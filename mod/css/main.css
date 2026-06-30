@@ -709,6 +709,63 @@ li {
     line-height: 1.4;
 }
 
+.home-product-gateway {
+    margin-bottom: 18px;
+}
+
+.home-product-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.home-product-toggle,
+.home-quick-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 52px;
+    padding: 0 18px;
+    border-radius: 8px;
+    border: 0;
+    font-size: 15px;
+    font-weight: 800;
+    text-align: center;
+}
+
+.home-product-toggle {
+    background: var(--primary);
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+}
+
+.home-product-toggle[aria-expanded="true"] .fa-chevron-down {
+    transform: rotate(180deg);
+}
+
+.home-quick-action {
+    background: #2f3338;
+    color: #fff;
+}
+
+.home-quick-action:hover {
+    color: #fff;
+    background: #1f2328;
+}
+
+.home-product-panel {
+    margin-top: 12px;
+    padding: 14px;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+}
+
+.home-product-panel[hidden] {
+    display: none;
+}
+
 ul.custom-button-list {
     list-style: none;
     display: flex;
@@ -755,6 +812,12 @@ ul.custom-button-list li {
     color: #fff;
     font-size: 15px;
     font-weight: 500;
+}
+
+@media (max-width: 575px) {
+    .home-product-actions {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* Skeleton Loading Styles - Vertical List Layout */
