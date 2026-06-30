@@ -17,8 +17,10 @@ $module = !empty($_GET['module']) ? validate_path($_GET['module']) : 'client';
 if ($module === false) {
     $module = 'client';
 }
+$request_path = trim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH), '/');
+$is_root_request = empty($_GET['module']) && empty($_GET['action']) && $request_path === '';
 $home   = $module == 'client' ? $CMSNT->site('home_page') : 'home';
-$action = !empty($_GET['action']) ? validate_path($_GET['action']) : $home;
+$action = $is_root_request ? 'landing' : (!empty($_GET['action']) ? validate_path($_GET['action']) : $home);
 if ($action === false) {
     $action = $home;
 }
@@ -42,6 +44,7 @@ $allowed_actions = [
     'login',
     'logout',
     'logs',
+    'landing',
     'policy',
     'product',
     'product-order',
