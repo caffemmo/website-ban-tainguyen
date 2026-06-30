@@ -729,14 +729,14 @@ li {
     align-items: center;
     justify-content: center;
     min-height: 52px;
-    padding: 0 18px;
-    border-radius: 8px;
+    padding: 14px 32px;
+    border-radius: 6px;
     border: 0;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 500;
-    font-family: var(--pfamily), "Rubik", sans-serif;
+    font-family: inherit;
     text-align: center;
-    line-height: 1.2;
+    line-height: 1.4;
 }
 
 .home-product-gateway .home-product-toggle {
