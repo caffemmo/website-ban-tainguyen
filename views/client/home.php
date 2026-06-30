@@ -8,6 +8,46 @@ $body = [
 ];
 $body['header'] = '
 <link rel="stylesheet" href="'.BASE_URL('public/client/').'css/wallet.css">
+<style>
+.home-promo-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 22px;
+    margin-bottom: 18px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #101827 0%, #1f3b57 55%, #0f766e 100%);
+    color: #fff;
+    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.16);
+}
+.home-promo-banner h3 {
+    margin: 0 0 6px;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 700;
+}
+.home-promo-banner p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.86);
+}
+.home-promo-banner .promo-badge {
+    flex: 0 0 auto;
+    padding: 10px 14px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
+    font-weight: 700;
+    white-space: nowrap;
+}
+@media (max-width: 575px) {
+    .home-promo-banner {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 16px;
+    }
+}
+</style>
 ';
 $body['footer'] = '
  
@@ -99,6 +139,16 @@ require_once(__DIR__.'/nav.php');
                 </div>
             </div>
             <?php endif?>
+
+            <div class="col-md-12">
+                <div class="home-promo-banner">
+                    <div>
+                        <h3><?=__('Deal giờ vàng mỗi ngày');?></h3>
+                        <p><?=__('Theo dõi khung giờ sale để săn tài nguyên giá tốt, số lượng có hạn.');?></p>
+                    </div>
+                    <span class="promo-badge"><?=__('Đang thử banner');?></span>
+                </div>
+            </div>
 
             <?php require_once(__DIR__.'/widget_tools.php');?>
             <br>
