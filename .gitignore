@@ -1,0 +1,8 @@
+.env
+error_log
+*.log
+vendor/
+tmp/
+.cache/
+.cpanel/
+.htpasswds/

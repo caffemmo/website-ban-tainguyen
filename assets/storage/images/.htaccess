@@ -1,0 +1,23 @@
+# Security rules for uploaded images
+Options -ExecCGI
+AddHandler cgi-script .php .pl .py .jsp .asp .sh .cgi
+
+# Deny execution of script files
+<Files ~ "\.(php|php3|php4|php5|phtml|pl|py|jsp|asp|sh|cgi)$">
+Order allow,deny
+Deny from all
+</Files>
+
+# Prevent access to sensitive files
+<Files ~ "\.(htaccess|htpasswd|ini|log|sh|inc|bak)$">
+Order allow,deny
+Deny from all
+</Files>
+
+# Only allow image files
+<FilesMatch "\.(jpg|jpeg|png|gif|webp)$">
+Order allow,deny
+Allow from all
+</FilesMatch>
+
+ 
