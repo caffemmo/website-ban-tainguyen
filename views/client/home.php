@@ -147,7 +147,7 @@ require_once(__DIR__.'/nav.php');
                 <?php endif?>
                 
                 <!-- Container để load sản phẩm bằng AJAX -->
-                <div id="products-container">
+                <div id="products-container" hidden>
                     <div class="skeleton-container">
                         <div class="skeleton-card">
                             <div class="skeleton-image"></div>
@@ -446,14 +446,17 @@ function loadProducts() {
 $(document).ready(function() {
     $('#toggleProductCategories').on('click', function() {
         const panel = $('#homeProductCategories');
+        const products = $('#products-container');
         const isOpen = $(this).attr('aria-expanded') === 'true';
         $(this).attr('aria-expanded', isOpen ? 'false' : 'true');
         panel.prop('hidden', isOpen);
+        products.prop('hidden', isOpen);
     });
 
     $('#home-categories-container').on('click', '.btn-category-home', function() {
         $('#toggleProductCategories').attr('aria-expanded', 'false');
         $('#homeProductCategories').prop('hidden', true);
+        $('#products-container').prop('hidden', false);
     });
 
     // 🔄 Set initial state cho history
@@ -469,6 +472,9 @@ $(document).ready(function() {
     
     if(keyword) {
         currentKeyword = keyword;
+        $('#toggleProductCategories').attr('aria-expanded', 'true');
+        $('#homeProductCategories').prop('hidden', false);
+        $('#products-container').prop('hidden', false);
         loadProducts();
     } else {
         // Load sản phẩm theo categories
