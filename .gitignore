@@ -6,3 +6,5 @@ tmp/
 .cache/
 .cpanel/
 .htpasswds/
+.DS_Store
+._.DS_Store
