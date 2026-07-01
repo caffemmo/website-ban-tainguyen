@@ -10,7 +10,7 @@ body {
     margin: 0;
     min-height: 100vh;
     font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    font-size: 13px;
+    font-size: 12px;
     color: #efedf7;
     background:
         radial-gradient(circle at 20% 18%, rgba(255, 100, 0, 0.16), transparent 32%),
@@ -57,7 +57,7 @@ main {
 .hero-section {
     width: min(920px, calc(100% - 32px));
     margin: 0 auto;
-    padding: 80px 0 58px;
+    padding: 76px 0 54px;
     text-align: center;
 }
 
@@ -70,21 +70,22 @@ main {
     border: 1px solid rgba(255, 111, 0, 0.5);
     background: rgba(255, 111, 0, 0.12);
     color: #ffc179;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 800;
 }
 
 .hero-section h1 {
-    margin: 32px 0 0;
+    margin: 28px 0 0;
     color: #f4f1fb;
-    font-size: clamp(46px, 7vw, 68px);
-    line-height: 1.04;
+    font-size: clamp(40px, 5.4vw, 58px);
+    line-height: 1.12;
     font-weight: 900;
-    letter-spacing: -1px;
+    letter-spacing: 0;
 }
 
 .hero-section h1 span {
     display: block;
+    padding-bottom: 8px;
     color: transparent;
     background: linear-gradient(90deg, #ff5a00 0%, #ff9d00 54%, #ffd03d 100%);
     -webkit-background-clip: text;
@@ -93,10 +94,10 @@ main {
 
 .hero-section p {
     max-width: 760px;
-    margin: 22px auto 0;
+    margin: 16px auto 0;
     color: #aaa3bd;
-    font-size: 18px;
-    line-height: 1.65;
+    font-size: 15px;
+    line-height: 1.6;
 }
 
 .hero-actions {
@@ -113,9 +114,9 @@ main {
     justify-content: center;
     gap: 8px;
     min-height: 54px;
-    padding: 0 28px;
+    padding: 0 24px;
     border-radius: 8px;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 900;
 }
 
@@ -129,6 +130,11 @@ main {
     border: 1px solid rgba(255, 255, 255, 0.16);
     background: rgba(255, 255, 255, 0.05);
     color: #efedf7;
+}
+
+.emoji-float {
+    display: inline-block;
+    animation: emojiFloat 1.8s ease-in-out infinite;
 }
 
 .logic-row {
@@ -150,12 +156,12 @@ main {
 
 .logic-card {
     display: grid;
-    gap: 9px;
-    min-height: 124px;
+    gap: 8px;
+    min-height: 116px;
     align-content: center;
     justify-items: center;
     border-radius: 12px;
-    padding: 18px;
+    padding: 16px;
     transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
 }
 
@@ -165,6 +171,31 @@ main {
     background: rgba(255, 255, 255, 0.065);
 }
 
+.logic-emoji {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 999px;
+    background: rgba(255, 122, 0, 0.12);
+    font-size: 20px;
+    filter: drop-shadow(0 0 12px rgba(255, 122, 0, 0.34));
+    animation: emojiFloat 2.2s ease-in-out infinite;
+}
+
+.logic-emoji.delay-1 {
+    animation-delay: 0.22s;
+}
+
+.logic-emoji.delay-2 {
+    animation-delay: 0.44s;
+}
+
+.logic-emoji.delay-3 {
+    animation-delay: 0.66s;
+}
+
 .logic-card i {
     color: #ff7a00;
     font-size: 24px;
@@ -172,13 +203,15 @@ main {
 
 .logic-card strong {
     color: #f4f1fb;
-    font-size: 18px;
+    font-size: 15px;
+    line-height: 1.25;
     font-weight: 900;
+    text-wrap: balance;
 }
 
 .logic-card span {
     color: #777086;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
     line-height: 1.45;
     text-align: center;
@@ -197,14 +230,14 @@ main {
     border: 1px solid rgba(125, 91, 255, 0.5);
     background: rgba(125, 91, 255, 0.18);
     color: #c8b8ff;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 900;
 }
 
 .section-heading h2 {
     margin: 26px 0 0;
     color: #f4f1fb;
-    font-size: clamp(34px, 5vw, 48px);
+    font-size: clamp(28px, 4vw, 40px);
     line-height: 1.15;
     font-weight: 900;
 }
@@ -212,7 +245,7 @@ main {
 .section-heading p {
     margin: 20px 0 0;
     color: #aaa3bd;
-    font-size: 15px;
+    font-size: 13px;
 }
 
 .feature-grid {
@@ -237,14 +270,14 @@ main {
 .feature-grid h3 {
     margin: 18px 0 0;
     color: #fff;
-    font-size: 17px;
+    font-size: 15px;
     font-weight: 900;
 }
 
 .feature-grid p {
     margin: 10px 0 0;
     color: #aaa3bd;
-    font-size: 13px;
+    font-size: 12px;
     line-height: 1.55;
 }
 
@@ -322,7 +355,7 @@ main {
 .thread-card h3 {
     margin: 0;
     color: #f4f1fb;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 800;
 }
 
@@ -342,7 +375,7 @@ main {
 
 .thread-card strong {
     color: #ff8a00;
-    font-size: 22px;
+    font-size: 19px;
     font-weight: 900;
 }
 
@@ -419,11 +452,11 @@ main {
     }
 
     .hero-section h1 {
-        font-size: 42px;
+        font-size: 34px;
     }
 
     .hero-section p {
-        font-size: 14px;
+        font-size: 13px;
     }
 
     .hero-actions,
@@ -435,5 +468,15 @@ main {
 
     .hero-actions {
         display: grid;
+    }
+}
+
+@keyframes emojiFloat {
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg) scale(1);
+    }
+    50% {
+        transform: translateY(-5px) rotate(-4deg) scale(1.06);
     }
 }
