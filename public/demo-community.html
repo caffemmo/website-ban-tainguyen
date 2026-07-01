@@ -6,9 +6,12 @@
     <title>Demo cộng đồng CAFFEMMO</title>
     <link rel="stylesheet" href="client/css/main.css">
     <link rel="stylesheet" href="fontawesome/css/all.min.css">
-    <link rel="stylesheet" href="assets/demo-community/demo-community.css">
+    <link rel="stylesheet" href="assets/demo-community/demo-community.css?v=2">
 </head>
 <body>
+    <canvas id="techCanvas" class="tech-canvas" aria-hidden="true"></canvas>
+    <div class="scan-layer" aria-hidden="true"></div>
+
     <header class="community-topbar">
         <a class="brand" href="../">
             <img src="client/images/logo.png" alt="CAFFEMMO">
@@ -16,41 +19,38 @@
         <nav>
             <a href="../">Trang chủ</a>
             <a href="../client/home">Shop</a>
-            <a href="../document-api">Tài liệu API</a>
+            <a href="../document-api">API</a>
         </nav>
-        <button class="ghost-button"><i class="fa-solid fa-plus"></i> Tạo bài viết</button>
+        <button class="ghost-button"><i class="fa-solid fa-plus"></i> Tạo chủ đề</button>
     </header>
 
     <main class="community-shell">
         <section class="community-hero">
             <div>
-                <span class="eyebrow">CAFFEMMO Community</span>
-                <h1>Diễn đàn hỗ trợ và chia sẻ kinh nghiệm tài nguyên số</h1>
-                <p>Hỏi đáp mua hàng, review sản phẩm, cảnh báo rủi ro và theo dõi deal mới trong một khu vực riêng cho khách.</p>
+                <span class="eyebrow">CAFFEMMO LIVE COMMUNITY</span>
+                <h1>Không gian trao đổi cho khách mua tài nguyên số</h1>
+                <p>Khách có thể hỏi đáp, review sản phẩm, theo dõi deal và chat trực tiếp với cộng đồng trong một giao diện công nghệ gọn nhẹ.</p>
             </div>
             <div class="hero-card">
-                <strong>Trạng thái cộng đồng</strong>
-                <div class="metric-grid">
-                    <span><b>128</b> bài viết</span>
-                    <span><b>42</b> đã trả lời</span>
-                    <span><b>7</b> deal hot</span>
-                </div>
+                <span>Online now</span>
+                <strong>214</strong>
+                <small>thành viên đang hoạt động</small>
             </div>
         </section>
 
         <section class="community-layout">
             <aside class="forum-sidebar">
-                <button class="category-item active"><i class="fa-solid fa-fire"></i> Tất cả chủ đề <span>128</span></button>
+                <button class="category-item active"><i class="fa-solid fa-signal"></i> Bảng tin <span>128</span></button>
                 <button class="category-item"><i class="fa-solid fa-cart-shopping"></i> Hỏi đáp mua hàng <span>34</span></button>
                 <button class="category-item"><i class="fa-solid fa-shield-halved"></i> Bảo mật tài khoản <span>21</span></button>
                 <button class="category-item"><i class="fa-solid fa-star"></i> Review sản phẩm <span>19</span></button>
-                <button class="category-item"><i class="fa-solid fa-bolt"></i> Góc săn sale <span>12</span></button>
-                <button class="category-item"><i class="fa-solid fa-code"></i> API & tích hợp <span>9</span></button>
+                <button class="category-item"><i class="fa-solid fa-bolt"></i> Săn sale <span>12</span></button>
+                <button class="category-item"><i class="fa-solid fa-code"></i> API & đại lý <span>9</span></button>
             </aside>
 
             <section class="forum-feed">
                 <div class="composer-card">
-                    <div class="composer-input">Bạn muốn hỏi hoặc chia sẻ điều gì?</div>
+                    <div class="composer-input">Nhập câu hỏi hoặc chia sẻ kinh nghiệm cho cộng đồng...</div>
                     <div class="composer-actions">
                         <button><i class="fa-regular fa-circle-question"></i> Hỏi đáp</button>
                         <button><i class="fa-solid fa-star"></i> Review</button>
@@ -62,17 +62,14 @@
                     <div class="thread-badge">Ghim</div>
                     <div class="thread-main">
                         <h2>Luật sử dụng tài nguyên và cảnh báo chống lừa đảo</h2>
-                        <p>Admin tổng hợp các nguyên tắc khi mua, nhận hàng và bảo mật tài khoản sau khi giao dịch.</p>
+                        <p>Admin tổng hợp các nguyên tắc khi mua, nhận hàng và bảo mật tài khoản sau giao dịch.</p>
                         <div class="thread-meta">
                             <span>Admin</span>
                             <span>2 giờ trước</span>
-                            <span>1.2k lượt xem</span>
+                            <span>1.2k xem</span>
                         </div>
                     </div>
-                    <div class="thread-stats">
-                        <strong>18</strong>
-                        <span>phản hồi</span>
-                    </div>
+                    <div class="thread-stats"><strong>18</strong><span>reply</span></div>
                 </article>
 
                 <article class="thread-card">
@@ -86,10 +83,7 @@
                             <span>#Facebook #Hướng dẫn</span>
                         </div>
                     </div>
-                    <div class="thread-stats">
-                        <strong>6</strong>
-                        <span>phản hồi</span>
-                    </div>
+                    <div class="thread-stats"><strong>6</strong><span>reply</span></div>
                 </article>
 
                 <article class="thread-card">
@@ -103,50 +97,46 @@
                             <span>#Săn sale #Ưu đãi</span>
                         </div>
                     </div>
-                    <div class="thread-stats">
-                        <strong>23</strong>
-                        <span>phản hồi</span>
-                    </div>
+                    <div class="thread-stats"><strong>23</strong><span>reply</span></div>
                 </article>
 
                 <article class="thread-card">
                     <div class="tag tag-blue">API</div>
                     <div class="thread-main">
                         <h2>Kết nối API mua hàng tự động cần những bước nào?</h2>
-                        <p>Checklist dành cho đại lý: lấy API key, test đơn nhỏ, xử lý callback và giới hạn tốc độ.</p>
+                        <p>Checklist cho đại lý: lấy API key, test đơn nhỏ, xử lý callback và giới hạn tốc độ.</p>
                         <div class="thread-meta">
                             <span>devhub</span>
                             <span>1 giờ trước</span>
                             <span>#API #Đại lý</span>
                         </div>
                     </div>
-                    <div class="thread-stats">
-                        <strong>4</strong>
-                        <span>phản hồi</span>
-                    </div>
+                    <div class="thread-stats"><strong>4</strong><span>reply</span></div>
                 </article>
             </section>
 
-            <aside class="forum-rightbar">
-                <div class="side-card">
-                    <h3>Tag nổi bật</h3>
-                    <div class="tag-cloud">
-                        <span>Facebook</span>
-                        <span>Proxy</span>
-                        <span>ChatGPT</span>
-                        <span>API</span>
-                        <span>Nạp tiền</span>
-                        <span>Lỗi đơn</span>
+            <aside class="live-chat">
+                <div class="chat-head">
+                    <div>
+                        <strong>Chat cộng đồng</strong>
+                        <span>Live room</span>
                     </div>
+                    <i class="fa-solid fa-circle"></i>
                 </div>
-                <div class="side-card">
-                    <h3>Sản phẩm liên quan</h3>
-                    <a class="product-link" href="../client/home">Acc Facebook thuê tích xanh</a>
-                    <a class="product-link" href="../client/home">Proxy tốc độ cao</a>
-                    <a class="product-link" href="../client/home">Clone cổ chăm page</a>
+                <div class="chat-stream" id="chatStream">
+                    <div class="chat-line admin"><b>Admin</b><span>Deal hôm nay sẽ cập nhật trong bảng tin.</span></div>
+                    <div class="chat-line"><b>huy***</b><span>Acc FB live ads còn hàng không shop?</span></div>
+                    <div class="chat-line"><b>linh***</b><span>Mình mới mua, nhận hàng tự động khá nhanh.</span></div>
+                    <div class="chat-line"><b>api-user</b><span>API có giới hạn request/phút không?</span></div>
+                </div>
+                <div class="chat-compose">
+                    <input type="text" id="chatInput" placeholder="Nhắn vào cộng đồng...">
+                    <button id="sendChat"><i class="fa-solid fa-paper-plane"></i></button>
                 </div>
             </aside>
         </section>
     </main>
+
+    <script src="assets/demo-community/demo-community.js?v=2"></script>
 </body>
 </html>
