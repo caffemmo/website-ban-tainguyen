@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>CAFFEMMO Product Home Demo</title>
+    <title>CAFFEMMO Product Flow Demo</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -12,6 +12,7 @@
         html { scroll-behavior: smooth; }
         body {
             min-height: 100vh;
+            overflow-x: hidden;
             background: #03050a;
             color: #fff;
             font-family: Geist, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -20,73 +21,262 @@
         }
         a { color: inherit; text-decoration: none; }
         button, input { font: inherit; }
-        .page { position: relative; min-height: 100vh; overflow-x: hidden; padding-bottom: 60px; }
+        .page { position: relative; min-height: 100vh; padding-bottom: 34px; }
         .bg-video, .overlay { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; }
         .bg-video { object-fit: cover; object-position: 70% center; }
         .overlay {
             background:
-                radial-gradient(circle at 10% 28%, rgba(255, 105, 0, 0.25), transparent 34%),
-                linear-gradient(90deg, rgba(0, 0, 0, 0.76), rgba(0, 0, 0, 0.34) 55%, rgba(0, 0, 0, 0.6));
+                radial-gradient(circle at 10% 28%, rgba(255, 105, 0, 0.23), transparent 32%),
+                linear-gradient(90deg, rgba(0, 0, 0, 0.74), rgba(0, 0, 0, 0.24) 55%, rgba(0, 0, 0, 0.52));
         }
         .nav, .container { position: relative; z-index: 2; }
         .nav {
-            display: flex; align-items: center; justify-content: space-between; gap: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
             padding: 18px 5vw;
         }
         .brand, .links, .actions { display: flex; align-items: center; }
         .brand { gap: 10px; font-size: 22px; font-weight: 800; letter-spacing: -0.04em; }
         .mark {
-            display: grid; width: 34px; height: 34px; place-items: center; border-radius: 11px;
-            background: rgba(255,255,255,.13); box-shadow: inset 0 1px 0 rgba(255,255,255,.18);
+            display: grid;
+            width: 34px;
+            height: 34px;
+            place-items: center;
+            border-radius: 11px;
+            background: rgba(255,255,255,.13);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.18);
         }
         .links { gap: 24px; }
-        .links a, .actions a { color: rgba(255,255,255,.78); font-size: 13px; font-weight: 700; }
-        .pill { border-radius: 10px; background: #fff; padding: 9px 18px; color: #050505 !important; }
-        .container { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding-top: 70px; }
-        .hero { max-width: 760px; padding-bottom: 58px; }
-        .badge { margin-bottom: 20px; color: rgba(255,255,255,.86); font-size: 14px; font-weight: 700; animation: fadeUp .8s ease .15s both; }
-        h1 { margin: 0; font-size: clamp(44px, 6vw, 76px); line-height: 1.03; letter-spacing: -.055em; font-weight: 800; animation: fadeUp .8s ease .28s both; }
-        h1 span { display: block; color: transparent; background: linear-gradient(90deg,#ff6b00,#ffab19 62%,#fff0a8); -webkit-background-clip: text; background-clip: text; }
-        .copy { max-width: 620px; margin-top: 22px; color: rgba(255,255,255,.7); font-size: 16px; line-height: 1.7; animation: fadeUp .8s ease .42s both; }
-        .hero-actions, .search { display: flex; align-items: center; }
-        .hero-actions { flex-wrap: wrap; gap: 12px; margin-top: 26px; animation: fadeUp .8s ease .56s both; }
-        .btn { min-height: 46px; border-radius: 10px; padding: 0 20px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; font-weight: 800; transition: transform .2s ease; }
-        .btn:hover, .card:hover { transform: translateY(-3px); }
+        .links a, .actions a {
+            color: rgba(255,255,255,.78);
+            font-size: 13px;
+            font-weight: 700;
+            transition: color .2s ease, transform .2s ease;
+        }
+        .links a:hover { color: #fff; }
+        .pill {
+            border-radius: 10px;
+            background: #fff;
+            padding: 9px 18px;
+            color: #050505 !important;
+        }
+        .container {
+            width: min(1180px, calc(100% - 32px));
+            margin: 0 auto;
+            padding-top: 70px;
+        }
+        .hero { max-width: 760px; }
+        .badge {
+            margin-bottom: 20px;
+            color: rgba(255,255,255,.86);
+            font-size: 14px;
+            font-weight: 700;
+            animation: fadeUp .8s ease .15s both;
+        }
+        h1 {
+            margin: 0;
+            font-size: clamp(44px, 6vw, 76px);
+            line-height: 1.03;
+            letter-spacing: -.055em;
+            font-weight: 800;
+            animation: fadeUp .8s ease .28s both;
+        }
+        h1 span {
+            display: block;
+            color: transparent;
+            background: linear-gradient(90deg,#ff6b00,#ffab19 62%,#fff0a8);
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+        .copy {
+            max-width: 620px;
+            margin-top: 22px;
+            color: rgba(255,255,255,.7);
+            font-size: 16px;
+            line-height: 1.7;
+            animation: fadeUp .8s ease .42s both;
+        }
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+            margin-top: 26px;
+            animation: fadeUp .8s ease .56s both;
+        }
+        .btn {
+            min-height: 46px;
+            border: 0;
+            border-radius: 10px;
+            padding: 0 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: transform .2s ease, border-color .2s ease, background .2s ease;
+        }
+        .btn:hover, .cat:hover, .product-card:hover { transform: translateY(-3px); }
         .primary { background: #fff; color: #050505; }
-        .secondary { border: 1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.08); color: #fff; backdrop-filter: blur(16px); }
-        .search { width: min(100%, 520px); min-height: 48px; margin-top: 18px; overflow: hidden; border: 1px solid rgba(255,255,255,.14); border-radius: 12px; background: rgba(255,255,255,.1); backdrop-filter: blur(18px); }
-        .search input { width: 100%; border: 0; outline: 0; background: transparent; padding: 0 16px; color: #fff; font-size: 14px; }
-        .search input::placeholder { color: rgba(255,255,255,.58); }
-        .search button { width: 54px; height: 48px; border: 0; background: #fff; color: #050505; cursor: pointer; }
-        .panel { border: 1px solid rgba(255,255,255,.14); border-radius: 24px; background: rgba(5,7,12,.48); box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 24px 80px rgba(0,0,0,.25); backdrop-filter: blur(22px); padding: 22px; }
-        .panel-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin-bottom: 18px; }
-        .panel-head h2 { font-size: 24px; letter-spacing: -.03em; }
-        .panel-head p { margin-top: 6px; color: rgba(255,255,255,.6); font-size: 13px; }
-        .categories { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 22px; }
-        .cat { min-height: 42px; border: 1px solid rgba(255,255,255,.14); border-radius: 999px; background: rgba(255,255,255,.08); color: rgba(255,255,255,.78); padding: 0 15px; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 800; backdrop-filter: blur(14px); }
-        .cat.active, .cat:hover { border-color: rgba(255,155,36,.66); background: rgba(255,124,0,.2); color: #fff; }
-        .layout { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 18px; }
-        .products { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; }
-        .card, .side-card { border: 1px solid rgba(255,255,255,.14); border-radius: 18px; background: rgba(255,255,255,.08); box-shadow: inset 0 1px 0 rgba(255,255,255,.08); backdrop-filter: blur(18px); }
-        .card { padding: 16px; transition: transform .2s ease, border-color .2s ease, background .2s ease; }
-        .card:hover { border-color: rgba(255,155,36,.64); background: rgba(255,255,255,.12); }
-        .product-top { display: flex; gap: 12px; align-items: flex-start; }
-        .icon { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 14px; background: rgba(255,126,0,.18); font-size: 22px; flex: 0 0 auto; }
-        .card h3 { font-size: 15px; line-height: 1.35; margin-bottom: 8px; }
-        .desc { color: rgba(255,255,255,.58); font-size: 12px; line-height: 1.55; }
-        .meta { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
-        .meta span { border-radius: 999px; background: rgba(255,255,255,.08); color: rgba(255,255,255,.68); padding: 6px 9px; font-size: 11px; font-weight: 700; }
-        .buy-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-        .price { color: #ffaf21; font-size: 17px; font-weight: 800; }
-        .buy { border: 0; border-radius: 10px; background: #fff; color: #050505; padding: 10px 13px; font-size: 12px; font-weight: 900; cursor: pointer; }
-        .side-card { padding: 18px; margin-bottom: 14px; }
-        .side-card h3 { font-size: 15px; margin-bottom: 12px; }
-        .balance { color: #ffaf21; font-size: 26px; font-weight: 800; }
-        .side-list { display: grid; gap: 10px; margin-top: 12px; color: rgba(255,255,255,.68); font-size: 12px; }
-        .notice { margin-top: 18px; color: rgba(255,255,255,.56); font-size: 12px; line-height: 1.6; }
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
-        @media (max-width: 980px) { .links { display: none; } .layout { grid-template-columns: 1fr; } .products { grid-template-columns: 1fr; } }
-        @media (max-width: 575px) { .nav { padding: 14px 16px; } .actions a:not(.pill) { display: none; } h1 { font-size: 40px; } .panel { border-radius: 18px; padding: 14px; } .panel-head { flex-direction: column; align-items: flex-start; } }
+        .secondary {
+            border: 1px solid rgba(255,255,255,.18);
+            background: rgba(255,255,255,.08);
+            color: #fff;
+            backdrop-filter: blur(16px);
+        }
+        .flow-shell {
+            position: relative;
+            z-index: 2;
+            width: min(1180px, calc(100% - 32px));
+            margin: 36px auto 0;
+        }
+        .drawer {
+            display: none;
+            max-width: 760px;
+            border: 1px solid rgba(255,255,255,.14);
+            border-radius: 22px;
+            background: rgba(5,7,12,.28);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 24px 80px rgba(0,0,0,.18);
+            backdrop-filter: blur(16px);
+            padding: 18px;
+            animation: fadeUp .45s ease both;
+        }
+        .drawer.is-open { display: block; }
+        .drawer-head {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 14px;
+        }
+        .drawer-head h2 { font-size: 20px; letter-spacing: -.03em; }
+        .drawer-head p { margin-top: 5px; color: rgba(255,255,255,.58); font-size: 12px; }
+        .close-btn {
+            border: 1px solid rgba(255,255,255,.14);
+            border-radius: 999px;
+            background: rgba(255,255,255,.08);
+            color: #fff;
+            width: 36px;
+            height: 36px;
+            cursor: pointer;
+        }
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0,1fr));
+            gap: 10px;
+        }
+        .cat {
+            min-height: 78px;
+            border: 1px solid rgba(255,255,255,.14);
+            border-radius: 16px;
+            background: rgba(255,255,255,.08);
+            color: #fff;
+            padding: 13px;
+            text-align: left;
+            cursor: pointer;
+            backdrop-filter: blur(14px);
+            transition: transform .2s ease, border-color .2s ease, background .2s ease;
+        }
+        .cat.is-active, .cat:hover {
+            border-color: rgba(255,155,36,.66);
+            background: rgba(255,124,0,.18);
+        }
+        .cat strong { display: block; margin-bottom: 5px; font-size: 14px; }
+        .cat span { color: rgba(255,255,255,.58); font-size: 11px; line-height: 1.45; }
+        .products-panel {
+            display: none;
+            margin-top: 12px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255,255,255,.12);
+        }
+        .products-panel.is-open { display: block; animation: fadeUp .35s ease both; }
+        .products-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 12px;
+            color: rgba(255,255,255,.72);
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .product-list {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0,1fr));
+            gap: 10px;
+        }
+        .product-card {
+            border: 1px solid rgba(255,255,255,.14);
+            border-radius: 16px;
+            background: rgba(255,255,255,.08);
+            padding: 14px;
+            backdrop-filter: blur(14px);
+            transition: transform .2s ease, border-color .2s ease, background .2s ease;
+        }
+        .product-card:hover {
+            border-color: rgba(255,155,36,.62);
+            background: rgba(255,255,255,.12);
+        }
+        .product-card h3 { font-size: 14px; line-height: 1.35; margin-bottom: 7px; }
+        .product-card p { color: rgba(255,255,255,.58); font-size: 11px; line-height: 1.5; }
+        .meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            margin: 12px 0;
+        }
+        .meta span {
+            border-radius: 999px;
+            background: rgba(255,255,255,.08);
+            color: rgba(255,255,255,.68);
+            padding: 5px 8px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+        .buy-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .price { color: #ffaf21; font-size: 15px; font-weight: 800; }
+        .buy {
+            border: 0;
+            border-radius: 9px;
+            background: #fff;
+            color: #050505;
+            padding: 8px 11px;
+            font-size: 11px;
+            font-weight: 900;
+            cursor: pointer;
+        }
+        .hint {
+            max-width: 520px;
+            margin-top: 12px;
+            color: rgba(255,255,255,.5);
+            font-size: 12px;
+            line-height: 1.55;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(18px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 980px) {
+            .links { display: none; }
+            .drawer { max-width: 100%; }
+        }
+        @media (max-width: 640px) {
+            .nav { padding: 14px 16px; }
+            .actions a:not(.pill) { display: none; }
+            .container { padding-top: 44px; }
+            h1 { font-size: 40px; }
+            .category-grid, .product-list { grid-template-columns: 1fr; }
+            .drawer-head { align-items: flex-start; }
+        }
     </style>
 </head>
 <body>
@@ -97,7 +287,7 @@
         <header class="nav">
             <a href="#" class="brand"><span class="mark">🔥</span> CAFFEMMO</a>
             <nav class="links">
-                <a href="#products">Sản phẩm</a>
+                <a href="#categories" data-open-categories>Sản phẩm</a>
                 <a href="#">Nạp tiền</a>
                 <a href="#">Đã mua</a>
                 <a href="#">API</a>
@@ -113,107 +303,124 @@
             <section class="hero">
                 <p class="badge">Community live hub · Tài nguyên số</p>
                 <h1>Cộng đồng hỗ trợ <span>tài nguyên số</span></h1>
-                <p class="copy">Mua hàng, hỏi đáp dịch vụ, săn deal, theo dõi thông báo admin và quản lý tài nguyên trong một giao diện mới của CAFFEMMO.</p>
+                <p class="copy">Giữ nền video làm điểm nhấn. Khách chỉ thấy chuyên mục khi bấm xem sản phẩm, rồi bấm chuyên mục mới hiện đúng sản phẩm bên trong.</p>
                 <div class="hero-actions">
-                    <a href="#products" class="btn primary">🛒 Xem sản phẩm</a>
+                    <button class="btn primary" type="button" data-open-categories>🛒 Xem sản phẩm</button>
                     <a href="#" class="btn secondary">💳 Nạp tiền</a>
                     <a href="#" class="btn secondary">📦 Đơn hàng</a>
                 </div>
-                <form class="search">
-                    <input type="text" placeholder="Tìm kiếm sản phẩm...">
-                    <button type="button">⌕</button>
-                </form>
-            </section>
-
-            <section class="panel" id="products">
-                <div class="panel-head">
-                    <div>
-                        <h2>Kho tài nguyên</h2>
-                        <p>Demo bố cục danh mục và sản phẩm trước khi gắn dữ liệu thật.</p>
-                    </div>
-                    <a href="#" class="btn secondary">❤️ Yêu thích</a>
-                </div>
-
-                <div class="categories">
-                    <a class="cat active" href="#">🛒 Tất cả sản phẩm</a>
-                    <a class="cat" href="#">🔥 Khóa học Facebook</a>
-                    <a class="cat" href="#">🌐 Proxy tốc độ cao</a>
-                    <a class="cat" href="#">✅ Acc tích xanh</a>
-                    <a class="cat" href="#">🤖 Chat GPT</a>
-                </div>
-
-                <div class="layout">
-                    <div class="products">
-                        <article class="card">
-                            <div class="product-top">
-                                <div class="icon">🔥</div>
-                                <div>
-                                    <h3>Khóa học làm dịch vụ Facebook cơ bản từ A-Z</h3>
-                                    <p class="desc">Gồm video hướng dẫn mở khóa, lên tích xanh, khôi phục và bảo mật tài khoản.</p>
-                                </div>
-                            </div>
-                            <div class="meta"><span>Kho: 41</span><span>Đã bán: 956</span><span>Hot</span></div>
-                            <div class="buy-row"><strong class="price">70.000đ</strong><button class="buy">MUA NGAY</button></div>
-                        </article>
-                        <article class="card">
-                            <div class="product-top">
-                                <div class="icon">✅</div>
-                                <div>
-                                    <h3>Acc FB có nút thuê tích xanh - 1 Mail/2FA</h3>
-                                    <p class="desc">Tài nguyên phục vụ quảng cáo, live ads và quy trình xử lý dịch vụ tích xanh.</p>
-                                </div>
-                            </div>
-                            <div class="meta"><span>Kho: 128</span><span>Đã bán: 1.2k</span><span>Live ADS</span></div>
-                            <div class="buy-row"><strong class="price">50.000đ</strong><button class="buy">MUA NGAY</button></div>
-                        </article>
-                        <article class="card">
-                            <div class="product-top">
-                                <div class="icon">🌐</div>
-                                <div>
-                                    <h3>Proxy tốc độ cao cho vận hành tài khoản</h3>
-                                    <p class="desc">Proxy ổn định, phù hợp nuôi tài khoản, automation và các tác vụ MMO.</p>
-                                </div>
-                            </div>
-                            <div class="meta"><span>Kho: 2.450</span><span>Đã bán: 320</span><span>API</span></div>
-                            <div class="buy-row"><strong class="price">12.000đ</strong><button class="buy">MUA NGAY</button></div>
-                        </article>
-                        <article class="card">
-                            <div class="product-top">
-                                <div class="icon">🤖</div>
-                                <div>
-                                    <h3>Chat GPT / AI account dùng cho học tập</h3>
-                                    <p class="desc">Tài khoản AI, hướng dẫn sử dụng và hỗ trợ sau mua trong cộng đồng.</p>
-                                </div>
-                            </div>
-                            <div class="meta"><span>Kho: 86</span><span>Đã bán: 742</span><span>Auto</span></div>
-                            <div class="buy-row"><strong class="price">35.000đ</strong><button class="buy">MUA NGAY</button></div>
-                        </article>
-                    </div>
-
-                    <aside>
-                        <div class="side-card">
-                            <h3>Ví tài khoản</h3>
-                            <div class="balance">0đ</div>
-                            <div class="side-list">
-                                <span>Tổng nạp: 0đ</span>
-                                <span>Đã sử dụng: 0đ</span>
-                                <span>Giảm giá: 0%</span>
-                            </div>
-                        </div>
-                        <div class="side-card">
-                            <h3>Logic kế tiếp</h3>
-                            <div class="side-list">
-                                <span>💬 Chat live cộng đồng</span>
-                                <span>✈️ Bot Telegram</span>
-                                <span>✅ Up tích xanh</span>
-                                <span>🛡️ Trung tâm trung gian</span>
-                            </div>
-                        </div>
-                    </aside>
-                </div>
-                <p class="notice">Đây là demo UI tĩnh. Khi bạn duyệt ổn, mình mới gắn layout này vào dữ liệu thật của trang chủ.</p>
+                <p class="hint">Demo này cố ý không xổ sản phẩm ngay để trang đầu thoáng và không che mất nền.</p>
             </section>
         </div>
+
+        <section class="flow-shell" id="categories">
+            <div class="drawer" id="categoryDrawer">
+                <div class="drawer-head">
+                    <div>
+                        <h2>Chọn chuyên mục</h2>
+                        <p>Bấm một chuyên mục để mở sản phẩm tương ứng.</p>
+                    </div>
+                    <button class="close-btn" type="button" data-close-drawer>×</button>
+                </div>
+
+                <div class="category-grid">
+                    <button class="cat" type="button" data-category="facebook">
+                        <strong>🔥 Khóa học Facebook</strong>
+                        <span>Dịch vụ Facebook, mở khóa, lên tích xanh.</span>
+                    </button>
+                    <button class="cat" type="button" data-category="verified">
+                        <strong>✅ Acc tích xanh</strong>
+                        <span>Tài nguyên có nút thuê tích xanh.</span>
+                    </button>
+                    <button class="cat" type="button" data-category="proxy">
+                        <strong>🌐 Proxy tốc độ cao</strong>
+                        <span>Proxy cho vận hành tài khoản và automation.</span>
+                    </button>
+                    <button class="cat" type="button" data-category="ai">
+                        <strong>🤖 Chat GPT / AI</strong>
+                        <span>Tài khoản AI, công cụ học tập và làm việc.</span>
+                    </button>
+                </div>
+
+                <div class="products-panel" id="productsPanel">
+                    <div class="products-title">
+                        <span id="productsTitle">Sản phẩm</span>
+                        <span>Demo tĩnh</span>
+                    </div>
+                    <div class="product-list" id="productList"></div>
+                </div>
+            </div>
+        </section>
     </main>
+
+    <script>
+        const products = {
+            facebook: {
+                title: '🔥 Khóa học Facebook',
+                items: [
+                    ['Khóa học làm dịch vụ Facebook cơ bản từ A-Z', 'Video hướng dẫn mở khóa, lên tích xanh, khôi phục và bảo mật.', 'Kho: 41', '70.000đ'],
+                    ['Khóa học ngâm tích xanh chính chủ mới nhất', 'Quy trình làm dịch vụ, chuẩn bị tài khoản và xử lý lỗi thường gặp.', 'Kho: 28', '120.000đ']
+                ]
+            },
+            verified: {
+                title: '✅ Acc tích xanh',
+                items: [
+                    ['Acc FB có nút thuê tích xanh - 1 Mail/2FA', 'Tài nguyên phục vụ quảng cáo, live ads và dịch vụ tích xanh.', 'Kho: 128', '50.000đ'],
+                    ['Fanpage chính chủ có hướng dẫn lên tích xanh', 'Gồm hướng dẫn cho người mới và lưu ý bảo mật sau mua.', 'Kho: 17', '90.000đ']
+                ]
+            },
+            proxy: {
+                title: '🌐 Proxy tốc độ cao',
+                items: [
+                    ['Proxy tốc độ cao cho vận hành tài khoản', 'Proxy ổn định, phù hợp nuôi tài khoản và automation.', 'Kho: 2.450', '12.000đ'],
+                    ['Proxy private theo gói ngày', 'Tối ưu cho workflow cần IP sạch và tốc độ đều.', 'Kho: 820', '25.000đ']
+                ]
+            },
+            ai: {
+                title: '🤖 Chat GPT / AI',
+                items: [
+                    ['Chat GPT / AI account dùng cho học tập', 'Tài khoản AI, hướng dẫn sử dụng và hỗ trợ sau mua.', 'Kho: 86', '35.000đ'],
+                    ['Gói AI workflow cho làm việc nhanh', 'Dành cho học tập, content, code và xử lý tài liệu.', 'Kho: 64', '55.000đ']
+                ]
+            }
+        };
+
+        const drawer = document.getElementById('categoryDrawer');
+        const panel = document.getElementById('productsPanel');
+        const list = document.getElementById('productList');
+        const title = document.getElementById('productsTitle');
+
+        document.querySelectorAll('[data-open-categories]').forEach((button) => {
+            button.addEventListener('click', () => {
+                drawer.classList.add('is-open');
+                panel.classList.remove('is-open');
+                document.querySelectorAll('.cat').forEach((cat) => cat.classList.remove('is-active'));
+                document.getElementById('categories').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+
+        document.querySelector('[data-close-drawer]').addEventListener('click', () => {
+            drawer.classList.remove('is-open');
+            panel.classList.remove('is-open');
+        });
+
+        document.querySelectorAll('[data-category]').forEach((button) => {
+            button.addEventListener('click', () => {
+                const category = products[button.dataset.category];
+                document.querySelectorAll('.cat').forEach((cat) => cat.classList.remove('is-active'));
+                button.classList.add('is-active');
+                title.textContent = category.title;
+                list.innerHTML = category.items.map((item) => `
+                    <article class="product-card">
+                        <h3>${item[0]}</h3>
+                        <p>${item[1]}</p>
+                        <div class="meta"><span>${item[2]}</span><span>Còn hàng</span></div>
+                        <div class="buy-row"><strong class="price">${item[3]}</strong><button class="buy">MUA NGAY</button></div>
+                    </article>
+                `).join('');
+                panel.classList.add('is-open');
+            });
+        });
+    </script>
 </body>
 </html>
