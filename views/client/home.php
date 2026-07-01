@@ -8,7 +8,6 @@ $body = [
 ];
 $body['header'] = '
 <link rel="stylesheet" href="'.BASE_URL('public/client/').'css/wallet.css">
-<link rel="stylesheet" href="'.BASE_URL('public/assets/caffemmo-home/caffemmo-home.css?v=1').'">
 ';
 $body['footer'] = '
  
@@ -84,69 +83,15 @@ if(!empty($_GET['keyword'])){
 }
 
 require_once(__DIR__.'/header.php');
+require_once(__DIR__.'/nav.php');
 ?>
 
-<body class="caffemmo-home-body">
-<section class="caffemmo-home-page">
-    <video class="caffemmo-home-video"
-        src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260429_114316_1c7889ad-2885-410e-b493-98119fee0ddb.mp4"
-        autoplay muted loop playsinline aria-hidden="true"></video>
-    <div class="caffemmo-home-overlay" aria-hidden="true"></div>
+<section class="section feature-part">
+    <div class="container">
+        <div class="mb-5">
 
-    <header class="caffemmo-home-nav">
-        <div class="caffemmo-home-brand">
-            <a href="<?=base_url();?>" class="caffemmo-home-brand"><span class="caffemmo-home-mark">🔥</span> CAFFEMMO</a>
         </div>
-        <nav class="caffemmo-home-links" aria-label="Main navigation">
-            <a href="#shop-products"><?=__('Sản phẩm');?></a>
-            <a href="<?=base_url('client/recharge-bank');?>"><?=__('Nạp tiền');?></a>
-            <a href="<?=base_url('product-orders/');?>"><?=__('Đã mua');?></a>
-            <a href="<?=base_url('client/document-api');?>"><?=__('API');?></a>
-            <a href="<?=base_url('client/contact');?>"><?=__('Hỗ trợ');?></a>
-        </nav>
-        <div class="caffemmo-home-actions">
-            <?php if(isset($getUser)):?>
-                <a href="<?=base_url('client/profile');?>"><?=htmlspecialchars($getUser['username'], ENT_QUOTES, 'UTF-8');?></a>
-                <a href="<?=base_url('client/recharge-bank');?>" class="caffemmo-home-pill"><?=format_currency($getUser['money']);?></a>
-            <?php else:?>
-                <a href="<?=base_url('client/register');?>"><?=__('Đăng ký');?></a>
-                <a href="<?=base_url('client/login');?>" class="caffemmo-home-pill"><?=__('Đăng nhập');?></a>
-            <?php endif?>
-        </div>
-    </header>
-
-    <div class="container caffemmo-home-container">
-        <section class="caffemmo-home-hero">
-            <p class="caffemmo-home-badge">Community live hub · Tài nguyên số</p>
-            <h1 class="caffemmo-home-title">
-                Cộng đồng hỗ trợ
-                <span>tài nguyên số</span>
-            </h1>
-            <p class="caffemmo-home-copy">
-                Mua hàng, hỏi đáp dịch vụ, săn deal, theo dõi thông báo admin và quản lý tài nguyên trong một giao diện mới của CAFFEMMO.
-            </p>
-            <div class="caffemmo-home-hero-actions">
-                <a href="#shop-products" class="caffemmo-home-primary">🛒 <?=__('Xem sản phẩm');?></a>
-                <a href="<?=base_url('client/recharge-bank');?>" class="caffemmo-home-secondary">💳 <?=__('Nạp tiền');?></a>
-                <a href="<?=base_url('product-orders/');?>" class="caffemmo-home-secondary">📦 <?=__('Đơn hàng');?></a>
-            </div>
-            <form class="caffemmo-home-search" method="GET" action="<?=base_url();?>">
-                <input type="hidden" name="action" value="home">
-                <input type="text" name="keyword" value="<?=htmlspecialchars($keyword, ENT_QUOTES, 'UTF-8');?>"
-                    placeholder="<?=__('Tìm kiếm sản phẩm...');?>">
-                <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
-            </form>
-        </section>
-
-        <section class="caffemmo-shop-panel" id="shop-products">
-            <div class="caffemmo-panel-heading">
-                <div>
-                    <h2><?=__('Kho tài nguyên');?></h2>
-                    <p><?=__('Chọn chuyên mục và mua sản phẩm bằng logic hiện tại của website.');?></p>
-                </div>
-                <a href="<?=base_url('client/favorites');?>" class="caffemmo-home-secondary">❤️ <?=__('Yêu thích');?></a>
-            </div>
-            <div class="row mb-5">
+        <div class="row mb-5">
             <?php if($CMSNT->site('notice_home') != ''):?>
             <div class="col-md-12">
                 <div class="account-card pt-3">
@@ -352,7 +297,6 @@ require_once(__DIR__.'/header.php');
         <?php endif?>
 
 
-        </section>
     </div>
 </section>
 
@@ -361,23 +305,6 @@ require_once(__DIR__.'/header.php');
 let currentCategoryId = '<?=htmlspecialchars($category_id, ENT_QUOTES, 'UTF-8');?>';
 let currentCategorySlug = '<?=htmlspecialchars($category_slug ?? '', ENT_QUOTES, 'UTF-8');?>';
 let currentKeyword = '<?=htmlspecialchars($keyword, ENT_QUOTES, 'UTF-8');?>';
-
-function loadMenuCategories() {
-    $.ajax({
-        url: baseUrl + 'ajaxs/client/load_menu.php',
-        type: 'GET',
-        dataType: 'json',
-        success: function(response) {
-            if ($('#home-categories-container').length) {
-                $('.home-categories-skeleton').remove();
-                $('#home-categories-container').append(response.home_buttons_html);
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error('Error loading menu categories:', error);
-        }
-    });
-}
 
 // Hàm tạo skeleton loading HTML
 function getSkeletonLoadingHTML() {
@@ -503,8 +430,6 @@ function loadProducts() {
 
 // Load sản phẩm khi trang load xong
 $(document).ready(function() {
-    loadMenuCategories();
-
     // 🔄 Set initial state cho history
     window.history.replaceState({
         categoryId: currentCategoryId, 
