@@ -37,7 +37,7 @@
             gap: 20px;
             padding: 18px 5vw;
         }
-        .brand, .actions { display: flex; align-items: center; }
+        .brand { display: flex; align-items: center; }
         .brand {
             width: min(300px, 44vw);
             height: 82px;
@@ -50,17 +50,6 @@
             object-position: left center;
             filter: drop-shadow(0 10px 24px rgba(0,0,0,.38));
         }
-        .shop-link {
-            border-radius: 10px;
-            background: #fff;
-            padding: 9px 18px;
-            color: #050505;
-            font-size: 13px;
-            font-weight: 800;
-            box-shadow: 0 14px 36px rgba(0,0,0,.2);
-            transition: transform .2s ease, background .2s ease;
-        }
-        .shop-link:hover { transform: translateY(-2px); background: rgba(255,255,255,.9); }
         .container {
             width: min(760px, calc(100% - 32px));
             margin-left: clamp(16px, 5vw, 64px);
@@ -271,7 +260,6 @@
         @media (max-width: 640px) {
             .nav { padding: 14px 16px; }
             .brand { width: min(220px, 58vw); height: 70px; }
-            .shop-link { padding: 8px 13px; font-size: 12px; }
             .container { padding-top: 44px; }
             h1 { font-size: 40px; }
             .category-grid, .product-list { grid-template-columns: 1fr; }
@@ -288,9 +276,6 @@
             <a href="#" class="brand" aria-label="CAFFEMMO">
                 <img class="brand-logo" src="/assets/storage/images/logo_light_A1P.gif" alt="CAFFEMMO">
             </a>
-            <div class="actions">
-                <a href="/" class="shop-link">Vào shop</a>
-            </div>
         </header>
 
         <div class="container">
