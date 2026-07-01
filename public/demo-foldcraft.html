@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Foldcraft Hero Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        geist: ['Geist', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        @keyframes fadeSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="module">
+        import React, { useState } from 'https://esm.sh/react@18.3.1';
+        import { createRoot } from 'https://esm.sh/react-dom@18.3.1/client';
+        import { ArrowRight, Menu, X } from 'https://esm.sh/lucide-react@0.468.0?deps=react@18.3.1';
+
+        const videoUrl = 'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260622_204221_5339e40b-e73d-4ab0-9c65-79c18c66fd50.mp4';
+        const navLinks = ['Home', 'Projects', 'Studio', 'Reach Us'];
+
+        function FoldcraftHero() {
+            const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+            return React.createElement(
+                'div',
+                { className: 'relative h-screen w-full overflow-hidden bg-black font-geist' },
+                React.createElement('video', {
+                    className: 'absolute inset-0 h-full w-full object-cover [object-position:70%_center]',
+                    src: videoUrl,
+                    autoPlay: true,
+                    muted: true,
+                    loop: true,
+                    playsInline: true,
+                    'aria-hidden': 'true'
+                }),
+                React.createElement('div', {
+                    className: 'absolute inset-0 bg-black/25',
+                    'aria-hidden': 'true'
+                }),
+                React.createElement(
+                    'header',
+                    { className: 'relative z-30 flex items-center justify-between px-6 py-5 md:px-12 lg:px-16' },
+                    React.createElement(
+                        'div',
+                        { className: 'flex items-center gap-10' },
+                        React.createElement(
+                            'a',
+                            { href: '#', className: 'text-lg font-semibold tracking-tight text-white sm:text-xl' },
+                            'Foldcraft'
+                        ),
+                        React.createElement(
+                            'nav',
+                            { className: 'hidden items-center gap-7 md:flex' },
+                            navLinks.map((link) =>
+                                React.createElement(
+                                    'a',
+                                    {
+                                        key: link,
+                                        href: '#',
+                                        className: 'text-sm text-white/80 transition-colors hover:text-white'
+                                    },
+                                    link
+                                )
+                            )
+                        )
+                    ),
+                    React.createElement(
+                        'div',
+                        { className: 'hidden md:block' },
+                        React.createElement(
+                            'a',
+                            {
+                                href: '#',
+                                className: 'inline-flex rounded-lg bg-white px-5 py-2 text-sm font-medium text-black transition-transform hover:scale-105'
+                            },
+                            "Let's Talk"
+                        )
+                    ),
+                    React.createElement(
+                        'button',
+                        {
+                            type: 'button',
+                            className: 'relative z-50 flex h-10 w-10 items-center justify-center text-white transition-transform active:scale-90 md:hidden',
+                            'aria-label': 'Toggle mobile menu',
+                            'aria-expanded': mobileMenuOpen,
+                            onClick: () => setMobileMenuOpen((open) => !open)
+                        },
+                        React.createElement(Menu, {
+                            size: 25,
+                            className: `absolute transition-all duration-300 ${mobileMenuOpen ? 'rotate-90 scale-75 opacity-0' : 'rotate-0 scale-100 opacity-100'}`
+                        }),
+                        React.createElement(X, {
+                            size: 25,
+                            className: `absolute transition-all duration-300 ${mobileMenuOpen ? 'rotate-0 scale-100 opacity-100' : '-rotate-90 scale-75 opacity-0'}`
+                        })
+                    )
+                ),
+                React.createElement(
+                    'div',
+                    {
+                        className: `absolute inset-x-0 top-0 z-20 overflow-hidden bg-black/98 backdrop-blur-xl transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${mobileMenuOpen ? 'h-screen opacity-100' : 'h-0 opacity-0 pointer-events-none'}`
+                    },
+                    React.createElement(
+                        'div',
+                        {
+                            className: `flex h-full flex-col justify-center px-8 transition-all delay-100 duration-500 ${mobileMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`
+                        },
+                        React.createElement(
+                            'nav',
+                            { className: 'flex flex-col gap-6' },
+                            navLinks.map((link) =>
+                                React.createElement(
+                                    'a',
+                                    {
+                                        key: link,
+                                        href: '#',
+                                        className: 'text-3xl font-medium text-white/90 transition-colors hover:text-white',
+                                        onClick: () => setMobileMenuOpen(false)
+                                    },
+                                    link
+                                )
+                            )
+                        ),
+                        React.createElement(
+                            'a',
+                            {
+                                href: '#',
+                                className: 'mt-6 inline-flex w-fit rounded-full bg-white px-8 py-3.5 text-base font-medium text-black transition-transform hover:scale-105',
+                                onClick: () => setMobileMenuOpen(false)
+                            },
+                            "Let's Talk"
+                        )
+                    )
+                ),
+                React.createElement(
+                    'main',
+                    { className: 'relative z-10 flex h-[calc(100vh-80px)] flex-col justify-between px-6 pb-10 pt-12 sm:pb-12 sm:pt-16 md:px-12 md:pb-16 md:pt-20 lg:px-16' },
+                    React.createElement(
+                        'section',
+                        { className: 'max-w-3xl' },
+                        React.createElement(
+                            'p',
+                            { className: 'mb-4 text-xs text-white/90 animate-[fadeSlideUp_0.8s_ease_0.2s_both] sm:mb-6 sm:text-sm' },
+                            'Brand & Visual Storytelling'
+                        ),
+                        React.createElement(
+                            'h1',
+                            { className: 'text-3xl font-medium leading-[1.1] tracking-tight text-white animate-[fadeSlideUp_0.8s_ease_0.4s_both] sm:text-5xl md:text-6xl lg:text-7xl' },
+                            'Shaping visual',
+                            React.createElement('br'),
+                            'narratives,',
+                            React.createElement('br'),
+                            'one pixel at a time.'
+                        )
+                    ),
+                    React.createElement(
+                        'section',
+                        null,
+                        React.createElement(
+                            'p',
+                            { className: 'mb-5 max-w-sm text-sm leading-relaxed text-white/60 animate-[fadeSlideUp_0.8s_ease_0.7s_both] sm:mb-6 sm:max-w-lg sm:text-base md:text-lg' },
+                            'Turning vision into reality through craft, motion, and an endless pursuit of beauty.'
+                        ),
+                        React.createElement(
+                            'a',
+                            { href: '#', className: 'inline-flex items-center gap-2 rounded-lg bg-white px-5 py-2.5 text-sm font-medium text-black transition-transform hover:scale-105 animate-[fadeSlideUp_0.8s_ease_0.9s_both] sm:px-6 sm:py-3' },
+                            'Explore Work',
+                            React.createElement(ArrowRight, { size: 16 })
+                        )
+                    )
+                )
+            );
+        }
+
+        createRoot(document.getElementById('root')).render(React.createElement(FoldcraftHero));
+    </script>
+</body>
+</html>
