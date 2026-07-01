@@ -1,0 +1,577 @@
+<!doctype html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CAFFEMMO Foldcraft Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background: #000;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button {
+            font: inherit;
+        }
+
+        .landing-root {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            background: #000;
+            color: #fff;
+            font-family: Geist, sans-serif;
+        }
+
+        .hero-video {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: 70% center;
+        }
+
+        .hero-shade {
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 16% 26%, rgba(255, 94, 0, 0.24), transparent 34%),
+                linear-gradient(90deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.25) 55%, rgba(0, 0, 0, 0.48));
+        }
+
+        .navbar {
+            position: relative;
+            z-index: 30;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+        }
+
+        .brand-wrap {
+            display: flex;
+            align-items: center;
+            gap: 34px;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+        }
+
+        .brand-mark {
+            display: inline-grid;
+            width: 30px;
+            height: 30px;
+            place-items: center;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.13);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+        }
+
+        .desktop-nav {
+            display: none;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .desktop-nav a,
+        .login-link {
+            color: rgba(255, 255, 255, 0.78);
+            font-size: 13px;
+            font-weight: 500;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+        .desktop-nav a:hover {
+            color: #fff;
+        }
+
+        .login-link {
+            display: none;
+            border-radius: 8px;
+            background: #fff;
+            padding: 8px 18px;
+            color: #000;
+        }
+
+        .login-link:hover,
+        .mobile-login:hover,
+        .primary-cta:hover,
+        .secondary-cta:hover {
+            transform: scale(1.05);
+        }
+
+        .menu-toggle {
+            position: relative;
+            z-index: 50;
+            display: flex;
+            width: 40px;
+            height: 40px;
+            align-items: center;
+            justify-content: center;
+            border: 0;
+            background: transparent;
+            color: #fff;
+            cursor: pointer;
+            transition: transform 0.15s ease;
+        }
+
+        .menu-toggle:active {
+            transform: scale(0.9);
+        }
+
+        .menu-toggle svg {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .icon-menu {
+            opacity: 1;
+            transform: rotate(0deg) scale(1);
+        }
+
+        .icon-close {
+            opacity: 0;
+            transform: rotate(-90deg) scale(0.75);
+        }
+
+        .menu-open .icon-menu {
+            opacity: 0;
+            transform: rotate(90deg) scale(0.75);
+        }
+
+        .menu-open .icon-close {
+            opacity: 1;
+            transform: rotate(0deg) scale(1);
+        }
+
+        .mobile-menu {
+            position: absolute;
+            inset: 0 0 auto;
+            z-index: 20;
+            height: 0;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.98);
+            opacity: 0;
+            pointer-events: none;
+            backdrop-filter: blur(24px);
+            transition: height 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .mobile-menu.is-open {
+            height: 100vh;
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .mobile-menu-inner {
+            display: flex;
+            height: 100%;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 32px;
+            opacity: 0;
+            transform: translateY(32px);
+            transition: opacity 0.5s ease 0.1s, transform 0.5s ease 0.1s;
+        }
+
+        .mobile-menu.is-open .mobile-menu-inner {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .mobile-menu nav {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .mobile-menu a {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 30px;
+            font-weight: 500;
+        }
+
+        .mobile-login {
+            width: fit-content;
+            margin-top: 24px;
+            border-radius: 999px;
+            background: #fff;
+            padding: 14px 32px;
+            color: #000 !important;
+            font-size: 16px !important;
+            transition: transform 0.2s ease;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            height: calc(100vh - 80px);
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 48px 24px 34px;
+        }
+
+        .hero-top {
+            max-width: 780px;
+        }
+
+        .badge {
+            margin-bottom: 16px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 12px;
+            animation: fadeSlideUp 0.8s ease 0.2s both;
+        }
+
+        h1 {
+            color: #fff;
+            font-size: 36px;
+            font-weight: 600;
+            line-height: 1.05;
+            letter-spacing: -0.045em;
+            animation: fadeSlideUp 0.8s ease 0.4s both;
+        }
+
+        h1 span {
+            display: block;
+            color: transparent;
+            background: linear-gradient(90deg, #ff6a00, #ffaf21 60%, #fff0a8);
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+
+        .hero-bottom {
+            width: min(100%, 980px);
+        }
+
+        .hero-bottom p {
+            max-width: 610px;
+            margin-bottom: 18px;
+            color: rgba(255, 255, 255, 0.68);
+            font-size: 14px;
+            line-height: 1.625;
+            animation: fadeSlideUp 0.8s ease 0.7s both;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .primary-cta,
+        .secondary-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border-radius: 8px;
+            padding: 10px 18px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: transform 0.2s ease;
+            animation: fadeSlideUp 0.8s ease 0.9s both;
+        }
+
+        .primary-cta {
+            background: #fff;
+            color: #000;
+        }
+
+        .secondary-cta {
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            backdrop-filter: blur(16px);
+        }
+
+        .logic-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+            animation: fadeSlideUp 0.8s ease 1.05s both;
+        }
+
+        .logic-card {
+            min-height: 94px;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 14px;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(18px);
+            transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+        }
+
+        .logic-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(255, 155, 36, 0.65);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .logic-icon {
+            display: inline-grid;
+            width: 28px;
+            height: 28px;
+            margin-bottom: 9px;
+            place-items: center;
+            border-radius: 999px;
+            background: rgba(255, 126, 0, 0.18);
+            font-size: 16px;
+            animation: emojiFloat 2.3s ease-in-out infinite;
+        }
+
+        .logic-card:nth-child(2) .logic-icon {
+            animation-delay: 0.2s;
+        }
+
+        .logic-card:nth-child(3) .logic-icon {
+            animation-delay: 0.4s;
+        }
+
+        .logic-card:nth-child(4) .logic-icon {
+            animation-delay: 0.6s;
+        }
+
+        .logic-card strong {
+            display: block;
+            color: #fff;
+            font-size: 14px;
+            line-height: 1.25;
+        }
+
+        .logic-card span {
+            display: block;
+            margin-top: 5px;
+            color: rgba(255, 255, 255, 0.56);
+            font-size: 11px;
+            line-height: 1.45;
+        }
+
+        @keyframes fadeSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes emojiFloat {
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg) scale(1);
+            }
+            50% {
+                transform: translateY(-5px) rotate(-4deg) scale(1.06);
+            }
+        }
+
+        @media (min-width: 640px) {
+            .brand {
+                font-size: 20px;
+            }
+
+            .badge {
+                margin-bottom: 24px;
+                font-size: 14px;
+            }
+
+            h1 {
+                font-size: 52px;
+            }
+
+            .hero-bottom p {
+                font-size: 16px;
+            }
+
+            .primary-cta,
+            .secondary-cta {
+                padding: 12px 22px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .navbar {
+                padding-right: 48px;
+                padding-left: 48px;
+            }
+
+            .desktop-nav,
+            .login-link {
+                display: flex;
+            }
+
+            .menu-toggle {
+                display: none;
+            }
+
+            .hero-content {
+                padding: 76px 48px 46px;
+            }
+
+            h1 {
+                font-size: 64px;
+            }
+
+            .logic-grid {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .navbar {
+                padding-right: 64px;
+                padding-left: 64px;
+            }
+
+            .hero-content {
+                padding-right: 64px;
+                padding-left: 64px;
+            }
+
+            h1 {
+                font-size: 72px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <section class="landing-root">
+        <video
+            class="hero-video"
+            src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260622_204221_5339e40b-e73d-4ab0-9c65-79c18c66fd50.mp4"
+            autoplay
+            muted
+            loop
+            playsinline
+            aria-hidden="true"
+        ></video>
+        <div class="hero-shade" aria-hidden="true"></div>
+
+        <header class="navbar">
+            <div class="brand-wrap">
+                <a href="../" class="brand"><span class="brand-mark">🔥</span> CAFFEMMO</a>
+                <nav class="desktop-nav" aria-label="Main navigation">
+                    <a href="../client/home">Mua hàng</a>
+                    <a href="#chat-live">Chat live</a>
+                    <a href="#telegram">Bot Telegram</a>
+                    <a href="#verified">Up tích xanh</a>
+                    <a href="#escrow">Trung gian</a>
+                </nav>
+            </div>
+            <a href="../client/home" class="login-link">Vào shop</a>
+            <button class="menu-toggle" type="button" aria-label="Toggle mobile menu" aria-expanded="false">
+                <svg class="icon-menu" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+                <svg class="icon-close" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </header>
+
+        <div class="mobile-menu" id="mobileMenu">
+            <div class="mobile-menu-inner">
+                <nav aria-label="Mobile navigation">
+                    <a href="../client/home">Mua hàng</a>
+                    <a href="#chat-live">Chat live</a>
+                    <a href="#telegram">Bot Telegram</a>
+                    <a href="#verified">Up tích xanh</a>
+                    <a href="#escrow">Trung tâm trung gian</a>
+                </nav>
+                <a href="../client/home" class="mobile-login">Vào shop</a>
+            </div>
+        </div>
+
+        <main class="hero-content">
+            <section class="hero-top">
+                <p class="badge">Community live hub · Tài nguyên số</p>
+                <h1>
+                    Cộng đồng hỗ trợ<br>
+                    <span>tài nguyên số</span>
+                </h1>
+            </section>
+
+            <section class="hero-bottom">
+                <p>Mua hàng, hỏi đáp dịch vụ, săn deal, theo dõi thông báo admin và chat online trong một không gian riêng của CAFFEMMO.</p>
+                <div class="hero-actions">
+                    <a href="../client/home" class="primary-cta">🛒 Mua hàng</a>
+                    <a href="#logic" class="secondary-cta">⬇ Xem logic</a>
+                </div>
+                <div class="logic-grid" id="logic">
+                    <a href="#chat-live" class="logic-card" id="chat-live">
+                        <span class="logic-icon">💬</span>
+                        <strong>Chat live</strong>
+                        <span>Hỏi nhanh, trao đổi với cộng đồng và admin.</span>
+                    </a>
+                    <a href="#telegram" class="logic-card" id="telegram">
+                        <span class="logic-icon">✈️</span>
+                        <strong>Bot Telegram</strong>
+                        <span>Nhận thông báo, hỗ trợ và theo dõi deal.</span>
+                    </a>
+                    <a href="#verified" class="logic-card" id="verified">
+                        <span class="logic-icon">✅</span>
+                        <strong>Up tích xanh</strong>
+                        <span>Khu hỏi đáp quy trình dịch vụ tích xanh.</span>
+                    </a>
+                    <a href="#escrow" class="logic-card" id="escrow">
+                        <span class="logic-icon">🛡️</span>
+                        <strong>Trung tâm trung gian</strong>
+                        <span>Kết nối giao dịch an toàn, hỗ trợ xử lý.</span>
+                    </a>
+                </div>
+            </section>
+        </main>
+    </section>
+
+    <script>
+        const root = document.querySelector('.landing-root');
+        const toggle = document.querySelector('.menu-toggle');
+        const menu = document.querySelector('#mobileMenu');
+        const menuLinks = menu.querySelectorAll('a');
+
+        function setMenu(open) {
+            root.classList.toggle('menu-open', open);
+            menu.classList.toggle('is-open', open);
+            toggle.setAttribute('aria-expanded', String(open));
+        }
+
+        toggle.addEventListener('click', () => {
+            setMenu(!menu.classList.contains('is-open'));
+        });
+
+        menuLinks.forEach((link) => {
+            link.addEventListener('click', () => setMenu(false));
+        });
+    </script>
+</body>
+</html>
