@@ -39,8 +39,8 @@
         }
         .brand { display: flex; align-items: center; }
         .brand {
-            width: min(300px, 44vw);
-            height: 82px;
+            width: min(220px, 38vw);
+            height: 62px;
         }
         .brand-logo {
             display: block;
@@ -120,18 +120,18 @@
         .flow-shell {
             position: relative;
             z-index: 2;
-            width: min(760px, calc(100% - 32px));
+            width: min(1040px, calc(100% - 32px));
             margin: 36px auto 0 clamp(16px, 5vw, 64px);
         }
         .drawer {
             display: none;
-            max-width: 760px;
+            max-width: 1040px;
             border: 1px solid rgba(255,255,255,.14);
-            border-radius: 22px;
-            background: rgba(5,7,12,.28);
+            border-radius: 14px;
+            background: rgba(255,255,255,.12);
             box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 24px 80px rgba(0,0,0,.18);
-            backdrop-filter: blur(16px);
-            padding: 18px;
+            backdrop-filter: blur(14px);
+            padding: 12px;
             animation: fadeUp .45s ease both;
         }
         .drawer.is-open { display: block; }
@@ -155,27 +155,55 @@
         }
         .category-grid {
             display: grid;
-            grid-template-columns: repeat(2, minmax(0,1fr));
-            gap: 10px;
+            grid-template-columns: repeat(12, minmax(0, 1fr));
+            gap: 8px;
         }
         .cat {
-            min-height: 78px;
-            border: 1px solid rgba(255,255,255,.14);
-            border-radius: 16px;
-            background: rgba(255,255,255,.08);
+            min-height: 48px;
+            border: 1px solid rgba(255,255,255,.08);
+            border-radius: 6px;
+            background: rgba(25,25,25,.88);
             color: #fff;
-            padding: 13px;
+            padding: 8px 14px;
             text-align: left;
             cursor: pointer;
-            backdrop-filter: blur(14px);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            grid-column: span 3;
+            min-width: 0;
+            box-shadow: 0 10px 28px rgba(0,0,0,.18);
             transition: transform .2s ease, border-color .2s ease, background .2s ease;
         }
+        .cat.wide { grid-column: span 5; }
+        .cat.medium { grid-column: span 4; }
+        .cat.small { grid-column: span 2; }
         .cat.is-active, .cat:hover {
             border-color: rgba(255,155,36,.66);
-            background: rgba(255,124,0,.18);
+            background: rgba(0, 197, 190, .86);
         }
-        .cat strong { display: block; margin-bottom: 5px; font-size: 14px; }
-        .cat span { color: rgba(255,255,255,.58); font-size: 11px; line-height: 1.45; }
+        .cat.all {
+            background: rgba(255,255,255,.86);
+            color: #1f6c91;
+            justify-content: flex-start;
+        }
+        .cat img {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+            flex: 0 0 auto;
+            border-radius: 6px;
+        }
+        .cat strong {
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 13px;
+            line-height: 1.2;
+            font-weight: 800;
+        }
         .products-panel {
             display: none;
             margin-top: 12px;
@@ -256,13 +284,17 @@
         }
         @media (max-width: 980px) {
             .drawer { max-width: 100%; }
+            .category-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+            .cat, .cat.medium, .cat.wide { grid-column: span 3; }
+            .cat.small { grid-column: span 2; }
         }
         @media (max-width: 640px) {
             .nav { padding: 14px 16px; }
-            .brand { width: min(220px, 58vw); height: 70px; }
+            .brand { width: min(170px, 52vw); height: 50px; }
             .container { padding-top: 44px; }
             h1 { font-size: 40px; }
             .category-grid, .product-list { grid-template-columns: 1fr; }
+            .cat, .cat.medium, .cat.wide, .cat.small { grid-column: span 1; justify-content: flex-start; }
             .drawer-head { align-items: flex-start; }
         }
     </style>
@@ -368,6 +400,80 @@
         const panel = document.getElementById('productsPanel');
         const list = document.getElementById('productList');
         const title = document.getElementById('productsTitle');
+        const categoryGrid = document.querySelector('.category-grid');
+
+        const demoCategories = [
+            { key: 'all', label: 'Tất cả sản phẩm', icon: '/public/theme/assets/icon-fonts/tabler-icons/icons-png/shopping-cart.png', size: 'medium', tone: 'all' },
+            { key: 'facebook', label: '(HOT) - KHÓA HỌC DỊCH VỤ FACEBOOK', icon: '/assets/storage/images/Z301.gif', size: 'wide' },
+            { key: 'proxy', label: 'PROXY TỐC ĐỘ CAO', icon: '/public/theme/assets/icon-fonts/tabler-icons/icons-png/world.png', size: 'medium' },
+            { key: 'verified', label: 'ACC THUÊ TÍCH XANH FACEBOOK', icon: '/assets/storage/images/category_GQTICK.png', size: 'wide' },
+            { key: 'clone', label: 'CLONE CỔ - CẦM PAGE - BM - SPAM - CHANGE OK', icon: '/assets/storage/images/category_GPTKJD.png', size: 'wide' },
+            { key: 'fb-support', label: 'Acc FB Có Tích Xanh - Chat Support', icon: '/assets/storage/images/category_GPTKJD.png', size: 'medium' },
+            { key: 'instagram', label: 'Acc INSTAGRAM Thuê Tích Xanh', icon: '/public/theme/assets/icon-fonts/tabler-icons/icons-png/brand-instagram.png', size: 'medium' },
+            { key: 'capcut', label: 'CapCut', icon: '/assets/img/banner-capcut-d7e2b.jpg', size: 'small' },
+            { key: 'ai', label: 'Chat GPT', icon: '/assets/storage/images/category_SQWGPT.png', size: 'small' },
+            { key: 'hma', label: 'Key HMA', icon: '/assets/storage/images/category_3HMA7S.png', size: 'wide' },
+            { key: 'gemini', label: 'GENMINI', icon: '/public/theme/assets/icon-fonts/tabler-icons/icons-png/zodiac-gemini.png', size: 'wide' }
+        ];
+
+        Object.assign(products, {
+            all: {
+                title: 'Tất cả sản phẩm',
+                items: [
+                    ['Khóa học dịch vụ Facebook', 'Danh mục hot đang bán trên website.', 'Kho: 41', '70.000đ'],
+                    ['Acc FB có nút thuê tích xanh', 'Tài nguyên có sẵn hướng dẫn sau mua.', 'Kho: 128', '50.000đ']
+                ]
+            },
+            clone: {
+                title: 'CLONE CỔ - CẦM PAGE - BM - SPAM - CHANGE OK',
+                items: [
+                    ['Clone cổ cầm page', 'Tài khoản phục vụ workflow Facebook.', 'Kho: 220', '35.000đ'],
+                    ['BM / Spam / Change OK', 'Nguồn tài nguyên chọn lọc theo nhu cầu.', 'Kho: 96', '45.000đ']
+                ]
+            },
+            'fb-support': {
+                title: 'Acc FB Có Tích Xanh - Chat Support',
+                items: [
+                    ['Acc FB có tích xanh chat support', 'Tài khoản phục vụ quy trình hỗ trợ.', 'Kho: 36', '150.000đ'],
+                    ['Acc support kèm mail', 'Có hướng dẫn bảo mật và lưu ý sử dụng.', 'Kho: 22', '180.000đ']
+                ]
+            },
+            instagram: {
+                title: 'Acc INSTAGRAM Thuê Tích Xanh',
+                items: [
+                    ['Instagram thuê tích xanh', 'Tài nguyên IG phục vụ dịch vụ xác minh.', 'Kho: 18', '95.000đ'],
+                    ['Instagram chính chủ', 'Nguồn tài khoản có hướng dẫn sau mua.', 'Kho: 12', '120.000đ']
+                ]
+            },
+            capcut: {
+                title: 'CapCut',
+                items: [
+                    ['CapCut Pro', 'Tài khoản/gói dùng cho chỉnh sửa video.', 'Kho: 74', '30.000đ'],
+                    ['CapCut team slot', 'Dùng nhanh cho nhu cầu cá nhân.', 'Kho: 31', '45.000đ']
+                ]
+            },
+            hma: {
+                title: 'Key HMA',
+                items: [
+                    ['Key HMA VPN', 'Key dùng cho nhu cầu đổi IP và vận hành tài khoản.', 'Kho: 66', '25.000đ'],
+                    ['HMA gói dài hạn', 'Ổn định hơn cho người dùng thường xuyên.', 'Kho: 19', '80.000đ']
+                ]
+            },
+            gemini: {
+                title: 'GENMINI',
+                items: [
+                    ['Gemini AI', 'Tài khoản AI hỗ trợ học tập và làm việc.', 'Kho: 44', '35.000đ'],
+                    ['Gemini gói nâng cao', 'Phù hợp xử lý nội dung và tài liệu.', 'Kho: 20', '65.000đ']
+                ]
+            }
+        });
+
+        categoryGrid.innerHTML = demoCategories.map((category) => `
+            <button class="cat ${category.size} ${category.tone || ''}" type="button" data-category="${category.key}">
+                <img src="${category.icon}" alt="">
+                <strong>${category.label}</strong>
+            </button>
+        `).join('');
 
         document.querySelectorAll('[data-open-categories]').forEach((button) => {
             button.addEventListener('click', () => {
