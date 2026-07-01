@@ -96,7 +96,7 @@ checkMaintenance();
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
   <?php endif ?>
   <?= $body['header']; ?>
-  <link rel="stylesheet" href="<?= BASE_URL('mod/css/main.css?v=30'); ?>">
+  <link rel="stylesheet" href="<?= BASE_URL('mod/css/main.css?v=29'); ?>">
   <script src="<?= base_url('mod/js/main.js?v=2'); ?>"></script>
   <?= $CMSNT->site('javascript_header'); ?>
 
