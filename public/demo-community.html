@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Demo cộng đồng CAFFEMMO</title>
+    <link rel="stylesheet" href="client/css/main.css">
+    <link rel="stylesheet" href="fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="assets/demo-community/demo-community.css">
+</head>
+<body>
+    <header class="community-topbar">
+        <a class="brand" href="../">
+            <img src="client/images/logo.png" alt="CAFFEMMO">
+        </a>
+        <nav>
+            <a href="../">Trang chủ</a>
+            <a href="../client/home">Shop</a>
+            <a href="../document-api">Tài liệu API</a>
+        </nav>
+        <button class="ghost-button"><i class="fa-solid fa-plus"></i> Tạo bài viết</button>
+    </header>
+
+    <main class="community-shell">
+        <section class="community-hero">
+            <div>
+                <span class="eyebrow">CAFFEMMO Community</span>
+                <h1>Diễn đàn hỗ trợ và chia sẻ kinh nghiệm tài nguyên số</h1>
+                <p>Hỏi đáp mua hàng, review sản phẩm, cảnh báo rủi ro và theo dõi deal mới trong một khu vực riêng cho khách.</p>
+            </div>
+            <div class="hero-card">
+                <strong>Trạng thái cộng đồng</strong>
+                <div class="metric-grid">
+                    <span><b>128</b> bài viết</span>
+                    <span><b>42</b> đã trả lời</span>
+                    <span><b>7</b> deal hot</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="community-layout">
+            <aside class="forum-sidebar">
+                <button class="category-item active"><i class="fa-solid fa-fire"></i> Tất cả chủ đề <span>128</span></button>
+                <button class="category-item"><i class="fa-solid fa-cart-shopping"></i> Hỏi đáp mua hàng <span>34</span></button>
+                <button class="category-item"><i class="fa-solid fa-shield-halved"></i> Bảo mật tài khoản <span>21</span></button>
+                <button class="category-item"><i class="fa-solid fa-star"></i> Review sản phẩm <span>19</span></button>
+                <button class="category-item"><i class="fa-solid fa-bolt"></i> Góc săn sale <span>12</span></button>
+                <button class="category-item"><i class="fa-solid fa-code"></i> API & tích hợp <span>9</span></button>
+            </aside>
+
+            <section class="forum-feed">
+                <div class="composer-card">
+                    <div class="composer-input">Bạn muốn hỏi hoặc chia sẻ điều gì?</div>
+                    <div class="composer-actions">
+                        <button><i class="fa-regular fa-circle-question"></i> Hỏi đáp</button>
+                        <button><i class="fa-solid fa-star"></i> Review</button>
+                        <button><i class="fa-solid fa-tag"></i> Gắn sản phẩm</button>
+                    </div>
+                </div>
+
+                <article class="thread-card pinned">
+                    <div class="thread-badge">Ghim</div>
+                    <div class="thread-main">
+                        <h2>Luật sử dụng tài nguyên và cảnh báo chống lừa đảo</h2>
+                        <p>Admin tổng hợp các nguyên tắc khi mua, nhận hàng và bảo mật tài khoản sau khi giao dịch.</p>
+                        <div class="thread-meta">
+                            <span>Admin</span>
+                            <span>2 giờ trước</span>
+                            <span>1.2k lượt xem</span>
+                        </div>
+                    </div>
+                    <div class="thread-stats">
+                        <strong>18</strong>
+                        <span>phản hồi</span>
+                    </div>
+                </article>
+
+                <article class="thread-card">
+                    <div class="tag tag-green">Đã trả lời</div>
+                    <div class="thread-main">
+                        <h2>Acc thuê tích xanh nhận mail như thế nào sau khi mua?</h2>
+                        <p>Khách mới hỏi quy trình nhận hàng, đổi mật khẩu và lưu 2FA an toàn.</p>
+                        <div class="thread-meta">
+                            <span>minh***</span>
+                            <span>15 phút trước</span>
+                            <span>#Facebook #Hướng dẫn</span>
+                        </div>
+                    </div>
+                    <div class="thread-stats">
+                        <strong>6</strong>
+                        <span>phản hồi</span>
+                    </div>
+                </article>
+
+                <article class="thread-card">
+                    <div class="tag tag-orange">Deal</div>
+                    <div class="thread-main">
+                        <h2>Gợi ý khung giờ săn sale tài nguyên hot trong ngày</h2>
+                        <p>Nơi khách theo dõi deal, bình luận sản phẩm muốn giảm giá và nhận thông báo từ admin.</p>
+                        <div class="thread-meta">
+                            <span>sale-bot</span>
+                            <span>48 phút trước</span>
+                            <span>#Săn sale #Ưu đãi</span>
+                        </div>
+                    </div>
+                    <div class="thread-stats">
+                        <strong>23</strong>
+                        <span>phản hồi</span>
+                    </div>
+                </article>
+
+                <article class="thread-card">
+                    <div class="tag tag-blue">API</div>
+                    <div class="thread-main">
+                        <h2>Kết nối API mua hàng tự động cần những bước nào?</h2>
+                        <p>Checklist dành cho đại lý: lấy API key, test đơn nhỏ, xử lý callback và giới hạn tốc độ.</p>
+                        <div class="thread-meta">
+                            <span>devhub</span>
+                            <span>1 giờ trước</span>
+                            <span>#API #Đại lý</span>
+                        </div>
+                    </div>
+                    <div class="thread-stats">
+                        <strong>4</strong>
+                        <span>phản hồi</span>
+                    </div>
+                </article>
+            </section>
+
+            <aside class="forum-rightbar">
+                <div class="side-card">
+                    <h3>Tag nổi bật</h3>
+                    <div class="tag-cloud">
+                        <span>Facebook</span>
+                        <span>Proxy</span>
+                        <span>ChatGPT</span>
+                        <span>API</span>
+                        <span>Nạp tiền</span>
+                        <span>Lỗi đơn</span>
+                    </div>
+                </div>
+                <div class="side-card">
+                    <h3>Sản phẩm liên quan</h3>
+                    <a class="product-link" href="../client/home">Acc Facebook thuê tích xanh</a>
+                    <a class="product-link" href="../client/home">Proxy tốc độ cao</a>
+                    <a class="product-link" href="../client/home">Clone cổ chăm page</a>
+                </div>
+            </aside>
+        </section>
+    </main>
+</body>
+</html>
