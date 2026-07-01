@@ -63,8 +63,9 @@
             color: #050505 !important;
         }
         .container {
-            width: min(1180px, calc(100% - 32px));
-            margin: 0 auto;
+            width: min(760px, calc(100% - 32px));
+            margin-left: clamp(16px, 5vw, 64px);
+            margin-right: auto;
             padding-top: 70px;
         }
         .hero { max-width: 760px; }
@@ -131,8 +132,8 @@
         .flow-shell {
             position: relative;
             z-index: 2;
-            width: min(1180px, calc(100% - 32px));
-            margin: 36px auto 0;
+            width: min(760px, calc(100% - 32px));
+            margin: 36px auto 0 clamp(16px, 5vw, 64px);
         }
         .drawer {
             display: none;
