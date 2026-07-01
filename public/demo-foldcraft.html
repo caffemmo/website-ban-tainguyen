@@ -7,18 +7,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        geist: ['Geist', 'sans-serif']
-                    }
-                }
-            }
-        };
-    </script>
     <style>
         * {
             margin: 0;
@@ -29,6 +17,261 @@
         body {
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            background: #000;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button {
+            font: inherit;
+        }
+
+        .foldcraft-root {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            background: #000;
+            font-family: Geist, sans-serif;
+        }
+
+        .foldcraft-video {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: 70% center;
+        }
+
+        .foldcraft-shade {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.25);
+        }
+
+        .navbar {
+            position: relative;
+            z-index: 30;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+        }
+
+        .brand-wrap {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .brand {
+            color: #fff;
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.03em;
+        }
+
+        .desktop-nav {
+            display: none;
+            align-items: center;
+            gap: 28px;
+        }
+
+        .desktop-nav a,
+        .talk-link {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+        .desktop-nav a:hover {
+            color: #fff;
+        }
+
+        .talk-link {
+            display: none;
+            border-radius: 8px;
+            background: #fff;
+            padding: 8px 20px;
+            color: #000;
+            font-weight: 500;
+        }
+
+        .talk-link:hover,
+        .mobile-talk:hover,
+        .cta:hover {
+            transform: scale(1.05);
+        }
+
+        .menu-toggle {
+            position: relative;
+            z-index: 50;
+            display: flex;
+            width: 40px;
+            height: 40px;
+            align-items: center;
+            justify-content: center;
+            border: 0;
+            background: transparent;
+            color: #fff;
+            cursor: pointer;
+            transition: transform 0.15s ease;
+        }
+
+        .menu-toggle:active {
+            transform: scale(0.9);
+        }
+
+        .menu-toggle svg {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .icon-menu {
+            opacity: 1;
+            transform: rotate(0deg) scale(1);
+        }
+
+        .icon-close {
+            opacity: 0;
+            transform: rotate(-90deg) scale(0.75);
+        }
+
+        .menu-open .icon-menu {
+            opacity: 0;
+            transform: rotate(90deg) scale(0.75);
+        }
+
+        .menu-open .icon-close {
+            opacity: 1;
+            transform: rotate(0deg) scale(1);
+        }
+
+        .mobile-menu {
+            position: absolute;
+            inset: 0 0 auto;
+            z-index: 20;
+            height: 0;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.98);
+            opacity: 0;
+            pointer-events: none;
+            backdrop-filter: blur(24px);
+            transition: height 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .mobile-menu.is-open {
+            height: 100vh;
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .mobile-menu-inner {
+            display: flex;
+            height: 100%;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 32px;
+            opacity: 0;
+            transform: translateY(32px);
+            transition: opacity 0.5s ease 0.1s, transform 0.5s ease 0.1s;
+        }
+
+        .mobile-menu.is-open .mobile-menu-inner {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .mobile-menu nav {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .mobile-menu a {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 30px;
+            font-weight: 500;
+        }
+
+        .mobile-menu a:hover {
+            color: #fff;
+        }
+
+        .mobile-talk {
+            width: fit-content;
+            margin-top: 24px;
+            border-radius: 999px;
+            background: #fff;
+            padding: 14px 32px;
+            color: #000 !important;
+            font-size: 16px !important;
+            font-weight: 500 !important;
+            transition: transform 0.2s ease;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            height: calc(100vh - 80px);
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 48px 24px 40px;
+        }
+
+        .hero-top {
+            max-width: 768px;
+        }
+
+        .badge {
+            margin-bottom: 16px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 12px;
+            animation: fadeSlideUp 0.8s ease 0.2s both;
+        }
+
+        h1 {
+            color: #fff;
+            font-size: 30px;
+            font-weight: 500;
+            line-height: 1.1;
+            letter-spacing: -0.045em;
+            animation: fadeSlideUp 0.8s ease 0.4s both;
+        }
+
+        .hero-bottom p {
+            max-width: 384px;
+            margin-bottom: 20px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            line-height: 1.625;
+            animation: fadeSlideUp 0.8s ease 0.7s both;
+        }
+
+        .cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border-radius: 8px;
+            background: #fff;
+            padding: 10px 20px;
+            color: #000;
+            font-size: 14px;
+            font-weight: 500;
+            transition: transform 0.2s ease;
+            animation: fadeSlideUp 0.8s ease 0.9s both;
+        }
+
+        .cta svg {
+            width: 16px;
+            height: 16px;
         }
 
         @keyframes fadeSlideUp {
@@ -41,174 +284,164 @@
                 transform: translateY(0);
             }
         }
+
+        @media (min-width: 640px) {
+            .brand {
+                font-size: 20px;
+            }
+
+            .badge {
+                margin-bottom: 24px;
+                font-size: 14px;
+            }
+
+            h1 {
+                font-size: 48px;
+            }
+
+            .hero-bottom p {
+                max-width: 512px;
+                margin-bottom: 24px;
+                font-size: 16px;
+            }
+
+            .cta {
+                padding: 12px 24px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .navbar {
+                padding-right: 48px;
+                padding-left: 48px;
+            }
+
+            .desktop-nav,
+            .talk-link {
+                display: flex;
+            }
+
+            .menu-toggle {
+                display: none;
+            }
+
+            .hero-content {
+                padding: 80px 48px 64px;
+            }
+
+            h1 {
+                font-size: 60px;
+            }
+
+            .hero-bottom p {
+                font-size: 18px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .navbar {
+                padding-right: 64px;
+                padding-left: 64px;
+            }
+
+            .hero-content {
+                padding-right: 64px;
+                padding-left: 64px;
+            }
+
+            h1 {
+                font-size: 72px;
+            }
+        }
     </style>
 </head>
 <body>
-    <div id="root"></div>
+    <section class="foldcraft-root">
+        <video
+            class="foldcraft-video"
+            src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260622_204221_5339e40b-e73d-4ab0-9c65-79c18c66fd50.mp4"
+            autoplay
+            muted
+            loop
+            playsinline
+            aria-hidden="true"
+        ></video>
+        <div class="foldcraft-shade" aria-hidden="true"></div>
 
-    <script type="module">
-        import React, { useState } from 'https://esm.sh/react@18.3.1';
-        import { createRoot } from 'https://esm.sh/react-dom@18.3.1/client';
-        import { ArrowRight, Menu, X } from 'https://esm.sh/lucide-react@0.468.0?deps=react@18.3.1';
+        <header class="navbar">
+            <div class="brand-wrap">
+                <a href="#" class="brand">Foldcraft</a>
+                <nav class="desktop-nav" aria-label="Main navigation">
+                    <a href="#">Home</a>
+                    <a href="#">Projects</a>
+                    <a href="#">Studio</a>
+                    <a href="#">Reach Us</a>
+                </nav>
+            </div>
+            <a href="#" class="talk-link">Let's Talk</a>
+            <button class="menu-toggle" type="button" aria-label="Toggle mobile menu" aria-expanded="false">
+                <svg class="icon-menu" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+                <svg class="icon-close" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </header>
 
-        const videoUrl = 'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260622_204221_5339e40b-e73d-4ab0-9c65-79c18c66fd50.mp4';
-        const navLinks = ['Home', 'Projects', 'Studio', 'Reach Us'];
+        <div class="mobile-menu" id="mobileMenu">
+            <div class="mobile-menu-inner">
+                <nav aria-label="Mobile navigation">
+                    <a href="#">Home</a>
+                    <a href="#">Projects</a>
+                    <a href="#">Studio</a>
+                    <a href="#">Reach Us</a>
+                </nav>
+                <a href="#" class="mobile-talk">Let's Talk</a>
+            </div>
+        </div>
 
-        function FoldcraftHero() {
-            const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+        <main class="hero-content">
+            <section class="hero-top">
+                <p class="badge">Brand &amp; Visual Storytelling</p>
+                <h1>
+                    Shaping visual<br>
+                    narratives,<br>
+                    one pixel at a time.
+                </h1>
+            </section>
 
-            return React.createElement(
-                'div',
-                { className: 'relative h-screen w-full overflow-hidden bg-black font-geist' },
-                React.createElement('video', {
-                    className: 'absolute inset-0 h-full w-full object-cover [object-position:70%_center]',
-                    src: videoUrl,
-                    autoPlay: true,
-                    muted: true,
-                    loop: true,
-                    playsInline: true,
-                    'aria-hidden': 'true'
-                }),
-                React.createElement('div', {
-                    className: 'absolute inset-0 bg-black/25',
-                    'aria-hidden': 'true'
-                }),
-                React.createElement(
-                    'header',
-                    { className: 'relative z-30 flex items-center justify-between px-6 py-5 md:px-12 lg:px-16' },
-                    React.createElement(
-                        'div',
-                        { className: 'flex items-center gap-10' },
-                        React.createElement(
-                            'a',
-                            { href: '#', className: 'text-lg font-semibold tracking-tight text-white sm:text-xl' },
-                            'Foldcraft'
-                        ),
-                        React.createElement(
-                            'nav',
-                            { className: 'hidden items-center gap-7 md:flex' },
-                            navLinks.map((link) =>
-                                React.createElement(
-                                    'a',
-                                    {
-                                        key: link,
-                                        href: '#',
-                                        className: 'text-sm text-white/80 transition-colors hover:text-white'
-                                    },
-                                    link
-                                )
-                            )
-                        )
-                    ),
-                    React.createElement(
-                        'div',
-                        { className: 'hidden md:block' },
-                        React.createElement(
-                            'a',
-                            {
-                                href: '#',
-                                className: 'inline-flex rounded-lg bg-white px-5 py-2 text-sm font-medium text-black transition-transform hover:scale-105'
-                            },
-                            "Let's Talk"
-                        )
-                    ),
-                    React.createElement(
-                        'button',
-                        {
-                            type: 'button',
-                            className: 'relative z-50 flex h-10 w-10 items-center justify-center text-white transition-transform active:scale-90 md:hidden',
-                            'aria-label': 'Toggle mobile menu',
-                            'aria-expanded': mobileMenuOpen,
-                            onClick: () => setMobileMenuOpen((open) => !open)
-                        },
-                        React.createElement(Menu, {
-                            size: 25,
-                            className: `absolute transition-all duration-300 ${mobileMenuOpen ? 'rotate-90 scale-75 opacity-0' : 'rotate-0 scale-100 opacity-100'}`
-                        }),
-                        React.createElement(X, {
-                            size: 25,
-                            className: `absolute transition-all duration-300 ${mobileMenuOpen ? 'rotate-0 scale-100 opacity-100' : '-rotate-90 scale-75 opacity-0'}`
-                        })
-                    )
-                ),
-                React.createElement(
-                    'div',
-                    {
-                        className: `absolute inset-x-0 top-0 z-20 overflow-hidden bg-black/98 backdrop-blur-xl transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${mobileMenuOpen ? 'h-screen opacity-100' : 'h-0 opacity-0 pointer-events-none'}`
-                    },
-                    React.createElement(
-                        'div',
-                        {
-                            className: `flex h-full flex-col justify-center px-8 transition-all delay-100 duration-500 ${mobileMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`
-                        },
-                        React.createElement(
-                            'nav',
-                            { className: 'flex flex-col gap-6' },
-                            navLinks.map((link) =>
-                                React.createElement(
-                                    'a',
-                                    {
-                                        key: link,
-                                        href: '#',
-                                        className: 'text-3xl font-medium text-white/90 transition-colors hover:text-white',
-                                        onClick: () => setMobileMenuOpen(false)
-                                    },
-                                    link
-                                )
-                            )
-                        ),
-                        React.createElement(
-                            'a',
-                            {
-                                href: '#',
-                                className: 'mt-6 inline-flex w-fit rounded-full bg-white px-8 py-3.5 text-base font-medium text-black transition-transform hover:scale-105',
-                                onClick: () => setMobileMenuOpen(false)
-                            },
-                            "Let's Talk"
-                        )
-                    )
-                ),
-                React.createElement(
-                    'main',
-                    { className: 'relative z-10 flex h-[calc(100vh-80px)] flex-col justify-between px-6 pb-10 pt-12 sm:pb-12 sm:pt-16 md:px-12 md:pb-16 md:pt-20 lg:px-16' },
-                    React.createElement(
-                        'section',
-                        { className: 'max-w-3xl' },
-                        React.createElement(
-                            'p',
-                            { className: 'mb-4 text-xs text-white/90 animate-[fadeSlideUp_0.8s_ease_0.2s_both] sm:mb-6 sm:text-sm' },
-                            'Brand & Visual Storytelling'
-                        ),
-                        React.createElement(
-                            'h1',
-                            { className: 'text-3xl font-medium leading-[1.1] tracking-tight text-white animate-[fadeSlideUp_0.8s_ease_0.4s_both] sm:text-5xl md:text-6xl lg:text-7xl' },
-                            'Shaping visual',
-                            React.createElement('br'),
-                            'narratives,',
-                            React.createElement('br'),
-                            'one pixel at a time.'
-                        )
-                    ),
-                    React.createElement(
-                        'section',
-                        null,
-                        React.createElement(
-                            'p',
-                            { className: 'mb-5 max-w-sm text-sm leading-relaxed text-white/60 animate-[fadeSlideUp_0.8s_ease_0.7s_both] sm:mb-6 sm:max-w-lg sm:text-base md:text-lg' },
-                            'Turning vision into reality through craft, motion, and an endless pursuit of beauty.'
-                        ),
-                        React.createElement(
-                            'a',
-                            { href: '#', className: 'inline-flex items-center gap-2 rounded-lg bg-white px-5 py-2.5 text-sm font-medium text-black transition-transform hover:scale-105 animate-[fadeSlideUp_0.8s_ease_0.9s_both] sm:px-6 sm:py-3' },
-                            'Explore Work',
-                            React.createElement(ArrowRight, { size: 16 })
-                        )
-                    )
-                )
-            );
+            <section class="hero-bottom">
+                <p>Turning vision into reality through craft, motion, and an endless pursuit of beauty.</p>
+                <a href="#" class="cta">
+                    Explore Work
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-6-6 6 6-6 6"></path>
+                    </svg>
+                </a>
+            </section>
+        </main>
+    </section>
+
+    <script>
+        const root = document.querySelector('.foldcraft-root');
+        const toggle = document.querySelector('.menu-toggle');
+        const menu = document.querySelector('#mobileMenu');
+        const menuLinks = menu.querySelectorAll('a');
+
+        function setMenu(open) {
+            root.classList.toggle('menu-open', open);
+            menu.classList.toggle('is-open', open);
+            toggle.setAttribute('aria-expanded', String(open));
         }
 
-        createRoot(document.getElementById('root')).render(React.createElement(FoldcraftHero));
+        toggle.addEventListener('click', () => {
+            setMenu(!menu.classList.contains('is-open'));
+        });
+
+        menuLinks.forEach((link) => {
+            link.addEventListener('click', () => setMenu(false));
+        });
     </script>
 </body>
 </html>
