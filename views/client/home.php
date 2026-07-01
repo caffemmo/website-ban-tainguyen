@@ -107,43 +107,29 @@ require_once(__DIR__.'/nav.php');
 
             <div class="<?=$CMSNT->site('cot_so_du_ben_phai') == 1 ? 'col-xl-9' : 'col-xl-12';?>">
                 <?php if($CMSNT->site('show_btn_category_home') == 1):?>
-                <div class="home-product-gateway">
-                    <div class="home-product-actions">
-                        <button type="button" class="home-product-toggle" id="toggleProductCategories"
-                            aria-expanded="false" aria-controls="homeProductCategories">
-                            <i class="fa-solid fa-cart-shopping me-2"></i><?=__('Xem sản phẩm');?>
-                            <i class="fa-solid fa-chevron-down ms-2"></i>
-                        </button>
-                        <a class="home-quick-action" href="<?=base_url('document-api');?>">
-                            <i class="fa-solid fa-code me-2"></i><?=__('Tài liệu API');?>
-                        </a>
-                    </div>
-                    <div class="home-product-panel" id="homeProductCategories" hidden>
-                        <!-- Container để load category buttons bằng AJAX -->
-                        <ul class="custom-button-list" id="home-categories-container">
-                            <li><a class="btn-category-home <?=$category_id == '' ? 'active' : '';?>"
-                                    href="javascript:void(0);"
-                                    onclick="loadProductsByCategory('', '')"
-                                    data-category-id=""
-                                    data-category-slug=""><i
-                                        class="fa-solid fa-cart-shopping me-2"></i><?=__('Tất cả sản phẩm');?></a>
-                            </li>
-                            <!-- Skeleton loading cho categories -->
-                            <li class="home-categories-skeleton">
-                                <div class="skeleton-category-btn"></div>
-                            </li>
-                            <li class="home-categories-skeleton">
-                                <div class="skeleton-category-btn"></div>
-                            </li>
-                            <li class="home-categories-skeleton">
-                                <div class="skeleton-category-btn"></div>
-                            </li>
-                            <li class="home-categories-skeleton">
-                                <div class="skeleton-category-btn"></div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+                <!-- Container để load category buttons bằng AJAX -->
+                <ul class="custom-button-list" id="home-categories-container">
+                    <li><a class="btn-category-home <?=$category_id == '' ? 'active' : '';?>" 
+                            href="javascript:void(0);" 
+                            onclick="loadProductsByCategory('', '')"
+                            data-category-id=""
+                            data-category-slug=""><i
+                                class="fa-solid fa-cart-shopping me-2"></i><?=__('Tất cả sản phẩm');?></a>
+                    </li>
+                    <!-- Skeleton loading cho categories -->
+                    <li class="home-categories-skeleton">
+                        <div class="skeleton-category-btn"></div>
+                    </li>
+                    <li class="home-categories-skeleton">
+                        <div class="skeleton-category-btn"></div>
+                    </li>
+                    <li class="home-categories-skeleton">
+                        <div class="skeleton-category-btn"></div>
+                    </li>
+                    <li class="home-categories-skeleton">
+                        <div class="skeleton-category-btn"></div>
+                    </li>
+                </ul>
                 <?php endif?>
                 
                 <!-- Container để load sản phẩm bằng AJAX -->
@@ -444,18 +430,6 @@ function loadProducts() {
 
 // Load sản phẩm khi trang load xong
 $(document).ready(function() {
-    $('#toggleProductCategories').on('click', function() {
-        const panel = $('#homeProductCategories');
-        const isOpen = $(this).attr('aria-expanded') === 'true';
-        $(this).attr('aria-expanded', isOpen ? 'false' : 'true');
-        panel.prop('hidden', isOpen);
-    });
-
-    $('#home-categories-container').on('click', '.btn-category-home', function() {
-        $('#toggleProductCategories').attr('aria-expanded', 'false');
-        $('#homeProductCategories').prop('hidden', true);
-    });
-
     // 🔄 Set initial state cho history
     window.history.replaceState({
         categoryId: currentCategoryId, 
