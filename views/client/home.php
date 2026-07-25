@@ -94,8 +94,15 @@ require_once(__DIR__.'/nav.php');
         <div class="row mb-5">
             <?php if($CMSNT->site('notice_home') != ''):?>
             <div class="col-md-12">
+                <?php
+                $home_notice = $CMSNT->site('notice_home');
+                $home_notice_without_emoji = preg_replace('/[\x{1F916}\x{1F7E2}]/u', '', $home_notice);
+                if($home_notice_without_emoji !== null) {
+                    $home_notice = $home_notice_without_emoji;
+                }
+                ?>
                 <div class="home-notice-host">
-                    <?=$CMSNT->site('notice_home');?>
+                    <?=$home_notice;?>
                 </div>
             </div>
             <?php endif?>

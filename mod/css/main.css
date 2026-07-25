@@ -1706,11 +1706,11 @@ ul.custom-button-list li {
     position: relative;
     overflow: hidden;
     margin: 0;
-    padding: 22px 24px 24px !important;
+    padding: 18px 20px 20px !important;
     border: 1px solid #dce9ee;
-    border-radius: 18px;
+    border-radius: 14px;
     background: #fff;
-    box-shadow: 0 16px 42px rgba(31, 69, 88, 0.12) !important;
+    box-shadow: 0 10px 28px rgba(31, 69, 88, 0.1) !important;
 }
 
 .home-notice-host .s2-wrapper::before {
@@ -1725,8 +1725,8 @@ ul.custom-button-list li {
 
 .home-notice-host .s2-container {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(360px, 1fr);
-    gap: 24px;
+    grid-template-columns: minmax(300px, 0.92fr) minmax(480px, 1.08fr);
+    gap: 18px;
     align-items: stretch;
     padding: 0 !important;
     background: transparent !important;
@@ -1736,27 +1736,28 @@ ul.custom-button-list li {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    min-height: 150px;
+    min-height: 142px;
     margin: 0 !important;
-    padding: 22px 24px 24px !important;
-    border: 0 !important;
-    border-radius: 14px !important;
-    background: #f2f8fa !important;
+    padding: 20px 22px !important;
+    border: 1px solid #e3edf0 !important;
+    border-left: 3px solid var(--primary) !important;
+    border-radius: 12px !important;
+    background: #f7fafb !important;
 }
 
 .home-notice-host .s2-title {
-    max-width: 26ch;
+    max-width: 32ch;
     margin-bottom: 12px !important;
     color: #153446 !important;
-    font-size: clamp(20px, 2vw, 28px) !important;
-    font-weight: 800 !important;
+    font-size: clamp(21px, 1.7vw, 25px) !important;
+    font-weight: 700 !important;
     line-height: 1.18 !important;
 }
 
 .home-notice-host .s2-desc {
-    max-width: 62ch;
-    color: #5c7480 !important;
-    font-size: 12px !important;
+    max-width: 58ch;
+    color: #425d69 !important;
+    font-size: 13px !important;
     font-weight: 500;
     line-height: 1.65 !important;
     text-transform: none !important;
@@ -1765,7 +1766,7 @@ ul.custom-button-list li {
 .home-notice-host .s2-payment-row {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
+    gap: 10px;
     align-items: stretch;
     width: auto;
 }
@@ -1781,22 +1782,42 @@ ul.custom-button-list li {
     display: flex;
     flex: 1;
     height: auto !important;
-    min-height: 150px;
+    min-height: 142px;
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
-    padding: 22px 20px !important;
-    border: 1px solid rgba(255, 255, 255, 0.14) !important;
-    border-radius: 14px !important;
-    color: #fff !important;
-    background: #163b4d !important;
-    box-shadow: none;
+    padding: 18px !important;
+    border: 1px solid #dce9ed !important;
+    border-radius: 12px !important;
+    color: #153446 !important;
+    background: #f8fbfc !important;
+    box-shadow: 0 3px 12px rgba(31, 69, 88, 0.06);
     text-align: left;
     transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
 }
 
 .home-notice-host .s2-payment:nth-child(2) .s2-pay-btn {
-    background: var(--primary) !important;
+    border-color: #b9e6e4 !important;
+    background: #f1fbfb !important;
+}
+
+.home-notice-host .s2-pay-btn::before {
+    display: grid;
+    width: 36px;
+    height: 36px;
+    margin-bottom: 12px;
+    place-items: center;
+    border-radius: 10px;
+    color: #087e83;
+    background: #d8f5f3;
+    content: "\f1d8";
+    font-family: "Font Awesome 6 Free";
+    font-size: 15px;
+    font-weight: 900;
+}
+
+.home-notice-host .s2-payment:nth-child(2) .s2-pay-btn::before {
+    content: "\f0c0";
 }
 
 .home-notice-host .s2-pay-btn::after {
@@ -1804,15 +1825,16 @@ ul.custom-button-list li {
     right: 18px;
     bottom: 15px;
     content: "\2197";
-    color: rgba(255, 255, 255, 0.72);
+    color: #07979a;
     font-size: 20px;
     line-height: 1;
 }
 
 .home-notice-host .s2-pay-btn strong {
     display: block;
-    max-width: 18ch;
+    max-width: 24ch;
     margin-bottom: 8px;
+    color: #153446 !important;
     font-size: 15px;
     font-weight: 800;
     line-height: 1.35;
@@ -1820,15 +1842,16 @@ ul.custom-button-list li {
 
 .home-notice-host .s2-pay-btn span {
     max-width: 24ch;
-    color: rgba(255, 255, 255, 0.78) !important;
+    color: #5c7480 !important;
     font-size: 12px;
     line-height: 1.5;
 }
 
 .home-notice-host .s2-pay-btn:hover {
     opacity: 1 !important;
-    transform: translateY(-3px);
-    box-shadow: 0 12px 24px rgba(22, 59, 77, 0.2);
+    transform: translateY(-2px);
+    border-color: #74cfcc !important;
+    box-shadow: 0 8px 18px rgba(31, 69, 88, 0.12);
 }
 
 .home-notice-host .s2-pay-btn:focus-visible {
@@ -1853,7 +1876,7 @@ ul.custom-button-list li {
 
     .home-notice-host .s2-wrapper {
         padding: 14px !important;
-        border-radius: 14px;
+        border-radius: 12px;
     }
 
     .home-notice-host .s2-container {
@@ -1862,11 +1885,11 @@ ul.custom-button-list li {
 
     .home-notice-host .s2-header {
         padding: 18px !important;
-        border-radius: 11px !important;
+        border-radius: 10px !important;
     }
 
     .home-notice-host .s2-title {
-        font-size: 21px !important;
+        font-size: 20px !important;
     }
 
     .home-notice-host .s2-payment-row {
@@ -1874,7 +1897,7 @@ ul.custom-button-list li {
     }
 
     .home-notice-host .s2-pay-btn {
-        min-height: 108px;
+        min-height: 116px;
         padding: 18px !important;
     }
 }
