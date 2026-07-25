@@ -50,6 +50,10 @@ foreach($all_categories as $category) {
     $home_buttons_html .= '</a></li>';
 }
 
+$netflix_label = htmlspecialchars(__('Xem Netflix'), ENT_QUOTES, 'UTF-8');
+$netflix_aria_label = htmlspecialchars(__('Xem Netflix trên trang chính thức'), ENT_QUOTES, 'UTF-8');
+$home_buttons_html .= '<li><a class="btn-category-home btn-category-netflix" href="https://www.netflix.com/vn/" target="_blank" rel="noopener noreferrer" aria-label="' . $netflix_aria_label . '"><i class="fa-solid fa-film me-2" aria-hidden="true"></i>' . $netflix_label . '</a></li>';
+
 // Trả về JSON với cả 2 loại HTML
 header('Content-Type: application/json');
 echo json_encode([

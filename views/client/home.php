@@ -8,6 +8,24 @@ $body = [
 ];
 $body['header'] = '
 <link rel="stylesheet" href="'.BASE_URL('public/client/').'css/wallet.css">
+<style>
+    #home-categories-container .btn-category-netflix {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        background: #e50914;
+        color: #fff;
+    }
+
+    #home-categories-container .btn-category-netflix:hover,
+    #home-categories-container .btn-category-netflix:focus {
+        background: #b20710;
+        color: #fff;
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
+    }
+</style>
 ';
 $body['footer'] = '
  
