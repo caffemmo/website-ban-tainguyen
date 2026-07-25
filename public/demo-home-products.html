@@ -111,6 +111,8 @@
         }
         .btn:hover, .cat:hover, .product-card:hover { transform: translateY(-3px); }
         .primary { background: #fff; color: #050505; }
+        .netflix-action { background: #e50914; color: #fff; }
+        .netflix-action:hover { background: #f6121d; }
         .secondary {
             border: 1px solid rgba(255,255,255,.18);
             background: rgba(255,255,255,.08);
@@ -187,6 +189,12 @@
             background: rgba(255,255,255,.86);
             color: #1f6c91;
             justify-content: flex-start;
+        }
+        .cat.netflix,
+        .cat.netflix.is-active,
+        .cat.netflix:hover {
+            background: #e50914;
+            border-color: rgba(255,255,255,.5);
         }
         .cat img {
             width: 24px;
@@ -271,6 +279,23 @@
             font-weight: 900;
             cursor: pointer;
         }
+        .buy.netflix-watch {
+            min-height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #e50914;
+            color: #fff;
+            text-decoration: none;
+        }
+        .buy.netflix-watch:hover { background: #f6121d; }
+        .btn:focus-visible,
+        .cat:focus-visible,
+        .buy:focus-visible,
+        .close-btn:focus-visible {
+            outline: 3px solid #fff;
+            outline-offset: 3px;
+        }
         .hint {
             max-width: 520px;
             margin-top: 12px;
@@ -297,6 +322,14 @@
             .cat, .cat.medium, .cat.wide, .cat.small { grid-column: span 1; justify-content: flex-start; }
             .drawer-head { align-items: flex-start; }
         }
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            *, *::before, *::after {
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: .01ms !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -317,6 +350,7 @@
                 <p class="copy">Giữ nền video làm điểm nhấn. Khách chỉ thấy chuyên mục khi bấm xem sản phẩm, rồi bấm chuyên mục mới hiện đúng sản phẩm bên trong.</p>
                 <div class="hero-actions">
                     <button class="btn primary" type="button" data-open-categories>🛒 Xem sản phẩm</button>
+                    <button class="btn netflix-action" type="button" data-open-netflix>Xem Netflix</button>
                     <a href="#" class="btn secondary">💳 Nạp tiền</a>
                     <a href="#" class="btn secondary">📦 Đơn hàng</a>
                 </div>
@@ -411,6 +445,7 @@
             { key: 'fb-support', label: 'Acc FB Có Tích Xanh - Chat Support', icon: '/assets/storage/images/category_GPTKJD.png', size: 'medium' },
             { key: 'instagram', label: 'Acc INSTAGRAM Thuê Tích Xanh', icon: '/public/theme/assets/icon-fonts/tabler-icons/icons-png/brand-instagram.png', size: 'medium' },
             { key: 'capcut', label: 'CapCut', icon: '/assets/img/banner-capcut-d7e2b.jpg', size: 'small' },
+            { key: 'netflix', label: 'XEM NETFLIX', icon: 'https://cdn.simpleicons.org/netflix/FFFFFF', size: 'medium', tone: 'netflix' },
             { key: 'ai', label: 'Chat GPT', icon: '/assets/storage/images/category_SQWGPT.png', size: 'small' },
             { key: 'hma', label: 'Key HMA', icon: '/assets/storage/images/category_3HMA7S.png', size: 'wide' },
             { key: 'gemini', label: 'GENMINI', icon: '/public/theme/assets/icon-fonts/tabler-icons/icons-png/zodiac-gemini.png', size: 'wide' }
@@ -452,6 +487,12 @@
                     ['CapCut team slot', 'Dùng nhanh cho nhu cầu cá nhân.', 'Kho: 31', '45.000đ']
                 ]
             },
+            netflix: {
+                title: 'Xem Netflix',
+                items: [
+                    ['Netflix chính thức', 'Mở Netflix để đăng nhập hoặc đăng ký gói xem phù hợp.', 'Nền tảng chính thức', 'Netflix.com', 'https://www.netflix.com/vn/', 'XEM NETFLIX']
+                ]
+            },
             hma: {
                 title: 'Key HMA',
                 items: [
@@ -489,21 +530,41 @@
             panel.classList.remove('is-open');
         });
 
-        document.querySelectorAll('[data-category]').forEach((button) => {
-            button.addEventListener('click', () => {
-                const category = products[button.dataset.category];
-                document.querySelectorAll('.cat').forEach((cat) => cat.classList.remove('is-active'));
-                button.classList.add('is-active');
-                title.textContent = category.title;
-                list.innerHTML = category.items.map((item) => `
+        function showCategory(categoryKey) {
+            const category = products[categoryKey];
+            const activeButton = document.querySelector(`[data-category="${categoryKey}"]`);
+
+            if (!category || !activeButton) return;
+
+            document.querySelectorAll('.cat').forEach((cat) => cat.classList.remove('is-active'));
+            activeButton.classList.add('is-active');
+            title.textContent = category.title;
+            list.innerHTML = category.items.map((item) => {
+                const action = item[4]
+                    ? `<a class="buy netflix-watch" href="${item[4]}" target="_blank" rel="noopener noreferrer">${item[5] || 'XEM NGAY'}</a>`
+                    : '<button class="buy" type="button">MUA NGAY</button>';
+
+                return `
                     <article class="product-card">
                         <h3>${item[0]}</h3>
                         <p>${item[1]}</p>
                         <div class="meta"><span>${item[2]}</span><span>Còn hàng</span></div>
-                        <div class="buy-row"><strong class="price">${item[3]}</strong><button class="buy">MUA NGAY</button></div>
+                        <div class="buy-row"><strong class="price">${item[3]}</strong>${action}</div>
                     </article>
-                `).join('');
-                panel.classList.add('is-open');
+                `;
+            }).join('');
+            panel.classList.add('is-open');
+        }
+
+        document.querySelectorAll('[data-category]').forEach((button) => {
+            button.addEventListener('click', () => showCategory(button.dataset.category));
+        });
+
+        document.querySelectorAll('[data-open-netflix]').forEach((button) => {
+            button.addEventListener('click', () => {
+                drawer.classList.add('is-open');
+                showCategory('netflix');
+                document.getElementById('categories').scrollIntoView({ behavior: 'smooth', block: 'start' });
             });
         });
     </script>
