@@ -94,7 +94,7 @@ require_once(__DIR__.'/nav.php');
         <div class="row mb-5">
             <?php if($CMSNT->site('notice_home') != ''):?>
             <div class="col-md-12">
-                <div class="account-card pt-3">
+                <div class="home-notice-host">
                     <?=$CMSNT->site('notice_home');?>
                 </div>
             </div>

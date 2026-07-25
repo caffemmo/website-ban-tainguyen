@@ -1698,6 +1698,197 @@ ul.custom-button-list li {
     color: var(--gray);
 }
 
+.home-notice-host {
+    margin-bottom: 30px;
+}
+
+.home-notice-host .s2-wrapper {
+    position: relative;
+    overflow: hidden;
+    margin: 0;
+    padding: 22px 24px 24px !important;
+    border: 1px solid #dce9ee;
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 16px 42px rgba(31, 69, 88, 0.12) !important;
+}
+
+.home-notice-host .s2-wrapper::before {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 5px;
+    content: "";
+    background: var(--primary);
+}
+
+.home-notice-host .s2-container {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(360px, 1fr);
+    gap: 24px;
+    align-items: stretch;
+    padding: 0 !important;
+    background: transparent !important;
+}
+
+.home-notice-host .s2-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 150px;
+    margin: 0 !important;
+    padding: 22px 24px 24px !important;
+    border: 0 !important;
+    border-radius: 14px !important;
+    background: #f2f8fa !important;
+}
+
+.home-notice-host .s2-title {
+    max-width: 26ch;
+    margin-bottom: 12px !important;
+    color: #153446 !important;
+    font-size: clamp(20px, 2vw, 28px) !important;
+    font-weight: 800 !important;
+    line-height: 1.18 !important;
+}
+
+.home-notice-host .s2-desc {
+    max-width: 62ch;
+    color: #5c7480 !important;
+    font-size: 12px !important;
+    font-weight: 500;
+    line-height: 1.65 !important;
+    text-transform: none !important;
+}
+
+.home-notice-host .s2-payment-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    align-items: stretch;
+    width: auto;
+}
+
+.home-notice-host .s2-payment {
+    display: flex;
+    min-width: 0;
+    animation: none !important;
+}
+
+.home-notice-host .s2-pay-btn {
+    position: relative;
+    display: flex;
+    flex: 1;
+    height: auto !important;
+    min-height: 150px;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 22px 20px !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    border-radius: 14px !important;
+    color: #fff !important;
+    background: #163b4d !important;
+    box-shadow: none;
+    text-align: left;
+    transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+.home-notice-host .s2-payment:nth-child(2) .s2-pay-btn {
+    background: var(--primary) !important;
+}
+
+.home-notice-host .s2-pay-btn::after {
+    position: absolute;
+    right: 18px;
+    bottom: 15px;
+    content: "\2197";
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 20px;
+    line-height: 1;
+}
+
+.home-notice-host .s2-pay-btn strong {
+    display: block;
+    max-width: 18ch;
+    margin-bottom: 8px;
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1.35;
+}
+
+.home-notice-host .s2-pay-btn span {
+    max-width: 24ch;
+    color: rgba(255, 255, 255, 0.78) !important;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.home-notice-host .s2-pay-btn:hover {
+    opacity: 1 !important;
+    transform: translateY(-3px);
+    box-shadow: 0 12px 24px rgba(22, 59, 77, 0.2);
+}
+
+.home-notice-host .s2-pay-btn:focus-visible {
+    outline: 3px solid rgba(0, 211, 214, 0.35);
+    outline-offset: 3px;
+}
+
+@media (max-width: 991px) {
+    .home-notice-host .s2-container {
+        grid-template-columns: 1fr;
+    }
+
+    .home-notice-host .s2-header {
+        min-height: 0;
+    }
+}
+
+@media (max-width: 575px) {
+    .home-notice-host {
+        margin-bottom: 22px;
+    }
+
+    .home-notice-host .s2-wrapper {
+        padding: 14px !important;
+        border-radius: 14px;
+    }
+
+    .home-notice-host .s2-container {
+        gap: 14px;
+    }
+
+    .home-notice-host .s2-header {
+        padding: 18px !important;
+        border-radius: 11px !important;
+    }
+
+    .home-notice-host .s2-title {
+        font-size: 21px !important;
+    }
+
+    .home-notice-host .s2-payment-row {
+        grid-template-columns: 1fr;
+    }
+
+    .home-notice-host .s2-pay-btn {
+        min-height: 108px;
+        padding: 18px !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .home-notice-host .s2-pay-btn {
+        transition: none;
+    }
+
+    .home-notice-host .s2-pay-btn:hover {
+        transform: none;
+    }
+}
+
 .lb-empty i {
     font-size: 36px;
     margin-bottom: 8px;
