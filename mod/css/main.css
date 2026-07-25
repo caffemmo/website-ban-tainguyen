@@ -1811,10 +1811,11 @@ ul.custom-button-list li {
     position: relative;
     display: grid;
     flex: 1;
-    grid-template-columns: 32px minmax(0, 1fr) 18px;
+    grid-template-columns: 32px minmax(0, max-content) 18px;
     grid-template-rows: auto auto;
     column-gap: 10px;
     align-items: center;
+    justify-content: start;
     min-height: 84px;
     height: auto !important;
     padding: 12px 14px !important;
@@ -1872,8 +1873,12 @@ ul.custom-button-list li {
     color: #153446 !important;
     font-size: 13px;
     font-weight: 700;
-    letter-spacing: 0;
+    letter-spacing: 0 !important;
     line-height: 1.3;
+    text-align: left !important;
+    text-align-last: left !important;
+    text-justify: none !important;
+    word-spacing: normal !important;
 }
 
 .home-notice-host .s2-pay-btn span {
@@ -1883,8 +1888,12 @@ ul.custom-button-list li {
     max-width: none;
     color: #5c7480 !important;
     font-size: 11.5px;
-    letter-spacing: 0;
+    letter-spacing: 0 !important;
     line-height: 1.35;
+    text-align: left !important;
+    text-align-last: left !important;
+    text-justify: none !important;
+    word-spacing: normal !important;
 }
 
 .home-notice-host .s2-pay-btn:hover {
@@ -1990,6 +1999,7 @@ ul.custom-button-list li {
     .home-notice-host .s2-pay-btn {
         min-height: 78px;
         padding: 10px 12px !important;
+        grid-template-columns: 32px minmax(0, 1fr) 18px;
     }
 }
 
