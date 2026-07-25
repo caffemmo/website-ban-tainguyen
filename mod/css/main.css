@@ -1814,7 +1814,9 @@ ul.custom-button-list li {
     grid-template-columns: 32px minmax(0, max-content) 18px;
     grid-template-rows: auto auto;
     column-gap: 10px;
+    row-gap: 0;
     align-items: center;
+    align-content: center;
     justify-content: start;
     min-height: 84px;
     height: auto !important;
@@ -1869,7 +1871,8 @@ ul.custom-button-list li {
     grid-column: 2;
     grid-row: 1;
     max-width: none;
-    margin-bottom: 3px;
+    margin: 0 0 1px !important;
+    padding: 0 !important;
     color: #153446 !important;
     font-size: 13px;
     font-weight: 700;
@@ -1886,6 +1889,8 @@ ul.custom-button-list li {
     grid-column: 2;
     grid-row: 2;
     max-width: none;
+    margin: 0 !important;
+    padding: 0 !important;
     color: #5c7480 !important;
     font-size: 11.5px;
     letter-spacing: 0 !important;
