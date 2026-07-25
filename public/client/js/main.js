@@ -20,6 +20,29 @@ $(window).on("scroll", function () {
   $(".nav-link").on("click", function () {
     $(".nav-list li a").removeClass("active"), $(this).addClass("active");
   }),
+  (function () {
+    var toggle = document.querySelector(".desktop-sidebar-toggle"),
+      body = document.body;
+    if (!toggle) return;
+    var setCollapsed = function (collapsed) {
+      body.classList.toggle("desktop-sidebar-collapsed", collapsed);
+      toggle.setAttribute("aria-expanded", collapsed ? "false" : "true");
+      toggle.querySelector("i").className = collapsed
+        ? "fa-solid fa-chevron-right"
+        : "fa-solid fa-chevron-left";
+      try {
+        window.localStorage.setItem("caffemmo-sidebar-collapsed", collapsed ? "1" : "0");
+      } catch (e) {}
+    };
+    var collapsed = false;
+    try {
+      collapsed = window.localStorage.getItem("caffemmo-sidebar-collapsed") === "1";
+    } catch (e) {}
+    setCollapsed(collapsed);
+    toggle.addEventListener("click", function () {
+      setCollapsed(!body.classList.contains("desktop-sidebar-collapsed"));
+    });
+  })(),
   $(".header-cate, .cate-btn").on("click", function () {
     $("body").css("overflow", "hidden"),
       $(".category-sidebar").addClass("active"),
