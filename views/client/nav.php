@@ -5,23 +5,7 @@
 <body class="has-desktop-sidebar">
     <div class="backdrop"></div><a class="backtop" href="#"><i class="fa-sharp fa-solid fa-chevron-up"></i></a>
     <aside class="desktop-app-sidebar" aria-label="<?= __('Điều hướng chính'); ?>">
-        <div class="desktop-sidebar-header">
-            <a class="desktop-sidebar-brand" href="<?= base_url(); ?>">
-                <img src="<?= BASE_URL($CMSNT->site('logo_light')); ?>" alt="<?= $CMSNT->site('title'); ?>">
-            </a>
-            <button class="desktop-sidebar-toggle" type="button" aria-label="<?= __('Thu gọn menu'); ?>" aria-expanded="true">
-                <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
-            </button>
-        </div>
         <div class="desktop-sidebar-scroll">
-            <div class="desktop-sidebar-account">
-                <span class="desktop-sidebar-avatar"><i class="fa-solid fa-user" aria-hidden="true"></i></span>
-                <span class="desktop-sidebar-account-copy">
-                    <strong><?= isset($getUser) ? htmlspecialchars($getUser['username'], ENT_QUOTES, 'UTF-8') : __('Khách truy cập'); ?></strong>
-                    <small><?= isset($getUser) ? format_currency($getUser['money']) : __('Đăng nhập để mua hàng'); ?></small>
-                </span>
-            </div>
-
             <nav class="desktop-sidebar-nav">
                 <p class="desktop-sidebar-section-title"><?= __('Tổng quan'); ?></p>
                 <a class="desktop-sidebar-link <?= isset($action) && $action == 'home' ? 'active' : ''; ?>" href="<?= base_url('client/home'); ?>">
@@ -31,19 +15,16 @@
                     <i class="fa-solid fa-store" aria-hidden="true"></i><span><?= __('Tất cả sản phẩm'); ?></span>
                 </a>
 
-                <p class="desktop-sidebar-section-title"><?= __('Tài chính'); ?></p>
-                <a class="desktop-sidebar-link <?= isset($action) && $action == 'profile' ? 'active' : ''; ?>" href="<?= base_url('client/profile'); ?>">
-                    <i class="fa-solid fa-user-gear" aria-hidden="true"></i><span><?= __('Thông tin cá nhân'); ?></span>
-                </a>
-                <a class="desktop-sidebar-link" href="<?= base_url('?action=recharge-bank'); ?>">
-                    <i class="fa-solid fa-wallet" aria-hidden="true"></i><span><?= __('Nạp tiền'); ?></span>
-                </a>
-                <a class="desktop-sidebar-link <?= isset($action) && in_array($action, ['product-orders', 'product-order'], true) ? 'active' : ''; ?>" href="<?= base_url('product-orders'); ?>">
-                    <i class="fa-solid fa-receipt" aria-hidden="true"></i><span><?= __('Lịch sử đơn hàng'); ?></span>
-                </a>
-                <a class="desktop-sidebar-link <?= isset($action) && $action == 'transactions' ? 'active' : ''; ?>" href="<?= base_url('?action=transactions'); ?>">
-                    <i class="fa-solid fa-arrow-right-arrow-left" aria-hidden="true"></i><span><?= __('Biến động số dư'); ?></span>
-                </a>
+                <p class="desktop-sidebar-section-title"><?= __('Dịch vụ Proxy'); ?></p>
+                <button class="desktop-sidebar-link desktop-sidebar-link--pending" type="button" disabled title="<?= __('Chờ kết nối API nhà cung cấp'); ?>">
+                    <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i><span><?= __('Mua Proxy'); ?></span>
+                </button>
+                <button class="desktop-sidebar-link desktop-sidebar-link--pending" type="button" disabled title="<?= __('Chờ kết nối API nhà cung cấp'); ?>">
+                    <i class="fa-solid fa-server" aria-hidden="true"></i><span><?= __('Proxy của tôi'); ?></span>
+                </button>
+                <button class="desktop-sidebar-link desktop-sidebar-link--pending" type="button" disabled title="<?= __('Chờ kết nối API nhà cung cấp'); ?>">
+                    <i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i><span><?= __('Gia hạn Proxy'); ?></span>
+                </button>
 
                 <?php if($CMSNT->site('status_menu_tools') == 1): ?>
                 <p class="desktop-sidebar-section-title"><?= __('Công cụ miễn phí'); ?></p>
@@ -60,14 +41,6 @@
                     <i class="fa-solid fa-face-smile" aria-hidden="true"></i><span><?= __('Random Face'); ?></span>
                 </a>
                 <?php endif; ?>
-
-                <p class="desktop-sidebar-section-title"><?= __('Danh mục sản phẩm'); ?></p>
-                <?php foreach (get_categories_not_parent_cached() as $desktop_category): ?>
-                <a class="desktop-sidebar-link desktop-sidebar-category-link" href="<?= base_url('category/' . $desktop_category['slug']); ?>">
-                    <img src="<?= base_url($desktop_category['icon']); ?>" alt="" aria-hidden="true">
-                    <span><?= __($desktop_category['name']); ?></span>
-                </a>
-                <?php endforeach; ?>
 
                 <p class="desktop-sidebar-section-title"><?= __('Hỗ trợ'); ?></p>
                 <a class="desktop-sidebar-link" href="<?= base_url('client/contact'); ?>">
