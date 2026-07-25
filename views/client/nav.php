@@ -574,9 +574,6 @@
     </aside>
     <aside class="nav-sidebar nav-sidebar-mobile" aria-label="<?= __('Menu chính'); ?>" aria-hidden="true">
         <div class="nav-header">
-            <a href="<?= base_url(); ?>">
-                <img src="<?= BASE_URL($CMSNT->site('logo_light')); ?>" alt="<?= $CMSNT->site('title'); ?>">
-            </a>
             <button class="nav-close" type="button" aria-label="<?= __('Đóng menu'); ?>">
                 <i class="icofont-close" aria-hidden="true"></i>
             </button>
