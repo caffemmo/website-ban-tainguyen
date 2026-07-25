@@ -2033,7 +2033,7 @@ ul.custom-button-list li {
 
 @media (min-width: 1200px) {
     body.has-desktop-sidebar {
-        padding-left: 260px;
+        padding-left: 284px;
         transition: padding-left 220ms ease;
     }
 
@@ -2051,11 +2051,12 @@ ul.custom-button-list li {
         left: 0;
         z-index: 1000;
         display: flex;
-        width: 260px;
+        width: 284px;
         flex-direction: column;
         overflow: hidden;
         color: #d7e8f0;
         background: #101b30;
+        font-family: 'Be Vietnam Pro', sans-serif;
         border-right: 1px solid #223650;
         box-shadow: 10px 0 28px rgba(20, 45, 66, 0.08);
         transition: width 220ms ease;
@@ -2064,7 +2065,7 @@ ul.custom-button-list li {
     .desktop-sidebar-scroll {
         flex: 1;
         overflow-y: auto;
-        padding: 14px 12px 24px;
+        padding: 22px 14px 24px;
         scrollbar-color: #3566a6 transparent;
         scrollbar-width: thin;
     }
@@ -2073,11 +2074,11 @@ ul.custom-button-list li {
         display: flex;
         align-items: center;
         gap: 8px;
-        margin: 18px 4px 8px;
+        margin: 24px 6px 10px;
         color: #76c6d9;
-        font-size: 10px;
+        font-size: 11px;
         font-weight: 800;
-        letter-spacing: 0.08em;
+        letter-spacing: 0.06em;
         line-height: 1.2;
         text-transform: uppercase;
     }
@@ -2092,34 +2093,35 @@ ul.custom-button-list li {
     .desktop-sidebar-link {
         display: flex;
         width: 100%;
-        min-height: 42px;
+        min-height: 48px;
         align-items: center;
-        gap: 11px;
-        padding: 8px 10px;
-        margin: 3px 0;
+        gap: 12px;
+        padding: 9px 11px;
+        margin: 5px 0;
         border: 1px solid transparent;
         border-radius: 9px;
-        color: #c8d5df;
-        font-size: 12px;
+        color: #d7e5ed;
+        font-size: 14px;
         font-weight: 600;
-        font-family: inherit;
-        line-height: 1.25;
+        font-family: 'Be Vietnam Pro', sans-serif;
+        line-height: 1.35;
         text-align: left;
         text-decoration: none;
         transition: color 180ms ease, background 180ms ease, border-color 180ms ease, transform 180ms ease;
+        animation: desktop-sidebar-item-in 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
     }
 
     .desktop-sidebar-link i {
         display: grid;
-        width: 28px;
-        height: 28px;
-        flex: 0 0 28px;
+        width: 32px;
+        height: 32px;
+        flex: 0 0 32px;
         place-items: center;
         border-radius: 8px;
-        color: #c8eaf0;
-        background: #22364d;
+        color: #8fe7ee;
+        background: #213a54;
         object-fit: contain;
-        font-size: 13px;
+        font-size: 14px;
     }
 
     .desktop-sidebar-link:hover,
@@ -2147,20 +2149,63 @@ ul.custom-button-list li {
         min-width: 0;
         overflow: hidden;
         text-overflow: ellipsis;
+        white-space: normal;
+    }
+
+    .desktop-sidebar-service-link {
+        min-height: 64px;
+        align-items: center;
+    }
+
+    .desktop-sidebar-link-label {
+        display: flex;
+        min-width: 0;
+        flex: 1;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .desktop-sidebar-link-label strong {
+        color: inherit;
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 1.35;
+    }
+
+    .desktop-sidebar-link-label small {
+        overflow: hidden;
+        color: #8fa9b9;
+        font-size: 11px;
+        font-weight: 500;
+        line-height: 1.35;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .desktop-sidebar-service-link em {
+        flex: 0 0 auto;
+        padding: 4px 7px;
+        border: 1px solid rgba(118, 198, 217, 0.24);
+        border-radius: 999px;
+        color: #8ac9d4;
+        font-size: 10px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: 1;
         white-space: nowrap;
     }
 
     .desktop-sidebar-link--pending {
-        color: #9fb5c2;
-        background: rgba(34, 54, 77, 0.42);
+        color: #d7e5ed;
+        background: #162a43;
         cursor: not-allowed;
-        opacity: 0.8;
+        opacity: 1;
     }
 
     .desktop-sidebar-link--pending:hover,
     .desktop-sidebar-link--pending:focus-visible {
-        color: #9fb5c2;
-        background: rgba(34, 54, 77, 0.42);
+        color: #d7e5ed;
+        background: #1a3450;
         border-color: transparent;
         outline: none;
         transform: none;
@@ -2170,13 +2215,98 @@ ul.custom-button-list li {
         margin-top: 12px;
         color: #ffb6b6;
     }
+
+    .desktop-sidebar-support-card {
+        display: flex;
+        min-height: 76px;
+        align-items: center;
+        gap: 10px;
+        padding: 12px;
+        margin: 28px 2px 0;
+        border: 1px solid #2b4b65;
+        border-radius: 12px;
+        background: #14263e;
+        box-shadow: 0 12px 28px rgba(5, 15, 28, 0.18);
+        animation: desktop-sidebar-item-in 420ms 120ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .desktop-sidebar-support-icon {
+        display: grid;
+        width: 34px;
+        height: 34px;
+        flex: 0 0 34px;
+        place-items: center;
+        border-radius: 9px;
+        color: #0b2637;
+        background: #78e3e3;
+        font-size: 14px;
+    }
+
+    .desktop-sidebar-support-copy {
+        display: flex;
+        min-width: 0;
+        flex: 1;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .desktop-sidebar-support-copy strong {
+        color: #f1f8fb;
+        font-size: 13px;
+        font-weight: 700;
+        line-height: 1.3;
+    }
+
+    .desktop-sidebar-support-copy small {
+        overflow: hidden;
+        color: #91aebe;
+        font-size: 11px;
+        line-height: 1.3;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .desktop-sidebar-support-card > a {
+        display: grid;
+        width: 30px;
+        height: 30px;
+        flex: 0 0 30px;
+        place-items: center;
+        border-radius: 8px;
+        color: #83e7ec;
+        background: rgba(0, 211, 214, 0.12);
+        font-size: 13px;
+        transition: color 180ms ease, background 180ms ease, transform 180ms ease;
+    }
+
+    .desktop-sidebar-support-card > a:hover,
+    .desktop-sidebar-support-card > a:focus-visible {
+        color: #082332;
+        background: #83e7ec;
+        outline: none;
+        transform: translateY(-1px);
+    }
+}
+
+@keyframes desktop-sidebar-item-in {
+    from {
+        opacity: 0;
+        transform: translateY(7px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
     body.has-desktop-sidebar,
     .desktop-app-sidebar,
-    .desktop-sidebar-link {
+    .desktop-sidebar-link,
+    .desktop-sidebar-support-card > a {
         transition: none;
+        animation: none;
     }
 }
 

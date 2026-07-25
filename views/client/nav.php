@@ -16,14 +16,29 @@
                 </a>
 
                 <p class="desktop-sidebar-section-title"><?= __('Dịch vụ Proxy'); ?></p>
-                <button class="desktop-sidebar-link desktop-sidebar-link--pending" type="button" disabled title="<?= __('Chờ kết nối API nhà cung cấp'); ?>">
-                    <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i><span><?= __('Mua Proxy'); ?></span>
+                <button class="desktop-sidebar-link desktop-sidebar-service-link desktop-sidebar-link--pending" type="button" disabled title="<?= __('Chờ kết nối API nhà cung cấp'); ?>">
+                    <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
+                    <span class="desktop-sidebar-link-label">
+                        <strong><?= __('Mua Proxy'); ?></strong>
+                        <small><?= __('Chọn loại proxy phù hợp'); ?></small>
+                    </span>
+                    <em><?= __('Sắp có'); ?></em>
                 </button>
-                <button class="desktop-sidebar-link desktop-sidebar-link--pending" type="button" disabled title="<?= __('Chờ kết nối API nhà cung cấp'); ?>">
-                    <i class="fa-solid fa-server" aria-hidden="true"></i><span><?= __('Proxy của tôi'); ?></span>
+                <button class="desktop-sidebar-link desktop-sidebar-service-link desktop-sidebar-link--pending" type="button" disabled title="<?= __('Chờ kết nối API nhà cung cấp'); ?>">
+                    <i class="fa-solid fa-server" aria-hidden="true"></i>
+                    <span class="desktop-sidebar-link-label">
+                        <strong><?= __('Proxy của tôi'); ?></strong>
+                        <small><?= __('Quản lý proxy đã mua'); ?></small>
+                    </span>
+                    <em><?= __('Sắp có'); ?></em>
                 </button>
-                <button class="desktop-sidebar-link desktop-sidebar-link--pending" type="button" disabled title="<?= __('Chờ kết nối API nhà cung cấp'); ?>">
-                    <i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i><span><?= __('Gia hạn Proxy'); ?></span>
+                <button class="desktop-sidebar-link desktop-sidebar-service-link desktop-sidebar-link--pending" type="button" disabled title="<?= __('Chờ kết nối API nhà cung cấp'); ?>">
+                    <i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i>
+                    <span class="desktop-sidebar-link-label">
+                        <strong><?= __('Gia hạn Proxy'); ?></strong>
+                        <small><?= __('Gia hạn nhanh, không gián đoạn'); ?></small>
+                    </span>
+                    <em><?= __('Sắp có'); ?></em>
                 </button>
 
                 <?php if($CMSNT->site('status_menu_tools') == 1): ?>
@@ -64,6 +79,16 @@
                 </a>
                 <?php endif; ?>
             </nav>
+            <div class="desktop-sidebar-support-card">
+                <span class="desktop-sidebar-support-icon"><i class="fa-solid fa-headset" aria-hidden="true"></i></span>
+                <span class="desktop-sidebar-support-copy">
+                    <strong><?= __('Cần hỗ trợ?'); ?></strong>
+                    <small><?= __('Đội ngũ luôn sẵn sàng'); ?></small>
+                </span>
+                <a href="<?= base_url('client/contact'); ?>" aria-label="<?= __('Liên hệ hỗ trợ'); ?>" title="<?= __('Liên hệ hỗ trợ'); ?>">
+                    <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+                </a>
+            </div>
         </div>
     </aside>
     <div class="header-top">
