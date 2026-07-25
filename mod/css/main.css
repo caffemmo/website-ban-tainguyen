@@ -1811,13 +1811,12 @@ ul.custom-button-list li {
     position: relative;
     display: grid;
     flex: 1;
-    grid-template-columns: 32px minmax(0, max-content) 18px;
+    grid-template-columns: 32px minmax(0, 1fr) 18px;
     grid-template-rows: auto auto;
     column-gap: 10px;
     row-gap: 0;
     align-items: center;
     align-content: center;
-    justify-content: start;
     min-height: 84px;
     height: auto !important;
     padding: 12px 14px !important;
