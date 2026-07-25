@@ -53,6 +53,9 @@ checkMaintenance();
   <link rel="stylesheet" href="<?= BASE_URL('public/client/'); ?>vendor/slickslider/slick.min.css">
   <link rel="stylesheet" href="<?= BASE_URL('public/client/'); ?>vendor/niceselect/nice-select.min.css">
   <link rel="stylesheet" href="<?= BASE_URL('public/client/'); ?>vendor/bootstrap/bootstrap.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap">
   <link rel="stylesheet" href="<?= BASE_URL('public/client/'); ?>css/main.css">
   <link rel="stylesheet" href="<?= BASE_URL('public/client/'); ?>css/user-auth.css">
   <link rel="stylesheet" href="<?= BASE_URL('public/client/'); ?>css/index.css">
@@ -96,7 +99,7 @@ checkMaintenance();
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
   <?php endif ?>
   <?= $body['header']; ?>
-  <link rel="stylesheet" href="<?= BASE_URL('mod/css/main.css?v=29'); ?>">
+  <link rel="stylesheet" href="<?= BASE_URL('mod/css/main.css?v=30'); ?>">
   <script src="<?= base_url('mod/js/main.js?v=2'); ?>"></script>
   <?= $CMSNT->site('javascript_header'); ?>
 
