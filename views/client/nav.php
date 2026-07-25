@@ -138,7 +138,7 @@
         <div class="container">
             <div class="header-content">
                 <div class="header-media-group">
-                    <button class="header-user"><i class="fa-solid fa-bars"></i></button>
+                    <button class="header-user" type="button" aria-label="<?= __('Mở menu'); ?>"><i class="fa-solid fa-bars" aria-hidden="true"></i></button>
                     <a href="<?= base_url(); ?>">
                         <img src="<?= BASE_URL($CMSNT->site('logo_light')); ?>" alt="logo"></a>
                     <button class="header-src"><i class="fas fa-search"></i></button>
@@ -572,7 +572,104 @@
             <?php endforeach ?>
         </ul>
     </aside>
-    <aside class="nav-sidebar">
+    <aside class="nav-sidebar nav-sidebar-mobile" aria-label="<?= __('Menu chính'); ?>" aria-hidden="true">
+        <div class="nav-header">
+            <a href="<?= base_url(); ?>">
+                <img src="<?= BASE_URL($CMSNT->site('logo_light')); ?>" alt="<?= $CMSNT->site('title'); ?>">
+            </a>
+            <button class="nav-close" type="button" aria-label="<?= __('Đóng menu'); ?>">
+                <i class="icofont-close" aria-hidden="true"></i>
+            </button>
+        </div>
+        <div class="nav-content">
+            <div class="nav-account-card">
+                <span class="nav-account-avatar"><i class="fa-solid fa-user" aria-hidden="true"></i></span>
+                <span class="nav-account-copy">
+                    <strong><?= isset($getUser) ? htmlspecialchars($getUser['username'], ENT_QUOTES, 'UTF-8') : __('Khách truy cập'); ?></strong>
+                    <small><?= isset($getUser) ? __('Tài khoản thành viên') : __('Đăng nhập để mua hàng'); ?></small>
+                </span>
+                <?php if (isset($getUser)): ?>
+                    <span class="nav-account-balance"><?= format_currency($getUser['money']); ?></span>
+                <?php endif; ?>
+            </div>
+
+            <nav class="nav-list" aria-label="<?= __('Điều hướng mobile'); ?>">
+                <p class="nav-section-title"><?= __('Tổng quan'); ?></p>
+                <a class="nav-link <?= active_sidebar_client(['home', '']); ?>" href="<?= base_url('client/home'); ?>">
+                    <i class="fa-solid fa-table-cells-large" aria-hidden="true"></i><span><?= __('Bảng điều khiển'); ?></span>
+                </a>
+                <a class="nav-link" href="<?= base_url(''); ?>">
+                    <i class="fa-solid fa-store" aria-hidden="true"></i><span><?= __('Tất cả sản phẩm'); ?></span>
+                </a>
+
+                <p class="nav-section-title"><?= __('Tài chính'); ?></p>
+                <a class="nav-link <?= active_sidebar_client(['recharge-bank', 'recharge-momo', 'recharge-card', 'recharge-crypto', 'recharge-paypal', 'recharge-manual']); ?>" href="<?= base_url('?action=recharge-bank'); ?>">
+                    <i class="fa-solid fa-building-columns" aria-hidden="true"></i><span><?= __('Nạp tiền'); ?></span>
+                </a>
+                <a class="nav-link <?= active_sidebar_client(['product-orders', 'product-order']); ?>" href="<?= base_url('product-orders'); ?>">
+                    <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i><span><?= __('Lịch sử đơn hàng'); ?></span>
+                </a>
+
+                <p class="nav-section-title"><?= __('Dịch vụ Proxy'); ?></p>
+                <button class="nav-link nav-link--pending" type="button" disabled title="<?= __('Chờ kết nối API nhà cung cấp'); ?>">
+                    <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
+                    <span class="nav-link-label"><strong><?= __('Mua Proxy'); ?></strong><small><?= __('Chọn loại proxy phù hợp'); ?></small></span>
+                    <em><?= __('Sắp có'); ?></em>
+                </button>
+                <button class="nav-link nav-link--pending" type="button" disabled title="<?= __('Chờ kết nối API nhà cung cấp'); ?>">
+                    <i class="fa-solid fa-server" aria-hidden="true"></i>
+                    <span class="nav-link-label"><strong><?= __('Proxy của tôi'); ?></strong><small><?= __('Quản lý proxy đã mua'); ?></small></span>
+                    <em><?= __('Sắp có'); ?></em>
+                </button>
+                <button class="nav-link nav-link--pending" type="button" disabled title="<?= __('Chờ kết nối API nhà cung cấp'); ?>">
+                    <i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i>
+                    <span class="nav-link-label"><strong><?= __('Gia hạn Proxy'); ?></strong><small><?= __('Gia hạn nhanh, không gián đoạn'); ?></small></span>
+                    <em><?= __('Sắp có'); ?></em>
+                </button>
+
+                <p class="nav-section-title"><?= __('Hỗ trợ'); ?></p>
+                <a class="nav-link" href="<?= base_url('client/contact'); ?>">
+                    <i class="fa-solid fa-headset" aria-hidden="true"></i><span><?= __('Liên hệ hỗ trợ'); ?></span>
+                </a>
+                <a class="nav-link" href="<?= base_url('client/faq'); ?>">
+                    <i class="fa-solid fa-circle-question" aria-hidden="true"></i><span><?= __('Câu hỏi thường gặp'); ?></span>
+                </a>
+                <?php if ($CMSNT->site('affiliate_status') == 1): ?>
+                    <a class="nav-link" href="<?= base_url('?action=affiliates'); ?>">
+                        <i class="fa-solid fa-money-bill-trend-up" aria-hidden="true"></i><span><?= __('Affiliate Program'); ?></span>
+                    </a>
+                <?php endif; ?>
+                <?php if ($CMSNT->site('api_status') == 1): ?>
+                    <a class="nav-link" href="<?= base_url('document-api'); ?>">
+                        <i class="fa-regular fa-file-code" aria-hidden="true"></i><span><?= __('Tài liệu API'); ?></span>
+                    </a>
+                <?php endif; ?>
+                <?php if (isset($getUser) && $getUser['admin'] != 0): ?>
+                    <a class="nav-link" href="<?= base_url_admin(); ?>">
+                        <i class="fa-solid fa-gear" aria-hidden="true"></i><span><?= __('Admin Panel'); ?></span>
+                    </a>
+                <?php endif; ?>
+                <?php if (isset($getUser)): ?>
+                    <a class="nav-link nav-link--logout" href="<?= base_url('client/logout'); ?>">
+                        <i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i><span><?= __('Đăng xuất'); ?></span>
+                    </a>
+                <?php else: ?>
+                    <a class="nav-link" href="<?= base_url('client/login'); ?>">
+                        <i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i><span><?= __('Đăng nhập'); ?></span>
+                    </a>
+                <?php endif; ?>
+            </nav>
+
+            <div class="nav-support-card">
+                <span class="nav-support-icon"><i class="fa-solid fa-headset" aria-hidden="true"></i></span>
+                <span><strong><?= __('Cần hỗ trợ?'); ?></strong><small><?= __('Đội ngũ luôn sẵn sàng'); ?></small></span>
+                <a href="<?= base_url('client/contact'); ?>" aria-label="<?= __('Liên hệ hỗ trợ'); ?>" title="<?= __('Liên hệ hỗ trợ'); ?>">
+                    <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+    </aside>
+    <aside class="nav-sidebar nav-sidebar-legacy" aria-hidden="true">
         <div class="nav-header"><a href="<?= base_url(); ?>"><img src="<?= BASE_URL($CMSNT->site('logo_light')); ?>"
                     alt="logo"></a><button class="nav-close"><i class="icofont-close"></i></button></div>
         <div class="nav-content">
@@ -771,22 +868,6 @@
             </div>
         </div>
     </aside>
-    <div class="mobile-menu">
-        <a href="<?= base_url('client/home'); ?>" title="<?= __('Trang chủ'); ?>"
-            class="<?= active_sidebar_client(['home', '']); ?>"><i
-                class="fas fa-home"></i><span><?= __('Trang chủ'); ?></span></a>
-        <button class="cate-btn" title="<?= __('Sản phẩm'); ?>"><i
-                class="fas fa-list"></i><span><?= __('Sản phẩm'); ?></span></button>
-        <button
-            class="cart-btn <?= active_sidebar_client(['recharge-flutterwave', 'recharge-bank', 'recharge-crypto', 'recharge-card', 'recharge-paypal', 'recharge-perfectmoney', 'recharge-toyyibpay', 'recharge-squadco', 'recharge-flutterwave', 'recharge-manual']); ?>"
-            title="<?= __('Nạp tiền'); ?>"><i
-                class="fa-solid fa-building-columns"></i><span><?= __('Nạp tiền'); ?></span></button>
-        <a href="<?= base_url('product-orders'); ?>"
-            class="<?= active_sidebar_client(['product-orders', 'product-order']); ?>" title="<?= __('Đơn hàng'); ?>"><i
-                class="fa-solid fa-cart-shopping"></i><span><?= __('Đơn hàng'); ?></span></a>
-        <a href="<?= base_url('client/profile'); ?>" title="Profile" class="<?= active_sidebar_client(['profile']); ?>"><i
-                class="fa-solid fa-user"></i><span><?= __('Thông tin'); ?></span></a>
-    </div>
 
 
 

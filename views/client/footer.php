@@ -624,7 +624,7 @@
 <script src="<?= BASE_URL('public/client/'); ?>js/accordion.js"></script>
 <script src="<?= BASE_URL('public/client/'); ?>js/venobox.js"></script>
 <script src="<?= BASE_URL('public/client/'); ?>js/slick.js"></script>
-<script src="<?= BASE_URL('public/client/'); ?>js/main.js?v=3"></script>
+<script src="<?= BASE_URL('public/client/'); ?>js/main.js?v=4"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
     flatpickr("#example-flatpickr-range");

@@ -31,10 +31,12 @@ $(window).on("scroll", function () {
   }),
   $(".header-user").on("click", function () {
     $("body").css("overflow", "hidden"),
-      $(".nav-sidebar").addClass("active"),
-      $(".nav-close").on("click", function () {
+      $("body").addClass("mobile-drawer-open"),
+      $(".nav-sidebar-mobile").addClass("active").attr("aria-hidden", "false"),
+      $(".nav-sidebar-mobile .nav-close").on("click", function () {
         $("body").css("overflow", "inherit"),
-          $(".nav-sidebar").removeClass("active"),
+          $("body").removeClass("mobile-drawer-open"),
+          $(".nav-sidebar-mobile").removeClass("active").attr("aria-hidden", "true"),
           $(".backdrop").fadeOut();
       });
   }),
@@ -52,9 +54,10 @@ $(window).on("scroll", function () {
     function () {
       $(".backdrop").fadeIn(),
         $(".backdrop").on("click", function () {
-          $(this).fadeOut(),
+            $(this).fadeOut(),
             $("body").css("overflow", "inherit"),
-            $(".nav-sidebar").removeClass("active"),
+            $("body").removeClass("mobile-drawer-open"),
+            $(".nav-sidebar-mobile").removeClass("active").attr("aria-hidden", "true"),
             $(".cart-sidebar").removeClass("active"),
             $(".category-sidebar").removeClass("active");
         });
