@@ -9,7 +9,7 @@ $body = [
     'desc' => __('Mua proxy chính hãng với cấu hình rõ ràng và quản lý tập trung.'),
     'keyword' => 'proxy, mua proxy, proxy premium'
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=4') . '">';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=5') . '">';
 $body['footer'] = '<script src="' . BASE_URL('mod/js/proxy.js?v=5') . '"></script>';
 
 require_once __DIR__ . '/header.php';
@@ -21,6 +21,12 @@ require_once __DIR__ . '/nav.php';
     data-token="<?= htmlspecialchars($getUser['token'], ENT_QUOTES, 'UTF-8'); ?>"
     data-configured="<?= youproxy_is_configured() ? '1' : '0'; ?>">
     <section class="proxy-page-heading">
+        <img class="proxy-heading-gif" src="<?= BASE_URL('assets/img/bgblink.gif'); ?>" alt="" aria-hidden="true">
+        <div class="proxy-heading-motion" aria-hidden="true">
+            <span class="proxy-heading-ring proxy-heading-ring--one"></span>
+            <span class="proxy-heading-ring proxy-heading-ring--two"></span>
+            <span class="proxy-heading-node"><i class="fa-solid fa-server"></i></span>
+        </div>
         <div>
             <span class="proxy-eyebrow"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Proxy workspace</span>
             <h1><?= __('Mua Proxy'); ?></h1>
