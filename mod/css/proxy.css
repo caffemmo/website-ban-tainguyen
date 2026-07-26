@@ -686,6 +686,114 @@ body {
     font-size: 24px;
 }
 
+.proxy-summary-preview {
+    display: block;
+    min-height: 0;
+    padding: 14px;
+    border: 1px solid #b9dfe5;
+    color: var(--proxy-ink);
+    background: linear-gradient(135deg, #f2fbfc 0%, #f8fcfd 100%);
+    font-weight: 400;
+}
+
+.proxy-summary-preview-head {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding-bottom: 13px;
+    border-bottom: 1px solid #dcecef;
+}
+
+.proxy-summary-preview-flag {
+    display: grid;
+    width: 42px;
+    height: 32px;
+    flex: 0 0 42px;
+    place-items: center;
+    border: 1px solid #c8e1e6;
+    border-radius: 6px;
+    background: #fff;
+    overflow: hidden;
+}
+
+.proxy-summary-preview-flag img {
+    width: 32px;
+    height: 22px;
+    object-fit: cover;
+}
+
+.proxy-summary-preview-flag i {
+    color: var(--proxy-cyan);
+    font-size: 18px;
+}
+
+.proxy-summary-preview-head > div {
+    min-width: 0;
+}
+
+.proxy-summary-preview-kicker,
+.proxy-summary-preview-head strong,
+.proxy-summary-preview-head small {
+    display: block;
+}
+
+.proxy-summary-preview-kicker {
+    margin-bottom: 3px;
+    color: #0c91aa;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.proxy-summary-preview-kicker i {
+    margin-right: 3px;
+    color: #1da975;
+    font-size: 10px;
+}
+
+.proxy-summary-preview-head strong {
+    overflow: hidden;
+    color: var(--proxy-ink);
+    font-size: 14px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.proxy-summary-preview-head small {
+    margin-top: 3px;
+    color: var(--proxy-muted);
+    font-size: 10px;
+}
+
+.proxy-summary-facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+    padding-top: 12px;
+}
+
+.proxy-summary-facts > div {
+    min-width: 0;
+}
+
+.proxy-summary-facts span,
+.proxy-summary-facts strong {
+    display: block;
+}
+
+.proxy-summary-facts span {
+    margin-bottom: 3px;
+    color: var(--proxy-muted);
+    font-size: 10px;
+}
+
+.proxy-summary-facts strong {
+    overflow: hidden;
+    color: var(--proxy-ink);
+    font-size: 11px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .proxy-summary-visual--compact {
     min-height: 74px;
     justify-content: flex-start;

@@ -9,8 +9,8 @@ $body = [
     'desc' => __('Mua proxy chính hãng với cấu hình rõ ràng và quản lý tập trung.'),
     'keyword' => 'proxy, mua proxy, proxy premium'
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=3') . '">';
-$body['footer'] = '<script src="' . BASE_URL('mod/js/proxy.js?v=4') . '"></script>';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=4') . '">';
+$body['footer'] = '<script src="' . BASE_URL('mod/js/proxy.js?v=5') . '"></script>';
 
 require_once __DIR__ . '/header.php';
 require_once __DIR__ . '/nav.php';
@@ -166,7 +166,22 @@ require_once __DIR__ . '/nav.php';
                 <span class="proxy-step">02</span>
                 <div><h2><?= __('Tóm tắt đơn'); ?></h2><p><?= __('Tổng tiền được cập nhật theo cấu hình hiện tại.'); ?></p></div>
             </div>
-            <div class="proxy-summary-visual"><i class="fa-solid fa-server" aria-hidden="true"></i><span><?= __('Sẵn sàng cấp proxy'); ?></span></div>
+            <div class="proxy-summary-visual proxy-summary-preview" data-buy-preview>
+                <div class="proxy-summary-preview-head">
+                    <span class="proxy-summary-preview-flag" data-summary-country-flag aria-hidden="true"><i class="fa-solid fa-globe"></i></span>
+                    <div>
+                        <span class="proxy-summary-preview-kicker"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> <span data-summary-status><?= __('Đang chờ cấu hình'); ?></span></span>
+                        <strong data-summary-country><?= __('Chọn quốc gia'); ?></strong>
+                        <small data-summary-delivery><?= __('Cấp tự động sau khi thanh toán'); ?></small>
+                    </div>
+                </div>
+                <div class="proxy-summary-facts">
+                    <div><span><?= __('Loại'); ?></span><strong data-summary-type>IPv4</strong></div>
+                    <div><span><?= __('Thời hạn'); ?></span><strong data-summary-rent>--</strong></div>
+                    <div><span><?= __('Số lượng'); ?></span><strong data-summary-quantity>1</strong></div>
+                    <div><span><?= __('Xác thực'); ?></span><strong data-summary-auth>Login / Password</strong></div>
+                </div>
+            </div>
             <dl class="proxy-summary-list">
                 <div><dt><?= __('Loại dịch vụ'); ?></dt><dd><?= __('Proxy premium'); ?></dd></div>
             </dl>

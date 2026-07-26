@@ -59,8 +59,18 @@
             return '<i class="fa-solid fa-globe" aria-hidden="true"></i>';
         }
         var source = 'https://flagcdn.com/w40/' + region.toLowerCase() + '.png';
-        return '<img src="' + escapeHtml(source) + '" alt="" loading="lazy" decoding="async">'
+        return '<img data-country-flag-image src="' + escapeHtml(source) + '" alt="" loading="lazy" decoding="async">'
             + '<i class="fa-solid fa-globe" aria-hidden="true" hidden></i>';
+    }
+
+    function bindCountryFlagFallbacks(root) {
+        $$('[data-country-flag-image]', root).forEach(function (image) {
+            image.addEventListener('error', function () {
+                image.hidden = true;
+                var fallback = image.parentElement.querySelector('i');
+                if (fallback) fallback.hidden = false;
+            });
+        });
     }
 
     function syncCountrySelection(select) {
@@ -88,13 +98,7 @@
                 + '<span class="proxy-country-name">' + escapeHtml(option.label) + '</span>'
                 + '<i class="fa-solid fa-check proxy-country-check" aria-hidden="true"></i></button>';
         }).join('');
-        $$('[data-country-option] img', picker).forEach(function (image) {
-            image.addEventListener('error', function () {
-                image.hidden = true;
-                var fallback = image.parentElement.querySelector('i');
-                if (fallback) fallback.hidden = false;
-            });
-        });
+        bindCountryFlagFallbacks(picker);
         $$('[data-country-option]', picker).forEach(function (button) {
             button.addEventListener('click', function () {
                 select.value = button.getAttribute('data-value');
@@ -260,7 +264,49 @@
         }
     }
 
+    function selectedOptionText(select) {
+        if (!select || !select.value || !select.options[select.selectedIndex]) {
+            return '';
+        }
+        return String(select.options[select.selectedIndex].textContent || '').trim();
+    }
+
     function updateBuySummary(price, form) {
+        var currentForm = form || $('[data-buy-form]');
+        if (currentForm) {
+            var country = $('[data-country-select]', currentForm);
+            var countryName = $('[data-summary-country]');
+            var countryFlagTarget = $('[data-summary-country-flag]');
+            var summaryStatus = $('[data-summary-status]');
+            var countryLabel = selectedOptionText(country);
+            var rent = $('[data-rent-select]', currentForm);
+            if (countryName) countryName.textContent = countryLabel || 'Chọn quốc gia';
+            if (summaryStatus) summaryStatus.textContent = country && country.value && rent && rent.value ? 'Sẵn sàng cấp proxy' : 'Đang chờ cấu hình';
+            if (countryFlagTarget) {
+                countryFlagTarget.innerHTML = country && country.value
+                    ? countryFlag(country.value)
+                    : '<i class="fa-solid fa-globe" aria-hidden="true"></i>';
+                bindCountryFlagFallbacks(countryFlagTarget);
+            }
+
+            var type = selectedType();
+            var typeCard = $$('[data-proxy-type]').find(function (card) {
+                return card.getAttribute('data-proxy-type') === type;
+            });
+            var typeLabel = typeCard && $('strong', typeCard) ? $('strong', typeCard).textContent.trim() : type;
+            var rentLabel = selectedOptionText(rent);
+            if (rentLabel && !/ngày|day/i.test(rentLabel)) rentLabel += ' ngày';
+            var quantity = $('[data-quantity-input]', currentForm);
+            var auth = $('[name="auth_type"]:checked', currentForm);
+            var summaryType = $('[data-summary-type]');
+            var summaryRent = $('[data-summary-rent]');
+            var summaryQuantity = $('[data-summary-quantity]');
+            var summaryAuth = $('[data-summary-auth]');
+            if (summaryType) summaryType.textContent = typeLabel || '--';
+            if (summaryRent) summaryRent.textContent = rentLabel || '--';
+            if (summaryQuantity) summaryQuantity.textContent = quantity && quantity.value ? quantity.value : '1';
+            if (summaryAuth) summaryAuth.textContent = auth && auth.value === 'IP' ? 'IP whitelist' : 'Login / Password';
+        }
         var total = $('[data-wallet-total]');
         if (!price) {
             if (total) total.textContent = '--';
@@ -316,6 +362,7 @@
             });
         });
         form.addEventListener('change', function (event) {
+            updateBuySummary(state.quote, form);
             if (event.target.name === 'auth_type') {
                 var ipField = $('[data-ip-field]');
                 var isIp = event.target.value === 'IP';
@@ -323,12 +370,16 @@
             }
             scheduleBuyQuote();
         });
-        form.addEventListener('input', scheduleBuyQuote);
+        form.addEventListener('input', function () {
+            updateBuySummary(state.quote, form);
+            scheduleBuyQuote();
+        });
         var quantity = $('[data-quantity-input]');
         var setQuantity = function (delta) {
             if (!quantity) return;
             var value = Math.max(1, Math.min(100, Number(quantity.value || 1) + delta));
             quantity.value = value;
+            updateBuySummary(state.quote, form);
             scheduleBuyQuote();
         };
         var minus = $('[data-quantity-minus]');
