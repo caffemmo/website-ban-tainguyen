@@ -2069,8 +2069,7 @@ ul.custom-button-list li {
         left: 0;
         height: 42px;
         content: "";
-        background: #17334e;
-        border-bottom: 1px solid #2b6282;
+        background: var(--primary);
         pointer-events: none;
     }
 
