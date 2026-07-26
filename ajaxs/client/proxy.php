@@ -143,13 +143,13 @@ function proxy_sanitized_record($record)
     $extend = isset($record['extendInfo']) && is_array($record['extendInfo']) ? $record['extendInfo'] : [];
     return [
         'id' => (string) (youproxy_find_first_value($record, ['ipAddressId', 'id']) ?: ''),
-        'ip' => (string) (youproxy_find_first_value($record, ['ipAddress', 'ip']) ?: ''),
+        'ip' => (string) (youproxy_find_first_value($record, ['ipAddressIp', 'ipAddress', 'ip']) ?: ''),
         'order_id' => (string) (youproxy_find_first_value($record, ['orderId', 'orderID', 'orderNumber']) ?: ''),
         'country' => (string) (youproxy_find_first_value($record, ['country', 'countryCode']) ?: ''),
         'proxy_type' => (string) (youproxy_find_first_value($record, ['proxyType', 'type']) ?: ''),
         'date_start' => (string) (youproxy_find_first_value($record, ['dateStart', 'startDate']) ?: ''),
         'date_end' => (string) (youproxy_find_first_value($record, ['dateEnd', 'endDate']) ?: ''),
-        'https_port' => (string) (youproxy_find_first_value($record, ['httpsPort']) ?: ''),
+        'https_port' => (string) (youproxy_find_first_value($record, ['httpsPort', 'port']) ?: ''),
         'socks5_port' => (string) (youproxy_find_first_value($record, ['socks5Port', 'socksPort']) ?: ''),
         'mobile_operator' => (string) (youproxy_find_first_value($record, ['mobileOperator']) ?: ''),
         'rotation_time' => (string) (youproxy_find_first_value($record, ['rotationTime']) ?: ''),
@@ -178,9 +178,10 @@ function proxy_owned_access($userId)
 {
     global $CMSNT;
     youproxy_ensure_tables();
-    $rows = $CMSNT->get_list_safe('SELECT `provider_order_id`, `ip_address_ids` FROM `proxy_orders` WHERE `user_id` = ? AND `status` <> ?', [(int) $userId, 'refunded']);
+    $rows = $CMSNT->get_list_safe('SELECT `provider_order_id`, `ip_address_ids`, `provider_payload` FROM `proxy_orders` WHERE `user_id` = ? AND `status` <> ?', [(int) $userId, 'refunded']);
     $ids = [];
     $orders = [];
+    $records = [];
     foreach ($rows as $row) {
         if (!empty($row['provider_order_id'])) {
             $orders[] = (string) $row['provider_order_id'];
@@ -193,8 +194,18 @@ function proxy_owned_access($userId)
                 }
             }
         }
+        $storedPayload = json_decode((string) ($row['provider_payload'] ?? ''), true);
+        if (is_array($storedPayload)) {
+            foreach (youproxy_normalize_ip_records($storedPayload) as $record) {
+                $records[] = $record;
+            }
+        }
     }
-    return ['ids' => array_values(array_unique($ids)), 'orders' => array_values(array_unique($orders))];
+    return [
+        'ids' => array_values(array_unique($ids)),
+        'orders' => array_values(array_unique($orders)),
+        'records' => $records
+    ];
 }
 
 function proxy_filter_owned_records($records, $userId)
@@ -202,11 +213,25 @@ function proxy_filter_owned_records($records, $userId)
     $access = proxy_owned_access($userId);
     $ownedIds = array_fill_keys($access['ids'], true);
     $ownedOrders = array_fill_keys($access['orders'], true);
-    return array_values(array_filter($records, function ($record) use ($ownedIds, $ownedOrders) {
+    $matchesOwnership = function ($record) use ($ownedIds, $ownedOrders) {
         $id = (string) (youproxy_find_first_value($record, ['ipAddressId', 'id']) ?: '');
         $orderId = (string) (youproxy_find_first_value($record, ['orderId', 'orderID', 'orderNumber']) ?: '');
         return ($id !== '' && isset($ownedIds[$id])) || ($orderId !== '' && isset($ownedOrders[$orderId]));
-    }));
+    };
+    $ownedRecords = array_values(array_filter($records, $matchesOwnership));
+    $fallbackRecords = array_values(array_filter($access['records'], $matchesOwnership));
+    $seen = [];
+    $merged = [];
+    foreach (array_merge($ownedRecords, $fallbackRecords) as $record) {
+        $id = (string) (youproxy_find_first_value($record, ['ipAddressId', 'id']) ?: '');
+        $orderId = (string) (youproxy_find_first_value($record, ['orderId', 'orderID', 'orderNumber']) ?: '');
+        $key = $id !== '' ? 'id:' . $id : ($orderId !== '' ? 'order:' . $orderId : 'record:' . count($merged));
+        if (!isset($seen[$key])) {
+            $seen[$key] = true;
+            $merged[] = $record;
+        }
+    }
+    return $merged;
 }
 
 function proxy_price_response($providerResponse)

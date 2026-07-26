@@ -318,22 +318,61 @@ function youproxy_response_options($response, $keys, $codeKeys = [], $labelKeys 
     return youproxy_normalize_option_list($value, $codeKeys, $labelKeys);
 }
 
-function youproxy_collect_ip_records($value, &$records = [])
+function youproxy_find_direct_value($data, $keys)
+{
+    if (!is_array($data)) {
+        return null;
+    }
+    foreach ($keys as $key) {
+        foreach ($data as $currentKey => $value) {
+            if (strcasecmp((string) $currentKey, (string) $key) === 0) {
+                return $value;
+            }
+        }
+    }
+    return null;
+}
+
+function youproxy_collect_ip_records($value, &$records = [], $context = [])
 {
     if (!is_array($value)) {
         return $records;
     }
-    $hasIp = youproxy_find_first_value($value, ['ipAddressId']) !== null || youproxy_find_first_value($value, ['ipAddress']) !== null;
-    if ($hasIp && !isset($value['success'])) {
-        $id = (string) youproxy_find_first_value($value, ['ipAddressId', 'id']);
-        if ($id !== '' && !isset($records[$id])) {
-            $records[$id] = $value;
+
+    // The provider wraps IP records inside order objects. Only direct fields
+    // identify an IP record; recursive lookup would mistake the wrapper for it.
+    $idValue = youproxy_find_direct_value($value, ['ipAddressId', 'id']);
+    $ipValue = youproxy_find_direct_value($value, ['ipAddressIp', 'ipAddress', 'ip']);
+    $hasIp = $idValue !== null || $ipValue !== null;
+    if ($hasIp && !array_key_exists('success', $value)) {
+        $record = $value;
+        $orderId = youproxy_find_direct_value($record, ['orderId', 'orderID', 'orderNumber']);
+        if (($orderId === null || trim((string) $orderId) === '') && !empty($context['orderId'])) {
+            $record['orderId'] = $context['orderId'];
+        }
+        $proxyType = youproxy_find_direct_value($record, ['proxyType', 'type']);
+        if (($proxyType === null || trim((string) $proxyType) === '') && !empty($context['proxyType'])) {
+            $record['proxyType'] = $context['proxyType'];
+        }
+        $id = is_scalar($idValue) ? trim((string) $idValue) : '';
+        if ($id !== '') {
+            $records[$id] = $record;
         }
         return $records;
     }
+
+    $nextContext = $context;
+    $orderId = youproxy_find_direct_value($value, ['orderId', 'orderID', 'orderNumber']);
+    if (is_scalar($orderId) && trim((string) $orderId) !== '') {
+        $nextContext['orderId'] = trim((string) $orderId);
+    }
+    $proxyType = youproxy_find_direct_value($value, ['proxyType', 'type']);
+    if (is_scalar($proxyType) && trim((string) $proxyType) !== '') {
+        $nextContext['proxyType'] = trim((string) $proxyType);
+    }
     foreach ($value as $child) {
         if (is_array($child)) {
-            youproxy_collect_ip_records($child, $records);
+            youproxy_collect_ip_records($child, $records, $nextContext);
         }
     }
     return $records;
@@ -354,11 +393,8 @@ function youproxy_normalize_ip_records($response)
             }
             if ($group !== null) {
                 $groupRecords = [];
-                youproxy_collect_ip_records($group, $groupRecords);
+                youproxy_collect_ip_records($group, $groupRecords, ['proxyType' => $proxyType]);
                 foreach ($groupRecords as $id => $record) {
-                    if (youproxy_find_first_value($record, ['proxyType', 'type']) === null) {
-                        $record['proxyType'] = $proxyType;
-                    }
                     $records[$id] = $record;
                 }
             }
