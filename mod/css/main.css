@@ -2058,7 +2058,7 @@ ul.custom-button-list li {
         background: #101b30;
         font-family: 'Be Vietnam Pro', sans-serif;
         border-right: 1px solid #223650;
-        box-shadow: 10px 0 28px rgba(20, 45, 66, 0.08);
+        box-shadow: none;
         transition: width 220ms ease;
     }
 
