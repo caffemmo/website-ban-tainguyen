@@ -2062,6 +2062,18 @@ ul.custom-button-list li {
         transition: width 220ms ease;
     }
 
+    .desktop-app-sidebar::before {
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        height: 42px;
+        content: "";
+        background: #17334e;
+        border-bottom: 1px solid #2b6282;
+        pointer-events: none;
+    }
+
     .desktop-sidebar-scroll {
         flex: 1;
         overflow-y: auto;
