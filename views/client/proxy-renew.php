@@ -9,7 +9,7 @@ $body = [
     'desc' => __('Gia hạn nhiều proxy cùng lúc và bật tự động gia hạn khi cần.'),
     'keyword' => 'gia hạn proxy'
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=1') . '">';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=2') . '">';
 $body['footer'] = '<script src="' . BASE_URL('mod/js/proxy.js?v=2') . '"></script>';
 
 require_once __DIR__ . '/header.php';

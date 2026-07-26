@@ -9,8 +9,8 @@ $body = [
     'desc' => __('Mua proxy chính hãng với cấu hình rõ ràng và quản lý tập trung.'),
     'keyword' => 'proxy, mua proxy, proxy premium'
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=1') . '">';
-$body['footer'] = '<script src="' . BASE_URL('mod/js/proxy.js?v=2') . '"></script>';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=2') . '">';
+$body['footer'] = '<script src="' . BASE_URL('mod/js/proxy.js?v=3') . '"></script>';
 
 require_once __DIR__ . '/header.php';
 require_once __DIR__ . '/nav.php';
@@ -88,7 +88,10 @@ require_once __DIR__ . '/nav.php';
             <div class="proxy-form-grid">
                 <label class="proxy-control">
                     <span><?= __('Quốc gia'); ?></span>
-                    <select name="country" data-country-select required disabled>
+                    <div class="proxy-country-picker" data-country-options role="listbox" aria-label="Country selection">
+                        <span class="proxy-country-empty" data-country-empty>Loading countries...</span>
+                    </div>
+                    <select class="proxy-country-select" name="country" data-country-select required disabled tabindex="-1" aria-hidden="true">
                         <option value="">Đang tải danh sách...</option>
                     </select>
                 </label>

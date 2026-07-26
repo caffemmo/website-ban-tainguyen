@@ -408,6 +408,106 @@ body {
     background: #f4f7f8;
 }
 
+.proxy-form-grid > .proxy-control:has([data-country-options]) {
+    grid-column: 1 / -1;
+}
+
+.proxy-country-picker {
+    display: grid;
+    max-height: 250px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    overflow-y: auto;
+    padding: 1px 2px 1px 1px;
+}
+
+.proxy-country-option {
+    display: flex;
+    min-width: 0;
+    min-height: 48px;
+    align-items: center;
+    gap: 9px;
+    padding: 10px 11px;
+    border: 1px solid var(--proxy-line);
+    border-radius: 8px;
+    color: var(--proxy-ink);
+    background: #fbfdfe;
+    cursor: pointer;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: left;
+    transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
+}
+
+.proxy-country-option:hover,
+.proxy-country-option:focus-visible {
+    border-color: #6bcfd8;
+    background: #f2fcfd;
+    outline: none;
+}
+
+.proxy-country-option.is-selected {
+    border-color: var(--proxy-cyan);
+    background: #ecfcfd;
+    box-shadow: inset 3px 0 0 var(--proxy-cyan);
+}
+
+.proxy-country-flag {
+    display: grid;
+    width: 25px;
+    height: 20px;
+    flex: 0 0 25px;
+    place-items: center;
+    font-size: 18px;
+    line-height: 1;
+}
+
+.proxy-country-flag i {
+    color: #6e8395;
+    font-size: 15px;
+}
+
+.proxy-country-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.proxy-country-check {
+    display: none;
+    margin-left: auto;
+    color: var(--proxy-blue);
+    font-size: 11px;
+}
+
+.proxy-country-option.is-selected .proxy-country-check {
+    display: block;
+}
+
+.proxy-country-empty {
+    grid-column: 1 / -1;
+    padding: 14px;
+    border: 1px dashed #cddde6;
+    border-radius: 8px;
+    color: var(--proxy-muted);
+    background: #f8fbfc;
+    font-size: 12px;
+    text-align: center;
+}
+
+.proxy-country-select {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    min-height: 1px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    opacity: 0;
+    pointer-events: none;
+}
+
 .proxy-stepper {
     display: flex;
     min-height: 44px;
@@ -1142,6 +1242,18 @@ body {
 
     .proxy-type-card small {
         font-size: 9px;
+    }
+
+    .proxy-country-picker {
+        max-height: 330px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .proxy-country-option {
+        min-height: 46px;
+        padding: 9px;
+        font-size: 11px;
     }
 
     .proxy-auth-row,

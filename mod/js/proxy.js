@@ -35,6 +35,69 @@
             .replace(/'/g, '&#039;');
     }
 
+    var alpha3ToAlpha2 = {
+        AFG: 'AF', ALB: 'AL', DZA: 'DZ', AND: 'AD', AGO: 'AO', ARG: 'AR', ARM: 'AM', AUS: 'AU', AUT: 'AT', AZE: 'AZ',
+        BHR: 'BH', BGD: 'BD', BLR: 'BY', BEL: 'BE', BLZ: 'BZ', BEN: 'BJ', BTN: 'BT', BOL: 'BO', BIH: 'BA', BWA: 'BW', BRA: 'BR', BRN: 'BN',
+        BGR: 'BG', BFA: 'BF', BDI: 'BI', KHM: 'KH', CMR: 'CM', CAN: 'CA', CHL: 'CL', CHN: 'CN', COL: 'CO', CRI: 'CR', HRV: 'HR', CYP: 'CY', CZE: 'CZ',
+        DNK: 'DK', DJI: 'DJ', DOM: 'DO', ECU: 'EC', EGY: 'EG', SLV: 'SV', EST: 'EE', ETH: 'ET', FIN: 'FI', FRA: 'FR', GEO: 'GE', DEU: 'DE', GHA: 'GH',
+        GRC: 'GR', GTM: 'GT', HND: 'HN', HKG: 'HK', HUN: 'HU', ISL: 'IS', IND: 'IN', IDN: 'ID', IRL: 'IE', ISR: 'IL', ITA: 'IT', JAM: 'JM', JPN: 'JP',
+        JOR: 'JO', KAZ: 'KZ', KEN: 'KE', KWT: 'KW', LVA: 'LV', LBN: 'LB', LTU: 'LT', LUX: 'LU', MAC: 'MO', MYS: 'MY', MDV: 'MV', MLT: 'MT', MEX: 'MX',
+        MDA: 'MD', MNG: 'MN', MNE: 'ME', MAR: 'MA', MOZ: 'MZ', MMR: 'MM', NAM: 'NA', NPL: 'NP', NLD: 'NL', NZL: 'NZ', NIC: 'NI', NGA: 'NG', NOR: 'NO',
+        OMN: 'OM', PAK: 'PK', PAN: 'PA', PNG: 'PG', PRY: 'PY', PER: 'PE', PHL: 'PH', POL: 'PL', PRT: 'PT', QAT: 'QA', ROU: 'RO', RUS: 'RU', SAU: 'SA',
+        SRB: 'RS', SGP: 'SG', SVK: 'SK', SVN: 'SI', ZAF: 'ZA', KOR: 'KR', ESP: 'ES', LKA: 'LK', SWE: 'SE', CHE: 'CH', TWN: 'TW', THA: 'TH', TUN: 'TN',
+        TUR: 'TR', UKR: 'UA', ARE: 'AE', GBR: 'GB', USA: 'US', URY: 'UY', UZB: 'UZ', VEN: 'VE', VNM: 'VN', ZMB: 'ZM', ZWE: 'ZW'
+    };
+
+    function countryAlpha2(value) {
+        var code = String(value || '').trim().toUpperCase();
+        return code.length === 2 ? code : (alpha3ToAlpha2[code] || '');
+    }
+
+    function countryFlag(value) {
+        var region = countryAlpha2(value);
+        if (region.length !== 2) {
+            return '<i class="fa-solid fa-globe" aria-hidden="true"></i>';
+        }
+        return String.fromCodePoint(127397 + region.charCodeAt(0))
+            + String.fromCodePoint(127397 + region.charCodeAt(1));
+    }
+
+    function syncCountrySelection(select) {
+        var value = select ? select.value : '';
+        $$('[data-country-option]').forEach(function (button) {
+            var selected = button.getAttribute('data-value') === value;
+            button.classList.toggle('is-selected', selected);
+            button.setAttribute('aria-selected', selected ? 'true' : 'false');
+        });
+    }
+
+    function renderCountryOptions(select, options) {
+        var picker = $('[data-country-options]');
+        if (!picker) {
+            return;
+        }
+        if (!options || !options.length) {
+            picker.innerHTML = '<span class="proxy-country-empty">No countries available</span>';
+            return;
+        }
+        picker.innerHTML = (options || []).map(function (option) {
+            return '<button type="button" class="proxy-country-option" data-country-option data-value="'
+                + escapeHtml(option.value) + '" role="option" aria-selected="false">'
+                + '<span class="proxy-country-flag" aria-hidden="true">' + countryFlag(option.value) + '</span>'
+                + '<span class="proxy-country-name">' + escapeHtml(option.label) + '</span>'
+                + '<i class="fa-solid fa-check proxy-country-check" aria-hidden="true"></i></button>';
+        }).join('');
+        $$('[data-country-option]', picker).forEach(function (button) {
+            button.addEventListener('click', function () {
+                select.value = button.getAttribute('data-value');
+                syncCountrySelection(select);
+                select.dispatchEvent(new Event('change', { bubbles: true }));
+                scheduleBuyQuote();
+            });
+        });
+        syncCountrySelection(select);
+    }
+
     function setStatus(message, type) {
         var status = $('[data-proxy-status]');
         if (!status) {
@@ -98,6 +161,9 @@
         });
         select.innerHTML = html;
         select.disabled = !(options && options.length);
+        if (select.matches('[data-country-select]')) {
+            renderCountryOptions(select, options);
+        }
     }
 
     function isUsableType(details) {
