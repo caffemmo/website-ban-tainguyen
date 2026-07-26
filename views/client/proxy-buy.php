@@ -9,7 +9,7 @@ $body = [
     'desc' => __('Mua proxy chính hãng với cấu hình rõ ràng và quản lý tập trung.'),
     'keyword' => 'proxy, mua proxy, proxy premium'
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=5') . '">';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=6') . '">';
 $body['footer'] = '<script src="' . BASE_URL('mod/js/proxy.js?v=5') . '"></script>';
 
 require_once __DIR__ . '/header.php';
@@ -21,12 +21,6 @@ require_once __DIR__ . '/nav.php';
     data-token="<?= htmlspecialchars($getUser['token'], ENT_QUOTES, 'UTF-8'); ?>"
     data-configured="<?= youproxy_is_configured() ? '1' : '0'; ?>">
     <section class="proxy-page-heading">
-        <img class="proxy-heading-gif" src="<?= BASE_URL('assets/img/bgblink.gif'); ?>" alt="" aria-hidden="true">
-        <div class="proxy-heading-motion" aria-hidden="true">
-            <span class="proxy-heading-ring proxy-heading-ring--one"></span>
-            <span class="proxy-heading-ring proxy-heading-ring--two"></span>
-            <span class="proxy-heading-node"><i class="fa-solid fa-server"></i></span>
-        </div>
         <div>
             <span class="proxy-eyebrow"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Proxy workspace</span>
             <h1><?= __('Mua Proxy'); ?></h1>
@@ -101,7 +95,7 @@ require_once __DIR__ . '/nav.php';
                         <option value="">Đang tải danh sách...</option>
                     </select>
                 </label>
-                <label class="proxy-control">
+                <label class="proxy-control proxy-rent-control">
                     <span><?= __('Thời hạn'); ?></span>
                     <select name="rent_period_days" data-rent-select required disabled>
                         <option value="">Đang tải thời hạn...</option>
@@ -188,13 +182,15 @@ require_once __DIR__ . '/nav.php';
                     <div><span><?= __('Xác thực'); ?></span><strong data-summary-auth>Login / Password</strong></div>
                 </div>
             </div>
-            <dl class="proxy-summary-list">
-                <div><dt><?= __('Loại dịch vụ'); ?></dt><dd><?= __('Proxy premium'); ?></dd></div>
-            </dl>
-            <div class="proxy-summary-total"><span><?= __('Tổng thanh toán'); ?></span><strong data-wallet-total>--</strong></div>
-            <p class="proxy-price-note"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> <?= __('Giá ví đã bao gồm tỷ giá và phí vận hành của website.'); ?></p>
-            <button class="proxy-primary-button" type="button" data-buy-submit disabled><i class="fa-solid fa-lock" aria-hidden="true"></i> <?= __('Đang tải cấu hình'); ?></button>
-            <p class="proxy-secure-note"><i class="fa-solid fa-shield-check" aria-hidden="true"></i> <?= __('Thanh toán an toàn, tự động hoàn tiền nếu giao dịch lỗi.'); ?></p>
+            <div class="proxy-summary-checkout">
+                <dl class="proxy-summary-list">
+                    <div><dt><i class="fa-solid fa-layer-group" aria-hidden="true"></i> <?= __('Loại dịch vụ'); ?></dt><dd><?= __('Proxy premium'); ?></dd></div>
+                </dl>
+                <div class="proxy-summary-total"><span><?= __('Tổng thanh toán'); ?></span><strong data-wallet-total>--</strong></div>
+                <p class="proxy-price-note"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> <?= __('Giá ví đã bao gồm tỷ giá và phí vận hành của website.'); ?></p>
+                <button class="proxy-primary-button" type="button" data-buy-submit disabled><i class="fa-solid fa-lock" aria-hidden="true"></i> <?= __('Đang tải cấu hình'); ?></button>
+                <p class="proxy-secure-note"><i class="fa-solid fa-shield-check" aria-hidden="true"></i> <?= __('Thanh toán an toàn, tự động hoàn tiền nếu giao dịch lỗi.'); ?></p>
+            </div>
         </aside>
     </section>
 </main>

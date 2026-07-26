@@ -56,84 +56,14 @@ body {
     animation: proxy-heading-scan 4.8s ease-in-out infinite;
 }
 
-.proxy-page-heading > div:not(.proxy-heading-motion) {
+.proxy-page-heading > div {
     position: relative;
     z-index: 2;
-}
-
-.proxy-heading-gif {
-    position: absolute;
-    top: -24px;
-    right: 155px;
-    width: 220px;
-    height: 166px;
-    object-fit: cover;
-    opacity: .16;
-    pointer-events: none;
-    filter: hue-rotate(135deg) saturate(1.35);
-}
-
-.proxy-heading-motion {
-    position: absolute;
-    z-index: 1;
-    top: 50%;
-    right: 205px;
-    width: 116px;
-    height: 92px;
-    transform: translateY(-50%);
-    pointer-events: none;
-}
-
-.proxy-heading-node {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    display: grid;
-    width: 42px;
-    height: 42px;
-    place-items: center;
-    border: 1px solid rgba(8, 197, 206, .65);
-    border-radius: 12px;
-    color: #078fa0;
-    background: rgba(231, 251, 252, .9);
-    box-shadow: 0 8px 20px rgba(8, 197, 206, .16);
-    transform: translate(-50%, -50%);
-    animation: proxy-node-float 2.8s ease-in-out infinite;
-}
-
-.proxy-heading-node i {
-    font-size: 17px;
-}
-
-.proxy-heading-ring {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 48px;
-    height: 48px;
-    border: 1px solid rgba(8, 197, 206, .42);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    animation: proxy-heading-ring 2.8s ease-out infinite;
-}
-
-.proxy-heading-ring--two {
-    animation-delay: 1.4s;
 }
 
 @keyframes proxy-heading-scan {
     0%, 25% { transform: translateX(-100%); }
     65%, 100% { transform: translateX(100%); }
-}
-
-@keyframes proxy-node-float {
-    0%, 100% { transform: translate(-50%, -50%) translateY(0); }
-    50% { transform: translate(-50%, -50%) translateY(-5px); }
-}
-
-@keyframes proxy-heading-ring {
-    0% { opacity: .75; transform: translate(-50%, -50%) scale(.62); }
-    70%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(1.8); }
 }
 
 .proxy-eyebrow {
@@ -509,6 +439,10 @@ body {
     grid-column: 1 / -1;
 }
 
+.proxy-rent-control {
+    grid-column: 1 / -1;
+}
+
 .proxy-country-picker {
     display: grid;
     max-height: 250px;
@@ -789,6 +723,7 @@ body {
     min-height: 0;
     padding: 14px;
     overflow: hidden;
+    margin-bottom: 16px;
     border: 1px solid #b9dfe5;
     color: var(--proxy-ink);
     background: #f4fbfc;
@@ -884,12 +819,17 @@ body {
     z-index: 1;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 9px;
+    gap: 8px;
     padding-top: 12px;
 }
 
 .proxy-summary-facts > div {
     min-width: 0;
+    min-height: 42px;
+    padding: 8px 9px;
+    border: 1px solid #dcecef;
+    border-radius: 6px;
+    background: #fff;
 }
 
 .proxy-summary-facts span,
@@ -929,15 +869,22 @@ body {
     margin: 18px 0;
 }
 
+.proxy-summary-checkout {
+    padding-top: 15px;
+    border-top: 1px solid #edf2f4;
+}
+
 .proxy-summary-list {
     margin: 0;
 }
 
 .proxy-summary-list > div {
     display: flex;
+    min-height: 42px;
+    align-items: center;
     justify-content: space-between;
     gap: 12px;
-    padding: 10px 0;
+    padding: 8px 0;
     border-bottom: 1px solid #edf2f4;
 }
 
@@ -948,7 +895,14 @@ body {
 }
 
 .proxy-summary-list dt {
+    display: inline-flex;
+    align-items: center;
     color: var(--proxy-muted);
+}
+
+.proxy-summary-list dt i {
+    margin-right: 6px;
+    color: var(--proxy-cyan);
 }
 
 .proxy-summary-list dd {
@@ -1438,11 +1392,6 @@ body {
         font-size: 12px;
     }
 
-    .proxy-heading-gif,
-    .proxy-heading-motion {
-        display: none;
-    }
-
     .proxy-wallet-card {
         width: 100%;
         align-items: flex-start;
@@ -1641,16 +1590,9 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
     .proxy-page-heading::after,
-    .proxy-heading-gif,
-    .proxy-heading-node,
-    .proxy-heading-ring,
     .proxy-summary-preview::after,
     .proxy-summary-preview-kicker i {
         animation: none;
-    }
-
-    .proxy-heading-gif {
-        visibility: hidden;
     }
 
     .proxy-type-card,
