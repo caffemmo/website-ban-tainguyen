@@ -249,8 +249,8 @@ if ($action === 'metadata') {
         $result['types'][$typeCode] = [
             'value' => $typeCode,
             'label' => $type['label'],
-            'countries' => $countryResponse['success'] ? youproxy_response_options($countryResponse, ['countries', 'items'], ['alpha3', 'code'], ['name', 'title']) : [],
-            'rent_periods' => $rentResponse['success'] ? youproxy_response_options($rentResponse, ['rentPeriods', 'periods', 'items'], ['days', 'value', 'code'], ['label', 'name', 'days']) : []
+            'countries' => $countryResponse['success'] ? youproxy_response_options($countryResponse, ['countries', 'items'], ['alpha3code', 'alpha3', 'countryCode', 'code'], ['name', 'countryName', 'title']) : [],
+            'rent_periods' => $rentResponse['success'] ? youproxy_response_options($rentResponse, ['rentPeriodDays', 'rentPeriods', 'periods', 'items'], ['days', 'rentPeriodDays', 'value', 'code'], ['label', 'name', 'days', 'rentPeriodDays']) : []
         ];
     }
     $mobileResponse = youproxy_mobile_operators();

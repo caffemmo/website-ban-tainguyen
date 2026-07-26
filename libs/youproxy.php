@@ -284,8 +284,14 @@ function youproxy_normalize_option_list($value, $codeKeys = [], $labelKeys = [])
         if (!is_array($item)) {
             continue;
         }
-        $code = youproxy_find_first_value($item, array_merge($codeKeys, ['code', 'id', 'value', 'alpha3', 'proxyType', 'days']));
-        $label = youproxy_find_first_value($item, array_merge($labelKeys, ['name', 'title', 'label', 'description', 'days']));
+        $code = youproxy_find_first_value($item, array_merge($codeKeys, [
+            'code', 'id', 'value', 'alpha3', 'alpha3code', 'countryCode',
+            'proxyType', 'days', 'rentPeriodDays', 'rentPeriod', 'period', 'duration'
+        ]));
+        $label = youproxy_find_first_value($item, array_merge($labelKeys, [
+            'name', 'title', 'label', 'description', 'countryName',
+            'country', 'days', 'rentPeriodDays', 'rentPeriod', 'period', 'duration'
+        ]));
         if (is_array($code) || $code === null || trim((string) $code) === '') {
             continue;
         }

@@ -100,6 +100,22 @@
         select.disabled = !(options && options.length);
     }
 
+    function isUsableType(details) {
+        return !!details && Array.isArray(details.countries) && details.countries.length > 0
+            && Array.isArray(details.rent_periods) && details.rent_periods.length > 0;
+    }
+
+    function updateBuyButtonState() {
+        var submit = $('[data-buy-submit]');
+        if (!submit || submit.dataset.originalText) {
+            return;
+        }
+        submit.disabled = !state.quote;
+        submit.innerHTML = state.quote
+            ? '<i class="fa-solid fa-lock-open" aria-hidden="true"></i> Mua proxy'
+            : '<i class="fa-solid fa-lock" aria-hidden="true"></i> Chọn cấu hình';
+    }
+
     function selectedType() {
         var input = $('[data-proxy-type-input]');
         return input ? input.value : '';
@@ -118,6 +134,9 @@
             setSelectOptions($('[data-country-select]'), details.countries, 'Chọn quốc gia');
             setSelectOptions($('[data-rent-select]'), details.rent_periods, 'Chọn thời hạn');
         }
+        state.quote = null;
+        updateBuySummary(null);
+        updateBuyButtonState();
         var isMobile = type === 'MOBILE';
         $$('[data-mobile-field]').forEach(function (field) {
             field.hidden = !isMobile;
@@ -139,7 +158,9 @@
             var response = await request('metadata');
             state.metadata = response.data;
             var types = state.metadata.types || {};
-            var available = Object.keys(types);
+            var available = Object.keys(types).filter(function (type) {
+                return isUsableType(types[type]);
+            });
             $$('[data-proxy-type]').forEach(function (card) {
                 var type = card.getAttribute('data-proxy-type');
                 card.disabled = available.indexOf(type) === -1;
@@ -155,12 +176,12 @@
             if (mobileSelect) {
                 mobileSelect.disabled = current !== 'MOBILE';
             }
+            updateBuyButtonState();
+        } catch (error) {
             var submit = $('[data-buy-submit]');
             if (submit) {
-                submit.disabled = false;
-                submit.innerHTML = '<i class="fa-solid fa-lock-open" aria-hidden="true"></i> Mua proxy';
+                submit.disabled = true;
             }
-        } catch (error) {
             setStatus(error.message, 'error');
         }
     }
@@ -189,17 +210,22 @@
         }
         var payload = formPayload(form);
         if (!payload.country || !payload.rent_period_days || !payload.goal) {
+            state.quote = null;
             updateBuySummary(null);
+            updateBuyButtonState();
             return;
         }
         try {
             var response = await request('quote', payload);
             state.quote = response.data;
             updateBuySummary(state.quote, form);
+            updateBuyButtonState();
             setStatus('', 'info');
         } catch (error) {
             state.quote = null;
             updateBuySummary(null);
+            updateBuyButtonState();
+            setStatus(error.message, 'error');
         }
     }
 
