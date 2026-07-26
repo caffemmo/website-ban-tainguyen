@@ -84,11 +84,6 @@
         return payload;
     }
 
-    function number(value, fallback) {
-        var parsed = Number(value);
-        return Number.isFinite(parsed) ? parsed : (fallback || 0);
-    }
-
     function moneyLabel(value) {
         return value === null || value === undefined || value === '' ? '--' : String(value);
     }
@@ -151,7 +146,7 @@
                 card.hidden = available.indexOf(type) === -1;
             });
             if (!available.length) {
-                throw new Error('Nhà cung cấp chưa trả về loại proxy khả dụng.');
+                throw new Error('Dịch vụ proxy chưa trả về loại proxy khả dụng.');
             }
             var current = available.indexOf(selectedType()) !== -1 ? selectedType() : available[0];
             setSelectedType(current);
@@ -171,22 +166,12 @@
     }
 
     function updateBuySummary(price, form) {
-        var providerPrice = $('[data-provider-price]');
         var total = $('[data-wallet-total]');
-        var after = $('[data-wallet-after]');
         if (!price) {
-            if (providerPrice) providerPrice.textContent = '-- USD';
             if (total) total.textContent = '--';
-            if (after) after.textContent = '--';
             return;
         }
-        if (providerPrice) providerPrice.textContent = number(price.provider_price).toFixed(2) + ' ' + (price.provider_currency || 'USD');
         if (total) total.textContent = moneyLabel(price.wallet_label);
-        if (after && form) {
-            var wallet = Number(($('[data-wallet-balance]') || {}).textContent || 0);
-            after.textContent = price.wallet_label || '--';
-            after.title = 'Số dư hiện tại: ' + wallet;
-        }
     }
 
     function scheduleBuyQuote() {
@@ -305,13 +290,13 @@
         var total = $('[data-stat-total]');
         var active = $('[data-stat-active]');
         var expiring = $('[data-stat-expiring]');
-        var providerBalance = $('[data-stat-provider-balance]');
+        var systemStatus = $('[data-stat-system-status]');
         if (total) total.textContent = stats.total || 0;
         if (active) active.textContent = stats.active || 0;
         if (expiring) expiring.textContent = stats.expiring || 0;
-        if (providerBalance) providerBalance.textContent = stats.provider_balance_label || '--';
+        if (systemStatus) systemStatus.textContent = stats.status_label || 'Sẵn sàng';
         var caption = $('[data-list-caption]');
-        if (caption) caption.textContent = state.records.length ? state.records.length + ' proxy đang được quản lý từ tài khoản nhà cung cấp.' : 'Chưa có proxy nào trong tài khoản.';
+        if (caption) caption.textContent = state.records.length ? state.records.length + ' proxy đang được quản lý.' : 'Chưa có proxy nào trong tài khoản.';
         if (!state.records.length) {
             tableWrap.innerHTML = '<div class="proxy-empty-state"><i class="fa-solid fa-server" aria-hidden="true"></i><strong>Chưa có proxy để hiển thị</strong><small>Hãy mua proxy mới để bắt đầu quản lý tại đây.</small><a class="proxy-secondary-button" href="' + escapeHtml((window.baseUrl || '/') + 'client/proxy-buy') + '"><i class="fa-solid fa-plus" aria-hidden="true"></i> Mua proxy</a></div>';
             return;
@@ -486,9 +471,7 @@
         try {
             var response = await request('renew_quote', { proxy_type: recordProxyType(selected[0]), ip_address_ids: selected.map(function (record) { return record.id; }), rent_period_days: rent.value });
             state.quote = response.data;
-            var provider = $('[data-provider-price]');
             var total = $('[data-wallet-total]');
-            if (provider) provider.textContent = number(state.quote.provider_price).toFixed(2) + ' ' + (state.quote.provider_currency || 'USD');
             if (total) total.textContent = moneyLabel(state.quote.wallet_label);
             setStatus('', 'info');
             if ($('[data-renew-submit]')) $('[data-renew-submit]').disabled = false;
@@ -549,7 +532,7 @@
     }
 
     if (!configured) {
-        setStatus('API YouProxy chưa được cấu hình. Giao diện đã sẵn sàng, chờ quản trị viên thêm khóa vào .env.', 'info');
+        setStatus('Dịch vụ proxy chưa sẵn sàng. Vui lòng thử lại sau hoặc liên hệ hỗ trợ.', 'info');
     }
     if (page === 'buy') initBuy();
     if (page === 'list') initList();

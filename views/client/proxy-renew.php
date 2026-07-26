@@ -26,7 +26,7 @@ require_once __DIR__ . '/nav.php';
     </section>
     <div class="proxy-status" data-proxy-status role="status" aria-live="polite" hidden></div>
     <?php if (!youproxy_is_configured()): ?>
-        <section class="proxy-setup-banner"><div class="proxy-setup-icon"><i class="fa-solid fa-plug-circle-xmark" aria-hidden="true"></i></div><div><strong><?= __('Dịch vụ proxy đang chờ cấu hình'); ?></strong><p><?= __('Thêm YOUPROXY_API_KEY vào .env trên cPanel để tải danh sách.'); ?></p></div></section>
+        <section class="proxy-setup-banner"><div class="proxy-setup-icon"><i class="fa-solid fa-plug-circle-xmark" aria-hidden="true"></i></div><div><strong><?= __('Dịch vụ proxy đang chờ cấu hình'); ?></strong><p><?= __('Dịch vụ đang được chuẩn bị. Vui lòng thử lại sau ít phút hoặc liên hệ hỗ trợ.'); ?></p></div></section>
     <?php endif; ?>
 
     <section class="proxy-renew-layout">
@@ -39,7 +39,7 @@ require_once __DIR__ . '/nav.php';
             <div class="proxy-summary-top"><span class="proxy-step">02</span><div><h2><?= __('Thiết lập gia hạn'); ?></h2><p><?= __('Báo giá sẽ cập nhật theo lựa chọn.'); ?></p></div></div>
             <label class="proxy-control"><span><?= __('Gia hạn thêm'); ?></span><select data-renew-rent disabled><option value="">Chọn thời hạn</option></select></label>
             <div class="proxy-summary-visual proxy-summary-visual--compact"><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i><span data-renew-selected>0 proxy được chọn</span></div>
-            <dl class="proxy-summary-list"><div><dt><?= __('Giá nhà cung cấp'); ?></dt><dd data-provider-price>-- USD</dd></div><div><dt><?= __('Tổng thanh toán'); ?></dt><dd data-wallet-total>--</dd></div></dl>
+            <dl class="proxy-summary-list"><div><dt><?= __('Tổng thanh toán'); ?></dt><dd data-wallet-total>--</dd></div></dl>
             <button class="proxy-secondary-button proxy-full-button" type="button" data-renew-quote disabled><i class="fa-solid fa-calculator" aria-hidden="true"></i> <?= __('Tính giá'); ?></button>
             <button class="proxy-primary-button" type="button" data-renew-submit disabled><i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i> <?= __('Gia hạn ngay'); ?></button>
             <label class="proxy-check-row proxy-check-row--summary"><input type="checkbox" data-renew-auto><span class="proxy-check-box"><i class="fa-solid fa-check" aria-hidden="true"></i></span><span><strong><?= __('Tự động gia hạn'); ?></strong><small><?= __('Áp dụng cho nhóm đã chọn'); ?></small></span></label>

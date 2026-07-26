@@ -5,8 +5,8 @@ if (!defined('IN_SITE')) {
 }
 
 /**
- * YouProxy integration helpers.
- * The provider key is intentionally read from the server environment only.
+ * Proxy integration helpers.
+ * Provider credentials are read from admin settings first, then server env.
  */
 function youproxy_env($key, $fallback = '')
 {
@@ -17,11 +17,41 @@ function youproxy_env($key, $fallback = '')
     return $value !== false && trim((string) $value) !== '' ? trim((string) $value) : $fallback;
 }
 
+function youproxy_db_setting($name, $fallback = '')
+{
+    global $CMSNT;
+    static $cache = [];
+    if (array_key_exists($name, $cache)) {
+        return $cache[$name];
+    }
+    if (!isset($CMSNT) || !is_object($CMSNT)) {
+        return $fallback;
+    }
+    $row = $CMSNT->get_row_safe('SELECT `value` FROM `settings` WHERE `name` = ? LIMIT 1', [$name]);
+    $cache[$name] = $row && isset($row['value']) ? trim((string) $row['value']) : $fallback;
+    return $cache[$name];
+}
+
 function youproxy_config()
 {
     global $CMSNT;
 
-    $usdRate = (float) youproxy_env('YOUPROXY_USD_RATE', '0');
+    $apiKey = youproxy_db_setting('youproxy_api_key');
+    $baseUrl = youproxy_db_setting('youproxy_api_base_url');
+    $usdRate = (float) youproxy_db_setting('youproxy_usd_rate', '0');
+    $markupSetting = youproxy_db_setting('youproxy_markup_percent', '');
+    $markup = $markupSetting !== '' ? (float) $markupSetting : 0;
+    $timeout = (int) youproxy_db_setting('youproxy_timeout', '0');
+
+    if ($apiKey === '') {
+        $apiKey = youproxy_env('YOUPROXY_API_KEY');
+    }
+    if ($baseUrl === '') {
+        $baseUrl = youproxy_env('YOUPROXY_API_BASE_URL', 'https://youproxy.io');
+    }
+    if ($usdRate <= 0) {
+        $usdRate = (float) youproxy_env('YOUPROXY_USD_RATE', '0');
+    }
     if ($usdRate <= 0 && isset($CMSNT)) {
         $usdRate = (float) $CMSNT->site('usd_rate');
     }
@@ -29,13 +59,18 @@ function youproxy_config()
         $usdRate = 25000;
     }
 
-    $markup = (float) youproxy_env('YOUPROXY_MARKUP_PERCENT', '20');
+    if ($markupSetting === '') {
+        $markup = (float) youproxy_env('YOUPROXY_MARKUP_PERCENT', '20');
+    }
+    if ($timeout <= 0) {
+        $timeout = (int) youproxy_env('YOUPROXY_TIMEOUT', '20');
+    }
     return [
-        'api_key' => youproxy_env('YOUPROXY_API_KEY'),
-        'base_url' => rtrim(youproxy_env('YOUPROXY_API_BASE_URL', 'https://youproxy.io'), '/'),
+        'api_key' => $apiKey,
+        'base_url' => rtrim($baseUrl, '/'),
         'usd_rate' => $usdRate,
         'markup_percent' => max(0, $markup),
-        'timeout' => max(5, (int) youproxy_env('YOUPROXY_TIMEOUT', '20'))
+        'timeout' => max(5, $timeout)
     ];
 }
 
@@ -45,42 +80,37 @@ function youproxy_is_configured()
     return $config['api_key'] !== '' && filter_var($config['base_url'], FILTER_VALIDATE_URL) !== false;
 }
 
-function youproxy_error_text($response, $fallback = 'Nhà cung cấp proxy không phản hồi hợp lệ.')
+function youproxy_error_text($response, $fallback = 'Không thể hoàn tất yêu cầu proxy.')
 {
     $code = (string) youproxy_find_first_value($response, ['errorCode', 'code', 'error_code']);
-    $message = youproxy_find_first_value($response, ['error', 'message', 'errorMessage', 'description']);
-    if (is_array($message)) {
-        $message = '';
-    }
-    $message = trim((string) $message);
     $map = [
-        '2' => 'API key không hợp lệ.',
-        '3' => 'IP máy chủ chưa được cấp quyền gọi API.',
+        '2' => 'Dịch vụ proxy chưa sẵn sàng.',
+        '3' => 'Dịch vụ proxy hiện không khả dụng.',
         '4' => 'Loại proxy không hợp lệ.',
         '6' => 'Quốc gia không hợp lệ.',
         '7' => 'Quốc gia này hiện không được cung cấp.',
         '10' => 'Kiểu xác thực không hợp lệ.',
         '11' => 'Thời hạn proxy không hợp lệ.',
         '14' => 'Mục đích sử dụng không được để trống.',
-        '16' => 'Tài khoản nhà cung cấp không đủ số dư.',
+        '16' => 'Dịch vụ proxy hiện không thể xử lý đơn.',
         '19' => 'Số lượng proxy không hợp lệ.',
         '23' => 'Địa chỉ IP xác thực không hợp lệ.',
         '24' => 'Danh sách proxy được chọn không hợp lệ.',
         '25' => 'Mã đơn hàng không hợp lệ.',
         '28' => 'Với loại proxy này cần chọn đủ các IP trong cùng đơn.',
-        '35' => 'Nhà cung cấp báo lỗi không xác định.'
+        '35' => 'Dịch vụ proxy báo lỗi không xác định.'
     ];
     if ($code !== '' && isset($map[$code])) {
         return $map[$code];
     }
-    return $message !== '' ? $message : $fallback;
+    return $fallback;
 }
 
 function youproxy_request($method, $endpoint, $query = [], $payload = null)
 {
     $config = youproxy_config();
     if ($config['api_key'] === '') {
-        return ['ok' => false, 'http_code' => 0, 'body' => null, 'error' => 'API YouProxy chưa được cấu hình trên server.'];
+        return ['ok' => false, 'http_code' => 0, 'body' => null, 'error' => 'Dịch vụ proxy chưa được cấu hình trên server.'];
     }
     if (!function_exists('curl_init')) {
         return ['ok' => false, 'http_code' => 0, 'body' => null, 'error' => 'Máy chủ chưa bật PHP cURL.'];
@@ -117,11 +147,11 @@ function youproxy_request($method, $endpoint, $query = [], $payload = null)
     curl_close($curl);
 
     if ($raw === false || $curlError !== '') {
-        return ['ok' => false, 'http_code' => $httpCode, 'body' => null, 'error' => 'Không thể kết nối đến nhà cung cấp proxy.'];
+        return ['ok' => false, 'http_code' => $httpCode, 'body' => null, 'error' => 'Không thể kết nối đến dịch vụ proxy.'];
     }
     $body = json_decode($raw, true);
     if (!is_array($body)) {
-        return ['ok' => false, 'http_code' => $httpCode, 'body' => null, 'error' => 'Phản hồi nhà cung cấp không phải JSON hợp lệ.'];
+        return ['ok' => false, 'http_code' => $httpCode, 'body' => null, 'error' => 'Dịch vụ proxy trả về dữ liệu không hợp lệ.'];
     }
     return ['ok' => $httpCode >= 200 && $httpCode < 300, 'http_code' => $httpCode, 'body' => $body, 'error' => ''];
 }

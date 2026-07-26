@@ -7,7 +7,7 @@ require_once __DIR__ . '/../../libs/youproxy.php';
 $body = [
     'title' => __('Mua Proxy') . ' | ' . $CMSNT->site('title'),
     'desc' => __('Mua proxy chính hãng với cấu hình rõ ràng và quản lý tập trung.'),
-    'keyword' => 'proxy, mua proxy, YouProxy'
+    'keyword' => 'proxy, mua proxy, proxy premium'
 ];
 $body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=1') . '">';
 $body['footer'] = '<script src="' . BASE_URL('mod/js/proxy.js?v=1') . '"></script>';
@@ -40,7 +40,7 @@ require_once __DIR__ . '/nav.php';
             <div class="proxy-setup-icon"><i class="fa-solid fa-plug-circle-xmark" aria-hidden="true"></i></div>
             <div>
                 <strong><?= __('Dịch vụ proxy đang chờ cấu hình'); ?></strong>
-                <p><?= __('Quản trị viên cần thêm YOUPROXY_API_KEY vào file .env trên cPanel trước khi sử dụng.'); ?></p>
+                <p><?= __('Dịch vụ đang được chuẩn bị. Vui lòng thử lại sau ít phút hoặc liên hệ hỗ trợ.'); ?></p>
             </div>
         </section>
     <?php endif; ?>
@@ -161,18 +161,16 @@ require_once __DIR__ . '/nav.php';
         <aside class="proxy-panel proxy-order-summary" aria-label="<?= __('Tóm tắt đơn hàng'); ?>">
             <div class="proxy-summary-top">
                 <span class="proxy-step">02</span>
-                <div><h2><?= __('Tóm tắt đơn'); ?></h2><p><?= __('Giá được tính từ API nhà cung cấp.'); ?></p></div>
+                <div><h2><?= __('Tóm tắt đơn'); ?></h2><p><?= __('Tổng tiền được cập nhật theo cấu hình hiện tại.'); ?></p></div>
             </div>
             <div class="proxy-summary-visual"><i class="fa-solid fa-server" aria-hidden="true"></i><span><?= __('Sẵn sàng cấp proxy'); ?></span></div>
             <dl class="proxy-summary-list">
-                <div><dt><?= __('Nhà cung cấp'); ?></dt><dd>YouProxy</dd></div>
-                <div><dt><?= __('Giá nhà cung cấp'); ?></dt><dd data-provider-price>-- USD</dd></div>
-                <div><dt><?= __('Số dư sau thanh toán'); ?></dt><dd data-wallet-after>--</dd></div>
+                <div><dt><?= __('Loại dịch vụ'); ?></dt><dd><?= __('Proxy premium'); ?></dd></div>
             </dl>
             <div class="proxy-summary-total"><span><?= __('Tổng thanh toán'); ?></span><strong data-wallet-total>--</strong></div>
             <p class="proxy-price-note"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> <?= __('Giá ví đã bao gồm tỷ giá và phí vận hành của website.'); ?></p>
             <button class="proxy-primary-button" type="button" data-buy-submit disabled><i class="fa-solid fa-lock" aria-hidden="true"></i> <?= __('Đang tải cấu hình'); ?></button>
-            <p class="proxy-secure-note"><i class="fa-solid fa-shield-check" aria-hidden="true"></i> <?= __('Thanh toán an toàn, tự động hoàn tiền nếu nhà cung cấp lỗi.'); ?></p>
+            <p class="proxy-secure-note"><i class="fa-solid fa-shield-check" aria-hidden="true"></i> <?= __('Thanh toán an toàn, tự động hoàn tiền nếu giao dịch lỗi.'); ?></p>
         </aside>
     </section>
 </main>

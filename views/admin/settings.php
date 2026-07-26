@@ -45,6 +45,7 @@ $base_settings_url = base_url_admin('settings');
 $tab_config = [
     'general'              => ['file' => 'general.php',              'icon' => 'bx bx-cog',                                            'label' => __('Cài đặt chung')],
     'connection'           => ['file' => 'connection.php',           'icon' => 'bx bx-plug',                                           'label' => __('Kết nối')],
+    'proxy'                => ['file' => 'proxy.php',                'icon' => 'fa-solid fa-server',                                 'label' => __('Proxy')],
     'telegram-template'    => ['file' => 'telegram-template.php',    'icon' => 'fa-brands fa-telegram',                                'label' => __('Telegram Template')],
     'mail-template'        => ['file' => 'mail-template.php',        'icon' => 'fa-solid fa-envelope',                                 'label' => __('Mail Template')],
     'security'             => ['file' => 'security.php',             'icon' => 'fa-solid fa-shield-halved',                            'label' => __('Bảo mật')],

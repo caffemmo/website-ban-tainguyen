@@ -213,14 +213,8 @@ function proxy_price_response($providerResponse)
 {
     $price = youproxy_price_context($providerResponse);
     return [
-        'provider_price' => $price['provider_price'],
-        'provider_currency' => $price['provider_currency'],
         'wallet_amount' => $price['wallet_amount'],
-        'wallet_label' => $price['wallet_label'],
-        'usd_rate' => $price['usd_rate'],
-        'markup_percent' => $price['markup_percent'],
-        'discount' => youproxy_find_first_value($providerResponse, ['discount']) ?: 0,
-        'warnings' => youproxy_find_first_value($providerResponse, ['warnings']) ?: []
+        'wallet_label' => $price['wallet_label']
     ];
 }
 
@@ -234,7 +228,7 @@ if (empty($getUser['token']) || !hash_equals((string) $getUser['token'], proxy_v
     proxy_json(['success' => false, 'message' => 'Phiên làm việc không hợp lệ, vui lòng tải lại trang.'], 419);
 }
 if (!youproxy_is_configured()) {
-    proxy_json(['success' => false, 'message' => 'Dịch vụ proxy chưa được cấu hình API trên server.'], 503);
+    proxy_json(['success' => false, 'message' => 'Dịch vụ proxy chưa sẵn sàng.'], 503);
 }
 
 if ($action === 'metadata') {
@@ -243,7 +237,7 @@ if ($action === 'metadata') {
         proxy_json(['success' => false, 'message' => youproxy_error_text($typeResponse)], 502);
     }
     $types = youproxy_response_options($typeResponse, ['proxyTypes', 'types', 'items'], ['proxyType', 'code'], ['name', 'title']);
-    $result = ['types' => [], 'mobile_operators' => [], 'settings' => ['usd_rate' => youproxy_config()['usd_rate'], 'markup_percent' => youproxy_config()['markup_percent']]];
+    $result = ['types' => [], 'mobile_operators' => [], 'settings' => []];
     foreach ($types as $type) {
         $typeCode = strtoupper($type['value']);
         if (!in_array($typeCode, ['IPV4', 'IPV6', 'MOBILE', 'ISP'], true)) {
@@ -289,7 +283,7 @@ if ($action === 'buy') {
     }
     $price = youproxy_price_context($quote);
     if ($price['provider_price'] <= 0 || $price['wallet_amount'] <= 0) {
-        proxy_json(['success' => false, 'message' => 'Nhà cung cấp chưa trả về giá hợp lệ cho cấu hình này.'], 502);
+        proxy_json(['success' => false, 'message' => 'Dịch vụ proxy chưa trả về giá hợp lệ cho cấu hình này.'], 502);
     }
     if ((float) $getUser['money'] < $price['wallet_amount']) {
         proxy_json(['success' => false, 'message' => 'Số dư ví không đủ. Vui lòng nạp thêm tiền trước khi mua proxy.'], 422);
@@ -297,7 +291,7 @@ if ($action === 'buy') {
 
     youproxy_ensure_tables();
     $transactionId = 'proxy_' . bin2hex(random_bytes(8));
-    $debitReason = 'Mua proxy YouProxy ' . $validated['payload']['proxyType'] . ' (' . $validated['payload']['quantity'] . ' IP)';
+    $debitReason = 'Mua proxy ' . $validated['payload']['proxyType'] . ' (' . $validated['payload']['quantity'] . ' IP)';
     $userModel = new users();
     if (!$userModel->RemoveCredits($getUser['id'], $price['wallet_amount'], $debitReason, $transactionId)) {
         proxy_json(['success' => false, 'message' => 'Không thể trừ tiền trong ví, vui lòng thử lại.'], 500);
@@ -305,7 +299,7 @@ if ($action === 'buy') {
 
     $providerOrder = youproxy_create_order($validated['payload']);
     if (!$providerOrder['success']) {
-        $userModel->RefundCredits($getUser['id'], $price['wallet_amount'], 'Hoàn tiền mua proxy do nhà cung cấp lỗi', $transactionId . '_refund');
+        $userModel->RefundCredits($getUser['id'], $price['wallet_amount'], 'Hoàn tiền mua proxy do giao dịch lỗi', $transactionId . '_refund');
         proxy_json(['success' => false, 'message' => youproxy_error_text($providerOrder, 'Mua proxy thất bại, hệ thống đã hoàn tiền vào ví.')], 502);
     }
 
@@ -383,12 +377,9 @@ if ($action === 'list') {
             }
         }
     }
-    $balanceResponse = youproxy_balance();
-    $providerBalance = $balanceResponse['success'] ? youproxy_extract_balance($balanceResponse) : null;
-    $balanceLabel = $providerBalance !== null ? '$' . number_format($providerBalance, 2, '.', ',') : '--';
     proxy_json(['success' => true, 'data' => [
         'records' => array_map('proxy_sanitized_record', $records),
-        'stats' => ['total' => count($records), 'active' => $active, 'expiring' => $expiring, 'provider_balance' => $providerBalance, 'provider_balance_label' => $balanceLabel]
+        'stats' => ['total' => count($records), 'active' => $active, 'expiring' => $expiring, 'status_label' => 'Sẵn sàng']
     ]]);
 }
 
@@ -417,24 +408,25 @@ if ($action === 'renew_quote' || $action === 'renew') {
     if (!$quote['success']) {
         proxy_json(['success' => false, 'message' => youproxy_error_text($quote)], 422);
     }
+    $priceContext = youproxy_price_context($quote);
     $price = proxy_price_response($quote);
     if ($action === 'renew_quote') {
         proxy_json(['success' => true, 'data' => $price]);
     }
-    if ((float) $getUser['money'] < (float) $price['wallet_amount']) {
+    if ((float) $getUser['money'] < (float) $priceContext['wallet_amount']) {
         proxy_json(['success' => false, 'message' => 'Số dư ví không đủ để gia hạn nhóm proxy đã chọn.'], 422);
     }
-    if ((float) $price['provider_price'] <= 0 || (float) $price['wallet_amount'] <= 0) {
-        proxy_json(['success' => false, 'message' => 'Nhà cung cấp chưa trả về giá gia hạn hợp lệ.'], 502);
+    if ((float) $priceContext['provider_price'] <= 0 || (float) $priceContext['wallet_amount'] <= 0) {
+        proxy_json(['success' => false, 'message' => 'Dịch vụ proxy chưa trả về giá gia hạn hợp lệ.'], 502);
     }
     $transactionId = 'proxy_extend_' . bin2hex(random_bytes(8));
     $userModel = new users();
-    if (!$userModel->RemoveCredits($getUser['id'], $price['wallet_amount'], 'Gia hạn proxy YouProxy (' . count($allowedIds) . ' IP)', $transactionId)) {
+    if (!$userModel->RemoveCredits($getUser['id'], $priceContext['wallet_amount'], 'Gia hạn proxy (' . count($allowedIds) . ' IP)', $transactionId)) {
         proxy_json(['success' => false, 'message' => 'Không thể trừ tiền trong ví, vui lòng thử lại.'], 500);
     }
     $extendResponse = youproxy_extend($payload);
     if (!$extendResponse['success']) {
-        $userModel->RefundCredits($getUser['id'], $price['wallet_amount'], 'Hoàn tiền gia hạn proxy do nhà cung cấp lỗi', $transactionId . '_refund');
+        $userModel->RefundCredits($getUser['id'], $priceContext['wallet_amount'], 'Hoàn tiền gia hạn proxy do giao dịch lỗi', $transactionId . '_refund');
         proxy_json(['success' => false, 'message' => youproxy_error_text($extendResponse, 'Gia hạn thất bại, hệ thống đã hoàn tiền vào ví.')], 502);
     }
     proxy_json(['success' => true, 'message' => 'Gia hạn proxy thành công.', 'data' => [

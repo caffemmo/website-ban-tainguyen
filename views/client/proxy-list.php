@@ -30,19 +30,19 @@ require_once __DIR__ . '/nav.php';
     </section>
     <div class="proxy-status" data-proxy-status role="status" aria-live="polite" hidden></div>
     <?php if (!youproxy_is_configured()): ?>
-        <section class="proxy-setup-banner"><div class="proxy-setup-icon"><i class="fa-solid fa-plug-circle-xmark" aria-hidden="true"></i></div><div><strong><?= __('Dịch vụ proxy đang chờ cấu hình'); ?></strong><p><?= __('Thêm YOUPROXY_API_KEY vào .env trên cPanel để tải danh sách.'); ?></p></div></section>
+        <section class="proxy-setup-banner"><div class="proxy-setup-icon"><i class="fa-solid fa-plug-circle-xmark" aria-hidden="true"></i></div><div><strong><?= __('Dịch vụ proxy đang chờ cấu hình'); ?></strong><p><?= __('Dịch vụ đang được chuẩn bị. Vui lòng thử lại sau ít phút hoặc liên hệ hỗ trợ.'); ?></p></div></section>
     <?php endif; ?>
 
     <section class="proxy-stats-grid" aria-label="<?= __('Tổng quan proxy'); ?>">
         <article class="proxy-stat-card"><span class="proxy-stat-icon"><i class="fa-solid fa-layer-group" aria-hidden="true"></i></span><div><small><?= __('Tổng proxy'); ?></small><strong data-stat-total>--</strong></div></article>
         <article class="proxy-stat-card"><span class="proxy-stat-icon proxy-stat-icon--green"><i class="fa-solid fa-circle-check" aria-hidden="true"></i></span><div><small><?= __('Đang hoạt động'); ?></small><strong data-stat-active>--</strong></div></article>
         <article class="proxy-stat-card"><span class="proxy-stat-icon proxy-stat-icon--orange"><i class="fa-solid fa-clock" aria-hidden="true"></i></span><div><small><?= __('Sắp hết hạn'); ?></small><strong data-stat-expiring>--</strong></div></article>
-        <article class="proxy-stat-card"><span class="proxy-stat-icon proxy-stat-icon--purple"><i class="fa-solid fa-wallet" aria-hidden="true"></i></span><div><small><?= __('Số dư API'); ?></small><strong data-stat-provider-balance>--</strong></div></article>
+        <article class="proxy-stat-card"><span class="proxy-stat-icon proxy-stat-icon--purple"><i class="fa-solid fa-circle-nodes" aria-hidden="true"></i></span><div><small><?= __('Tình trạng'); ?></small><strong data-stat-system-status>--</strong></div></article>
     </section>
 
     <section class="proxy-panel proxy-list-panel">
         <div class="proxy-panel-heading proxy-list-heading">
-            <div><div class="proxy-step">03</div><div><h2><?= __('Danh sách proxy'); ?></h2><p data-list-caption><?= __('Đang tải dữ liệu từ nhà cung cấp...'); ?></p></div></div>
+            <div><div class="proxy-step">03</div><div><h2><?= __('Danh sách proxy'); ?></h2><p data-list-caption><?= __('Đang tải danh sách...'); ?></p></div></div>
             <div class="proxy-toolbar"><label class="proxy-control proxy-toolbar-select"><span><?= __('Lọc loại'); ?></span><select data-list-type><option value="">Tất cả</option><option value="IPV4">IPv4</option><option value="IPV6">IPv6</option><option value="ISP">ISP</option><option value="MOBILE">Mobile</option></select></label><button type="button" class="proxy-secondary-button" data-go-renew disabled><i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i> <?= __('Gia hạn đã chọn'); ?></button></div>
         </div>
         <div class="proxy-table-wrap" data-proxy-table>
