@@ -50,7 +50,7 @@
 
     function countryAlpha2(value) {
         var code = String(value || '').trim().toUpperCase();
-        return code.length === 2 ? code : (alpha3ToAlpha2[code] || '');
+        return /^[A-Z]{2}$/.test(code) ? code : (alpha3ToAlpha2[code] || '');
     }
 
     function countryFlag(value) {
@@ -58,8 +58,9 @@
         if (region.length !== 2) {
             return '<i class="fa-solid fa-globe" aria-hidden="true"></i>';
         }
-        return String.fromCodePoint(127397 + region.charCodeAt(0))
-            + String.fromCodePoint(127397 + region.charCodeAt(1));
+        var source = 'https://flagcdn.com/w40/' + region.toLowerCase() + '.png';
+        return '<img src="' + escapeHtml(source) + '" alt="" loading="lazy" decoding="async">'
+            + '<i class="fa-solid fa-globe" aria-hidden="true" hidden></i>';
     }
 
     function syncCountrySelection(select) {
@@ -87,6 +88,13 @@
                 + '<span class="proxy-country-name">' + escapeHtml(option.label) + '</span>'
                 + '<i class="fa-solid fa-check proxy-country-check" aria-hidden="true"></i></button>';
         }).join('');
+        $$('[data-country-option] img', picker).forEach(function (image) {
+            image.addEventListener('error', function () {
+                image.hidden = true;
+                var fallback = image.parentElement.querySelector('i');
+                if (fallback) fallback.hidden = false;
+            });
+        });
         $$('[data-country-option]', picker).forEach(function (button) {
             button.addEventListener('click', function () {
                 select.value = button.getAttribute('data-value');
