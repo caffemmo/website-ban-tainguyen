@@ -174,6 +174,182 @@ function proxy_records_for_ids($records, $ids)
     return array_values(array_unique($selected));
 }
 
+function proxy_row_stored_ids($row)
+{
+    $storedIds = json_decode((string) ($row['ip_address_ids'] ?? ''), true);
+    if (!is_array($storedIds)) {
+        return [];
+    }
+    $ids = [];
+    foreach ($storedIds as $id) {
+        if (is_scalar($id) && trim((string) $id) !== '') {
+            $ids[] = trim((string) $id);
+        }
+    }
+    return array_values(array_unique($ids));
+}
+
+function proxy_record_id($record)
+{
+    return trim((string) (youproxy_find_first_value($record, ['ipAddressId', 'id']) ?: ''));
+}
+
+function proxy_record_order_id($record)
+{
+    return trim((string) (youproxy_find_first_value($record, ['orderId', 'orderID', 'orderNumber']) ?: ''));
+}
+
+function proxy_record_type($record)
+{
+    return strtoupper(trim((string) (youproxy_find_first_value($record, ['proxyType', 'type']) ?: '')));
+}
+
+function proxy_record_country_code($record)
+{
+    return strtoupper(trim((string) (youproxy_find_first_value($record, ['country', 'countryCode']) ?: '')));
+}
+
+function proxy_record_timestamp($record, $keys)
+{
+    $value = youproxy_find_first_value($record, $keys);
+    $timestamp = $value !== null ? strtotime((string) $value) : false;
+    return $timestamp !== false ? $timestamp : null;
+}
+
+function proxy_match_pending_orders($records)
+{
+    global $CMSNT;
+    if (empty($records)) {
+        return;
+    }
+    youproxy_ensure_tables();
+    $rows = $CMSNT->get_list_safe('SELECT `id`, `user_id`, `proxy_type`, `country`, `quantity`, `rent_period_days`, `created_at`, `ip_address_ids` FROM `proxy_orders` WHERE `status` <> ? ORDER BY `created_at` ASC, `id` ASC', ['refunded']);
+    if (empty($rows)) {
+        return;
+    }
+
+    $claimedBy = [];
+    $pending = [];
+    foreach ($rows as $row) {
+        $rowId = (int) ($row['id'] ?? 0);
+        $storedIds = proxy_row_stored_ids($row);
+        foreach ($storedIds as $id) {
+            $claimedBy[$id] = $rowId;
+        }
+        if ($rowId > 0 && count($storedIds) < max(1, (int) ($row['quantity'] ?? 1))) {
+            $pending[] = ['row' => $row, 'stored_ids' => $storedIds];
+        }
+    }
+    if (empty($pending)) {
+        return;
+    }
+
+    $groups = [];
+    foreach ($records as $record) {
+        $recordId = proxy_record_id($record);
+        $orderId = proxy_record_order_id($record);
+        if ($recordId === '' || $orderId === '') {
+            continue;
+        }
+        if (!isset($groups[$orderId])) {
+            $groups[$orderId] = [];
+        }
+        $groups[$orderId][] = $record;
+    }
+    if (empty($groups)) {
+        return;
+    }
+
+    foreach ($pending as $pendingOrder) {
+        $row = $pendingOrder['row'];
+        $rowId = (int) $row['id'];
+        $quantity = max(1, (int) ($row['quantity'] ?? 1));
+        $expectedType = strtoupper(trim((string) ($row['proxy_type'] ?? '')));
+        $expectedCountry = strtoupper(trim((string) ($row['country'] ?? '')));
+        $expectedDays = max(1, (int) ($row['rent_period_days'] ?? 0));
+        $createdAt = strtotime((string) ($row['created_at'] ?? ''));
+        if ($createdAt === false) {
+            continue;
+        }
+
+        $candidates = [];
+        foreach ($groups as $orderId => $group) {
+            if (count($group) !== $quantity) {
+                continue;
+            }
+            $groupStart = null;
+            $groupEnd = null;
+            $validGroup = true;
+            foreach ($group as $record) {
+                $recordId = proxy_record_id($record);
+                if (isset($claimedBy[$recordId]) && $claimedBy[$recordId] !== $rowId) {
+                    $validGroup = false;
+                    break;
+                }
+                if ($expectedType !== '' && proxy_record_type($record) !== $expectedType) {
+                    $validGroup = false;
+                    break;
+                }
+                if ($expectedCountry !== '' && proxy_record_country_code($record) !== $expectedCountry) {
+                    $validGroup = false;
+                    break;
+                }
+                $start = proxy_record_timestamp($record, ['dateStart', 'startDate']);
+                $end = proxy_record_timestamp($record, ['dateEnd', 'endDate']);
+                if ($start === null || $end === null) {
+                    $validGroup = false;
+                    break;
+                }
+                $groupStart = $groupStart === null ? $start : min($groupStart, $start);
+                $groupEnd = $groupEnd === null ? $end : max($groupEnd, $end);
+            }
+            if (!$validGroup || $groupStart === null || $groupEnd === null) {
+                continue;
+            }
+
+            $durationDays = (int) round(($groupEnd - $groupStart) / 86400);
+            if (abs($durationDays - $expectedDays) > 2) {
+                continue;
+            }
+            $timeDistance = abs($groupStart - $createdAt);
+            // Provider provisioning can be delayed, but a stale order must not
+            // be silently assigned to a newer customer order.
+            if ($timeDistance > 14 * 86400) {
+                continue;
+            }
+            $candidates[] = [
+                'order_id' => $orderId,
+                'records' => $group,
+                'time_distance' => $timeDistance
+            ];
+        }
+        if (empty($candidates)) {
+            continue;
+        }
+        usort($candidates, function ($left, $right) {
+            return $left['time_distance'] <=> $right['time_distance'];
+        });
+        if (isset($candidates[1]) && ($candidates[1]['time_distance'] - $candidates[0]['time_distance']) < 120) {
+            continue;
+        }
+
+        $matchedIds = array_map('proxy_record_id', $candidates[0]['records']);
+        $mergedIds = array_values(array_unique(array_merge($pendingOrder['stored_ids'], $matchedIds)));
+        if (count($mergedIds) < $quantity) {
+            continue;
+        }
+        $updated = $CMSNT->update('proxy_orders', [
+            'ip_address_ids' => json_encode($mergedIds, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+            'updated_at' => date('Y-m-d H:i:s')
+        ], '`id` = ?', [$rowId]);
+        if ($updated !== false) {
+            foreach ($mergedIds as $id) {
+                $claimedBy[$id] = $rowId;
+            }
+        }
+    }
+}
+
 function proxy_owned_access($userId)
 {
     global $CMSNT;
@@ -210,6 +386,7 @@ function proxy_owned_access($userId)
 
 function proxy_filter_owned_records($records, $userId)
 {
+    proxy_match_pending_orders($records);
     $access = proxy_owned_access($userId);
     $ownedIds = array_fill_keys($access['ids'], true);
     $ownedOrders = array_fill_keys($access['orders'], true);
