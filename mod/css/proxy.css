@@ -761,9 +761,9 @@ body {
     position: relative;
     z-index: 1;
     display: flex;
-    align-items: center;
-    gap: 9px;
-    padding-bottom: 10px;
+    align-items: flex-start;
+    gap: 7px;
+    padding-bottom: 9px;
     border-bottom: 1px solid #dcecef;
 }
 
@@ -777,6 +777,7 @@ body {
     border-radius: 6px;
     background: #fff;
     overflow: hidden;
+    margin-top: 1px;
 }
 
 .proxy-summary-preview-flag img {
@@ -801,10 +802,11 @@ body {
 }
 
 .proxy-summary-preview-kicker {
-    margin-bottom: 3px;
+    margin-bottom: 2px;
     color: #0c91aa;
     font-size: 10px;
     font-weight: 800;
+    line-height: 1.2;
 }
 
 .proxy-summary-preview-kicker i {
@@ -818,14 +820,16 @@ body {
     overflow: hidden;
     color: var(--proxy-ink);
     font-size: 14px;
+    line-height: 1.2;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
 .proxy-summary-preview-head small {
-    margin-top: 3px;
+    margin-top: 2px;
     color: var(--proxy-muted);
     font-size: 10px;
+    line-height: 1.25;
 }
 
 .proxy-summary-facts {
