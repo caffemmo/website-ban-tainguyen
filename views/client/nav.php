@@ -22,7 +22,6 @@
                         <strong><?= __('Mua Proxy'); ?></strong>
                         <small><?= __('Chọn loại proxy phù hợp'); ?></small>
                     </span>
-                    <em><?= __('Mới'); ?></em>
                 </a>
                 <a class="desktop-sidebar-link desktop-sidebar-service-link <?= isset($action) && $action == 'proxy-list' ? 'active' : ''; ?>" href="<?= base_url('client/proxy-list'); ?>">
                     <i class="fa-solid fa-server" aria-hidden="true"></i>
@@ -30,7 +29,6 @@
                         <strong><?= __('Proxy của tôi'); ?></strong>
                         <small><?= __('Quản lý proxy đã mua'); ?></small>
                     </span>
-                    <em><?= __('Quản lý'); ?></em>
                 </a>
                 <a class="desktop-sidebar-link desktop-sidebar-service-link <?= isset($action) && $action == 'proxy-renew' ? 'active' : ''; ?>" href="<?= base_url('client/proxy-renew'); ?>">
                     <i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i>
@@ -38,7 +36,6 @@
                         <strong><?= __('Gia hạn Proxy'); ?></strong>
                         <small><?= __('Gia hạn nhanh, không gián đoạn'); ?></small>
                     </span>
-                    <em><?= __('Nhanh'); ?></em>
                 </a>
 
                 <?php if($CMSNT->site('status_menu_tools') == 1): ?>
@@ -611,17 +608,14 @@
                 <a class="nav-link <?= isset($action) && $action == 'proxy-buy' ? 'active' : ''; ?>" href="<?= base_url('client/proxy-buy'); ?>">
                     <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
                     <span class="nav-link-label"><strong><?= __('Mua Proxy'); ?></strong><small><?= __('Chọn loại proxy phù hợp'); ?></small></span>
-                    <em><?= __('Mới'); ?></em>
                 </a>
                 <a class="nav-link <?= isset($action) && $action == 'proxy-list' ? 'active' : ''; ?>" href="<?= base_url('client/proxy-list'); ?>">
                     <i class="fa-solid fa-server" aria-hidden="true"></i>
                     <span class="nav-link-label"><strong><?= __('Proxy của tôi'); ?></strong><small><?= __('Quản lý proxy đã mua'); ?></small></span>
-                    <em><?= __('Quản lý'); ?></em>
                 </a>
                 <a class="nav-link <?= isset($action) && $action == 'proxy-renew' ? 'active' : ''; ?>" href="<?= base_url('client/proxy-renew'); ?>">
                     <i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i>
                     <span class="nav-link-label"><strong><?= __('Gia hạn Proxy'); ?></strong><small><?= __('Gia hạn nhanh, không gián đoạn'); ?></small></span>
-                    <em><?= __('Nhanh'); ?></em>
                 </a>
 
                 <p class="nav-section-title"><?= __('Hỗ trợ'); ?></p>

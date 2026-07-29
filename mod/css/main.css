@@ -2063,20 +2063,13 @@ ul.custom-button-list li {
     }
 
     .desktop-app-sidebar::before {
-        position: absolute;
-        top: 0;
-        right: 0;
-        left: 0;
-        height: 42px;
-        content: "";
-        background: var(--primary);
-        pointer-events: none;
+        display: none;
     }
 
     .desktop-sidebar-scroll {
         flex: 1;
         overflow-y: auto;
-        padding: 22px 14px 24px;
+        padding: 14px 14px 24px;
         scrollbar-color: #3566a6 transparent;
         scrollbar-width: thin;
     }
@@ -2085,9 +2078,9 @@ ul.custom-button-list li {
         display: flex;
         align-items: center;
         gap: 8px;
-        margin: 24px 6px 10px;
+        margin: 18px 6px 8px;
         color: #76c6d9;
-        font-size: 11px;
+        font-size: 10px;
         font-weight: 800;
         letter-spacing: 0.06em;
         line-height: 1.2;
@@ -2104,15 +2097,15 @@ ul.custom-button-list li {
     .desktop-sidebar-link {
         display: flex;
         width: 100%;
-        min-height: 48px;
+        min-height: 44px;
         align-items: center;
-        gap: 12px;
-        padding: 9px 11px;
-        margin: 5px 0;
+        gap: 10px;
+        padding: 7px 9px;
+        margin: 3px 0;
         border: 1px solid transparent;
         border-radius: 9px;
         color: #d7e5ed;
-        font-size: 14px;
+        font-size: 13px;
         font-weight: 600;
         font-family: 'Be Vietnam Pro', sans-serif;
         line-height: 1.35;
@@ -2124,15 +2117,15 @@ ul.custom-button-list li {
 
     .desktop-sidebar-link i {
         display: grid;
-        width: 32px;
-        height: 32px;
-        flex: 0 0 32px;
+        width: 30px;
+        height: 30px;
+        flex: 0 0 30px;
         place-items: center;
         border-radius: 8px;
         color: #8fe7ee;
         background: #213a54;
         object-fit: contain;
-        font-size: 14px;
+        font-size: 13px;
     }
 
     .desktop-sidebar-link:hover,
@@ -2164,7 +2157,7 @@ ul.custom-button-list li {
     }
 
     .desktop-sidebar-service-link {
-        min-height: 64px;
+        min-height: 56px;
         align-items: center;
     }
 
@@ -2178,7 +2171,7 @@ ul.custom-button-list li {
 
     .desktop-sidebar-link-label strong {
         color: inherit;
-        font-size: 14px;
+        font-size: 13px;
         font-weight: 700;
         line-height: 1.35;
     }
@@ -2186,7 +2179,7 @@ ul.custom-button-list li {
     .desktop-sidebar-link-label small {
         overflow: hidden;
         color: #8fa9b9;
-        font-size: 11px;
+        font-size: 10px;
         font-weight: 500;
         line-height: 1.35;
         text-overflow: ellipsis;
@@ -2229,11 +2222,11 @@ ul.custom-button-list li {
 
     .desktop-sidebar-support-card {
         display: flex;
-        min-height: 76px;
+        min-height: 68px;
         align-items: center;
         gap: 10px;
         padding: 12px;
-        margin: 28px 2px 0;
+        margin: 20px 2px 0;
         border: 1px solid #2b4b65;
         border-radius: 12px;
         background: #14263e;
@@ -2263,7 +2256,7 @@ ul.custom-button-list li {
 
     .desktop-sidebar-support-copy strong {
         color: #f1f8fb;
-        font-size: 13px;
+        font-size: 12px;
         font-weight: 700;
         line-height: 1.3;
     }
@@ -2271,7 +2264,7 @@ ul.custom-button-list li {
     .desktop-sidebar-support-copy small {
         overflow: hidden;
         color: #91aebe;
-        font-size: 11px;
+        font-size: 10px;
         line-height: 1.3;
         text-overflow: ellipsis;
         white-space: nowrap;

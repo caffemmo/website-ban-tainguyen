@@ -261,6 +261,20 @@ body {
     margin-right: 11px;
 }
 
+.proxy-summary-top {
+    justify-content: flex-start;
+    gap: 10px;
+}
+
+.proxy-summary-top .proxy-step {
+    margin-right: 0;
+}
+
+.proxy-summary-top > div {
+    min-width: 0;
+    flex: 1;
+}
+
 .proxy-panel h2 {
     margin: 0 0 4px;
     color: var(--proxy-ink);
@@ -721,9 +735,9 @@ body {
     position: relative;
     display: block;
     min-height: 0;
-    padding: 14px;
+    padding: 11px;
     overflow: hidden;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
     border: 1px solid #b9dfe5;
     color: var(--proxy-ink);
     background: #f4fbfc;
@@ -748,16 +762,16 @@ body {
     z-index: 1;
     display: flex;
     align-items: center;
-    gap: 11px;
-    padding-bottom: 13px;
+    gap: 9px;
+    padding-bottom: 10px;
     border-bottom: 1px solid #dcecef;
 }
 
 .proxy-summary-preview-flag {
     display: grid;
-    width: 42px;
-    height: 32px;
-    flex: 0 0 42px;
+    width: 36px;
+    height: 30px;
+    flex: 0 0 36px;
     place-items: center;
     border: 1px solid #c8e1e6;
     border-radius: 6px;
@@ -766,7 +780,7 @@ body {
 }
 
 .proxy-summary-preview-flag img {
-    width: 32px;
+    width: 28px;
     height: 22px;
     object-fit: cover;
 }
@@ -819,14 +833,14 @@ body {
     z-index: 1;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
-    padding-top: 12px;
+    gap: 6px;
+    padding-top: 10px;
 }
 
 .proxy-summary-facts > div {
     min-width: 0;
-    min-height: 42px;
-    padding: 8px 9px;
+    min-height: 38px;
+    padding: 7px 8px;
     border: 1px solid #dcecef;
     border-radius: 6px;
     background: #fff;
@@ -870,7 +884,7 @@ body {
 }
 
 .proxy-summary-checkout {
-    padding-top: 15px;
+    padding-top: 11px;
     border-top: 1px solid #edf2f4;
 }
 
@@ -880,11 +894,11 @@ body {
 
 .proxy-summary-list > div {
     display: flex;
-    min-height: 42px;
+    min-height: 38px;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    padding: 8px 0;
+    padding: 6px 0;
     border-bottom: 1px solid #edf2f4;
 }
 
@@ -916,7 +930,7 @@ body {
     align-items: end;
     justify-content: space-between;
     gap: 12px;
-    padding: 18px 0 10px;
+    padding: 13px 0 8px;
 }
 
 .proxy-summary-total span {
@@ -933,7 +947,7 @@ body {
 
 .proxy-price-note,
 .proxy-secure-note {
-    margin: 8px 0 18px;
+    margin: 6px 0 13px;
     color: var(--proxy-muted);
     font-size: 11px;
     line-height: 1.55;
@@ -1381,6 +1395,56 @@ body {
     font-size: 10px;
 }
 
+.proxy-expiry-countdown {
+    display: inline-flex !important;
+    width: fit-content;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 8px;
+    border: 1px solid #c5e4d8;
+    border-radius: 999px;
+    color: #167354 !important;
+    background: #effbf6;
+    font-size: 11px !important;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.proxy-expiry-countdown--safe {
+    border-color: #c5e4d8;
+    color: #167354 !important;
+    background: #effbf6;
+}
+
+.proxy-expiry-countdown--soon {
+    border-color: #f0d19d;
+    color: #a35b15 !important;
+    background: #fff8ec;
+    animation: proxy-countdown-pulse-soft 2.4s ease-in-out infinite;
+}
+
+.proxy-expiry-countdown--urgent {
+    border-color: #efb1b1;
+    color: #b33f3f !important;
+    background: #fff2f2;
+    animation: proxy-countdown-pulse 1.8s ease-in-out infinite;
+}
+
+.proxy-renew-item-date .proxy-expiry-countdown {
+    margin-top: 5px;
+    text-align: left;
+}
+
+@keyframes proxy-countdown-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(179, 63, 63, .08); }
+    50% { box-shadow: 0 0 0 4px rgba(179, 63, 63, .12); }
+}
+
+@keyframes proxy-countdown-pulse-soft {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(163, 91, 21, .06); }
+    50% { box-shadow: 0 0 0 3px rgba(163, 91, 21, .1); }
+}
+
 .proxy-auto-status {
     display: inline-flex;
     align-items: center;
@@ -1792,7 +1856,8 @@ body {
     .proxy-primary-button,
     .proxy-secondary-button,
     .proxy-icon-button,
-    .proxy-loader {
+    .proxy-loader,
+    .proxy-expiry-countdown {
         transition: none;
         animation: none;
     }

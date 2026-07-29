@@ -9,8 +9,8 @@ $body = [
     'desc' => __('Mua proxy chính hãng với cấu hình rõ ràng và quản lý tập trung.'),
     'keyword' => 'proxy, mua proxy, proxy premium'
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=6') . '">';
-$body['footer'] = '<script src="' . BASE_URL('mod/js/proxy.js?v=5') . '"></script>';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=7') . '">';
+$body['footer'] = '<script src="' . BASE_URL('mod/js/proxy.js?v=6') . '"></script>';
 
 require_once __DIR__ . '/header.php';
 require_once __DIR__ . '/nav.php';
@@ -142,8 +142,8 @@ require_once __DIR__ . '/nav.php';
 
             <div class="proxy-auth-row">
                 <div>
-                    <strong><?= __('Kiểu xác thực'); ?></strong>
-                    <small><?= __('LOGIN dễ dùng hơn; IP phù hợp cho hệ thống tự động.'); ?></small>
+                    <strong><?= __('Định dạng kết nối'); ?></strong>
+                    <small><?= __('Login / Password: IP:PORT:USER:PASS · hỗ trợ cổng HTTPS và SOCKS5.'); ?></small>
                 </div>
                 <div class="proxy-segmented" role="radiogroup" aria-label="<?= __('Kiểu xác thực'); ?>">
                     <label><input type="radio" name="auth_type" value="LOGIN" checked><span>Login / Password</span></label>
@@ -172,14 +172,14 @@ require_once __DIR__ . '/nav.php';
                     <div>
                         <span class="proxy-summary-preview-kicker"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> <span data-summary-status><?= __('Đang chờ cấu hình'); ?></span></span>
                         <strong data-summary-country><?= __('Chọn quốc gia'); ?></strong>
-                        <small data-summary-delivery><?= __('Cấp tự động sau khi thanh toán'); ?></small>
+                        <small data-summary-delivery><?= __('Cấp tự động sau thanh toán · HTTPS + SOCKS5'); ?></small>
                     </div>
                 </div>
                 <div class="proxy-summary-facts">
                     <div><span><?= __('Loại'); ?></span><strong data-summary-type>IPv4</strong></div>
                     <div><span><?= __('Thời hạn'); ?></span><strong data-summary-rent>--</strong></div>
                     <div><span><?= __('Số lượng'); ?></span><strong data-summary-quantity>1</strong></div>
-                    <div><span><?= __('Xác thực'); ?></span><strong data-summary-auth>Login / Password</strong></div>
+                    <div><span><?= __('Định dạng'); ?></span><strong data-summary-auth>IP:PORT:USER:PASS</strong></div>
                 </div>
             </div>
             <div class="proxy-summary-checkout">

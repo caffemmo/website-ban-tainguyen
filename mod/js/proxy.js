@@ -305,7 +305,7 @@
             if (summaryType) summaryType.textContent = typeLabel || '--';
             if (summaryRent) summaryRent.textContent = rentLabel || '--';
             if (summaryQuantity) summaryQuantity.textContent = quantity && quantity.value ? quantity.value : '1';
-            if (summaryAuth) summaryAuth.textContent = auth && auth.value === 'IP' ? 'IP whitelist' : 'Login / Password';
+            if (summaryAuth) summaryAuth.textContent = auth && auth.value === 'IP' ? 'IP whitelist' : 'IP:PORT:USER:PASS';
         }
         var total = $('[data-wallet-total]');
         if (!price) {
@@ -455,6 +455,19 @@
         return Math.max(0, Math.ceil((end.getTime() - Date.now()) / 86400000));
     }
 
+    function countdownClass(days) {
+        if (days === null) {
+            return '';
+        }
+        if (days <= 3) {
+            return 'proxy-expiry-countdown--urgent';
+        }
+        if (days <= 7) {
+            return 'proxy-expiry-countdown--soon';
+        }
+        return 'proxy-expiry-countdown--safe';
+    }
+
     function fieldMarkup(label, value, note) {
         var raw = String(value || '').trim();
         var visible = raw || '--';
@@ -500,6 +513,7 @@
             var portNote = 'HTTPS ' + (record.https_port || '--') + ' · SOCKS5 ' + (record.socks5_port || '--');
             var country = record.country || '--';
             var expiryNote = days === null ? 'Chưa xác định thời hạn' : (days > 0 ? 'Còn ' + days + ' ngày' : 'Đã hết hạn');
+            var expiryClass = countdownClass(days);
             var formatButton = connection
                 ? '<button type="button" class="proxy-secondary-button proxy-copy-format" data-copy-connection="' + escapeHtml(connection) + '"><i class="fa-regular fa-copy" aria-hidden="true"></i> Copy định dạng</button>'
                 : '<button type="button" class="proxy-secondary-button proxy-copy-format" disabled><i class="fa-regular fa-copy" aria-hidden="true"></i> Chưa đủ dữ liệu</button>';
@@ -507,7 +521,7 @@
                 '<div class="proxy-record-card-header"><label class="proxy-record-select"><input type="checkbox" class="proxy-record-check" data-record-check="' + id + '"><span>Chọn</span></label><div class="proxy-record-identity"><span class="proxy-country-flag proxy-record-flag" aria-hidden="true">' + countryFlag(record.country) + '</span><div><strong>' + escapeHtml(record.ip || '--') + '</strong><small>' + escapeHtml(type + ' · ' + country) + '</small></div></div><span class="proxy-badge ' + (status.soon ? 'proxy-badge--soon' : '') + '">' + escapeHtml(status.label) + '</span></div>' +
                 '<div class="proxy-connection-grid">' + fieldMarkup('IP', record.ip) + fieldMarkup('Port', primaryPort(record), portNote) + fieldMarkup('User', record.login) + fieldMarkup('Pass', record.password) + '</div>' +
                 '<div class="proxy-format-row"><div><span class="proxy-detail-label">Định dạng kết nối</span><code>' + escapeHtml(connection || 'IP:Port:User:Pass') + '</code></div>' + formatButton + '</div>' +
-                '<div class="proxy-record-card-footer"><div class="proxy-expiry"><span class="proxy-detail-label">Hạn dùng</span><strong>' + escapeHtml(providerDateLabel(record.date_end)) + '</strong><small>' + escapeHtml(expiryNote) + '</small></div><div class="proxy-auto-status ' + (autoExtend ? 'is-enabled' : '') + '"><i class="fa-solid ' + (autoExtend ? 'fa-arrows-rotate' : 'fa-circle-minus') + '" aria-hidden="true"></i><span>' + (autoExtend ? 'Đã bật gia hạn' : 'Chưa bật gia hạn') + '</span></div></div>' +
+                '<div class="proxy-record-card-footer"><div class="proxy-expiry"><span class="proxy-detail-label">Hạn dùng</span><strong>' + escapeHtml(providerDateLabel(record.date_end)) + '</strong><small class="proxy-expiry-countdown ' + expiryClass + '"><i class="fa-solid fa-hourglass-half" aria-hidden="true"></i>' + escapeHtml(expiryNote) + '</small></div><div class="proxy-auto-status ' + (autoExtend ? 'is-enabled' : '') + '"><i class="fa-solid ' + (autoExtend ? 'fa-arrows-rotate' : 'fa-circle-minus') + '" aria-hidden="true"></i><span>' + (autoExtend ? 'Đã bật gia hạn' : 'Chưa bật gia hạn') + '</span></div></div>' +
                 '</article>';
         }).join('');
         tableWrap.innerHTML = '<div class="proxy-record-grid">' + cards + '</div>';
@@ -631,7 +645,7 @@
             var days = remainingDays(record);
             var autoExtend = Boolean(record.auto_extend);
             var remaining = days === null ? 'Chưa xác định thời hạn' : (days > 0 ? 'Còn ' + days + ' ngày' : 'Đã hết hạn');
-            return '<label class="proxy-renew-item ' + (state.selected.has(id) ? 'is-selected' : '') + '"><input type="checkbox" data-renew-check="' + escapeHtml(id) + '" ' + (state.selected.has(id) ? 'checked' : '') + '><span class="proxy-renew-item-content"><span class="proxy-renew-item-identity"><span class="proxy-country-flag proxy-renew-flag" aria-hidden="true">' + countryFlag(record.country) + '</span><span><strong>' + escapeHtml(record.ip || '--') + '</strong><small>' + escapeHtml(recordProxyType(record) + ' · ' + (record.country || '--')) + '</small></span></span><span class="proxy-renew-item-date"><strong>' + escapeHtml(providerDateLabel(record.date_end)) + '</strong><small>' + escapeHtml(remaining) + '</small></span><span class="proxy-auto-status ' + (autoExtend ? 'is-enabled' : '') + '"><i class="fa-solid ' + (autoExtend ? 'fa-arrows-rotate' : 'fa-circle-minus') + '" aria-hidden="true"></i>' + (autoExtend ? 'Đã bật gia hạn' : 'Chưa bật gia hạn') + '</span></span></label>';
+            return '<label class="proxy-renew-item ' + (state.selected.has(id) ? 'is-selected' : '') + '"><input type="checkbox" data-renew-check="' + escapeHtml(id) + '" ' + (state.selected.has(id) ? 'checked' : '') + '><span class="proxy-renew-item-content"><span class="proxy-renew-item-identity"><span class="proxy-country-flag proxy-renew-flag" aria-hidden="true">' + countryFlag(record.country) + '</span><span><strong>' + escapeHtml(record.ip || '--') + '</strong><small>' + escapeHtml(recordProxyType(record) + ' · ' + (record.country || '--')) + '</small></span></span><span class="proxy-renew-item-date"><strong>' + escapeHtml(providerDateLabel(record.date_end)) + '</strong><span class="proxy-expiry-countdown ' + countdownClass(days) + '"><i class="fa-solid fa-hourglass-half" aria-hidden="true"></i>' + escapeHtml(remaining) + '</span></span><span class="proxy-auto-status ' + (autoExtend ? 'is-enabled' : '') + '"><i class="fa-solid ' + (autoExtend ? 'fa-arrows-rotate' : 'fa-circle-minus') + '" aria-hidden="true"></i>' + (autoExtend ? 'Đã bật gia hạn' : 'Chưa bật gia hạn') + '</span></span></label>';
         }).join('');
         bindCountryFlagFallbacks(container);
         $$('[data-renew-check]', container).forEach(function (checkbox) {
