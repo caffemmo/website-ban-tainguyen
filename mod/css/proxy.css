@@ -762,8 +762,8 @@ body {
     z-index: 1;
     display: flex;
     align-items: flex-start;
-    gap: 7px;
-    padding-bottom: 9px;
+    gap: 8px;
+    padding-bottom: 11px;
     border-bottom: 1px solid #dcecef;
 }
 
@@ -793,6 +793,7 @@ body {
 
 .proxy-summary-preview-head > div {
     min-width: 0;
+    padding-top: 1px;
 }
 
 .proxy-summary-preview-kicker,
@@ -802,11 +803,11 @@ body {
 }
 
 .proxy-summary-preview-kicker {
-    margin-bottom: 2px;
+    margin-bottom: 4px;
     color: #0c91aa;
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 800;
-    line-height: 1.2;
+    line-height: 1.25;
 }
 
 .proxy-summary-preview-kicker i {
@@ -819,17 +820,17 @@ body {
 .proxy-summary-preview-head strong {
     overflow: hidden;
     color: var(--proxy-ink);
-    font-size: 14px;
-    line-height: 1.2;
+    font-size: 12px;
+    line-height: 1.3;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
 .proxy-summary-preview-head small {
-    margin-top: 2px;
+    margin-top: 4px;
     color: var(--proxy-muted);
-    font-size: 10px;
-    line-height: 1.25;
+    font-size: 9px;
+    line-height: 1.35;
 }
 
 .proxy-summary-facts {
@@ -837,14 +838,14 @@ body {
     z-index: 1;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 6px;
-    padding-top: 10px;
+    gap: 7px;
+    padding-top: 11px;
 }
 
 .proxy-summary-facts > div {
     min-width: 0;
-    min-height: 38px;
-    padding: 7px 8px;
+    min-height: 36px;
+    padding: 6px 8px;
     border: 1px solid #dcecef;
     border-radius: 6px;
     background: #fff;
@@ -856,15 +857,15 @@ body {
 }
 
 .proxy-summary-facts span {
-    margin-bottom: 3px;
+    margin-bottom: 4px;
     color: var(--proxy-muted);
-    font-size: 10px;
+    font-size: 9px;
 }
 
 .proxy-summary-facts strong {
     overflow: hidden;
     color: var(--proxy-ink);
-    font-size: 11px;
+    font-size: 10px;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
