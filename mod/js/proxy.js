@@ -408,7 +408,11 @@
     }
 
     function dateEnd(record) {
-        return record.date_end ? new Date(String(record.date_end).replace(/-/g, '/')) : null;
+        if (!record || !record.date_end) {
+            return null;
+        }
+        var date = new Date(String(record.date_end).trim());
+        return Number.isNaN(date.getTime()) ? null : date;
     }
 
     function isExpiring(record) {
@@ -420,10 +424,44 @@
         return String(record.proxy_type || '').toUpperCase() || 'IPV4';
     }
 
+    function primaryPort(record) {
+        return String(record.https_port || record.socks5_port || '').trim();
+    }
+
     function recordConnection(record) {
-        var port = record.https_port || record.socks5_port || '';
-        var auth = record.login ? ':' + record.login + ':' + record.password : '';
-        return record.ip + (port ? ':' + port : '') + auth;
+        var values = [record.ip, primaryPort(record), record.login, record.password];
+        return values.every(function (value) { return String(value || '').trim() !== ''; }) ? values.join(':') : '';
+    }
+
+    function providerDateLabel(value) {
+        var raw = String(value || '').trim();
+        var match = raw.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})/);
+        if (match) {
+            return match[4] + ':' + match[5] + ':' + match[6] + ' - ' + match[3] + '.' + match[2] + '.' + match[1];
+        }
+        var date = raw ? new Date(raw) : null;
+        if (!date || Number.isNaN(date.getTime())) {
+            return '--';
+        }
+        var pad = function (value) { return String(value).padStart(2, '0'); };
+        return pad(date.getHours()) + ':' + pad(date.getMinutes()) + ':' + pad(date.getSeconds()) + ' - ' + pad(date.getDate()) + '.' + pad(date.getMonth() + 1) + '.' + date.getFullYear();
+    }
+
+    function remainingDays(record) {
+        var end = dateEnd(record);
+        if (!end) {
+            return null;
+        }
+        return Math.max(0, Math.ceil((end.getTime() - Date.now()) / 86400000));
+    }
+
+    function fieldMarkup(label, value, note) {
+        var raw = String(value || '').trim();
+        var visible = raw || '--';
+        var copyButton = raw
+            ? '<button type="button" class="proxy-copy-button" data-copy-value="' + escapeHtml(raw) + '" aria-label="Sao chép ' + escapeHtml(label) + '" title="Sao chép ' + escapeHtml(label) + '"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>'
+            : '<button type="button" class="proxy-copy-button" disabled aria-label="' + escapeHtml(label) + ' chưa có dữ liệu"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>';
+        return '<div class="proxy-connection-field"><span class="proxy-detail-label">' + escapeHtml(label) + '</span><div class="proxy-detail-value"><code>' + escapeHtml(visible) + '</code>' + copyButton + '</div>' + (note ? '<small>' + escapeHtml(note) + '</small>' : '') + '</div>';
     }
 
     function recordStatus(record) {
@@ -452,21 +490,28 @@
             tableWrap.innerHTML = '<div class="proxy-empty-state"><i class="fa-solid fa-server" aria-hidden="true"></i><strong>Chưa có proxy để hiển thị</strong><small>Hãy mua proxy mới để bắt đầu quản lý tại đây.</small><a class="proxy-secondary-button" href="' + escapeHtml((window.baseUrl || '/') + 'client/proxy-buy') + '"><i class="fa-solid fa-plus" aria-hidden="true"></i> Mua proxy</a></div>';
             return;
         }
-        var rows = state.records.map(function (record) {
+        var cards = state.records.map(function (record) {
             var status = recordStatus(record);
             var id = escapeHtml(record.id);
             var connection = recordConnection(record);
             var type = recordProxyType(record);
-            return '<tr data-record-id="' + id + '">' +
-                '<td data-label="Chọn"><input type="checkbox" class="proxy-record-check" data-record-check="' + id + '"></td>' +
-                '<td data-label="Địa chỉ"><div class="proxy-record-meta"><code>' + escapeHtml(record.ip || '--') + '</code><small>' + escapeHtml(type) + ' / ' + escapeHtml(record.country || '--') + '</small></div></td>' +
-                '<td data-label="Cổng"><span>HTTPS ' + escapeHtml(record.https_port || '--') + '</span><small>SOCKS5 ' + escapeHtml(record.socks5_port || '--') + '</small></td>' +
-                '<td data-label="Đăng nhập"><span>' + escapeHtml(record.login || '--') + '</span><small>' + escapeHtml(record.password || '--') + '</small></td>' +
-                '<td data-label="Hạn dùng"><span>' + escapeHtml(record.date_end || '--') + '</span><small class="proxy-badge ' + (status.soon ? 'proxy-badge--soon' : '') + '">' + escapeHtml(status.label) + '</small></td>' +
-                '<td data-label="Thao tác"><div class="proxy-record-actions"><button type="button" class="proxy-copy-button" data-copy-connection="' + escapeHtml(connection) + '" aria-label="Sao chép thông tin kết nối" title="Sao chép thông tin kết nối"><i class="fa-regular fa-copy" aria-hidden="true"></i></button></div></td>' +
-                '</tr>';
+            var days = remainingDays(record);
+            var autoExtend = Boolean(record.auto_extend);
+            var portNote = 'HTTPS ' + (record.https_port || '--') + ' · SOCKS5 ' + (record.socks5_port || '--');
+            var country = record.country || '--';
+            var expiryNote = days === null ? 'Chưa xác định thời hạn' : (days > 0 ? 'Còn ' + days + ' ngày' : 'Đã hết hạn');
+            var formatButton = connection
+                ? '<button type="button" class="proxy-secondary-button proxy-copy-format" data-copy-connection="' + escapeHtml(connection) + '"><i class="fa-regular fa-copy" aria-hidden="true"></i> Copy định dạng</button>'
+                : '<button type="button" class="proxy-secondary-button proxy-copy-format" disabled><i class="fa-regular fa-copy" aria-hidden="true"></i> Chưa đủ dữ liệu</button>';
+            return '<article class="proxy-record-card" data-record-id="' + id + '">' +
+                '<div class="proxy-record-card-header"><label class="proxy-record-select"><input type="checkbox" class="proxy-record-check" data-record-check="' + id + '"><span>Chọn</span></label><div class="proxy-record-identity"><span class="proxy-country-flag proxy-record-flag" aria-hidden="true">' + countryFlag(record.country) + '</span><div><strong>' + escapeHtml(record.ip || '--') + '</strong><small>' + escapeHtml(type + ' · ' + country) + '</small></div></div><span class="proxy-badge ' + (status.soon ? 'proxy-badge--soon' : '') + '">' + escapeHtml(status.label) + '</span></div>' +
+                '<div class="proxy-connection-grid">' + fieldMarkup('IP', record.ip) + fieldMarkup('Port', primaryPort(record), portNote) + fieldMarkup('User', record.login) + fieldMarkup('Pass', record.password) + '</div>' +
+                '<div class="proxy-format-row"><div><span class="proxy-detail-label">Định dạng kết nối</span><code>' + escapeHtml(connection || 'IP:Port:User:Pass') + '</code></div>' + formatButton + '</div>' +
+                '<div class="proxy-record-card-footer"><div class="proxy-expiry"><span class="proxy-detail-label">Hạn dùng</span><strong>' + escapeHtml(providerDateLabel(record.date_end)) + '</strong><small>' + escapeHtml(expiryNote) + '</small></div><div class="proxy-auto-status ' + (autoExtend ? 'is-enabled' : '') + '"><i class="fa-solid ' + (autoExtend ? 'fa-arrows-rotate' : 'fa-circle-minus') + '" aria-hidden="true"></i><span>' + (autoExtend ? 'Đã bật gia hạn' : 'Chưa bật gia hạn') + '</span></div></div>' +
+                '</article>';
         }).join('');
-        tableWrap.innerHTML = '<table class="proxy-table"><thead><tr><th>Chọn</th><th>Địa chỉ</th><th>Cổng</th><th>Đăng nhập</th><th>Hạn dùng</th><th>Thao tác</th></tr></thead><tbody>' + rows + '</tbody></table>';
+        tableWrap.innerHTML = '<div class="proxy-record-grid">' + cards + '</div>';
+        bindCountryFlagFallbacks(tableWrap);
         $$('[data-record-check]', tableWrap).forEach(function (checkbox) {
             checkbox.checked = state.selected.has(checkbox.getAttribute('data-record-check'));
             checkbox.addEventListener('change', function () {
@@ -478,6 +523,11 @@
         $$('[data-copy-connection]', tableWrap).forEach(function (button) {
             button.addEventListener('click', function () {
                 copyText(button.getAttribute('data-copy-connection'), button);
+            });
+        });
+        $$('[data-copy-value]', tableWrap).forEach(function (button) {
+            button.addEventListener('click', function () {
+                copyText(button.getAttribute('data-copy-value'), button);
             });
         });
         updateSelectionButton();
@@ -501,6 +551,23 @@
         } else {
             fallbackCopy(value, done);
         }
+    }
+
+    function downloadProxyFile() {
+        var lines = state.records.map(recordConnection).filter(Boolean);
+        if (!lines.length) {
+            setStatus('Chưa có proxy đủ thông tin để tải xuống.', 'info');
+            return;
+        }
+        var blob = new Blob([lines.join('\r\n') + '\r\n'], { type: 'text/plain;charset=utf-8' });
+        var url = URL.createObjectURL(blob);
+        var link = document.createElement('a');
+        link.href = url;
+        link.download = 'caffemmo-proxies-' + new Date().toISOString().slice(0, 10) + '.txt';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
     }
 
     function fallbackCopy(value, done) {
@@ -539,6 +606,8 @@
             sessionStorage.setItem('proxyRenewSelection', JSON.stringify(Array.from(state.selected)));
             window.location.href = (window.baseUrl || '/') + 'client/proxy-renew';
         });
+        var downloadButton = $('[data-download-proxies]');
+        if (downloadButton) downloadButton.addEventListener('click', downloadProxyFile);
         loadList(filter ? filter.value : '');
     }
 
@@ -559,8 +628,12 @@
         container.innerHTML = records.map(function (record) {
             var id = String(record.id);
             var status = recordStatus(record);
-            return '<label class="proxy-renew-item ' + (state.selected.has(id) ? 'is-selected' : '') + '"><input type="checkbox" data-renew-check="' + escapeHtml(id) + '" ' + (state.selected.has(id) ? 'checked' : '') + '><span class="proxy-renew-item-content"><span><strong>' + escapeHtml(record.ip || '--') + '</strong><small>' + escapeHtml(recordProxyType(record) + ' / ' + (record.country || '--')) + '</small></span><span class="proxy-renew-item-date"><span class="proxy-badge ' + (status.soon ? 'proxy-badge--soon' : '') + '">' + escapeHtml(record.date_end || '--') + '</span></span></span></label>';
+            var days = remainingDays(record);
+            var autoExtend = Boolean(record.auto_extend);
+            var remaining = days === null ? 'Chưa xác định thời hạn' : (days > 0 ? 'Còn ' + days + ' ngày' : 'Đã hết hạn');
+            return '<label class="proxy-renew-item ' + (state.selected.has(id) ? 'is-selected' : '') + '"><input type="checkbox" data-renew-check="' + escapeHtml(id) + '" ' + (state.selected.has(id) ? 'checked' : '') + '><span class="proxy-renew-item-content"><span class="proxy-renew-item-identity"><span class="proxy-country-flag proxy-renew-flag" aria-hidden="true">' + countryFlag(record.country) + '</span><span><strong>' + escapeHtml(record.ip || '--') + '</strong><small>' + escapeHtml(recordProxyType(record) + ' · ' + (record.country || '--')) + '</small></span></span><span class="proxy-renew-item-date"><strong>' + escapeHtml(providerDateLabel(record.date_end)) + '</strong><small>' + escapeHtml(remaining) + '</small></span><span class="proxy-auto-status ' + (autoExtend ? 'is-enabled' : '') + '"><i class="fa-solid ' + (autoExtend ? 'fa-arrows-rotate' : 'fa-circle-minus') + '" aria-hidden="true"></i>' + (autoExtend ? 'Đã bật gia hạn' : 'Chưa bật gia hạn') + '</span></span></label>';
         }).join('');
+        bindCountryFlagFallbacks(container);
         $$('[data-renew-check]', container).forEach(function (checkbox) {
             checkbox.addEventListener('change', function () {
                 var id = checkbox.getAttribute('data-renew-check');

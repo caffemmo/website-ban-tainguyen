@@ -1125,77 +1125,281 @@ body {
     font-size: 11px;
 }
 
-.proxy-table-wrap {
-    overflow-x: auto;
-    border: 1px solid var(--proxy-line);
-    border-radius: 8px;
+.proxy-format-note {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    margin: 0 0 14px;
+    border: 1px solid #cce7ec;
+    border-radius: 7px;
+    color: #376b7b;
+    background: #f3fbfc;
+    font-size: 11px;
+    line-height: 1.45;
 }
 
-.proxy-table {
-    width: 100%;
-    min-width: 820px;
-    border-collapse: collapse;
+.proxy-format-note > i {
+    flex: 0 0 auto;
+    color: #0c9eae;
 }
 
-.proxy-table th,
-.proxy-table td {
-    padding: 13px 14px;
-    border-bottom: 1px solid #edf2f4;
-    text-align: left;
-    vertical-align: middle;
-}
-
-.proxy-table th {
-    color: #7890a0;
-    background: #f7fafb;
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: .04em;
-    text-transform: uppercase;
-}
-
-.proxy-table td {
-    color: var(--proxy-ink);
-    font-size: 12px;
-}
-
-.proxy-table tr:last-child td {
-    border-bottom: 0;
-}
-
-.proxy-table tbody tr:hover {
-    background: #fbfeff;
-}
-
-.proxy-table code {
+.proxy-format-note code,
+.proxy-format-row code {
     color: #0d526b;
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    font-size: 12px;
     font-weight: 700;
 }
 
-.proxy-record-meta,
-.proxy-record-actions {
+.proxy-table-wrap {
+    overflow: visible;
+}
+
+.proxy-record-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.proxy-record-card {
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid #cfe0e7;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 8px 20px rgba(31, 66, 91, .06);
+    transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.proxy-record-card:hover {
+    border-color: #7ad6dc;
+    box-shadow: 0 12px 24px rgba(31, 66, 91, .1);
+    transform: translateY(-1px);
+}
+
+.proxy-record-card-header {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 11px;
+    padding: 14px 16px;
+    border-bottom: 1px solid #e5eef1;
+    background: #f8fbfc;
+}
+
+.proxy-record-select {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--proxy-muted);
+    font-size: 10px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.proxy-record-select input {
+    width: 17px;
+    height: 17px;
+    margin: 0;
+    accent-color: var(--proxy-cyan);
+}
+
+.proxy-record-identity,
+.proxy-renew-item-identity {
     display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: 9px;
+}
+
+.proxy-record-identity > div,
+.proxy-renew-item-identity > span:last-child {
+    min-width: 0;
+}
+
+.proxy-record-identity strong,
+.proxy-record-identity small,
+.proxy-renew-item-identity strong,
+.proxy-renew-item-identity small {
+    display: block;
+}
+
+.proxy-record-identity strong,
+.proxy-renew-item-identity strong {
+    overflow: hidden;
+    color: var(--proxy-ink);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 13px;
+    font-weight: 800;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.proxy-record-identity small,
+.proxy-renew-item-identity small {
+    margin-top: 3px;
+    overflow: hidden;
+    color: var(--proxy-muted);
+    font-size: 10px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.proxy-country-flag {
+    display: grid;
+    width: 38px;
+    height: 28px;
+    flex: 0 0 38px;
+    place-items: center;
+    overflow: hidden;
+    border: 1px solid #cfe0e7;
+    border-radius: 6px;
+    color: #0c9eae;
+    background: #eef9fa;
+}
+
+.proxy-country-flag img {
+    display: block;
+    width: 28px;
+    height: 18px;
+    object-fit: cover;
+}
+
+.proxy-connection-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    margin: 14px 16px 0;
+    overflow: hidden;
+    border: 1px solid #e0ebef;
+    border-radius: 8px;
+    background: #e0ebef;
+}
+
+.proxy-connection-field {
+    min-width: 0;
+    padding: 10px 11px;
+    background: #fff;
+}
+
+.proxy-detail-label {
+    display: block;
+    margin-bottom: 5px;
+    color: #7890a0;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+}
+
+.proxy-detail-value {
+    display: flex;
+    min-width: 0;
     align-items: center;
     gap: 7px;
 }
 
-.proxy-record-meta {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 2px;
+.proxy-detail-value code {
+    min-width: 0;
+    overflow: hidden;
+    color: #0d526b;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12px;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
-.proxy-record-meta small {
+.proxy-connection-field small {
+    display: block;
+    margin-top: 4px;
+    overflow: hidden;
+    color: var(--proxy-muted);
+    font-size: 9px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.proxy-format-row {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 13px 16px;
+    border-bottom: 1px solid #e5eef1;
+}
+
+.proxy-format-row > div {
+    min-width: 0;
+}
+
+.proxy-format-row code {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    font-size: 11px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.proxy-copy-format {
+    min-height: 40px;
+    flex: 0 0 auto;
+    padding: 8px 11px;
+    font-size: 11px;
+}
+
+.proxy-record-card-footer {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 13px 16px;
+    background: #fbfdfe;
+}
+
+.proxy-expiry,
+.proxy-auto-status {
+    min-width: 0;
+}
+
+.proxy-expiry strong,
+.proxy-expiry small {
+    display: block;
+}
+
+.proxy-expiry strong {
+    color: var(--proxy-ink);
+    font-size: 12px;
+}
+
+.proxy-expiry small {
+    margin-top: 4px;
     color: var(--proxy-muted);
     font-size: 10px;
 }
 
+.proxy-auto-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #788d9b;
+    font-size: 10px;
+    font-weight: 800;
+    text-align: right;
+}
+
+.proxy-auto-status.is-enabled {
+    color: var(--proxy-green);
+}
+
 .proxy-copy-button {
     display: grid;
-    width: 30px;
-    height: 30px;
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
     place-items: center;
     border: 1px solid #cfe2e8;
     border-radius: 5px;
@@ -1209,6 +1413,12 @@ body {
     border-color: var(--proxy-cyan);
     background: #e8fbfc;
     outline: none;
+}
+
+.proxy-copy-button:disabled {
+    color: #a7bac3;
+    background: #f2f6f7;
+    cursor: not-allowed;
 }
 
 .proxy-badge {
@@ -1274,6 +1484,12 @@ body {
     to { transform: rotate(360deg); }
 }
 
+@media (max-width: 1080px) {
+    .proxy-record-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 .proxy-renew-list {
     display: grid;
     max-height: 610px;
@@ -1284,20 +1500,22 @@ body {
 
 .proxy-renew-item {
     display: flex;
-    min-height: 72px;
+    min-height: 92px;
     align-items: center;
     gap: 11px;
-    padding: 11px 12px;
+    padding: 13px 14px;
     border: 1px solid var(--proxy-line);
-    border-radius: 7px;
+    border-radius: 9px;
     background: #fbfdfe;
     cursor: pointer;
+    transition: border-color 180ms ease, background-color 180ms ease, box-shadow 180ms ease;
 }
 
 .proxy-renew-item:hover,
 .proxy-renew-item.is-selected {
     border-color: #73d7dc;
     background: #effcfd;
+    box-shadow: 0 5px 14px rgba(31, 66, 91, .06);
 }
 
 .proxy-renew-item input {
@@ -1311,34 +1529,33 @@ body {
     min-width: 0;
     flex: 1;
     align-items: center;
-    justify-content: space-between;
-    gap: 12px;
+    justify-content: flex-start;
+    gap: 18px;
 }
 
-.proxy-renew-item-content strong,
-.proxy-renew-item-content small {
-    display: block;
-}
-
-.proxy-renew-item-content strong {
-    overflow: hidden;
-    color: var(--proxy-ink);
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    font-size: 12px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.proxy-renew-item-content small {
-    margin-top: 3px;
-    color: var(--proxy-muted);
-    font-size: 10px;
+.proxy-renew-item-identity {
+    min-width: 0;
+    flex: 1 1 auto;
 }
 
 .proxy-renew-item-date {
-    flex: 0 0 auto;
     color: var(--proxy-ink);
+}
+
+.proxy-renew-item-date strong,
+.proxy-renew-item-date small {
+    display: block;
+}
+
+.proxy-renew-item-date strong {
     font-size: 11px;
+    white-space: nowrap;
+}
+
+.proxy-renew-item-date small {
+    margin-top: 4px;
+    color: var(--proxy-muted);
+    font-size: 10px;
     text-align: right;
 }
 
@@ -1521,70 +1738,46 @@ body {
         overflow: visible;
     }
 
-    .proxy-table,
-    .proxy-table thead,
-    .proxy-table tbody,
-    .proxy-table tr,
-    .proxy-table td {
-        display: block;
+    .proxy-record-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .proxy-record-card-header {
+        grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .proxy-record-card-header > .proxy-badge {
+        grid-column: 2;
+        justify-self: start;
+    }
+
+    .proxy-format-row {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .proxy-copy-format {
         width: 100%;
-        min-width: 0;
     }
 
-    .proxy-table {
-        min-width: 0;
+    .proxy-record-card-footer {
+        align-items: flex-start;
+        flex-direction: column;
     }
 
-    .proxy-table thead {
-        display: none;
-    }
-
-    .proxy-table tr {
-        padding: 12px;
-        margin-bottom: 8px;
-        border: 1px solid var(--proxy-line);
-        border-radius: 7px;
-        background: #fff;
-    }
-
-    .proxy-table td {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        padding: 7px 0;
-        border: 0;
-        text-align: right;
-    }
-
-    .proxy-table td::before {
-        color: var(--proxy-muted);
-        content: attr(data-label);
-        font-size: 10px;
-        font-weight: 700;
+    .proxy-auto-status {
         text-align: left;
-    }
-
-    .proxy-table td:first-child {
-        justify-content: flex-start;
-    }
-
-    .proxy-table td:first-child::before {
-        display: none;
-    }
-
-    .proxy-record-actions {
-        justify-content: flex-end;
     }
 
     .proxy-renew-item-content {
         align-items: flex-start;
         flex-direction: column;
-        gap: 4px;
+        gap: 9px;
     }
 
-    .proxy-renew-item-date {
-        font-size: 10px;
+    .proxy-renew-item-date small {
+        text-align: left;
     }
 }
 

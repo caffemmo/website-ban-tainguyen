@@ -9,8 +9,8 @@ $body = [
     'desc' => __('Quản lý proxy đã mua, thông tin đăng nhập và thời hạn.'),
     'keyword' => 'proxy của tôi, quản lý proxy'
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=2') . '">';
-$body['footer'] = '<script src="' . BASE_URL('mod/js/proxy.js?v=2') . '"></script>';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=3') . '">';
+$body['footer'] = '<script src="' . BASE_URL('mod/js/proxy.js?v=3') . '"></script>';
 
 require_once __DIR__ . '/header.php';
 require_once __DIR__ . '/nav.php';
@@ -43,8 +43,9 @@ require_once __DIR__ . '/nav.php';
     <section class="proxy-panel proxy-list-panel">
         <div class="proxy-panel-heading proxy-list-heading">
             <div><div class="proxy-step">03</div><div><h2><?= __('Danh sách proxy'); ?></h2><p data-list-caption><?= __('Đang tải danh sách...'); ?></p></div></div>
-            <div class="proxy-toolbar"><label class="proxy-control proxy-toolbar-select"><span><?= __('Lọc loại'); ?></span><select data-list-type><option value="">Tất cả</option><option value="IPV4">IPv4</option><option value="IPV6">IPv6</option><option value="ISP">ISP</option><option value="MOBILE">Mobile</option></select></label><button type="button" class="proxy-secondary-button" data-go-renew disabled><i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i> <?= __('Gia hạn đã chọn'); ?></button></div>
+            <div class="proxy-toolbar"><label class="proxy-control proxy-toolbar-select"><span><?= __('Lọc loại'); ?></span><select data-list-type><option value="">Tất cả</option><option value="IPV4">IPv4</option><option value="IPV6">IPv6</option><option value="ISP">ISP</option><option value="MOBILE">Mobile</option></select></label><button type="button" class="proxy-secondary-button" data-download-proxies><i class="fa-solid fa-file-arrow-down" aria-hidden="true"></i> <?= __('Tải TXT'); ?></button><button type="button" class="proxy-secondary-button" data-go-renew disabled><i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i> <?= __('Gia hạn đã chọn'); ?></button></div>
         </div>
+        <div class="proxy-format-note"><i class="fa-solid fa-circle-info" aria-hidden="true"></i><span><?= __('Định dạng kết nối:'); ?> <code>IP:Port:User:Pass</code>. <?= __('Bấm nút copy trong từng proxy để sao chép nhanh.'); ?></span></div>
         <div class="proxy-table-wrap" data-proxy-table>
             <div class="proxy-loading-state"><span class="proxy-loader"></span><strong><?= __('Đang đồng bộ danh sách proxy'); ?></strong><small><?= __('Vui lòng chờ trong giây lát.'); ?></small></div>
         </div>
