@@ -34,7 +34,7 @@ $body = [
     'desc' => __('Dịch vụ Get Link Facebook, Up tích Facebook và Up tích Instagram.'),
     'keyword' => 'get link facebook, up tích xanh, up tích facebook, up tích instagram'
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/up-tich-xanh.css?v=7') . '">';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/up-tich-xanh.css?v=8') . '">';
 
 require_once __DIR__ . '/header.php';
 require_once __DIR__ . '/nav.php';
@@ -73,11 +73,11 @@ require_once __DIR__ . '/nav.php';
                         <span class="up-panel-kicker"><?= __('Dịch vụ đang chọn'); ?></span>
                         <div class="up-heading-title-row">
                             <h2 id="up-service-title"><?= __($currentService['label']); ?></h2>
-                            <span class="up-service-state up-service-state--soon" role="status"><i aria-hidden="true"></i> <?= __('Sắp mở'); ?></span>
                         </div>
                         <p><?= __($currentService['description']); ?></p>
                     </div>
                 </div>
+                <span class="up-service-state up-service-state--soon" role="status"><i aria-hidden="true"></i> <?= __('Sắp mở'); ?></span>
             </div>
 
             <div class="up-notice up-notice--info" role="status">
