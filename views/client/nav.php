@@ -1,6 +1,15 @@
 <?php if (!defined('IN_SITE')) {
     die('The Request Not Found');
 } ?>
+<?php
+$upService = isset($_GET['service']) && in_array($_GET['service'], ['get-link', 'up-fb', 'up-ig'], true)
+    ? $_GET['service']
+    : '';
+$upMenuActive = isset($action) && $action === 'up-tich-xanh';
+if ($upMenuActive && $upService === '') {
+    $upService = 'get-link';
+}
+?>
 
 <body class="has-desktop-sidebar">
     <div class="backdrop"></div><a class="backtop" href="#"><i class="fa-sharp fa-solid fa-chevron-up"></i></a>
@@ -35,6 +44,29 @@
                     <span class="desktop-sidebar-link-label">
                         <strong><?= __('Gia hạn Proxy'); ?></strong>
                         <small><?= __('Gia hạn nhanh, không gián đoạn'); ?></small>
+                    </span>
+                </a>
+
+                <p class="desktop-sidebar-section-title"><?= __('Up tích xanh'); ?></p>
+                <a class="desktop-sidebar-link desktop-sidebar-service-link <?= $upMenuActive && $upService === 'get-link' ? 'active' : ''; ?>" href="<?= base_url('client/up-tich-xanh/get-link'); ?>" <?= $upMenuActive && $upService === 'get-link' ? 'aria-current="page"' : ''; ?>>
+                    <i class="fa-solid fa-link" aria-hidden="true"></i>
+                    <span class="desktop-sidebar-link-label">
+                        <strong><?= __('Get Link Facebook'); ?></strong>
+                        <small><?= __('Lấy link xác minh nhanh'); ?></small>
+                    </span>
+                </a>
+                <a class="desktop-sidebar-link desktop-sidebar-service-link <?= $upMenuActive && $upService === 'up-fb' ? 'active' : ''; ?>" href="<?= base_url('client/up-tich-xanh/up-fb'); ?>" <?= $upMenuActive && $upService === 'up-fb' ? 'aria-current="page"' : ''; ?>>
+                    <i class="fa-brands fa-facebook" aria-hidden="true"></i>
+                    <span class="desktop-sidebar-link-label">
+                        <strong><?= __('Up tích Facebook'); ?></strong>
+                        <small><?= __('Xác minh tích xanh Facebook'); ?></small>
+                    </span>
+                </a>
+                <a class="desktop-sidebar-link desktop-sidebar-service-link <?= $upMenuActive && $upService === 'up-ig' ? 'active' : ''; ?>" href="<?= base_url('client/up-tich-xanh/up-ig'); ?>" <?= $upMenuActive && $upService === 'up-ig' ? 'aria-current="page"' : ''; ?>>
+                    <i class="fa-brands fa-instagram" aria-hidden="true"></i>
+                    <span class="desktop-sidebar-link-label">
+                        <strong><?= __('Up tích Instagram'); ?></strong>
+                        <small><?= __('Xác minh tích xanh Instagram'); ?></small>
                     </span>
                 </a>
 
@@ -616,6 +648,20 @@
                 <a class="nav-link <?= isset($action) && $action == 'proxy-renew' ? 'active' : ''; ?>" href="<?= base_url('client/proxy-renew'); ?>">
                     <i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i>
                     <span class="nav-link-label"><strong><?= __('Gia hạn Proxy'); ?></strong><small><?= __('Gia hạn nhanh, không gián đoạn'); ?></small></span>
+                </a>
+
+                <p class="nav-section-title"><?= __('Up tích xanh'); ?></p>
+                <a class="nav-link <?= $upMenuActive && $upService === 'get-link' ? 'active' : ''; ?>" href="<?= base_url('client/up-tich-xanh/get-link'); ?>" <?= $upMenuActive && $upService === 'get-link' ? 'aria-current="page"' : ''; ?>>
+                    <i class="fa-solid fa-link" aria-hidden="true"></i>
+                    <span class="nav-link-label"><strong><?= __('Get Link Facebook'); ?></strong><small><?= __('Lấy link xác minh nhanh'); ?></small></span>
+                </a>
+                <a class="nav-link <?= $upMenuActive && $upService === 'up-fb' ? 'active' : ''; ?>" href="<?= base_url('client/up-tich-xanh/up-fb'); ?>" <?= $upMenuActive && $upService === 'up-fb' ? 'aria-current="page"' : ''; ?>>
+                    <i class="fa-brands fa-facebook" aria-hidden="true"></i>
+                    <span class="nav-link-label"><strong><?= __('Up tích Facebook'); ?></strong><small><?= __('Xác minh tích xanh Facebook'); ?></small></span>
+                </a>
+                <a class="nav-link <?= $upMenuActive && $upService === 'up-ig' ? 'active' : ''; ?>" href="<?= base_url('client/up-tich-xanh/up-ig'); ?>" <?= $upMenuActive && $upService === 'up-ig' ? 'aria-current="page"' : ''; ?>>
+                    <i class="fa-brands fa-instagram" aria-hidden="true"></i>
+                    <span class="nav-link-label"><strong><?= __('Up tích Instagram'); ?></strong><small><?= __('Xác minh tích xanh Instagram'); ?></small></span>
                 </a>
 
                 <p class="nav-section-title"><?= __('Hỗ trợ'); ?></p>
