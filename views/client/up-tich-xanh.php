@@ -43,9 +43,9 @@ require_once __DIR__ . '/nav.php';
 <main class="up-page">
     <section class="up-hero" aria-labelledby="up-page-title">
         <div class="up-hero-copy">
-            <span class="up-eyebrow"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Social workspace</span>
+            <span class="up-eyebrow"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Caffemmo Social</span>
             <h1 id="up-page-title"><?= __('Up tích xanh'); ?></h1>
-            <p><?= __('Chọn đúng dịch vụ, theo dõi yêu cầu và chuẩn bị thông tin xác minh trong một luồng rõ ràng.'); ?></p>
+            <p><?= __('Chọn dịch vụ phù hợp và chuẩn bị thông tin xác minh theo từng bước rõ ràng.'); ?></p>
         </div>
         <div class="up-wallet-card">
             <span><?= __('Số dư ví'); ?></span>
@@ -75,12 +75,12 @@ require_once __DIR__ . '/nav.php';
                         <p><?= __($currentService['description']); ?></p>
                     </div>
                 </div>
-                <span class="up-live-state"><i aria-hidden="true"></i> <?= __('Sẵn sàng cấu hình'); ?></span>
+                <span class="up-live-state"><i aria-hidden="true"></i> <?= __('Đang hoàn thiện'); ?></span>
             </div>
 
             <div class="up-notice" role="status">
                 <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
-                <div><strong><?= __('API đang chờ kết nối'); ?></strong><span><?= __('Giao diện đã sẵn sàng. Chức năng gửi yêu cầu sẽ mở sau khi cấu hình API nhà cung cấp.'); ?></span></div>
+                <div><strong><?= __('Dịch vụ đang được hoàn thiện'); ?></strong><span><?= __('Quy trình tiếp nhận đang được cập nhật để xử lý yêu cầu nhanh và ổn định hơn.'); ?></span></div>
             </div>
 
             <?php if ($service === 'get-link'): ?>
@@ -127,7 +127,7 @@ require_once __DIR__ . '/nav.php';
                 <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i><span><?= __('Ảnh giấy tờ rõ nét, đủ thông tin và không bị cắt góc.'); ?></span></li>
                 <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i><span><?= __('Không chia sẻ cookie cho bên khác ngoài biểu mẫu chính thức.'); ?></span></li>
             </ul>
-            <div class="up-safety-note"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i><span><?= __('Thông tin chỉ được gửi khi API được cấu hình và bật.'); ?></span></div>
+            <div class="up-safety-note"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i><span><?= __('Thông tin của bạn được bảo vệ trong suốt quá trình tiếp nhận và xử lý.'); ?></span></div>
         </aside>
     </div>
 </main>
