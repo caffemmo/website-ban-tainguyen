@@ -75,16 +75,21 @@ require_once __DIR__ . '/nav.php';
                         <p><?= __($currentService['description']); ?></p>
                     </div>
                 </div>
-                <span class="up-live-state"><i aria-hidden="true"></i> <?= __('Đang hoàn thiện'); ?></span>
+                <span class="up-service-state up-service-state--soon" role="status"><i aria-hidden="true"></i> <?= __('Sắp mở'); ?></span>
             </div>
 
-            <div class="up-notice" role="status">
+            <div class="up-notice up-notice--info" role="status">
                 <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
-                <div><strong><?= __('Dịch vụ đang được hoàn thiện'); ?></strong><span><?= __('Quy trình tiếp nhận đang được cập nhật để xử lý yêu cầu nhanh và ổn định hơn.'); ?></span></div>
+                <div><strong><?= __('Tính năng đang được cập nhật'); ?></strong><span><?= __('Bạn có thể xem trước quy trình. Các trường thông tin sẽ mở khi dịch vụ sẵn sàng tiếp nhận.'); ?></span></div>
+            </div>
+
+            <div class="up-form-lock" id="up-form-state" role="status">
+                <i class="fa-solid fa-lock" aria-hidden="true"></i>
+                <div><strong><?= __('Chưa mở tiếp nhận'); ?></strong><span><?= __('Dịch vụ sẽ được mở sau khi hoàn thiện quy trình xử lý.'); ?></span></div>
             </div>
 
             <?php if ($service === 'get-link'): ?>
-                <form class="up-form" onsubmit="return false;">
+                <form class="up-form up-form--locked" onsubmit="return false;" aria-describedby="up-form-state">
                     <label class="up-field">
                         <span><?= __('Link Facebook'); ?></span>
                         <input type="url" placeholder="https://www.facebook.com/..." autocomplete="url" disabled>
@@ -92,7 +97,7 @@ require_once __DIR__ . '/nav.php';
                     <button class="up-submit-button" type="button" disabled><i class="fa-solid fa-link" aria-hidden="true"></i> <?= __('Lấy link'); ?></button>
                 </form>
             <?php else: ?>
-                <form class="up-form" onsubmit="return false;">
+                <form class="up-form up-form--locked" onsubmit="return false;" aria-describedby="up-form-state">
                     <label class="up-field">
                         <span><?= $service === 'up-fb' ? __('Cookie Facebook') : __('Cookie Instagram'); ?></span>
                         <textarea rows="4" placeholder="<?= $service === 'up-fb' ? __('Dán cookie Facebook vào đây...') : __('Dán cookie Instagram vào đây...'); ?>" disabled></textarea>
