@@ -34,7 +34,7 @@ $body = [
     'desc' => __('Dịch vụ Get Link Facebook, Up tích Facebook và Up tích Instagram.'),
     'keyword' => 'get link facebook, up tích xanh, up tích facebook, up tích instagram'
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/up-tich-xanh.css?v=5') . '">';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/up-tich-xanh.css?v=6') . '">';
 
 require_once __DIR__ . '/header.php';
 require_once __DIR__ . '/nav.php';
@@ -67,15 +67,17 @@ require_once __DIR__ . '/nav.php';
     <div class="up-content-grid">
         <section class="up-panel" aria-labelledby="up-service-title">
             <div class="up-panel-heading">
-                <div>
+                <div class="up-heading-main">
                     <span class="up-step">01</span>
-                    <div>
+                    <div class="up-heading-copy">
                         <span class="up-panel-kicker"><?= __('Dịch vụ đang chọn'); ?></span>
-                        <h2 id="up-service-title"><?= __($currentService['label']); ?></h2>
+                        <div class="up-heading-title-row">
+                            <h2 id="up-service-title"><?= __($currentService['label']); ?></h2>
+                            <span class="up-service-state up-service-state--soon" role="status"><i aria-hidden="true"></i> <?= __('Sắp mở'); ?></span>
+                        </div>
                         <p><?= __($currentService['description']); ?></p>
                     </div>
                 </div>
-                <span class="up-service-state up-service-state--soon" role="status"><i aria-hidden="true"></i> <?= __('Sắp mở'); ?></span>
             </div>
 
             <div class="up-notice up-notice--info" role="status">
@@ -126,7 +128,7 @@ require_once __DIR__ . '/nav.php';
         </section>
 
         <aside class="up-panel up-side-panel" aria-labelledby="up-guide-title">
-            <div class="up-side-heading"><span class="up-step">02</span><div><h2 id="up-guide-title"><?= __('Chuẩn bị trước khi gửi'); ?></h2><p><?= __('Giúp yêu cầu được xử lý thuận lợi hơn.'); ?></p></div></div>
+            <div class="up-side-heading"><span class="up-step">02</span><div><span class="up-panel-kicker"><?= __('Hướng dẫn'); ?></span><h2 id="up-guide-title"><?= __('Chuẩn bị trước khi gửi'); ?></h2><p><?= __('Giúp yêu cầu được xử lý thuận lợi hơn.'); ?></p></div></div>
             <ul class="up-check-list">
                 <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i><span><?= __('Tài khoản phải đã đăng ký và thanh toán gói Meta Verified.'); ?></span></li>
                 <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i><span><?= __('Ảnh giấy tờ rõ nét, đủ thông tin và không bị cắt góc.'); ?></span></li>

@@ -199,12 +199,25 @@
     gap: 15px;
 }
 
-.up-panel-heading > div,
-.up-side-heading { display: flex; gap: 16px; min-width: 0; }
-
-.up-panel-heading > div:first-child {
+.up-heading-main {
+    display: flex;
     min-width: 0;
     flex: 1;
+    gap: 16px;
+}
+
+.up-heading-copy,
+.up-side-heading > div {
+    min-width: 0;
+    flex: 1;
+}
+
+.up-heading-title-row {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
 }
 
 .up-step {
@@ -229,6 +242,8 @@
     line-height: 1.25;
 }
 
+.up-heading-title-row h2 { margin: 0; }
+
 .up-panel-heading p,
 .up-side-heading p { margin: 0; color: #617b8f; font-size: 13px; line-height: 1.55; }
 .up-panel-kicker { margin-bottom: 5px; color: #0b9ba8; font-size: 11px; letter-spacing: .08em; }
@@ -238,7 +253,7 @@
     flex: 0 0 auto;
     align-items: center;
     gap: 7px;
-    margin-top: 3px;
+    margin-top: 0;
     padding: 7px 10px;
     border: 1px solid #f0d5a2;
     border-radius: 999px;
@@ -317,7 +332,7 @@
 .up-submit-button { min-height: 46px; border: 0; border-radius: 7px; background: #dce9ee; color: #7290a1; font: inherit; font-size: 13px; font-weight: 700; cursor: not-allowed; }
 .up-submit-button i { margin-right: 6px; }
 
-.up-side-panel { align-self: stretch; color: #24445b; background: #f2fbfb; border-color: #c5e3e7; border-top: 4px solid #09b4bd; box-shadow: 0 10px 22px rgba(24, 76, 90, .08); }
+.up-side-panel { align-self: start; color: #24445b; background: #f2fbfb; border-color: #c5e3e7; border-top: 4px solid #09b4bd; box-shadow: 0 10px 22px rgba(24, 76, 90, .08); }
 .up-side-panel h2 { color: #16344d; }
 .up-side-heading p { color: #617b8f; }
 .up-side-panel .up-step { background: #0caeb7; }
@@ -364,7 +379,7 @@
     .up-service-tab { min-height: 66px; }
     .up-panel { padding: 19px; }
     .up-panel-heading { display: grid; gap: 13px; }
-    .up-service-state { margin-left: 50px; }
+    .up-service-state { margin-left: 0; }
     .up-panel h2, .up-side-panel h2 { font-size: 16px; }
     .up-field input, .up-field textarea { font-size: 16px; }
 }
