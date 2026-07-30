@@ -56,7 +56,7 @@ checkMaintenance();
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap">
-  <link rel="stylesheet" href="<?= BASE_URL('public/client/'); ?>css/main.css">
+  <link rel="stylesheet" href="<?= BASE_URL('public/client/'); ?>css/main.css?v=2">
   <link rel="stylesheet" href="<?= BASE_URL('public/client/'); ?>css/user-auth.css">
   <link rel="stylesheet" href="<?= BASE_URL('public/client/'); ?>css/index.css">
 
