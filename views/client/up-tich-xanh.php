@@ -1,46 +1,60 @@
-<?php if (!defined('IN_SITE')) {
+<?php
+if (!defined('IN_SITE')) {
     die('The Request Not Found');
 }
+
 require_once __DIR__ . '/../../models/is_user.php';
+require_once __DIR__ . '/../../libs/uptichxanh.php';
 
 $services = [
     'get-link' => [
         'label' => 'Get Link Facebook',
         'short' => 'Lấy link xác minh nhanh',
-        'description' => 'Nhập đường dẫn Facebook để bắt đầu tạo link xác minh.',
+        'description' => 'Gửi cookie Facebook để nhận liên kết xác minh theo yêu cầu.',
         'icon' => 'fa-link',
         'tone' => 'teal'
     ],
     'up-fb' => [
         'label' => 'Up tích Facebook',
         'short' => 'Xác minh tích xanh Facebook',
-        'description' => 'Gửi thông tin xác minh Facebook theo đúng yêu cầu của dịch vụ.',
+        'description' => 'Gửi cookie và ảnh giấy tờ xác minh Facebook theo biểu mẫu.',
         'icon' => 'fa-facebook',
         'tone' => 'blue'
     ],
     'up-ig' => [
         'label' => 'Up tích Instagram',
         'short' => 'Xác minh tích xanh Instagram',
-        'description' => 'Gửi thông tin xác minh Instagram và chọn số lượng ảnh cần dùng.',
+        'description' => 'Gửi cookie và ảnh giấy tờ xác minh Instagram theo biểu mẫu.',
         'icon' => 'fa-instagram',
         'tone' => 'pink'
     ]
 ];
+
 $service = isset($_GET['service']) && isset($services[$_GET['service']]) ? $_GET['service'] : 'get-link';
 $currentService = $services[$service];
+$upConfigured = uptichxanh_is_configured();
+$servicePrice = uptichxanh_service_price($service);
 
 $body = [
     'title' => __('Up tích xanh') . ' | ' . $CMSNT->site('title'),
     'desc' => __('Dịch vụ Get Link Facebook, Up tích Facebook và Up tích Instagram.'),
     'keyword' => 'get link facebook, up tích xanh, up tích facebook, up tích instagram'
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/up-tich-xanh.css?v=8') . '">';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/up-tich-xanh.css?v=9') . '">';
+$body['footer'] = '<script src="' . BASE_URL('mod/js/up-tich-xanh.js?v=1') . '"></script>';
 
 require_once __DIR__ . '/header.php';
 require_once __DIR__ . '/nav.php';
 ?>
 
-<main class="up-page">
+<main
+    class="up-page"
+    data-up-app
+    data-endpoint="<?= htmlspecialchars(BASE_URL('ajaxs/client/up-tich-xanh.php'), ENT_QUOTES, 'UTF-8'); ?>"
+    data-token="<?= htmlspecialchars((string) $getUser['token'], ENT_QUOTES, 'UTF-8'); ?>"
+    data-service="<?= htmlspecialchars($service, ENT_QUOTES, 'UTF-8'); ?>"
+    data-configured="<?= $upConfigured ? '1' : '0'; ?>"
+>
     <section class="up-hero" aria-labelledby="up-page-title">
         <div class="up-hero-copy">
             <span class="up-eyebrow"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Caffemmo Social</span>
@@ -71,64 +85,67 @@ require_once __DIR__ . '/nav.php';
                     <span class="up-step">01</span>
                     <div class="up-heading-copy">
                         <span class="up-panel-kicker"><?= __('Dịch vụ đang chọn'); ?></span>
-                        <div class="up-heading-title-row">
-                            <h2 id="up-service-title"><?= __($currentService['label']); ?></h2>
-                        </div>
+                        <div class="up-heading-title-row"><h2 id="up-service-title"><?= __($currentService['label']); ?></h2></div>
                         <p><?= __($currentService['description']); ?></p>
                     </div>
                 </div>
-                <span class="up-service-state up-service-state--soon" role="status"><i aria-hidden="true"></i> <?= __('Sắp mở'); ?></span>
+                <span class="up-service-state <?= $upConfigured ? 'up-service-state--ready' : 'up-service-state--soon'; ?>" role="status"><i aria-hidden="true"></i> <?= $upConfigured ? __('Sẵn sàng') : __('Tạm đóng'); ?></span>
             </div>
 
-            <div class="up-notice up-notice--info" role="status">
+            <div class="up-notice up-notice--info" data-up-notice role="status" aria-live="polite">
                 <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
-                <div><strong><?= __('Tính năng đang được cập nhật'); ?></strong><span><?= __('Bạn có thể xem trước quy trình. Các trường thông tin sẽ mở khi dịch vụ sẵn sàng tiếp nhận.'); ?></span></div>
+                <div>
+                    <strong><?= $upConfigured ? __('Thông tin được gửi bảo mật') : __('Dịch vụ đang được chuẩn bị'); ?></strong>
+                    <span><?= $upConfigured ? __('Cookie và ảnh chỉ dùng để xử lý yêu cầu, không hiển thị công khai.') : __('Vui lòng quay lại sau khi quản trị viên hoàn tất cấu hình dịch vụ.'); ?></span>
+                </div>
             </div>
 
-            <div class="up-form-lock" id="up-form-state" role="status">
-                <i class="fa-solid fa-lock" aria-hidden="true"></i>
-                <div><strong><?= __('Chưa mở tiếp nhận'); ?></strong><span><?= __('Dịch vụ sẽ được mở sau khi hoàn thiện quy trình xử lý.'); ?></span></div>
-            </div>
+            <?php if (!$upConfigured): ?>
+                <div class="up-form-lock" id="up-form-state" role="status">
+                    <i class="fa-solid fa-lock" aria-hidden="true"></i>
+                    <div><strong><?= __('Chưa mở tiếp nhận'); ?></strong><span><?= __('Dịch vụ sẽ được mở ngay khi hoàn tất cấu hình.'); ?></span></div>
+                </div>
+            <?php endif; ?>
 
-            <?php if ($service === 'get-link'): ?>
-                <form class="up-form up-form--locked" onsubmit="return false;" aria-describedby="up-form-state">
-                    <label class="up-field">
-                        <span><?= __('Link Facebook'); ?></span>
-                        <input type="url" placeholder="https://www.facebook.com/..." autocomplete="url" disabled>
+            <form class="up-form <?= !$upConfigured ? 'up-form--locked' : ''; ?>" data-up-form enctype="multipart/form-data" autocomplete="off"<?= !$upConfigured ? ' aria-describedby="up-form-state"' : ''; ?>>
+                <?php if ($service === 'get-link'): ?>
+                    <label class="up-field" for="up_cookie">
+                        <span><?= __('Cookie Facebook'); ?></span>
+                        <textarea id="up_cookie" name="cookie" rows="5" placeholder="<?= __('Dán cookie Facebook vào đây...'); ?>"<?= !$upConfigured ? ' disabled' : ''; ?> required></textarea>
+                        <small><?= __('Chi phí mỗi lượt:'); ?> <?= format_currency($servicePrice); ?></small>
                     </label>
-                    <button class="up-submit-button" type="button" disabled><i class="fa-solid fa-link" aria-hidden="true"></i> <?= __('Lấy link'); ?></button>
-                </form>
-            <?php else: ?>
-                <form class="up-form up-form--locked" onsubmit="return false;" aria-describedby="up-form-state">
-                    <label class="up-field">
+                    <button class="up-submit-button" data-up-submit type="submit"<?= !$upConfigured ? ' disabled' : ''; ?>><i class="fa-solid fa-link" aria-hidden="true"></i> <?= __('Lấy link xác minh'); ?></button>
+                <?php else: ?>
+                    <label class="up-field" for="up_cookie">
                         <span><?= $service === 'up-fb' ? __('Cookie Facebook') : __('Cookie Instagram'); ?></span>
-                        <textarea rows="4" placeholder="<?= $service === 'up-fb' ? __('Dán cookie Facebook vào đây...') : __('Dán cookie Instagram vào đây...'); ?>" disabled></textarea>
+                        <textarea id="up_cookie" name="cookie" rows="5" placeholder="<?= $service === 'up-fb' ? __('Dán cookie Facebook vào đây...') : __('Dán cookie Instagram vào đây...'); ?>"<?= !$upConfigured ? ' disabled' : ''; ?> required></textarea>
                     </label>
-                    <?php if ($service === 'up-ig'): ?>
-                        <fieldset class="up-fieldset">
-                            <legend><?= __('Số lượng ảnh'); ?></legend>
-                            <div class="up-choice-grid">
-                                <button type="button" class="up-choice is-selected" disabled>1 <?= __('ảnh'); ?></button>
-                                <button type="button" class="up-choice" disabled>2 <?= __('ảnh'); ?></button>
-                            </div>
-                        </fieldset>
-                    <?php endif; ?>
                     <div class="up-upload-field">
                         <span><?= __('Ảnh giấy tờ xác minh'); ?></span>
-                        <label class="up-upload-box">
+                        <label class="up-upload-box<?= $upConfigured ? ' is-enabled' : ''; ?>" for="up_image">
                             <i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i>
-                            <strong><?= __('Click hoặc kéo thả ảnh'); ?></strong>
-                            <small>PNG, JPG, WEBP · tối đa 10MB</small>
-                            <input type="file" accept="image/png,image/jpeg,image/webp" disabled>
+                            <strong><?= __('Chọn ảnh giấy tờ'); ?></strong>
+                            <small>PNG, JPG, WEBP · <?= __('tối đa 10MB'); ?></small>
+                            <input id="up_image" type="file" name="image" accept="image/png,image/jpeg,image/webp"<?= !$upConfigured ? ' disabled' : ''; ?> required>
                         </label>
                     </div>
-                    <button class="up-submit-button" type="button" disabled><i class="fa-solid fa-paper-plane" aria-hidden="true"></i> <?= __('Bắt đầu xác minh'); ?></button>
-                </form>
-            <?php endif; ?>
+                    <div class="up-price-row"><span><?= __('Chi phí mỗi lượt'); ?></span><strong><?= format_currency($servicePrice); ?></strong></div>
+                    <button class="up-submit-button" data-up-submit type="submit"<?= !$upConfigured ? ' disabled' : ''; ?>><i class="fa-solid fa-paper-plane" aria-hidden="true"></i> <?= __('Gửi yêu cầu xác minh'); ?></button>
+                <?php endif; ?>
+            </form>
+
+            <div class="up-result" data-up-result hidden aria-live="polite"></div>
         </section>
 
         <aside class="up-panel up-side-panel" aria-labelledby="up-guide-title">
-            <div class="up-side-heading"><span class="up-step">02</span><div><span class="up-panel-kicker"><?= __('Hướng dẫn'); ?></span><h2 id="up-guide-title"><?= __('Chuẩn bị trước khi gửi'); ?></h2><p><?= __('Giúp yêu cầu được xử lý thuận lợi hơn.'); ?></p></div></div>
+            <div class="up-side-heading">
+                <span class="up-step">02</span>
+                <div>
+                    <span class="up-panel-kicker"><?= __('Hướng dẫn'); ?></span>
+                    <h2 id="up-guide-title"><?= __('Chuẩn bị trước khi gửi'); ?></h2>
+                    <p><?= __('Giúp yêu cầu được xử lý thuận lợi hơn.'); ?></p>
+                </div>
+            </div>
             <ul class="up-check-list">
                 <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i><span><?= __('Tài khoản phải đã đăng ký và thanh toán gói Meta Verified.'); ?></span></li>
                 <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i><span><?= __('Ảnh giấy tờ rõ nét, đủ thông tin và không bị cắt góc.'); ?></span></li>
