@@ -486,10 +486,23 @@ foreach ($CMSNT->get_list_safe(" SELECT * FROM `banks` WHERE `status` = ? ", [1]
             echo $result;
         }
         $result = json_decode($result, true);
-        foreach ($result['data'] as $data) {
-            $tid            = check_string($data['refNo']);
-            $description    = str_replace(' ', '.', check_string($data['description']));
-            $amount         = check_string($data['creditAmount']);
+        // Web2M's newer MB response exposes transactions[] instead of data[].
+        $transactions = $result['transactions'] ?? $result['data'] ?? null;
+        if (!is_array($transactions)) {
+            error_log('[Auto bank][MB] Missing transaction list: ' . (string)($result['message'] ?? 'unknown response'));
+            continue;
+        }
+        foreach ($transactions as $data) {
+            $type           = strtoupper(trim((string)($data['type'] ?? 'IN')));
+            if ($type !== 'IN') {
+                continue;
+            }
+            $tid            = check_string((string)($data['transactionID'] ?? $data['refNo'] ?? ''));
+            $description    = str_replace(' ', '.', check_string((string)($data['description'] ?? '')));
+            $amount         = check_string((string)($data['amount'] ?? $data['creditAmount'] ?? '0'));
+            if (empty($tid) || empty($description) || $amount <= 0) {
+                continue;
+            }
             // TÁCH NỘI DUNG CHUYỂN TIỀN (findUserByDescription)
             if ($amount < $CMSNT->site('bank_min') || $amount > $CMSNT->site('bank_max')) {
                 continue;
@@ -543,7 +556,7 @@ foreach ($CMSNT->get_list_safe(" SELECT * FROM `banks` WHERE `status` = ? ", [1]
                     'tid'               => $tid,
                     'method'            => $bank['short_name'],
                     'description'       => $description,
-                    'type'              => $data['type'],
+                    'type'              => $type,
                     'amount'            => $amount,
                     'create_gettime'    => gettime()
                 ));
