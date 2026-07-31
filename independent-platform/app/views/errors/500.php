@@ -1,0 +1,1 @@
+<section class="empty-state"><i data-lucide="triangle-alert"></i><h1>Hệ thống đang bận</h1><p>Lỗi đã được ghi vào log server. Vui lòng thử lại sau.</p><a class="button button-primary" href="<?= e(url('/')) ?>">Tải lại</a></section>
