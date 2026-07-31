@@ -1,11 +1,40 @@
-$(window).on("scroll", function () {
-  $(this).scrollTop() > 130
-    ? $(".header-part").addClass("active")
-    : $(".header-part").removeClass("active");
-}),
-  $(window).on("scroll", function () {
-    $(this).scrollTop() > 700 ? $(".backtop").show() : $(".backtop").hide();
-  }),
+(function () {
+  var scheduled = false;
+  var headerIsActive = null;
+  var backtopIsVisible = null;
+
+  // Keep scrolling work to one visual update per frame instead of two jQuery handlers.
+  function updateScrollUi() {
+    var scrollTop = window.pageYOffset || document.documentElement.scrollTop || 0;
+    var shouldActivateHeader = scrollTop > 130;
+    var shouldShowBacktop = scrollTop > 700;
+
+    scheduled = false;
+
+    if (headerIsActive !== shouldActivateHeader) {
+      $(".header-part").toggleClass("active", shouldActivateHeader);
+      headerIsActive = shouldActivateHeader;
+    }
+
+    if (backtopIsVisible !== shouldShowBacktop) {
+      $(".backtop").toggle(shouldShowBacktop);
+      backtopIsVisible = shouldShowBacktop;
+    }
+  }
+
+  window.addEventListener(
+    "scroll",
+    function () {
+      if (!scheduled) {
+        scheduled = true;
+        window.requestAnimationFrame(updateScrollUi);
+      }
+    },
+    { passive: true }
+  );
+
+  updateScrollUi();
+})();
   $(function () {
     $(".dropdown-link").click(function () {
       $(this).next().toggle(),

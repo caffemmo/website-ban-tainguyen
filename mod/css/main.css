@@ -2668,4 +2668,11 @@ ul.custom-button-list li {
     color: var(--border);
 }
 
+@media (min-width: 992px) {
+    .desktop-sidebar-link,
+    .desktop-sidebar-support-card {
+        animation: none;
+    }
+}
+
 /* ===== END WIDGET BẢNG XẾP HẠNG ===== */

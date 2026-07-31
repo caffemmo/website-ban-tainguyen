@@ -612,7 +612,20 @@
         </div>
     </div>
 </footer>
-<script src="<?= BASE_URL('public/client/'); ?>vendor/bootstrap/jquery-1.12.4.min.js"></script>
+<style>
+    /* Decorative widgets should not keep repainting the desktop interface. */
+    @media (min-width: 992px) {
+        .hotline-phone-ring-circle,
+        .hotline-phone-ring-circle-fill,
+        .hotline-phone-ring-img-circle,
+        .fcta-zalo-nen-nut::before,
+        .fcta-zalo-nen-nut::after,
+        .fcta-zalo-ben-trong-nut i {
+            -webkit-animation: none !important;
+            animation: none !important;
+        }
+    }
+</style>
 <script src="<?= BASE_URL('public/client/'); ?>vendor/bootstrap/popper.min.js"></script>
 <script src="<?= BASE_URL('public/client/'); ?>vendor/bootstrap/bootstrap.min.js"></script>
 <script src="<?= BASE_URL('public/client/'); ?>vendor/countdown/countdown.min.js"></script>
