@@ -20,6 +20,106 @@ function proxy_json($payload, $status = 200)
     exit;
 }
 
+function proxy_metadata_cache_path()
+{
+    return dirname(dirname(__DIR__, 2)) . '/.caffemmo-cache/youproxy-metadata.json';
+}
+
+function proxy_metadata_cache_key()
+{
+    $config = youproxy_config();
+    return hash('sha256', $config['base_url'] . '|' . $config['api_key']);
+}
+
+function proxy_metadata_cache_read()
+{
+    $path = proxy_metadata_cache_path();
+    if (!is_file($path) || !is_readable($path)) {
+        return null;
+    }
+    $payload = json_decode((string) @file_get_contents($path), true);
+    if (!is_array($payload)
+        || empty($payload['created_at'])
+        || !isset($payload['config_key'])
+        || !isset($payload['data'])
+        || !is_array($payload['data'])) {
+        return null;
+    }
+    if (!hash_equals((string) $payload['config_key'], proxy_metadata_cache_key())) {
+        return null;
+    }
+    // Countries and rental periods rarely change, while prices remain live.
+    if (time() - (int) $payload['created_at'] > 3600) {
+        return null;
+    }
+    return $payload['data'];
+}
+
+function proxy_metadata_cache_write($data)
+{
+    $path = proxy_metadata_cache_path();
+    $directory = dirname($path);
+    if (!is_dir($directory) && !@mkdir($directory, 0755, true)) {
+        return;
+    }
+    $payload = json_encode([
+        'created_at' => time(),
+        'config_key' => proxy_metadata_cache_key(),
+        'data' => $data
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    if ($payload === false) {
+        return;
+    }
+    $temporary = $path . '.' . bin2hex(random_bytes(6)) . '.tmp';
+    if (@file_put_contents($temporary, $payload, LOCK_EX) !== false) {
+        @rename($temporary, $path);
+    }
+}
+
+function proxy_metadata_fetch()
+{
+    $typeResponse = youproxy_proxy_types();
+    if (!$typeResponse['success']) {
+        return ['success' => false, 'message' => youproxy_error_text($typeResponse)];
+    }
+
+    $types = youproxy_response_options($typeResponse, ['proxyTypes', 'types', 'items'], ['proxyType', 'code'], ['name', 'title']);
+    $availableTypes = [];
+    $requests = ['mobile_operators' => ['endpoint' => 'mobileOperator', 'query' => []]];
+    foreach ($types as $type) {
+        $typeCode = strtoupper((string) $type['value']);
+        if (!in_array($typeCode, ['IPV4', 'IPV6', 'MOBILE', 'ISP'], true)) {
+            continue;
+        }
+        $providerType = proxy_type($typeCode);
+        if ($providerType === false) {
+            continue;
+        }
+        $availableTypes[$typeCode] = ['value' => $typeCode, 'label' => $type['label'], 'provider_type' => $providerType];
+        $requests['countries_' . $typeCode] = ['endpoint' => 'country', 'query' => ['proxyType' => $providerType]];
+        $requests['periods_' . $typeCode] = ['endpoint' => 'rentPeriod', 'query' => ['proxyType' => $providerType]];
+    }
+
+    $responses = youproxy_multi_get($requests);
+    $result = ['types' => [], 'mobile_operators' => [], 'settings' => []];
+    foreach ($availableTypes as $typeCode => $type) {
+        $countryResponse = $responses['countries_' . $typeCode] ?? ['success' => false];
+        $rentResponse = $responses['periods_' . $typeCode] ?? ['success' => false];
+        $result['types'][$typeCode] = [
+            'value' => $typeCode,
+            'label' => $type['label'],
+            'countries' => !empty($countryResponse['success']) ? youproxy_response_options($countryResponse, ['countries', 'items'], ['alpha3code', 'alpha3', 'countryCode', 'code'], ['name', 'countryName', 'title']) : [],
+            'rent_periods' => !empty($rentResponse['success']) ? youproxy_response_options($rentResponse, ['rentPeriodDays', 'rentPeriods', 'periods', 'items'], ['days', 'rentPeriodDays', 'value', 'code'], ['label', 'name', 'days', 'rentPeriodDays']) : []
+        ];
+    }
+    $mobileResponse = $responses['mobile_operators'] ?? ['success' => false];
+    if (!empty($mobileResponse['success'])) {
+        $result['mobile_operators'] = youproxy_response_options($mobileResponse, ['mobileOperators', 'operators', 'items'], ['code', 'id', 'operator'], ['name', 'title', 'operator']);
+    }
+
+    return ['success' => true, 'data' => $result];
+}
+
 function proxy_input()
 {
     $raw = file_get_contents('php://input');
@@ -434,32 +534,17 @@ if (!youproxy_is_configured()) {
 }
 
 if ($action === 'metadata') {
-    $typeResponse = youproxy_proxy_types();
-    if (!$typeResponse['success']) {
-        proxy_json(['success' => false, 'message' => youproxy_error_text($typeResponse)], 502);
+    $result = proxy_metadata_cache_read();
+    if ($result !== null) {
+        proxy_json(['success' => true, 'data' => $result]);
     }
-    $types = youproxy_response_options($typeResponse, ['proxyTypes', 'types', 'items'], ['proxyType', 'code'], ['name', 'title']);
-    $result = ['types' => [], 'mobile_operators' => [], 'settings' => []];
-    foreach ($types as $type) {
-        $typeCode = strtoupper($type['value']);
-        if (!in_array($typeCode, ['IPV4', 'IPV6', 'MOBILE', 'ISP'], true)) {
-            continue;
-        }
-        $providerType = proxy_type($typeCode);
-        $countryResponse = youproxy_countries($providerType);
-        $rentResponse = youproxy_rent_periods($providerType);
-        $result['types'][$typeCode] = [
-            'value' => $typeCode,
-            'label' => $type['label'],
-            'countries' => $countryResponse['success'] ? youproxy_response_options($countryResponse, ['countries', 'items'], ['alpha3code', 'alpha3', 'countryCode', 'code'], ['name', 'countryName', 'title']) : [],
-            'rent_periods' => $rentResponse['success'] ? youproxy_response_options($rentResponse, ['rentPeriodDays', 'rentPeriods', 'periods', 'items'], ['days', 'rentPeriodDays', 'value', 'code'], ['label', 'name', 'days', 'rentPeriodDays']) : []
-        ];
+
+    $metadata = proxy_metadata_fetch();
+    if (empty($metadata['success'])) {
+        proxy_json(['success' => false, 'message' => $metadata['message'] ?? 'Không thể tải cấu hình proxy.'], 502);
     }
-    $mobileResponse = youproxy_mobile_operators();
-    if ($mobileResponse['success']) {
-        $result['mobile_operators'] = youproxy_response_options($mobileResponse, ['mobileOperators', 'operators', 'items'], ['code', 'id', 'operator'], ['name', 'title', 'operator']);
-    }
-    proxy_json(['success' => true, 'data' => $result]);
+    proxy_metadata_cache_write($metadata['data']);
+    proxy_json(['success' => true, 'data' => $metadata['data']]);
 }
 
 if ($action === 'quote') {

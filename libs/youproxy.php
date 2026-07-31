@@ -156,9 +156,8 @@ function youproxy_request($method, $endpoint, $query = [], $payload = null)
     return ['ok' => $httpCode >= 200 && $httpCode < 300, 'http_code' => $httpCode, 'body' => $body, 'error' => ''];
 }
 
-function youproxy_api_call($method, $endpoint, $query = [], $payload = null)
+function youproxy_api_result($response)
 {
-    $response = youproxy_request($method, $endpoint, $query, $payload);
     if (!$response['ok']) {
         return ['success' => false, 'error' => $response['error'], '_http_code' => $response['http_code']];
     }
@@ -171,6 +170,109 @@ function youproxy_api_call($method, $endpoint, $query = [], $payload = null)
     }
     $body['_http_code'] = $response['http_code'];
     return $body;
+}
+
+function youproxy_api_call($method, $endpoint, $query = [], $payload = null)
+{
+    return youproxy_api_result(youproxy_request($method, $endpoint, $query, $payload));
+}
+
+/**
+ * Fetch several read-only provider endpoints at once. Metadata requests used to
+ * run one after another, making the proxy purchase page wait for every country
+ * and duration response before it could render.
+ */
+function youproxy_multi_get($requests)
+{
+    $results = [];
+    if (!is_array($requests) || empty($requests)) {
+        return $results;
+    }
+
+    $config = youproxy_config();
+    if ($config['api_key'] === '' || !function_exists('curl_multi_init')) {
+        foreach ($requests as $key => $request) {
+            $results[$key] = youproxy_api_call('GET', $request['endpoint'] ?? '', $request['query'] ?? []);
+        }
+        return $results;
+    }
+
+    $multi = curl_multi_init();
+    if ($multi === false) {
+        foreach ($requests as $key => $request) {
+            $results[$key] = youproxy_api_call('GET', $request['endpoint'] ?? '', $request['query'] ?? []);
+        }
+        return $results;
+    }
+
+    $handles = [];
+    foreach ($requests as $key => $request) {
+        $endpoint = ltrim((string) ($request['endpoint'] ?? ''), '/');
+        if ($endpoint === '') {
+            $results[$key] = ['success' => false, 'error' => 'Yêu cầu dịch vụ proxy không hợp lệ.', '_http_code' => 0];
+            continue;
+        }
+
+        $url = $config['base_url'] . '/client/api/v1/' . rawurlencode($config['api_key']) . '/' . $endpoint;
+        $query = isset($request['query']) && is_array($request['query']) ? $request['query'] : [];
+        if (!empty($query)) {
+            $url .= '?' . http_build_query($query, '', '&', PHP_QUERY_RFC3986);
+        }
+
+        $curl = curl_init();
+        if ($curl === false) {
+            $results[$key] = ['success' => false, 'error' => 'Không thể kết nối đến dịch vụ proxy.', '_http_code' => 0];
+            continue;
+        }
+        curl_setopt_array($curl, [
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_FOLLOWLOCATION => false,
+            CURLOPT_CONNECTTIMEOUT => 8,
+            CURLOPT_TIMEOUT => $config['timeout'],
+            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_SSL_VERIFYHOST => 2,
+            CURLOPT_HTTPHEADER => ['Accept: application/json', 'User-Agent: Caffemmo-Proxy/1.0']
+        ]);
+        $handles[(string) $key] = $curl;
+        curl_multi_add_handle($multi, $curl);
+    }
+
+    do {
+        $status = curl_multi_exec($multi, $running);
+    } while ($status === CURLM_CALL_MULTI_PERFORM);
+
+    while ($running && $status === CURLM_OK) {
+        $selected = curl_multi_select($multi, 1.0);
+        if ($selected === -1) {
+            usleep(50000);
+        }
+        do {
+            $status = curl_multi_exec($multi, $running);
+        } while ($status === CURLM_CALL_MULTI_PERFORM);
+    }
+
+    foreach ($handles as $key => $curl) {
+        $raw = curl_multi_getcontent($curl);
+        $curlError = curl_error($curl);
+        $httpCode = (int) curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        curl_multi_remove_handle($multi, $curl);
+        curl_close($curl);
+
+        if ($raw === false || $curlError !== '') {
+            $results[$key] = youproxy_api_result(['ok' => false, 'http_code' => $httpCode, 'body' => null, 'error' => 'Không thể kết nối đến dịch vụ proxy.']);
+            continue;
+        }
+        $body = json_decode($raw, true);
+        if (!is_array($body)) {
+            $results[$key] = youproxy_api_result(['ok' => false, 'http_code' => $httpCode, 'body' => null, 'error' => 'Dịch vụ proxy trả về dữ liệu không hợp lệ.']);
+            continue;
+        }
+        $results[$key] = youproxy_api_result(['ok' => $httpCode >= 200 && $httpCode < 300, 'http_code' => $httpCode, 'body' => $body, 'error' => '']);
+    }
+    curl_multi_close($multi);
+
+    return $results;
 }
 
 function youproxy_proxy_types()
