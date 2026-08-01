@@ -1,1 +1,0 @@
-<section class="empty-state"><i data-lucide="file-question"></i><h1>Không tìm thấy trang</h1><p>Đường dẫn này không tồn tại trong platform mới.</p><a class="button button-primary" href="<?= e(url('/')) ?>">Về trang chủ</a></section>
