@@ -740,6 +740,9 @@ insert_options('time_cron_suppliers_api48', 0);
 insert_options('time_cron_suppliers_api49', 0);
 insert_options('time_cron_suppliers_api50', 0);
 insert_options('time_cron_suppliers_api51', 0);
+insert_options('time_cron_suppliers_api52', 0);
+insert_options('time_cron_suppliers_api53', 0);
+insert_options('time_cron_suppliers_api54', 0);
 
 //
 if (!column_exists('suppliers', 'notes')) {
@@ -1068,3 +1071,6 @@ insert_options('leaderboard_periods', 'daily,weekly,monthly,all_time');
 insert_options('leaderboard_limit', 10);
 
 insert_options('time_cron_suppliers_api51', 0);
+insert_options('time_cron_suppliers_api52', 0);
+insert_options('time_cron_suppliers_api53', 0);
+insert_options('time_cron_suppliers_api54', 0);

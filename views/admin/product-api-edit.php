@@ -10,7 +10,7 @@ $body['header'] = '
 
 ';
 $body['footer'] = '
- 
+
 ';
 require_once(__DIR__ . '/../../libs/suppliers.php');
 require_once(__DIR__ . '/../../models/is_admin.php');
@@ -546,7 +546,7 @@ if (isset($_POST['save'])) {
         // Gọi hàm check số dư API_50 để xác thực thông tin kết nối
         $result_raw = balance_API_50(check_string($_POST['domain']), check_string($_POST['token']), check_string($_POST['proxy']));
         $result = json_decode($result_raw, true);
-        
+
         // Kiểm tra kết quả trả về từ API
         if (!isset($result['success']) || $result['success'] != true || !isset($result['balance'])) {
             $errorMsg = isset($result['message']) ? $result['message'] : 'Kết nối đến API không thành công! Vui lòng kiểm tra lại Domain và Token.';
@@ -555,7 +555,7 @@ if (isset($_POST['save'])) {
             }
             die('<script type="text/javascript">if(!alert("' . addslashes($errorMsg) . '")){window.history.back().location.reload();}</script>');
         }
-        
+
         // Lưu trữ số dư định dạng text hiển thị
         $currency = isset($result['walletCurrency']) ? $result['walletCurrency'] : '';
         $price = isset($result['balanceText']) ? check_string($result['balanceText']) : check_string($result['balance']) . ' ' . $currency;
@@ -567,7 +567,7 @@ if (isset($_POST['save'])) {
         // Gọi hàm check số dư balance_API_51 để xác thực thông tin kết nối
         $result_raw = balance_API_51(check_string($_POST['domain']), check_string($_POST['api_key']), check_string($_POST['proxy']));
         $result = json_decode($result_raw, true);
-        
+
         // Kiểm tra kết quả trả về từ API
         if (!isset($result['ok']) || $result['ok'] != true || !isset($result['balance'])) {
             $errorMsg = isset($result['error']) ? $result['error'] : 'Kết nối đến API không thành công! Vui lòng kiểm tra lại Domain và API Key.';
@@ -576,9 +576,96 @@ if (isset($_POST['save'])) {
             }
             die('<script type="text/javascript">if(!alert("' . addslashes($errorMsg) . '")){window.history.back().location.reload();}</script>');
         }
-        
+
         // Lưu trữ số dư định dạng text hiển thị
         $price = isset($result['balanceText']) ? check_string($result['balanceText']) : format_currency(check_string($result['balance']));
+    } else if ($type == 'API_52') {
+        // API_52: yêu cầu Partner Token (nhập vào ô API Key)
+        if (empty($_POST['api_key'])) {
+            die('<script type="text/javascript">if(!alert("Vui lòng nhập Partner Token")){window.history.back().location.reload();}</script>');
+        }
+        // Gọi hàm check số dư balance_API_52 để xác thực thông tin kết nối
+        $result_raw = balance_API_52(check_string($_POST['domain']), check_string($_POST['api_key']), check_string($_POST['proxy']));
+        $result = json_decode($result_raw, true);
+
+        // Xác định xem API có kết nối thành công không (success hoặc ok là true)
+        $is_ok = false;
+        if (isset($result['success']) && $result['success'] == true) {
+            $is_ok = true;
+        } else if (isset($result['ok']) && $result['ok'] == true) {
+            $is_ok = true;
+        }
+
+        // Lấy số dư linh hoạt
+        $balance = null;
+        if (isset($result['balance'])) {
+            $balance = $result['balance'];
+        } else if (isset($result['data']['wallet']['vnd'])) {
+            $balance = $result['data']['wallet']['vnd'];
+        } else if (isset($result['data']['wallet']['credit'])) {
+            $balance = $result['data']['wallet']['credit'];
+        }
+
+        // Kiểm tra kết quả trả về từ API
+        if (!$is_ok || $balance === null) {
+            $errorMsg = isset($result['message']) ? $result['message'] : 'Kết nối đến API không thành công! Vui lòng kiểm tra lại Domain và Partner Token.';
+            if ($result_raw !== false && !empty($result_raw)) {
+                $errorMsg .= ' Chi tiết phản hồi: ' . strip_tags(substr($result_raw, 0, 300));
+            }
+            die('<script type="text/javascript">if(!alert("' . addslashes($errorMsg) . '")){window.history.back().location.reload();}</script>');
+        }
+
+        // Lưu trữ số dư định dạng text hiển thị
+        $price = isset($result['balanceText']) ? check_string($result['balanceText']) : format_currency(check_string($balance));
+    } else if ($type == 'API_53') {
+        // API_53 - Customer API v2: yêu cầu API Key (header x-api-key)
+        if (empty($_POST['api_key'])) {
+            die('<script type="text/javascript">if(!alert("Vui lòng nhập API Key")){window.history.back().location.reload();}</script>');
+        }
+        // Gọi hàm check số dư balance_API_53 để xác thực thông tin kết nối
+        $result_raw = balance_API_53(check_string($_POST['domain']), check_string($_POST['api_key']), check_string($_POST['proxy']));
+        $result = json_decode($result_raw, true);
+
+        // Số dư VNĐ là số dư dùng để thanh toán đơn hàng
+        $balance = null;
+        if (isset($result['data']['vnd'])) {
+            $balance = $result['data']['vnd'];
+        } else if (isset($result['data']['VND'])) {
+            $balance = $result['data']['VND'];
+        }
+
+        // Kiểm tra kết quả trả về từ API
+        if (!is_array($result) || isset($result['error']) || $balance === null) {
+            $errorMsg = isset($result['error']['message']) ? $result['error']['message'] : 'Kết nối đến API không thành công! Vui lòng kiểm tra lại Domain và API Key.';
+            if ($result_raw !== false && !empty($result_raw)) {
+                $errorMsg .= ' Chi tiết phản hồi: ' . strip_tags(substr($result_raw, 0, 300));
+            }
+            die('<script type="text/javascript">if(!alert("' . addslashes($errorMsg) . '")){window.history.back().location.reload();}</script>');
+        }
+
+        // Lưu trữ số dư định dạng text hiển thị
+        $price = format_currency(check_string($balance));
+    } else if ($type == 'API_54') {
+        // API_54 - Telegram Buyer API v2: yêu cầu Buyer Key dạng tgb_xxx (gửi qua query param)
+        if (empty($_POST['token'])) {
+            die('<script type="text/javascript">if(!alert("Vui lòng nhập Telegram Buyer Key (dạng tgb_xxx)")){window.history.back().location.reload();}</script>');
+        }
+        // Gọi hàm check số dư balance_API_54 để xác thực thông tin kết nối
+        $result_raw = balance_API_54(check_string($_POST['domain']), check_string($_POST['token']), check_string($_POST['proxy']));
+        $result = json_decode($result_raw, true);
+
+        // Kiểm tra kết quả trả về từ API
+        if (!isset($result['success']) || $result['success'] != true || !isset($result['balance'])) {
+            $errorMsg = isset($result['message']) ? $result['message'] : 'Kết nối đến API không thành công! Vui lòng kiểm tra lại Domain và Telegram Buyer Key.';
+            if ($result_raw !== false && !empty($result_raw)) {
+                $errorMsg .= ' Chi tiết phản hồi: ' . strip_tags(substr($result_raw, 0, 300));
+            }
+            die('<script type="text/javascript">if(!alert("' . addslashes($errorMsg) . '")){window.history.back().location.reload();}</script>');
+        }
+
+        // Lưu trữ số dư định dạng text hiển thị (kèm đơn vị VND hoặc USD tùy loại ví)
+        $currency = isset($result['walletCurrency']) ? check_string($result['walletCurrency']) : '';
+        $price = isset($result['balanceText']) ? check_string($result['balanceText']) : check_string($result['balance']) . ' ' . $currency;
     }
 
 
@@ -737,6 +824,9 @@ if (isset($_POST['save'])) {
                                                     <option <?= $supplier['type'] == 'API_49' ? 'selected' : ''; ?> value="API_49">API (Ngoài hệ sinh thái)</option>
                                                     <option <?= $supplier['type'] == 'API_50' ? 'selected' : ''; ?> value="API_50">API (Ngoài hệ sinh thái)</option>
                                                     <option <?= $supplier['type'] == 'API_51' ? 'selected' : ''; ?> value="API_51">API (Ngoài hệ sinh thái)</option>
+                                                    <option <?= $supplier['type'] == 'API_52' ? 'selected' : ''; ?> value="API_52">API (Ngoài hệ sinh thái)</option>
+                                                    <option <?= $supplier['type'] == 'API_53' ? 'selected' : ''; ?> value="API_53">API (Ngoài hệ sinh thái)</option>
+                                                    <option <?= $supplier['type'] == 'API_54' ? 'selected' : ''; ?> value="API_54">API (Ngoài hệ sinh thái)</option>
                                                 </select>
                                                 <div class="form-text"><i class="fas fa-info-circle"></i> API CMSNT được hỗ trợ miễn phí, API ngoại hệ sinh thái tính phí phát sinh.</div>
                                             </div>
@@ -1403,6 +1493,36 @@ require_once(__DIR__ . '/footer.php');
                 // Đổi label cho API_51
                 document.querySelector('#api_key label').innerHTML = '<i class="fa-solid fa-key text-danger"></i> <?= __("API Key:"); ?> <span class="text-danger">*</span>';
                 document.getElementById('api-key-input').placeholder = '<?= __("Nhập API Key từ Nas Nabi (VD: psk_xxxxx)"); ?>';
+            }
+            // Hiển thị ô API Key cho API_52
+            else if (selectedType === "API_52") {
+                apiKeyField.style.display = "block";
+                proxyField.style.display = "block";
+                rateField.style.display = "block";
+                auto_show.style.display = "block";
+                // Đổi label cho API_52
+                document.querySelector('#api_key label').innerHTML = '<i class="fa-solid fa-key text-danger"></i> <?= __("Partner Token:"); ?> <span class="text-danger">*</span>';
+                document.getElementById('api-key-input').placeholder = '<?= __("Nhập Partner Token (VD: brk_xxxxx)"); ?>';
+            }
+            // Hiển thị ô API Key cho API_53 (Customer API v2)
+            else if (selectedType === "API_53") {
+                apiKeyField.style.display = "block";
+                proxyField.style.display = "block";
+                rateField.style.display = "block";
+                auto_show.style.display = "block";
+                // Đổi label cho API_53
+                document.querySelector('#api_key label').innerHTML = '<i class="fa-solid fa-key text-danger"></i> <?= __("API Key:"); ?> <span class="text-danger">*</span>';
+                document.getElementById('api-key-input').placeholder = '<?= __("Nhập API Key từ nhà cung cấp (VD: apk_xxxxx)"); ?>';
+            }
+            // Hiển thị ô Token cho API_54 (Telegram Buyer API v2, key dạng tgb_xxx)
+            else if (selectedType === "API_54") {
+                tokenField.style.display = "block";
+                proxyField.style.display = "block";
+                rateField.style.display = "block";
+                auto_show.style.display = "block";
+                // Đổi label token thành Telegram Buyer Key để admin hiểu rõ
+                document.querySelector('#token label').innerHTML = '<i class="fa-brands fa-telegram text-primary"></i> <?= __("Telegram Buyer Key:"); ?> <span class="text-danger">*</span>';
+                document.getElementById('token-input').placeholder = '<?= __("Dạng tgb_xxx... (lấy từ bot Telegram của shop)"); ?>';
             }
             // Hiển thị ô Token
             else if (selectedType === "API_14" || selectedType === "API_21" || selectedType === "API_22") {

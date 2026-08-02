@@ -2023,7 +2023,7 @@ function listProduct_API_38($domain, $app_id, $app_key, $proxy = '')
 /**
  * Lấy thông tin tồn kho sản phẩm - /shared/commodity/inventory
  * @param string $domain Domain API
- * @param int $app_id App ID 
+ * @param int $app_id App ID
  * @param string $app_key App Key
  * @param string $sharedCode Mã sản phẩm
  * @param string $race Loại sản phẩm (nếu có)
@@ -3254,28 +3254,28 @@ function call_API_47($domain, $endpoint, $token, $method = 'GET', $data = [], $p
     // Đảm bảo domain kết thúc bằng dấu gạch chéo
     $domain = rtrim($domain, '/') . '/';
     $url = $domain . ltrim($endpoint, '/');
-    
+
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_TIMEOUT, 30);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-    
+
     $headers = [
         "X-API-KEY: " . $token,
         "Accept: application/json",
         "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
     ];
-    
+
     if (strtoupper($method) == 'POST') {
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
         $headers[] = "Content-Type: application/json";
     }
-    
+
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    
+
     // Thêm proxy nếu có cấu hình
     if (!empty($proxy)) {
         $proxy_parts = explode(':', $proxy);
@@ -3286,7 +3286,7 @@ function call_API_47($domain, $endpoint, $token, $method = 'GET', $data = [], $p
             curl_setopt($ch, CURLOPT_PROXY, $proxy_parts[0] . ':' . $proxy_parts[1]);
         }
     }
-    
+
     $response = curl_exec($ch);
     curl_close($ch);
     return $response;
@@ -3596,7 +3596,7 @@ function buy_API_49($domain, $key, $loaiproxy, $quantity, $proxy = '')
     if (empty($domain) || strpos($domain, 'http') === false) {
         $domain = 'https://topproxy.vn';
     }
-    
+
     // Tách cấu hình tùy chọn từ api_id (dạng: loaiproxy|ngay|type|user|password)
     $parts = explode('|', $loaiproxy);
     $real_loaiproxy = isset($parts[0]) ? trim($parts[0]) : '';
@@ -3606,7 +3606,7 @@ function buy_API_49($domain, $key, $loaiproxy, $quantity, $proxy = '')
     $pass = (isset($parts[4]) && trim($parts[4]) !== '') ? trim($parts[4]) : 'random';
 
     $url = $domain . "/apiv2/muaproxy.php";
-    
+
     // Tạo tham số query
     $params = [
         'key' => $key,
@@ -3617,7 +3617,7 @@ function buy_API_49($domain, $key, $loaiproxy, $quantity, $proxy = '')
         'user' => $user,
         'password' => $pass
     ];
-    
+
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url . '?' . http_build_query($params));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -3628,13 +3628,13 @@ function buy_API_49($domain, $key, $loaiproxy, $quantity, $proxy = '')
         'Accept: application/json',
         'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
     ));
-    
+
     _apply_proxy_API_49($ch, $proxy);
-    
+
     $response = curl_exec($ch);
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
-    
+
     // Nếu lỗi kết nối HTTP
     if ($http_code != 200) {
         return json_encode([
@@ -3643,7 +3643,7 @@ function buy_API_49($domain, $key, $loaiproxy, $quantity, $proxy = '')
             'http_code' => $http_code
         ]);
     }
-    
+
     return $response;
 }
 
@@ -4016,4 +4016,564 @@ function buy_API_51($domain, $api_key, $product_id, $quantity, $shop_order_id = 
     return $data;
 }
 
+// ==================== API_52 (Authorization: Bearer token header, me, products & orders endpoints) ====================
+// Xác thực: Header Authorization: Bearer YOUR_TOKEN (lưu trong api_key của bảng suppliers)
+// Các Endpoint:
+//   GET  /api/partner/v1/me         → Xem số dư tài khoản
+//   GET  /api/partner/v1/products   → Lấy danh sách sản phẩm
+//   POST /api/partner/v1/orders     → Mua hàng {"productId":"123","quantity":1,"paymentMode":"VND"}
 
+/**
+ * Lấy số dư tài khoản từ API_52
+ *
+ * @param string $domain  Domain nhà cung cấp cấu hình
+ * @param string $api_key API Key kết nối (token Bearer)
+ * @param string $proxy   Proxy cấu hình nếu có
+ * @return string JSON response
+ */
+function balance_API_52($domain, $api_key, $proxy = '')
+{
+    // Đảm bảo không có dấu gạch chéo dư thừa ở cuối domain
+    $domain = rtrim($domain, '/');
+    if (strpos($domain, 'http://') === 0) {
+        $domain = str_replace('http://', 'https://', $domain);
+    }
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $domain . '/api/partner/v1/me');
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        'Authorization: Bearer ' . $api_key,
+        'Accept: application/json',
+        'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
+    ));
+
+    if (!empty($proxy)) {
+        $proxy_parts = explode(':', $proxy);
+        if (count($proxy_parts) == 4 && !empty($proxy_parts[0]) && !empty($proxy_parts[1]) && !empty($proxy_parts[2]) && !empty($proxy_parts[3])) {
+            curl_setopt($ch, CURLOPT_PROXY, $proxy_parts[0] . ':' . $proxy_parts[1]);
+            curl_setopt($ch, CURLOPT_PROXYUSERPWD, $proxy_parts[2] . ':' . $proxy_parts[3]);
+        } elseif (count($proxy_parts) == 2 && !empty($proxy_parts[0]) && !empty($proxy_parts[1])) {
+            curl_setopt($ch, CURLOPT_PROXY, $proxy_parts[0] . ':' . $proxy_parts[1]);
+        }
+    }
+
+    $data = curl_exec($ch);
+    if ($data === false) {
+        $error = curl_error($ch);
+        curl_close($ch);
+        return json_encode([
+            'success' => false,
+            'error' => 'Lỗi kết nối cURL: ' . $error
+        ]);
+    }
+    curl_close($ch);
+    return $data;
+}
+
+/**
+ * Lấy danh sách sản phẩm từ API_52
+ *
+ * @param string $domain  Domain nhà cung cấp cấu hình
+ * @param string $api_key API Key kết nối (token Bearer)
+ * @param string $proxy   Proxy cấu hình nếu có
+ * @return string JSON response
+ */
+function listProduct_API_52($domain, $api_key, $proxy = '')
+{
+    $domain = rtrim($domain, '/');
+    if (strpos($domain, 'http://') === 0) {
+        $domain = str_replace('http://', 'https://', $domain);
+    }
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $domain . '/api/partner/v1/products');
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        'Authorization: Bearer ' . $api_key,
+        'Accept: application/json',
+        'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
+    ));
+
+    if (!empty($proxy)) {
+        $proxy_parts = explode(':', $proxy);
+        if (count($proxy_parts) == 4 && !empty($proxy_parts[0]) && !empty($proxy_parts[1]) && !empty($proxy_parts[2]) && !empty($proxy_parts[3])) {
+            curl_setopt($ch, CURLOPT_PROXY, $proxy_parts[0] . ':' . $proxy_parts[1]);
+            curl_setopt($ch, CURLOPT_PROXYUSERPWD, $proxy_parts[2] . ':' . $proxy_parts[3]);
+        } elseif (count($proxy_parts) == 2 && !empty($proxy_parts[0]) && !empty($proxy_parts[1])) {
+            curl_setopt($ch, CURLOPT_PROXY, $proxy_parts[0] . ':' . $proxy_parts[1]);
+        }
+    }
+
+    $data = curl_exec($ch);
+    if ($data === false) {
+        $error = curl_error($ch);
+        curl_close($ch);
+        return json_encode([
+            'success' => false,
+            'error' => 'Lỗi kết nối cURL: ' . $error
+        ]);
+    }
+    curl_close($ch);
+    return $data;
+}
+
+/**
+ * Mua sản phẩm từ API_52
+ *
+ * @param string $domain     Domain nhà cung cấp cấu hình
+ * @param string $api_key    API Key kết nối (token Bearer)
+ * @param string $product_id ID sản phẩm bên API_52
+ * @param int    $quantity   Số lượng cần mua
+ * @param string $proxy      Proxy cấu hình nếu có
+ * @return string JSON response
+ */
+function buy_API_52($domain, $api_key, $product_id, $quantity, $proxy = '')
+{
+    $domain = rtrim($domain, '/');
+    if (strpos($domain, 'http://') === 0) {
+        $domain = str_replace('http://', 'https://', $domain);
+    }
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $domain . '/api/partner/v1/orders');
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+
+    $payload = [
+        'productId'   => strval($product_id),
+        'quantity'    => intval($quantity),
+        'paymentMode' => 'VND'
+    ];
+
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        'Authorization: Bearer ' . $api_key,
+        'Content-Type: application/json',
+        'Accept: application/json',
+        'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
+    ));
+
+    if (!empty($proxy)) {
+        $proxy_parts = explode(':', $proxy);
+        if (count($proxy_parts) == 4 && !empty($proxy_parts[0]) && !empty($proxy_parts[1]) && !empty($proxy_parts[2]) && !empty($proxy_parts[3])) {
+            curl_setopt($ch, CURLOPT_PROXY, $proxy_parts[0] . ':' . $proxy_parts[1]);
+            curl_setopt($ch, CURLOPT_PROXYUSERPWD, $proxy_parts[2] . ':' . $proxy_parts[3]);
+        } elseif (count($proxy_parts) == 2 && !empty($proxy_parts[0]) && !empty($proxy_parts[1])) {
+            curl_setopt($ch, CURLOPT_PROXY, $proxy_parts[0] . ':' . $proxy_parts[1]);
+        }
+    }
+
+    $data = curl_exec($ch);
+    if ($data === false) {
+        $error = curl_error($ch);
+        error_log('[API_52] cURL error in buy_API_52: ' . $error . ' | product_id: ' . $product_id);
+        curl_close($ch);
+        return json_encode([
+            'success' => false,
+            'error' => 'Lỗi kết nối cURL: ' . $error
+        ]);
+    }
+    curl_close($ch);
+    return $data;
+}
+
+// ==================== API_53 (Customer API v2, header x-api-key, sản phẩm nhiều variant) ====================
+// Xác thực: Header x-api-key: YOUR_API_KEY (lưu trong api_key của bảng suppliers)
+// Các Endpoint:
+//   GET  /api/v2/wallet/balance       → Số dư ví theo từng loại tiền {"data":{"vnd":0,"usd":0}}
+//   GET  /api/v2/products             → Danh sách sản phẩm (chỉ id + title, có phân trang limit/offset)
+//   GET  /api/v2/products/{id}        → Chi tiết sản phẩm kèm mảng variants (giá + tồn kho)
+//   POST /api/v2/orders               → Tạo đơn và trừ tiền từ ví
+//   GET  /api/v2/orders/{id}/delivery → Lấy tài khoản đã giao của đơn
+//
+// LƯU Ý QUAN TRỌNG: đơn vị bán được của API này là VARIANT chứ không phải product.
+// Vì vậy cột `api_id` của bảng `products` lưu variant_id, không lưu product_id.
+
+/**
+ * Gửi request tới API_53 (dùng chung cho tất cả endpoint)
+ *
+ * @param string $domain    Domain nhà cung cấp cấu hình
+ * @param string $api_key   API Key kết nối (header x-api-key)
+ * @param string $path      Đường dẫn endpoint, bắt đầu bằng dấu / (đã encode sẵn)
+ * @param string $proxy     Proxy cấu hình nếu có
+ * @param array  $post_body Body JSON cần gửi, để null nếu là request GET
+ * @param int    $timeout   Thời gian chờ tối đa (giây)
+ * @return string JSON response
+ */
+function request_API_53($domain, $api_key, $path, $proxy = '', $post_body = null, $timeout = 30)
+{
+    // Đảm bảo không có dấu gạch chéo dư thừa ở cuối domain
+    $domain = rtrim($domain, '/');
+    if (strpos($domain, 'http://') === 0) {
+        $domain = str_replace('http://', 'https://', $domain);
+    }
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $domain . $path);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    // Chỉ cho phép redirect sang HTTPS và giới hạn số lần chuyển hướng,
+    // tránh trường hợp bị chuyển sang http:// làm lộ API Key dưới dạng plaintext
+    curl_setopt($ch, CURLOPT_REDIR_PROTOCOLS, CURLPROTO_HTTPS);
+    curl_setopt($ch, CURLOPT_MAXREDIRS, 3);
+
+    $headers = array(
+        'x-api-key: ' . $api_key,
+        'Accept: application/json',
+        'Accept-Language: vi-VN',
+        'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
+    );
+
+    // Chỉ gửi body khi là request tạo đơn hàng
+    if ($post_body !== null) {
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post_body));
+        $headers[] = 'Content-Type: application/json';
+    }
+
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+    if (!empty($proxy)) {
+        $proxy_parts = explode(':', $proxy);
+        if (count($proxy_parts) == 4 && !empty($proxy_parts[0]) && !empty($proxy_parts[1]) && !empty($proxy_parts[2]) && !empty($proxy_parts[3])) {
+            curl_setopt($ch, CURLOPT_PROXY, $proxy_parts[0] . ':' . $proxy_parts[1]);
+            curl_setopt($ch, CURLOPT_PROXYUSERPWD, $proxy_parts[2] . ':' . $proxy_parts[3]);
+        } elseif (count($proxy_parts) == 2 && !empty($proxy_parts[0]) && !empty($proxy_parts[1])) {
+            curl_setopt($ch, CURLOPT_PROXY, $proxy_parts[0] . ':' . $proxy_parts[1]);
+        }
+    }
+
+    $data = curl_exec($ch);
+    if ($data === false) {
+        $error = curl_error($ch);
+        error_log('[API_53] cURL error: ' . $error . ' | path: ' . $path);
+        curl_close($ch);
+        return json_encode([
+            'error' => [
+                'code'    => 'curl_error',
+                'message' => 'Lỗi kết nối cURL: ' . $error
+            ]
+        ]);
+    }
+    curl_close($ch);
+    return $data;
+}
+
+/**
+ * Lấy số dư ví từ API_53
+ *
+ * Response: {"data":{"vnd":500000,"usd":25}}
+ *
+ * @param string $domain  Domain nhà cung cấp cấu hình
+ * @param string $api_key API Key kết nối
+ * @param string $proxy   Proxy cấu hình nếu có
+ * @return string JSON response
+ */
+function balance_API_53($domain, $api_key, $proxy = '')
+{
+    return request_API_53($domain, $api_key, '/api/v2/wallet/balance?locale=vi-VN', $proxy, null, 15);
+}
+
+/**
+ * Lấy danh sách sản phẩm từ API_53 (chỉ trả về id + title, cần phân trang)
+ *
+ * Response: {"data":[{"id":"prod_xxx","title":"Tên"}],"meta":{"count":51,"limit":100,"offset":0}}
+ *
+ * @param string $domain  Domain nhà cung cấp cấu hình
+ * @param string $api_key API Key kết nối
+ * @param string $proxy   Proxy cấu hình nếu có
+ * @param int    $limit   Số sản phẩm mỗi trang (tối đa 100 theo tài liệu API)
+ * @param int    $offset  Vị trí bắt đầu của trang
+ * @return string JSON response
+ */
+function listProduct_API_53($domain, $api_key, $proxy = '', $limit = 100, $offset = 0)
+{
+    // Giới hạn tham số trong khoảng API cho phép để tránh lỗi 400
+    $limit  = max(1, min(100, intval($limit)));
+    $offset = max(0, intval($offset));
+
+    $path = '/api/v2/products?limit=' . $limit . '&offset=' . $offset . '&locale=vi-VN';
+    return request_API_53($domain, $api_key, $path, $proxy, null, 30);
+}
+
+/**
+ * Lấy chi tiết một sản phẩm từ API_53 (kèm giá và tồn kho của từng variant)
+ *
+ * Response: {"data":{"id","title","description","thumbnail","in_stock",
+ *                    "variants":[{"id","title","prices":{"vnd":1000,"usd":1},"in_stock","available_quantity"}]}}
+ *
+ * @param string $domain     Domain nhà cung cấp cấu hình
+ * @param string $api_key    API Key kết nối
+ * @param string $product_id ID sản phẩm bên API_53 (dạng prod_xxx)
+ * @param string $proxy      Proxy cấu hình nếu có
+ * @return string JSON response
+ */
+function detailProduct_API_53($domain, $api_key, $product_id, $proxy = '')
+{
+    $path = '/api/v2/products/' . rawurlencode($product_id) . '?locale=vi-VN';
+    return request_API_53($domain, $api_key, $path, $proxy, null, 30);
+}
+
+/**
+ * Mua sản phẩm từ API_53 (trừ tiền trực tiếp từ ví)
+ *
+ * Response 201: {"data":{"checkout_id","order_id","order_display_id","status","payment"}}
+ *
+ * @param string $domain     Domain nhà cung cấp cấu hình
+ * @param string $api_key    API Key kết nối
+ * @param string $variant_id ID variant bên API_53 (dạng variant_xxx, lưu trong api_id)
+ * @param int    $quantity   Số lượng cần mua
+ * @param string $proxy      Proxy cấu hình nếu có
+ * @return string JSON response
+ */
+function buy_API_53($domain, $api_key, $variant_id, $quantity, $proxy = '')
+{
+    $payload = [
+        'items' => [
+            [
+                'variant_id' => strval($variant_id),
+                'quantity'   => max(1, intval($quantity))
+            ]
+        ],
+        'currency_code'  => 'vnd',
+        'payment_method' => 'wallet'
+    ];
+
+    return request_API_53($domain, $api_key, '/api/v2/orders?locale=vi-VN', $proxy, $payload, 60);
+}
+
+/**
+ * Lấy nội dung giao hàng (tài khoản) của đơn từ API_53
+ *
+ * Response: {"deliveredAccount":[{"account","password","additional_info",...}],"delivered_accounts":[...]}
+ *
+ * @param string $domain   Domain nhà cung cấp cấu hình
+ * @param string $api_key  API Key kết nối
+ * @param string $order_id ID đơn hàng bên API_53 (dạng order_xxx)
+ * @param string $proxy    Proxy cấu hình nếu có
+ * @return string JSON response
+ */
+function delivery_API_53($domain, $api_key, $order_id, $proxy = '')
+{
+    $path = '/api/v2/orders/' . rawurlencode($order_id) . '/delivery?locale=vi-VN';
+    return request_API_53($domain, $api_key, $path, $proxy, null, 30);
+}
+
+// ==================== API_54 (Telegram Buyer API v2 - key dạng tgb_xxx) ====================
+// Xác thực: tham số key=tgb_xxx (GET gửi qua query param, POST gửi trong body JSON)
+// Các Endpoint:
+//   GET  /api/v2/telegram-buyer/balance?key=xxx   → {success, balance, balanceText, walletCurrency, balanceVnd, usdRate}
+//   GET  /api/v2/telegram-buyer/products?key=xxx  → {success, products:[{_id, product_name, walletPricing, stats:{available}}]}
+//   POST /api/v2/telegram-buyer/purchase          → {success, orderCode, deliveredAccounts:[{user, password, verifyEmail}]}
+//
+// KHÁC BIỆT SO VỚI API_45 (bản v1 của cùng nhà cung cấp):
+//   - Đường dẫn có tiền tố /api/v2/, domain nhập động (mặc định https://canboso.com khi bỏ trống)
+//   - Endpoint mua hàng BẮT BUỘC gửi header Idempotency-Key (8-128 ký tự);
+//     gọi lại đúng request cũ với cùng key sẽ trả về kết quả của đơn cũ, không bị trừ tiền 2 lần
+//   - Có giới hạn tần suất (products 10 req/phút, balance 30 req/phút, purchase 5 req/phút cho mỗi key)
+//     Khi vượt hạn mức API trả HTTP 429 kèm Retry-After và bị phạt tăng dần: 1 phút → 5 phút → 15 phút → 1 giờ → 6 giờ
+//   - Có thêm loại sản phẩm "slot" (yêu cầu customer_email / slot_months) — hệ thống KHÔNG đồng bộ loại này
+
+/**
+ * Chuẩn hóa domain của API_54
+ *
+ * Key được gửi kèm trên URL nên bắt buộc dùng HTTPS để tránh lộ key dưới dạng plaintext
+ *
+ * @param string $domain Domain do admin nhập (có thể bỏ trống)
+ * @return string Domain đã chuẩn hóa, không có dấu / ở cuối
+ */
+function domain_API_54($domain)
+{
+    $domain = trim((string)$domain);
+    if ($domain === '') {
+        // Domain mặc định của nhà cung cấp theo tài liệu API
+        return 'https://' . 'canboso' . '.com';
+    }
+
+    $domain = rtrim($domain, '/');
+    if (strpos($domain, 'http://') === 0) {
+        $domain = 'https://' . substr($domain, 7);
+    } else if (strpos($domain, 'https://') !== 0) {
+        $domain = 'https://' . $domain;
+    }
+    return $domain;
+}
+
+/**
+ * Gửi request tới API_54 (dùng chung cho tất cả endpoint)
+ *
+ * @param string $domain        Domain nhà cung cấp (bỏ trống sẽ dùng domain mặc định)
+ * @param string $token         Buyer API Key dạng tgb_xxx
+ * @param string $path          Đường dẫn endpoint, bắt đầu bằng dấu /
+ * @param string $proxy         Proxy cấu hình nếu có (ip:port hoặc ip:port:user:pass)
+ * @param array  $post_body     Body JSON cần gửi, để null nếu là request GET
+ * @param int    $timeout       Thời gian chờ tối đa (giây)
+ * @param array  $extra_headers Header bổ sung (VD: Idempotency-Key khi mua hàng)
+ * @return string|false JSON response, false khi lỗi kết nối cURL
+ */
+function request_API_54($domain, $token, $path, $proxy = '', $post_body = null, $timeout = 30, $extra_headers = array())
+{
+    $url = domain_API_54($domain) . $path;
+
+    // Request GET gửi key qua query param, request POST gửi key trong body JSON
+    if ($post_body === null) {
+        $url .= (strpos($path, '?') === false ? '?' : '&') . 'key=' . urlencode($token);
+    }
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
+    // Key nằm trên URL nên bắt buộc kiểm tra chứng chỉ SSL nghiêm ngặt
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    // Chỉ cho phép chuyển hướng sang HTTPS, tránh bị đẩy sang http:// làm lộ key
+    curl_setopt($ch, CURLOPT_REDIR_PROTOCOLS, CURLPROTO_HTTPS);
+    curl_setopt($ch, CURLOPT_MAXREDIRS, 3);
+
+    $headers = array(
+        'Accept: application/json',
+        'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
+    );
+    foreach ($extra_headers as $extra_header) {
+        $headers[] = $extra_header;
+    }
+
+    if ($post_body !== null) {
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post_body));
+        $headers[] = 'Content-Type: application/json';
+    }
+
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+    // Bắt header Retry-After để ghi log khi bị giới hạn tần suất (HTTP 429)
+    $retry_after = '';
+    curl_setopt($ch, CURLOPT_HEADERFUNCTION, function ($curl, $header) use (&$retry_after) {
+        if (stripos($header, 'Retry-After:') === 0) {
+            $retry_after = trim(substr($header, strlen('Retry-After:')));
+        }
+        return strlen($header);
+    });
+
+    if (!empty($proxy)) {
+        $proxy_parts = explode(':', $proxy);
+        if (count($proxy_parts) == 4 && !empty($proxy_parts[0]) && !empty($proxy_parts[1]) && !empty($proxy_parts[2]) && !empty($proxy_parts[3])) {
+            curl_setopt($ch, CURLOPT_PROXY, $proxy_parts[0] . ':' . $proxy_parts[1]);
+            curl_setopt($ch, CURLOPT_PROXYUSERPWD, $proxy_parts[2] . ':' . $proxy_parts[3]);
+        } elseif (count($proxy_parts) == 2 && !empty($proxy_parts[0]) && !empty($proxy_parts[1])) {
+            curl_setopt($ch, CURLOPT_PROXY, $proxy_parts[0] . ':' . $proxy_parts[1]);
+        }
+    }
+
+    $data = curl_exec($ch);
+    // Trả về nguyên trạng false khi cURL lỗi để luồng mua hàng nhận diện là mất kết nối
+    // (đơn có thể đã được tạo bên nhà cung cấp) và xử lý theo cấu hình tự động hoàn tiền
+    if ($data === false) {
+        error_log('[API_54] cURL error: ' . curl_error($ch) . ' | path: ' . $path);
+        curl_close($ch);
+        return false;
+    }
+
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    // Ghi log khi bị chặn do vượt hạn mức để admin biết cần giãn tần suất chạy cron
+    if ($http_code == 429) {
+        error_log('[API_54] Bị giới hạn tần suất (HTTP 429) | path: ' . $path . ' | Retry-After: ' . $retry_after);
+    }
+
+    return $data;
+}
+
+/**
+ * Lấy số dư ví từ API_54 — GET /api/v2/telegram-buyer/balance
+ *
+ * Response: {"success":true,"walletCurrency":"VND","balance":250000,"balanceText":"250.000 ₫","balanceVnd":250000}
+ *
+ * @param string $domain Domain nhà cung cấp (bỏ trống sẽ dùng domain mặc định)
+ * @param string $token  Buyer API Key dạng tgb_xxx
+ * @param string $proxy  Proxy cấu hình nếu có
+ * @return string|false JSON response, false khi lỗi kết nối cURL
+ */
+function balance_API_54($domain, $token, $proxy = '')
+{
+    return request_API_54($domain, $token, '/api/v2/telegram-buyer/balance', $proxy, null, 15);
+}
+
+/**
+ * Lấy danh sách sản phẩm từ API_54 — GET /api/v2/telegram-buyer/products
+ *
+ * Response: {"success":true,"walletCurrency":"VND","products":[{"_id","product_name","description",
+ *            "pricing","walletPricing","isSlotProduct","requiresCustomerEmail","stats":{"total","sold","available"}}]}
+ * API trả toàn bộ sản phẩm trong 1 lần gọi (không phân trang)
+ *
+ * @param string $domain Domain nhà cung cấp (bỏ trống sẽ dùng domain mặc định)
+ * @param string $token  Buyer API Key dạng tgb_xxx
+ * @param string $proxy  Proxy cấu hình nếu có
+ * @return string|false JSON response, false khi lỗi kết nối cURL
+ */
+function listProduct_API_54($domain, $token, $proxy = '')
+{
+    return request_API_54($domain, $token, '/api/v2/telegram-buyer/products', $proxy, null, 30);
+}
+
+/**
+ * Mua sản phẩm từ API_54 — POST /api/v2/telegram-buyer/purchase (trừ tiền trực tiếp từ ví)
+ *
+ * Body: {"key":"tgb_xxx","product_id":"64f0c0f2b90c2b4c5a123456","quantity":1}
+ * Response: {"success":true,"orderCode":"ORDER1A2B3C4D5E","amount":90000,"balance":120000,
+ *            "deliveredAccounts":[{"user","password","verifyEmail","deliveredAt"}]}
+ *
+ * @param string $domain          Domain nhà cung cấp (bỏ trống sẽ dùng domain mặc định)
+ * @param string $token           Buyer API Key dạng tgb_xxx
+ * @param string $product_id      MongoDB ObjectId string của sản phẩm (lưu trong api_id)
+ * @param int    $quantity        Số lượng cần mua
+ * @param string $proxy           Proxy cấu hình nếu có
+ * @param string $idempotency_key Mã chống trùng đơn (nên truyền trans_id của đơn hàng)
+ * @return string|false JSON response, false khi lỗi kết nối cURL
+ */
+function buy_API_54($domain, $token, $product_id, $quantity, $proxy = '', $idempotency_key = '')
+{
+    // Idempotency-Key là bắt buộc: chỉ nhận [A-Za-z0-9._-] và dài 8-128 ký tự
+    $idempotency_key = preg_replace('/[^A-Za-z0-9._-]/', '', (string)$idempotency_key);
+    if (strlen($idempotency_key) < 4) {
+        // Không có mã đơn hợp lệ thì sinh mã ngẫu nhiên để request không bị API từ chối
+        $idempotency_key = uniqid('', true);
+        $idempotency_key = preg_replace('/[^A-Za-z0-9._-]/', '', $idempotency_key);
+    }
+    $idempotency_key = substr('sc7-' . $idempotency_key, 0, 128);
+
+    $payload = [
+        'key'        => $token,
+        'product_id' => strval($product_id),
+        'quantity'   => max(1, intval($quantity))
+    ];
+
+    return request_API_54(
+        $domain,
+        $token,
+        '/api/v2/telegram-buyer/purchase',
+        $proxy,
+        $payload,
+        60,
+        array('Idempotency-Key: ' . $idempotency_key)
+    );
+}
