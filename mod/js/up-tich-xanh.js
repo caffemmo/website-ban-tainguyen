@@ -6,12 +6,17 @@
 
     var endpoint = app.getAttribute('data-endpoint') || '';
     var token = app.getAttribute('data-token') || '';
+    var loginUrl = app.getAttribute('data-login-url') || ((window.baseUrl || '/') + 'client/login');
     var service = app.getAttribute('data-service') || '';
     var configured = app.getAttribute('data-configured') === '1';
     var form = app.querySelector('[data-up-form]');
     var submit = app.querySelector('[data-up-submit]');
     var notice = app.querySelector('[data-up-notice]');
     var result = app.querySelector('[data-up-result]');
+
+    function redirectToLogin() {
+        window.location.href = loginUrl;
+    }
 
     function setMessage(element, message, type) {
         if (!element) return;
@@ -48,6 +53,10 @@
 
     async function submitForm() {
         if (!configured || !form || !submit) return;
+        if (!token) {
+            redirectToLogin();
+            return;
+        }
         var cookie = form.querySelector('[name="cookie"]');
         var image = form.querySelector('[name="image"]');
         if (!cookie || cookie.value.trim().length < 10) {
@@ -63,7 +72,6 @@
             setMessage(notice, 'Ảnh không được vượt quá 10MB.', 'error');
             return;
         }
-
         var body = new FormData(form);
         body.append('action', 'submit');
         body.append('service', service);

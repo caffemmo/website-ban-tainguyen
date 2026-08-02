@@ -6,9 +6,10 @@ require_once dirname(__DIR__, 2) . '/config.php';
 require_once dirname(__DIR__, 2) . '/libs/lang.php';
 require_once dirname(__DIR__, 2) . '/libs/helper.php';
 require_once dirname(__DIR__, 2) . '/libs/database/users.php';
+require_once dirname(__DIR__, 2) . '/libs/client-session.php';
 require_once dirname(__DIR__, 2) . '/libs/uptichxanh.php';
 $CMSNT = new DB();
-require_once dirname(__DIR__, 2) . '/models/is_user.php';
+$getUser = client_optional_user($CMSNT);
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');

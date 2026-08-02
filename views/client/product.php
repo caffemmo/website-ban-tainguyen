@@ -30,13 +30,8 @@ $body['footer'] = '
  
 ';
 
-if($CMSNT->site('isLoginRequiredToViewProduct') == 1) {
-    require_once(__DIR__ . '/../../models/is_user.php');
-}else{
-    if (isSecureCookie('user_login') == true) {
-        require_once(__DIR__ . '/../../models/is_user.php');
-    }
-}
+require_once(__DIR__ . '/../../libs/client-session.php');
+$getUser = client_optional_user($CMSNT);
 
 require_once(__DIR__.'/header.php');
 require_once(__DIR__.'/nav.php');

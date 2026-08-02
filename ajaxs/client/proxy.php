@@ -6,9 +6,10 @@ require_once dirname(__DIR__, 2) . '/config.php';
 require_once dirname(__DIR__, 2) . '/libs/lang.php';
 require_once dirname(__DIR__, 2) . '/libs/helper.php';
 require_once dirname(__DIR__, 2) . '/libs/database/users.php';
+require_once dirname(__DIR__, 2) . '/libs/client-session.php';
 require_once dirname(__DIR__, 2) . '/libs/youproxy.php';
 $CMSNT = new DB();
-require_once dirname(__DIR__, 2) . '/models/is_user.php';
+$getUser = client_optional_user($CMSNT);
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
@@ -520,13 +521,15 @@ function proxy_price_response($providerResponse)
     ];
 }
 
-if (!isset($getUser) || !is_array($getUser)) {
+$input = proxy_input();
+$action = proxy_value($input, 'action');
+if (!in_array($action, ['metadata', 'quote'], true) && (!isset($getUser) || !is_array($getUser))) {
     proxy_json(['success' => false, 'message' => 'Vui lòng đăng nhập để sử dụng dịch vụ proxy.'], 401);
 }
 
-$input = proxy_input();
-$action = proxy_value($input, 'action');
-if (empty($getUser['token']) || !hash_equals((string) $getUser['token'], proxy_value($input, 'token'))) {
+$tokenMatchesSession = !empty($getUser['token'])
+    && hash_equals((string) $getUser['token'], proxy_value($input, 'token'));
+if (!in_array($action, ['metadata', 'quote'], true) && !$tokenMatchesSession) {
     proxy_json(['success' => false, 'message' => 'Phiên làm việc không hợp lệ, vui lòng tải lại trang.'], 419);
 }
 if (!youproxy_is_configured()) {

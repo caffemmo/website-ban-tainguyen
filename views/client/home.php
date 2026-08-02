@@ -13,13 +13,8 @@ $body['footer'] = '
  
 ';
 
-if($CMSNT->site('isLoginRequiredToViewProduct') == 1) {
-    require_once(__DIR__ . '/../../models/is_user.php');
-}else{
-    if (isSecureCookie('user_login') == true) {
-        require_once(__DIR__ . '/../../models/is_user.php');
-    }
-}
+require_once(__DIR__ . '/../../libs/client-session.php');
+$getUser = client_optional_user($CMSNT);
 
 // Kiểm tra và redirect đến trang VAT invoice nếu popup_vat được bật và user chưa có thông tin VAT
 if($CMSNT->site('popup_vat') == 1 && isset($getUser)) {

@@ -3,8 +3,15 @@ if (!defined('IN_SITE')) {
     die('The Request Not Found');
 }
 
-require_once __DIR__ . '/../../models/is_user.php';
+require_once __DIR__ . '/../../libs/client-session.php';
 require_once __DIR__ . '/../../libs/uptichxanh.php';
+
+$getUser = client_optional_user($CMSNT);
+$upIsAuthenticated = is_array($getUser);
+$upUserToken = $upIsAuthenticated ? (string) ($getUser['token'] ?? '') : '';
+$upWalletBalance = $upIsAuthenticated ? format_currency($getUser['money']) : __('Đăng nhập để sử dụng');
+$upWalletUrl = $upIsAuthenticated ? base_url('recharge-bank') : base_url('client/login');
+$upWalletAction = $upIsAuthenticated ? __('Nạp tiền') : __('Đăng nhập');
 
 $services = [
     'get-link' => [
@@ -51,7 +58,9 @@ require_once __DIR__ . '/nav.php';
     class="up-page"
     data-up-app
     data-endpoint="<?= htmlspecialchars(BASE_URL('ajaxs/client/up-tich-xanh.php'), ENT_QUOTES, 'UTF-8'); ?>"
-    data-token="<?= htmlspecialchars((string) $getUser['token'], ENT_QUOTES, 'UTF-8'); ?>"
+    data-token="<?= htmlspecialchars($upUserToken, ENT_QUOTES, 'UTF-8'); ?>"
+    data-authenticated="<?= $upIsAuthenticated ? '1' : '0'; ?>"
+    data-login-url="<?= htmlspecialchars(base_url('client/login'), ENT_QUOTES, 'UTF-8'); ?>"
     data-service="<?= htmlspecialchars($service, ENT_QUOTES, 'UTF-8'); ?>"
     data-configured="<?= $upConfigured ? '1' : '0'; ?>"
 >
@@ -63,8 +72,8 @@ require_once __DIR__ . '/nav.php';
         </div>
         <div class="up-wallet-card">
             <span><?= __('Số dư ví'); ?></span>
-            <strong><?= format_currency($getUser['money']); ?></strong>
-            <a href="<?= base_url('recharge-bank'); ?>"><?= __('Nạp tiền'); ?> <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
+            <strong><?= $upWalletBalance; ?></strong>
+            <a href="<?= htmlspecialchars($upWalletUrl, ENT_QUOTES, 'UTF-8'); ?>"><?= $upWalletAction; ?> <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
         </div>
     </section>
 

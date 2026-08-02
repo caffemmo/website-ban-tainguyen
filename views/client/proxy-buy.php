@@ -1,8 +1,15 @@
 <?php if (!defined('IN_SITE')) {
     die('The Request Not Found');
 }
-require_once __DIR__ . '/../../models/is_user.php';
+require_once __DIR__ . '/../../libs/client-session.php';
 require_once __DIR__ . '/../../libs/youproxy.php';
+
+$getUser = client_optional_user($CMSNT);
+$proxyIsAuthenticated = is_array($getUser);
+$proxyUserToken = $proxyIsAuthenticated ? (string) ($getUser['token'] ?? '') : '';
+$proxyWalletBalance = $proxyIsAuthenticated ? format_currency($getUser['money']) : __('Đăng nhập để mua');
+$proxyWalletUrl = $proxyIsAuthenticated ? base_url('recharge-bank') : base_url('client/login');
+$proxyWalletAction = $proxyIsAuthenticated ? __('Nạp tiền') : __('Đăng nhập');
 
 $body = [
     'title' => __('Mua Proxy') . ' | ' . $CMSNT->site('title'),
@@ -18,7 +25,9 @@ require_once __DIR__ . '/nav.php';
 
 <main class="proxy-page" data-proxy-app data-proxy-page="buy"
     data-endpoint="<?= BASE_URL('ajaxs/client/proxy.php'); ?>"
-    data-token="<?= htmlspecialchars($getUser['token'], ENT_QUOTES, 'UTF-8'); ?>"
+    data-token="<?= htmlspecialchars($proxyUserToken, ENT_QUOTES, 'UTF-8'); ?>"
+    data-authenticated="<?= $proxyIsAuthenticated ? '1' : '0'; ?>"
+    data-login-url="<?= htmlspecialchars(base_url('client/login'), ENT_QUOTES, 'UTF-8'); ?>"
     data-configured="<?= youproxy_is_configured() ? '1' : '0'; ?>">
     <section class="proxy-page-heading">
         <div>
@@ -28,8 +37,8 @@ require_once __DIR__ . '/nav.php';
         </div>
         <div class="proxy-wallet-card">
             <span><?= __('Số dư ví'); ?></span>
-            <strong data-wallet-balance><?= format_currency($getUser['money']); ?></strong>
-            <a href="<?= base_url('recharge-bank'); ?>"><?= __('Nạp tiền'); ?> <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
+            <strong data-wallet-balance><?= $proxyWalletBalance; ?></strong>
+            <a href="<?= htmlspecialchars($proxyWalletUrl, ENT_QUOTES, 'UTF-8'); ?>"><?= $proxyWalletAction; ?> <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
         </div>
     </section>
 

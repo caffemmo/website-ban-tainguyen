@@ -9,6 +9,7 @@
     var page = app.getAttribute('data-proxy-page');
     var endpoint = app.getAttribute('data-endpoint');
     var userToken = app.getAttribute('data-token') || '';
+    var loginUrl = app.getAttribute('data-login-url') || ((window.baseUrl || '/') + 'client/login');
     var configured = app.getAttribute('data-configured') === '1';
     var state = {
         metadata: null,
@@ -25,6 +26,10 @@
     var $$ = function (selector, root) {
         return Array.prototype.slice.call((root || app).querySelectorAll(selector));
     };
+
+    function redirectToLogin() {
+        window.location.href = loginUrl;
+    }
 
     function escapeHtml(value) {
         return String(value === null || value === undefined ? '' : value)
@@ -391,6 +396,10 @@
             submit.addEventListener('click', async function () {
                 if (!form.reportValidity() || !state.quote) {
                     setStatus('Vui lòng chọn đủ cấu hình để hệ thống tính giá trước khi mua.', 'error');
+                    return;
+                }
+                if (!userToken) {
+                    redirectToLogin();
                     return;
                 }
                 setButtonLoading(submit, true, 'Đang tạo đơn');
