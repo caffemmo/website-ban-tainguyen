@@ -476,6 +476,9 @@ insert_options('telegram_proxy_type', 'SOCKS5');
 insert_options('telegram_url', 'https://bypass-telegram.cmsnt.workers.dev/');
 
 insert_options('tax_vat', 0);
+insert_options('home_page', 'home');
+insert_options('maintenance_title', 'Hệ thống đang nâng cấp');
+insert_options('maintenance_content', 'Chúng tôi đang thực hiện bảo trì và nâng cấp hệ thống để mang đến trải nghiệm tốt hơn. Vui lòng quay lại sau ít phút.');
 
 insert_options('time_cron_suppliers_api31', 0);
 insert_options('google_ads_status', 0);

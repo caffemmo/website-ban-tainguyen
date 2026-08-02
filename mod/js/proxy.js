@@ -10,6 +10,7 @@
     var endpoint = app.getAttribute('data-endpoint');
     var userToken = app.getAttribute('data-token') || '';
     var loginUrl = app.getAttribute('data-login-url') || ((window.baseUrl || '/') + 'client/login');
+    var authenticated = app.getAttribute('data-authenticated') === '1' || !!userToken;
     var configured = app.getAttribute('data-configured') === '1';
     var state = {
         metadata: null,
@@ -29,6 +30,25 @@
 
     function redirectToLogin() {
         window.location.href = loginUrl;
+    }
+
+    function authRequiredMarkup(message) {
+        return '<div class="proxy-empty-state"><i class="fa-solid fa-lock" aria-hidden="true"></i><strong>Vui lòng đăng nhập</strong><small>'
+            + escapeHtml(message || 'Đăng nhập để xem dữ liệu tài khoản và tiếp tục thao tác.')
+            + '</small><a class="proxy-secondary-button" href="' + escapeHtml(loginUrl) + '"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Đăng nhập</a></div>';
+    }
+
+    function renderAuthRequired(message) {
+        setStatus('Đăng nhập để sử dụng đầy đủ chức năng proxy.', 'info');
+        var table = $('[data-proxy-table]');
+        var renewList = $('[data-renew-list]');
+        if (table) table.innerHTML = authRequiredMarkup(message);
+        if (renewList) renewList.innerHTML = authRequiredMarkup(message);
+        $$('[data-download-proxies], [data-go-renew], [data-renew-quote], [data-renew-submit]').forEach(function (button) {
+            button.disabled = true;
+        });
+        var caption = $('[data-list-caption]') || $('[data-renew-caption]');
+        if (caption) caption.textContent = 'Cần đăng nhập để tải dữ liệu tài khoản.';
     }
 
     function escapeHtml(value) {
@@ -621,6 +641,10 @@
     }
 
     function initList() {
+        if (!authenticated) {
+            renderAuthRequired('Đăng nhập để xem danh sách proxy đã mua, copy định dạng và tải file TXT.');
+            return;
+        }
         var filter = $('[data-list-type]');
         if (filter) filter.addEventListener('change', function () { state.selected.clear(); loadList(filter.value); });
         $$('[data-refresh-list]').forEach(function (button) { button.addEventListener('click', function () { loadList(filter ? filter.value : ''); }); });
@@ -731,6 +755,10 @@
     }
 
     async function initRenew() {
+        if (!authenticated) {
+            renderAuthRequired('Đăng nhập để chọn proxy cần gia hạn và bật tự động gia hạn.');
+            return;
+        }
         if (!configured) return;
         var filter = $('[data-renew-type]');
         if (filter) filter.addEventListener('change', function () { setRenewType(filter.value); });

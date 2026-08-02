@@ -5,6 +5,7 @@ if (!defined('IN_SITE')) {
 
 require_once __DIR__ . '/../../libs/client-session.php';
 require_once __DIR__ . '/../../libs/uptichxanh.php';
+require_once __DIR__ . '/../../libs/service-catalog.php';
 
 $getUser = client_optional_user($CMSNT);
 $upIsAuthenticated = is_array($getUser);
@@ -13,29 +14,10 @@ $upWalletBalance = $upIsAuthenticated ? format_currency($getUser['money']) : __(
 $upWalletUrl = $upIsAuthenticated ? base_url('recharge-bank') : base_url('client/login');
 $upWalletAction = $upIsAuthenticated ? __('Nạp tiền') : __('Đăng nhập');
 
-$services = [
-    'get-link' => [
-        'label' => 'Get Link Facebook',
-        'short' => 'Lấy link xác minh nhanh',
-        'description' => 'Gửi cookie Facebook để nhận liên kết xác minh theo yêu cầu.',
-        'icon' => 'fa-link',
-        'tone' => 'teal'
-    ],
-    'up-fb' => [
-        'label' => 'Up tích Facebook',
-        'short' => 'Xác minh tích xanh Facebook',
-        'description' => 'Gửi cookie và ảnh giấy tờ xác minh Facebook theo biểu mẫu.',
-        'icon' => 'fa-facebook',
-        'tone' => 'blue'
-    ],
-    'up-ig' => [
-        'label' => 'Up tích Instagram',
-        'short' => 'Xác minh tích xanh Instagram',
-        'description' => 'Gửi cookie và ảnh giấy tờ xác minh Instagram theo biểu mẫu.',
-        'icon' => 'fa-instagram',
-        'tone' => 'pink'
-    ]
-];
+$services = [];
+foreach (caffemmo_service_catalog()['up-tich-xanh']['items'] as $catalogItem) {
+    $services[$catalogItem['key']] = $catalogItem;
+}
 
 $service = isset($_GET['service']) && isset($services[$_GET['service']]) ? $_GET['service'] : 'get-link';
 $currentService = $services[$service];
@@ -79,8 +61,8 @@ require_once __DIR__ . '/nav.php';
 
     <section class="up-service-tabs" aria-label="<?= __('Chọn dịch vụ Up tích xanh'); ?>">
         <?php foreach ($services as $key => $item): ?>
-            <a class="up-service-tab up-service-tab--<?= htmlspecialchars($item['tone'], ENT_QUOTES, 'UTF-8'); ?> <?= $service === $key ? 'is-active' : ''; ?>" href="<?= base_url('client/up-tich-xanh/' . $key); ?>" <?= $service === $key ? 'aria-current="page"' : ''; ?>>
-                <span class="up-service-tab-icon"><i class="<?= in_array($item['icon'], ['fa-facebook', 'fa-instagram'], true) ? 'fa-brands' : 'fa-solid'; ?> <?= htmlspecialchars($item['icon'], ENT_QUOTES, 'UTF-8'); ?>" aria-hidden="true"></i></span>
+            <a class="up-service-tab up-service-tab--<?= htmlspecialchars($item['tone'], ENT_QUOTES, 'UTF-8'); ?> <?= $service === $key ? 'is-active' : ''; ?>" href="<?= htmlspecialchars($item['url'], ENT_QUOTES, 'UTF-8'); ?>" <?= $service === $key ? 'aria-current="page"' : ''; ?>>
+                <span class="up-service-tab-icon"><i class="<?= htmlspecialchars($item['icon'], ENT_QUOTES, 'UTF-8'); ?>" aria-hidden="true"></i></span>
                 <span><strong><?= __($item['label']); ?></strong><small><?= __($item['short']); ?></small></span>
                 <i class="fa-solid fa-arrow-up-right-from-square up-service-tab-arrow" aria-hidden="true"></i>
             </a>

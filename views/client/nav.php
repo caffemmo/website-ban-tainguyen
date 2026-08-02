@@ -2,6 +2,8 @@
     die('The Request Not Found');
 } ?>
 <?php
+require_once __DIR__ . '/../../libs/service-catalog.php';
+
 $upService = isset($_GET['service']) && in_array($_GET['service'], ['get-link', 'up-fb', 'up-ig'], true)
     ? $_GET['service']
     : '';
@@ -9,6 +11,7 @@ $upMenuActive = isset($action) && $action === 'up-tich-xanh';
 if ($upMenuActive && $upService === '') {
     $upService = 'get-link';
 }
+$serviceCatalog = caffemmo_service_catalog();
 ?>
 
 <body class="has-desktop-sidebar">
@@ -24,51 +27,19 @@ if ($upMenuActive && $upService === '') {
                     <i class="fa-solid fa-store" aria-hidden="true"></i><span><?= __('Tất cả sản phẩm'); ?></span>
                 </a>
 
-                <p class="desktop-sidebar-section-title"><?= __('Dịch vụ Proxy'); ?></p>
-                <a class="desktop-sidebar-link desktop-sidebar-service-link <?= isset($action) && $action == 'proxy-buy' ? 'active' : ''; ?>" href="<?= base_url('client/proxy-buy'); ?>">
-                    <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
-                    <span class="desktop-sidebar-link-label">
-                        <strong><?= __('Mua Proxy'); ?></strong>
-                        <small><?= __('Chọn loại proxy phù hợp'); ?></small>
-                    </span>
-                </a>
-                <a class="desktop-sidebar-link desktop-sidebar-service-link <?= isset($action) && $action == 'proxy-list' ? 'active' : ''; ?>" href="<?= base_url('client/proxy-list'); ?>">
-                    <i class="fa-solid fa-server" aria-hidden="true"></i>
-                    <span class="desktop-sidebar-link-label">
-                        <strong><?= __('Proxy của tôi'); ?></strong>
-                        <small><?= __('Quản lý proxy đã mua'); ?></small>
-                    </span>
-                </a>
-                <a class="desktop-sidebar-link desktop-sidebar-service-link <?= isset($action) && $action == 'proxy-renew' ? 'active' : ''; ?>" href="<?= base_url('client/proxy-renew'); ?>">
-                    <i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i>
-                    <span class="desktop-sidebar-link-label">
-                        <strong><?= __('Gia hạn Proxy'); ?></strong>
-                        <small><?= __('Gia hạn nhanh, không gián đoạn'); ?></small>
-                    </span>
-                </a>
-
-                <p class="desktop-sidebar-section-title"><?= __('Up tích xanh'); ?></p>
-                <a class="desktop-sidebar-link desktop-sidebar-service-link <?= $upMenuActive && $upService === 'get-link' ? 'active' : ''; ?>" href="<?= base_url('client/up-tich-xanh/get-link'); ?>" <?= $upMenuActive && $upService === 'get-link' ? 'aria-current="page"' : ''; ?>>
-                    <i class="fa-solid fa-link" aria-hidden="true"></i>
-                    <span class="desktop-sidebar-link-label">
-                        <strong><?= __('Get Link Facebook'); ?></strong>
-                        <small><?= __('Lấy link xác minh nhanh'); ?></small>
-                    </span>
-                </a>
-                <a class="desktop-sidebar-link desktop-sidebar-service-link <?= $upMenuActive && $upService === 'up-fb' ? 'active' : ''; ?>" href="<?= base_url('client/up-tich-xanh/up-fb'); ?>" <?= $upMenuActive && $upService === 'up-fb' ? 'aria-current="page"' : ''; ?>>
-                    <i class="fa-brands fa-facebook" aria-hidden="true"></i>
-                    <span class="desktop-sidebar-link-label">
-                        <strong><?= __('Up tích Facebook'); ?></strong>
-                        <small><?= __('Xác minh tích xanh Facebook'); ?></small>
-                    </span>
-                </a>
-                <a class="desktop-sidebar-link desktop-sidebar-service-link <?= $upMenuActive && $upService === 'up-ig' ? 'active' : ''; ?>" href="<?= base_url('client/up-tich-xanh/up-ig'); ?>" <?= $upMenuActive && $upService === 'up-ig' ? 'aria-current="page"' : ''; ?>>
-                    <i class="fa-brands fa-instagram" aria-hidden="true"></i>
-                    <span class="desktop-sidebar-link-label">
-                        <strong><?= __('Up tích Instagram'); ?></strong>
-                        <small><?= __('Xác minh tích xanh Instagram'); ?></small>
-                    </span>
-                </a>
+                <?php foreach ($serviceCatalog as $serviceGroup): ?>
+                <p class="desktop-sidebar-section-title"><?= __($serviceGroup['title']); ?></p>
+                    <?php foreach ($serviceGroup['items'] as $serviceItem): ?>
+                    <?php $serviceActive = caffemmo_is_service_active($serviceItem, $action ?? '', $upService); ?>
+                    <a class="desktop-sidebar-link desktop-sidebar-service-link <?= $serviceActive ? 'active' : ''; ?>" href="<?= htmlspecialchars($serviceItem['url'], ENT_QUOTES, 'UTF-8'); ?>" <?= $serviceActive ? 'aria-current="page"' : ''; ?>>
+                        <i class="<?= htmlspecialchars($serviceItem['icon'], ENT_QUOTES, 'UTF-8'); ?>" aria-hidden="true"></i>
+                        <span class="desktop-sidebar-link-label">
+                            <strong><?= __($serviceItem['label']); ?></strong>
+                            <small><?= __($serviceItem['short']); ?></small>
+                        </span>
+                    </a>
+                    <?php endforeach; ?>
+                <?php endforeach; ?>
 
                 <?php if($CMSNT->site('status_menu_tools') == 1): ?>
                 <p class="desktop-sidebar-section-title"><?= __('Công cụ miễn phí'); ?></p>
@@ -636,33 +607,16 @@ if ($upMenuActive && $upService === '') {
                     <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i><span><?= __('Lịch sử đơn hàng'); ?></span>
                 </a>
 
-                <p class="nav-section-title"><?= __('Dịch vụ Proxy'); ?></p>
-                <a class="nav-link <?= isset($action) && $action == 'proxy-buy' ? 'active' : ''; ?>" href="<?= base_url('client/proxy-buy'); ?>">
-                    <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
-                    <span class="nav-link-label"><strong><?= __('Mua Proxy'); ?></strong><small><?= __('Chọn loại proxy phù hợp'); ?></small></span>
-                </a>
-                <a class="nav-link <?= isset($action) && $action == 'proxy-list' ? 'active' : ''; ?>" href="<?= base_url('client/proxy-list'); ?>">
-                    <i class="fa-solid fa-server" aria-hidden="true"></i>
-                    <span class="nav-link-label"><strong><?= __('Proxy của tôi'); ?></strong><small><?= __('Quản lý proxy đã mua'); ?></small></span>
-                </a>
-                <a class="nav-link <?= isset($action) && $action == 'proxy-renew' ? 'active' : ''; ?>" href="<?= base_url('client/proxy-renew'); ?>">
-                    <i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i>
-                    <span class="nav-link-label"><strong><?= __('Gia hạn Proxy'); ?></strong><small><?= __('Gia hạn nhanh, không gián đoạn'); ?></small></span>
-                </a>
-
-                <p class="nav-section-title"><?= __('Up tích xanh'); ?></p>
-                <a class="nav-link <?= $upMenuActive && $upService === 'get-link' ? 'active' : ''; ?>" href="<?= base_url('client/up-tich-xanh/get-link'); ?>" <?= $upMenuActive && $upService === 'get-link' ? 'aria-current="page"' : ''; ?>>
-                    <i class="fa-solid fa-link" aria-hidden="true"></i>
-                    <span class="nav-link-label"><strong><?= __('Get Link Facebook'); ?></strong><small><?= __('Lấy link xác minh nhanh'); ?></small></span>
-                </a>
-                <a class="nav-link <?= $upMenuActive && $upService === 'up-fb' ? 'active' : ''; ?>" href="<?= base_url('client/up-tich-xanh/up-fb'); ?>" <?= $upMenuActive && $upService === 'up-fb' ? 'aria-current="page"' : ''; ?>>
-                    <i class="fa-brands fa-facebook" aria-hidden="true"></i>
-                    <span class="nav-link-label"><strong><?= __('Up tích Facebook'); ?></strong><small><?= __('Xác minh tích xanh Facebook'); ?></small></span>
-                </a>
-                <a class="nav-link <?= $upMenuActive && $upService === 'up-ig' ? 'active' : ''; ?>" href="<?= base_url('client/up-tich-xanh/up-ig'); ?>" <?= $upMenuActive && $upService === 'up-ig' ? 'aria-current="page"' : ''; ?>>
-                    <i class="fa-brands fa-instagram" aria-hidden="true"></i>
-                    <span class="nav-link-label"><strong><?= __('Up tích Instagram'); ?></strong><small><?= __('Xác minh tích xanh Instagram'); ?></small></span>
-                </a>
+                <?php foreach ($serviceCatalog as $serviceGroup): ?>
+                <p class="nav-section-title"><?= __($serviceGroup['title']); ?></p>
+                    <?php foreach ($serviceGroup['items'] as $serviceItem): ?>
+                    <?php $serviceActive = caffemmo_is_service_active($serviceItem, $action ?? '', $upService); ?>
+                    <a class="nav-link <?= $serviceActive ? 'active' : ''; ?>" href="<?= htmlspecialchars($serviceItem['url'], ENT_QUOTES, 'UTF-8'); ?>" <?= $serviceActive ? 'aria-current="page"' : ''; ?>>
+                        <i class="<?= htmlspecialchars($serviceItem['icon'], ENT_QUOTES, 'UTF-8'); ?>" aria-hidden="true"></i>
+                        <span class="nav-link-label"><strong><?= __($serviceItem['label']); ?></strong><small><?= __($serviceItem['short']); ?></small></span>
+                    </a>
+                    <?php endforeach; ?>
+                <?php endforeach; ?>
 
                 <p class="nav-section-title"><?= __('Hỗ trợ'); ?></p>
                 <a class="nav-link" href="<?= base_url('client/contact'); ?>">

@@ -40,6 +40,9 @@ if (isset($_POST['SaveSettings'])) {
 
     admin_msg_success("Lưu thành công!", "", 1000);
 }
+
+insert_options('maintenance_title', 'Hệ thống đang nâng cấp');
+insert_options('maintenance_content', 'Chúng tôi đang thực hiện bảo trì và nâng cấp hệ thống để mang đến trải nghiệm tốt hơn. Vui lòng quay lại sau ít phút.');
 ?>
 <div class="tab-pane text-muted show active" id="cai-dat-chung" role="tabpanel">
     <!-- Page Header -->
@@ -242,6 +245,15 @@ if (isset($_POST['SaveSettings'])) {
                                     </select>
                                 </div>
                             </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-medium"><i class="fas fa-screwdriver-wrench me-1 text-danger"></i><?= __('Tiêu đề thông báo bảo trì'); ?></label>
+                            <input type="text" name="maintenance_title" value="<?= htmlspecialchars($CMSNT->site('maintenance_title') ?: 'Hệ thống đang nâng cấp', ENT_QUOTES, 'UTF-8'); ?>" class="form-control" maxlength="160" placeholder="<?= __('Ví dụ: Hệ thống đang nâng cấp'); ?>">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-medium"><i class="fas fa-message me-1 text-danger"></i><?= __('Nội dung thông báo bảo trì'); ?></label>
+                            <textarea name="maintenance_content" class="form-control" rows="3" maxlength="600" placeholder="<?= __('Nội dung khách sẽ thấy khi website đang bảo trì'); ?>"><?= htmlspecialchars($CMSNT->site('maintenance_content') ?: 'Chúng tôi đang thực hiện bảo trì và nâng cấp hệ thống để mang đến trải nghiệm tốt hơn. Vui lòng quay lại sau ít phút.', ENT_QUOTES, 'UTF-8'); ?></textarea>
+                            <div class="form-text"><?= __('Admin vẫn truy cập bình thường khi website ở chế độ bảo trì.'); ?></div>
                         </div>
                         <div class="row">
                             <div class="col-md-6">

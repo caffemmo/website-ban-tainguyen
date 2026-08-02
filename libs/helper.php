@@ -413,6 +413,9 @@ $host = check_string($host);
 $domains = $host . ',' . 'www.' . $host;
 insert_options('domains', $domains);
 insert_options('telegram_proxy_type', 'HTTP');
+insert_options('home_page', 'home');
+insert_options('maintenance_title', 'Hệ thống đang nâng cấp');
+insert_options('maintenance_content', 'Chúng tôi đang thực hiện bảo trì và nâng cấp hệ thống để mang đến trải nghiệm tốt hơn. Vui lòng quay lại sau ít phút.');
 //
 
 function insert_ip_block($ip, $reason)

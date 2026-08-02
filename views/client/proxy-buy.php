@@ -17,7 +17,7 @@ $body = [
     'keyword' => 'proxy, mua proxy, proxy premium'
 ];
 $body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=9') . '">';
-$body['footer'] = '<script src="' . BASE_URL('mod/js/proxy.js?v=6') . '"></script>';
+$body['footer'] = '<script src="' . BASE_URL('mod/js/proxy.js?v=7') . '"></script>';
 
 require_once __DIR__ . '/header.php';
 require_once __DIR__ . '/nav.php';

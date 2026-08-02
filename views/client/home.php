@@ -14,7 +14,9 @@ $body['footer'] = '
 ';
 
 require_once(__DIR__ . '/../../libs/client-session.php');
+require_once(__DIR__ . '/../../libs/service-catalog.php');
 $getUser = client_optional_user($CMSNT);
+$homeServiceGroups = caffemmo_service_catalog();
 
 // Kiểm tra và redirect đến trang VAT invoice nếu popup_vat được bật và user chưa có thông tin VAT
 if($CMSNT->site('popup_vat') == 1 && isset($getUser)) {
@@ -104,6 +106,34 @@ require_once(__DIR__.'/nav.php');
 
             <?php require_once(__DIR__.'/widget_tools.php');?>
             <br>
+
+            <div class="col-12">
+                <section class="home-service-catalog" aria-labelledby="home-service-title">
+                    <div class="home-service-head">
+                        <div>
+                            <span><?= __('Caffemmo services'); ?></span>
+                            <h2 id="home-service-title"><?= __('Dịch vụ hiện có'); ?></h2>
+                        </div>
+                        <a href="#products-container"><?= __('Xem sản phẩm'); ?> <i class="fa-solid fa-arrow-down" aria-hidden="true"></i></a>
+                    </div>
+                    <div class="home-service-grid">
+                        <?php foreach ($homeServiceGroups as $serviceGroup): ?>
+                            <?php foreach ($serviceGroup['items'] as $serviceItem): ?>
+                                <a class="home-service-card home-service-card--<?= htmlspecialchars($serviceItem['tone'], ENT_QUOTES, 'UTF-8'); ?>" href="<?= htmlspecialchars($serviceItem['url'], ENT_QUOTES, 'UTF-8'); ?>">
+                                    <span class="home-service-icon"><i class="<?= htmlspecialchars($serviceItem['icon'], ENT_QUOTES, 'UTF-8'); ?>" aria-hidden="true"></i></span>
+                                    <span class="home-service-copy">
+                                        <strong><?= __($serviceItem['label']); ?></strong>
+                                        <small><?= __($serviceItem['description']); ?></small>
+                                    </span>
+                                    <span class="home-service-meta">
+                                        <?= !empty($serviceItem['requires_login']) ? __('Đăng nhập khi thao tác') : __('Xem tự do'); ?>
+                                    </span>
+                                </a>
+                            <?php endforeach; ?>
+                        <?php endforeach; ?>
+                    </div>
+                </section>
+            </div>
 
 
 

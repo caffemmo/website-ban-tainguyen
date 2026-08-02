@@ -1,8 +1,12 @@
 <?php if (!defined('IN_SITE')) {
     die('The Request Not Found');
 }
-require_once __DIR__ . '/../../models/is_user.php';
+require_once __DIR__ . '/../../libs/client-session.php';
 require_once __DIR__ . '/../../libs/youproxy.php';
+
+$getUser = client_optional_user($CMSNT);
+$proxyIsAuthenticated = is_array($getUser);
+$proxyUserToken = $proxyIsAuthenticated ? (string) ($getUser['token'] ?? '') : '';
 
 $body = [
     'title' => __('Proxy của tôi') . ' | ' . $CMSNT->site('title'),
@@ -10,7 +14,7 @@ $body = [
     'keyword' => 'proxy của tôi, quản lý proxy'
 ];
 $body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=9') . '">';
-$body['footer'] = '<script src="' . BASE_URL('mod/js/proxy.js?v=6') . '"></script>';
+$body['footer'] = '<script src="' . BASE_URL('mod/js/proxy.js?v=7') . '"></script>';
 
 require_once __DIR__ . '/header.php';
 require_once __DIR__ . '/nav.php';
@@ -18,7 +22,9 @@ require_once __DIR__ . '/nav.php';
 
 <main class="proxy-page" data-proxy-app data-proxy-page="list"
     data-endpoint="<?= BASE_URL('ajaxs/client/proxy.php'); ?>"
-    data-token="<?= htmlspecialchars($getUser['token'], ENT_QUOTES, 'UTF-8'); ?>"
+    data-token="<?= htmlspecialchars($proxyUserToken, ENT_QUOTES, 'UTF-8'); ?>"
+    data-authenticated="<?= $proxyIsAuthenticated ? '1' : '0'; ?>"
+    data-login-url="<?= htmlspecialchars(base_url('client/login'), ENT_QUOTES, 'UTF-8'); ?>"
     data-configured="<?= youproxy_is_configured() ? '1' : '0'; ?>">
     <section class="proxy-page-heading">
         <div>

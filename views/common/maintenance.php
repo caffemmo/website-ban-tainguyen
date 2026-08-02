@@ -1,6 +1,14 @@
 <?php if (!defined('IN_SITE')) {
     die('The Request Not Found');
 }
+$maintenanceTitle = trim((string) $CMSNT->site('maintenance_title'));
+$maintenanceContent = trim((string) $CMSNT->site('maintenance_content'));
+if ($maintenanceTitle === '') {
+    $maintenanceTitle = 'Hệ thống đang nâng cấp';
+}
+if ($maintenanceContent === '') {
+    $maintenanceContent = 'Chúng tôi đang thực hiện bảo trì và nâng cấp hệ thống để mang đến trải nghiệm tốt hơn. Vui lòng quay lại sau ít phút.';
+}
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -8,8 +16,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= __('Bảo trì hệ thống'); ?></title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <title><?= htmlspecialchars(__($maintenanceTitle), ENT_QUOTES, 'UTF-8'); ?></title>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         *,
         *::before,
@@ -20,7 +28,7 @@
         }
 
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-family: 'Be Vietnam Pro', system-ui, -apple-system, sans-serif;
             min-height: 100vh;
             overflow: hidden;
             background: #0a0e1a;
@@ -568,9 +576,9 @@
             </div>
 
             <!-- Title & description -->
-            <h1 class="maintenance-title"><?= __('Hệ thống đang nâng cấp'); ?></h1>
+            <h1 class="maintenance-title"><?= htmlspecialchars(__($maintenanceTitle), ENT_QUOTES, 'UTF-8'); ?></h1>
             <p class="maintenance-desc">
-                <?= __('Chúng tôi đang thực hiện bảo trì và nâng cấp hệ thống để mang đến trải nghiệm tốt hơn. Vui lòng quay lại sau ít phút.'); ?>
+                <?= nl2br(htmlspecialchars(__($maintenanceContent), ENT_QUOTES, 'UTF-8')); ?>
             </p>
 
             <!-- Progress bar -->
