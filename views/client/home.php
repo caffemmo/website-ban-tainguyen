@@ -22,6 +22,10 @@ require_once(__DIR__ . '/../../libs/client-session.php');
 require_once(__DIR__ . '/../../libs/service-catalog.php');
 $getUser = client_optional_user($CMSNT);
 $homeServiceGroups = $isProductsPage ? [] : caffemmo_service_catalog();
+$homeServiceCount = 0;
+foreach ($homeServiceGroups as $homeServiceGroup) {
+    $homeServiceCount += count($homeServiceGroup['items']);
+}
 
 if ($isProductsPage) {
     $body['title'] = __('Tất cả sản phẩm') . ' | ' . $CMSNT->site('title');
@@ -102,9 +106,33 @@ require_once(__DIR__.'/nav.php');
             <p><?= __('Chọn danh mục hoặc tìm kiếm sản phẩm phù hợp với nhu cầu của bạn.'); ?></p>
         </header>
         <?php else: ?>
-        <div class="mb-5">
-
-        </div>
+        <section class="tech-home-hero" aria-labelledby="tech-home-title">
+            <div class="tech-home-hero-grid" aria-hidden="true"></div>
+            <div class="tech-home-hero-inner">
+                <div class="tech-home-hero-copy">
+                    <span class="tech-home-kicker"><i class="fa-solid fa-bolt" aria-hidden="true"></i><?= __('Caffemmo digital services'); ?></span>
+                    <h1 id="tech-home-title"><?= __('Dịch vụ số, sẵn sàng cho nhịp làm việc của bạn.'); ?></h1>
+                    <p><?= __('Khám phá proxy, xác minh và tài nguyên được tổ chức rõ ràng, thao tác an toàn và nhanh chóng.'); ?></p>
+                    <div class="tech-home-actions">
+                        <a class="tech-home-button tech-home-button--primary" href="<?= base_url('client/products'); ?>">
+                            <span><?= __('Khám phá dịch vụ'); ?></span><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+                        </a>
+                        <a class="tech-home-button tech-home-button--quiet" href="<?= isset($getUser) ? base_url('client/profile') : base_url('client/login'); ?>">
+                            <span><?= isset($getUser) ? __('Tài khoản của tôi') : __('Đăng nhập'); ?></span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="tech-home-visual" aria-hidden="true">
+                    <div class="tech-home-visual-core"><i class="fa-solid fa-shield-halved"></i></div>
+                    <span class="tech-home-visual-route tech-home-visual-route--one"></span>
+                    <span class="tech-home-visual-route tech-home-visual-route--two"></span>
+                    <span class="tech-home-visual-node tech-home-visual-node--one"><i class="fa-solid fa-server"></i></span>
+                    <span class="tech-home-visual-node tech-home-visual-node--two"><i class="fa-solid fa-link"></i></span>
+                    <span class="tech-home-visual-node tech-home-visual-node--three"><i class="fa-solid fa-arrows-rotate"></i></span>
+                    <div class="tech-home-visual-caption"><strong><?= $homeServiceCount; ?></strong><span><?= __('dịch vụ đang sẵn sàng'); ?></span></div>
+                </div>
+            </div>
+        </section>
         <?php endif; ?>
         <div class="row mb-5">
             <?php if (!$isProductsPage): ?>
@@ -123,32 +151,32 @@ require_once(__DIR__.'/nav.php');
             </div>
             <?php endif?>
 
-            <?php require_once(__DIR__.'/widget_tools.php');?>
-            <br>
-
             <div class="col-12">
-                <section class="home-service-catalog" aria-labelledby="home-service-title">
-                    <div class="home-service-head">
+                <section class="tech-home-services" aria-labelledby="home-service-title">
+                    <div class="tech-home-services-head">
                         <div>
-                            <span><?= __('Caffemmo services'); ?></span>
+                            <span><?= __('Dịch vụ Caffemmo'); ?></span>
                             <h2 id="home-service-title"><?= __('Dịch vụ hiện có'); ?></h2>
                         </div>
-                        <a href="<?= base_url('client/products'); ?>"><?= __('Xem sản phẩm'); ?> <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+                        <a href="<?= base_url('client/products'); ?>"><span><?= __('Xem tất cả sản phẩm'); ?></span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
                     </div>
-                    <div class="home-service-grid">
+                    <div class="tech-home-service-groups">
                         <?php foreach ($homeServiceGroups as $serviceGroup): ?>
+                        <section class="tech-home-service-group" aria-label="<?= htmlspecialchars(__($serviceGroup['title']), ENT_QUOTES, 'UTF-8'); ?>">
+                            <h3><?= __($serviceGroup['title']); ?></h3>
+                            <div class="tech-home-service-grid">
                             <?php foreach ($serviceGroup['items'] as $serviceItem): ?>
-                                <a class="home-service-card home-service-card--<?= htmlspecialchars($serviceItem['tone'], ENT_QUOTES, 'UTF-8'); ?>" href="<?= htmlspecialchars($serviceItem['url'], ENT_QUOTES, 'UTF-8'); ?>">
-                                    <span class="home-service-icon"><i class="<?= htmlspecialchars($serviceItem['icon'], ENT_QUOTES, 'UTF-8'); ?>" aria-hidden="true"></i></span>
-                                    <span class="home-service-copy">
+                                <a class="tech-home-service-card tech-home-service-card--<?= htmlspecialchars($serviceItem['tone'], ENT_QUOTES, 'UTF-8'); ?>" href="<?= htmlspecialchars($serviceItem['url'], ENT_QUOTES, 'UTF-8'); ?>">
+                                    <span class="tech-home-service-icon"><i class="<?= htmlspecialchars($serviceItem['icon'], ENT_QUOTES, 'UTF-8'); ?>" aria-hidden="true"></i></span>
+                                    <span class="tech-home-service-copy">
                                         <strong><?= __($serviceItem['label']); ?></strong>
                                         <small><?= __($serviceItem['description']); ?></small>
                                     </span>
-                                    <span class="home-service-meta">
-                                        <?= !empty($serviceItem['requires_login']) ? __('Đăng nhập khi thao tác') : __('Xem tự do'); ?>
-                                    </span>
+                                    <span class="tech-home-service-action"><span><?= __('Xem dịch vụ'); ?></span><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></span>
                                 </a>
                             <?php endforeach; ?>
+                            </div>
+                        </section>
                         <?php endforeach; ?>
                     </div>
                 </section>
@@ -230,8 +258,8 @@ require_once(__DIR__.'/nav.php');
             </div>
             <?php endif; ?>
             <?php if(!$isProductsPage && $CMSNT->site('cot_so_du_ben_phai') == 1):?>
-            <div class="col-xl-3">
-                <div class="account-card card-wallet-home py-4">
+            <div class="col-12 tech-home-wallet-col">
+                <div class="account-card card-wallet-home tech-home-wallet-card py-4">
                     <?php if(isset($getUser)):?>
                     <div class="my-wallet">
                         <p><?=__('Số dư hiện tại');?></p>
@@ -252,7 +280,7 @@ require_once(__DIR__.'/nav.php');
                         </div>
                     </div>
                     <?php else:?>
-                    <ul class="user-form-social">
+                    <ul class="user-form-social tech-home-auth-actions">
                         <li><a href="<?=base_url('client/login');?>" class="facebook"><i
                                     class="fa-solid fa-right-to-bracket"></i> <?=mb_strtoupper(__('Đăng nhập'));?></a>
                         </li>

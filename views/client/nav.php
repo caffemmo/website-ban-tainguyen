@@ -14,7 +14,7 @@ if ($upMenuActive && $upService === '') {
 $serviceCatalog = caffemmo_service_catalog();
 ?>
 
-<body class="has-desktop-sidebar">
+<body class="has-desktop-sidebar<?= isset($action) && $action === 'home' ? ' caffemmo-tech-home' : ''; ?>">
     <div class="backdrop"></div><a class="backtop" href="#"><i class="fa-sharp fa-solid fa-chevron-up"></i></a>
     <aside class="desktop-app-sidebar" aria-label="<?= __('Điều hướng chính'); ?>">
         <div class="desktop-sidebar-scroll">

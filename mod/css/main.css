@@ -3051,4 +3051,906 @@ ul.custom-button-list li {
     }
 }
 
+/* ===== Caffemmo technology homepage ===== */
+.caffemmo-tech-home {
+    --tech-bg: #060d1b;
+    --tech-surface: #0b1628;
+    --tech-surface-raised: #0f2035;
+    --tech-line: #1a3a50;
+    --tech-text: #f4fbff;
+    --tech-muted: #9db3c6;
+    --tech-accent: #20d5c7;
+    --tech-accent-strong: #62f2e5;
+    background: var(--tech-bg);
+    color: var(--tech-text);
+}
+
+.caffemmo-tech-home .header-top,
+.caffemmo-tech-home .header-part,
+.caffemmo-tech-home .navbar-part {
+    border-color: var(--tech-line);
+    background: #091426;
+}
+
+.caffemmo-tech-home .header-part.active {
+    background: #091426;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, .22);
+}
+
+.caffemmo-tech-home .navbar-content {
+    border-color: var(--tech-line);
+}
+
+.caffemmo-tech-home .header-top-welcome p,
+.caffemmo-tech-home .header-top-list a,
+.caffemmo-tech-home .header-select,
+.caffemmo-tech-home .header-select i,
+.caffemmo-tech-home .navbar-link,
+.caffemmo-tech-home .navbar-info,
+.caffemmo-tech-home .navbar-info * {
+    color: var(--tech-muted);
+}
+
+.caffemmo-tech-home .header-top-list a:hover,
+.caffemmo-tech-home .navbar-link:hover,
+.caffemmo-tech-home .navbar-link:focus-visible {
+    color: var(--tech-accent-strong);
+}
+
+.caffemmo-tech-home .header-select select,
+.caffemmo-tech-home .header-form,
+.caffemmo-tech-home .header-form input {
+    border-color: var(--tech-line);
+    color: var(--tech-text);
+    background: #0d1b30;
+}
+
+.caffemmo-tech-home .header-form input::placeholder {
+    color: #7892a8;
+}
+
+.caffemmo-tech-home .header-form button,
+.caffemmo-tech-home .header-widget,
+.caffemmo-tech-home .header-widget i,
+.caffemmo-tech-home .header-user,
+.caffemmo-tech-home .header-src {
+    color: var(--tech-accent);
+    background: #0d1b30;
+}
+
+.caffemmo-tech-home .header-widget:hover,
+.caffemmo-tech-home .header-widget:hover i,
+.caffemmo-tech-home .header-user:hover,
+.caffemmo-tech-home .header-src:hover {
+    color: #06101d;
+    background: var(--tech-accent);
+}
+
+.caffemmo-tech-home .header-widget span,
+.caffemmo-tech-home .header-widget span p {
+    color: var(--tech-text);
+}
+
+.caffemmo-tech-home .header-widget span p[style] {
+    color: var(--tech-accent) !important;
+}
+
+.caffemmo-tech-home .feature-part {
+    position: relative;
+    overflow: hidden;
+    background: var(--tech-bg);
+}
+
+.caffemmo-tech-home .feature-part::before {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    content: "";
+    pointer-events: none;
+    background-image:
+        linear-gradient(rgba(105, 191, 212, .035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(105, 191, 212, .035) 1px, transparent 1px);
+    background-size: 56px 56px;
+}
+
+.caffemmo-tech-home .feature-part > .container {
+    position: relative;
+    z-index: 1;
+}
+
+.tech-home-hero {
+    position: relative;
+    min-height: 456px;
+    margin: 0 0 40px;
+    overflow: hidden;
+    border-top: 1px solid var(--tech-line);
+    border-bottom: 1px solid var(--tech-line);
+    background: #071224;
+}
+
+.tech-home-hero-grid {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+        linear-gradient(rgba(32, 213, 199, .08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(32, 213, 199, .08) 1px, transparent 1px);
+    background-size: 48px 48px;
+}
+
+.tech-home-hero-inner {
+    position: relative;
+    display: grid;
+    min-height: inherit;
+    grid-template-columns: minmax(0, 1.08fr) minmax(340px, .92fr);
+    align-items: center;
+    gap: 54px;
+    padding: 58px 52px;
+}
+
+.tech-home-hero-copy {
+    max-width: 680px;
+    animation: tech-home-reveal 620ms cubic-bezier(.16, 1, .3, 1) both;
+}
+
+.tech-home-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    color: var(--tech-accent);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.tech-home-kicker i {
+    font-size: 11px;
+}
+
+.tech-home-hero h1 {
+    max-width: 650px;
+    margin: 0;
+    color: var(--tech-text);
+    font-size: 58px;
+    font-weight: 800;
+    line-height: 1.08;
+    letter-spacing: 0;
+    text-wrap: balance;
+}
+
+.tech-home-hero p {
+    max-width: 610px;
+    margin: 22px 0 0;
+    color: var(--tech-muted);
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.72;
+}
+
+.tech-home-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 30px;
+}
+
+.tech-home-button {
+    display: inline-flex;
+    min-height: 48px;
+    align-items: center;
+    justify-content: center;
+    gap: 13px;
+    padding: 0 18px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1;
+    text-decoration: none;
+    transition: background-color 260ms cubic-bezier(.16, 1, .3, 1), border-color 260ms cubic-bezier(.16, 1, .3, 1), color 260ms cubic-bezier(.16, 1, .3, 1), transform 260ms cubic-bezier(.16, 1, .3, 1), box-shadow 260ms cubic-bezier(.16, 1, .3, 1);
+}
+
+.tech-home-button i {
+    transition: transform 260ms cubic-bezier(.16, 1, .3, 1);
+}
+
+.tech-home-button--primary {
+    color: #032020;
+    background: var(--tech-accent);
+    box-shadow: 0 14px 28px rgba(32, 213, 199, .18);
+}
+
+.tech-home-button--quiet {
+    border-color: #2c4a60;
+    color: var(--tech-text);
+    background: rgba(10, 27, 46, .78);
+}
+
+.tech-home-button:hover,
+.tech-home-button:focus-visible {
+    color: #03191d;
+    border-color: var(--tech-accent-strong);
+    background: var(--tech-accent-strong);
+    box-shadow: 0 18px 34px rgba(32, 213, 199, .28);
+    transform: translateY(-3px);
+    text-decoration: none;
+}
+
+.tech-home-button:hover i,
+.tech-home-button:focus-visible i {
+    transform: translate(3px, -2px);
+}
+
+.tech-home-button:active {
+    transform: translateY(-1px) scale(.985);
+}
+
+.tech-home-button:focus-visible,
+.tech-home-services-head a:focus-visible,
+.tech-home-service-card:focus-visible {
+    outline: 3px solid rgba(98, 242, 229, .45);
+    outline-offset: 3px;
+}
+
+.tech-home-visual {
+    position: relative;
+    width: min(100%, 390px);
+    min-height: 310px;
+    justify-self: end;
+    animation: tech-home-reveal 680ms 120ms cubic-bezier(.16, 1, .3, 1) both;
+}
+
+.tech-home-visual::before,
+.tech-home-visual::after {
+    position: absolute;
+    content: "";
+    pointer-events: none;
+}
+
+.tech-home-visual::before {
+    inset: 26px 32px 32px 18px;
+    border: 1px solid rgba(89, 174, 195, .22);
+    clip-path: polygon(20% 0, 82% 0, 100% 23%, 100% 82%, 80% 100%, 18% 100%, 0 78%, 0 20%);
+}
+
+.tech-home-visual::after {
+    inset: 62px 67px 69px 53px;
+    border: 1px solid rgba(32, 213, 199, .18);
+    clip-path: polygon(20% 0, 82% 0, 100% 23%, 100% 82%, 80% 100%, 18% 100%, 0 78%, 0 20%);
+}
+
+.tech-home-visual-core {
+    position: absolute;
+    top: 90px;
+    left: 122px;
+    z-index: 2;
+    display: grid;
+    width: 132px;
+    height: 132px;
+    place-items: center;
+    border: 1px solid rgba(126, 255, 245, .68);
+    color: #042124;
+    background: var(--tech-accent);
+    box-shadow: 0 0 0 12px rgba(32, 213, 199, .06), 0 24px 52px rgba(0, 0, 0, .34);
+    clip-path: polygon(20% 0, 82% 0, 100% 23%, 100% 82%, 80% 100%, 18% 100%, 0 78%, 0 20%);
+    font-size: 44px;
+    animation: tech-home-core-breathe 4s cubic-bezier(.45, .05, .55, .95) infinite;
+}
+
+.tech-home-visual-route {
+    position: absolute;
+    z-index: 1;
+    width: 100px;
+    height: 1px;
+    background: #398c97;
+    transform-origin: left center;
+}
+
+.tech-home-visual-route--one {
+    top: 111px;
+    left: 64px;
+    transform: rotate(-32deg);
+}
+
+.tech-home-visual-route--two {
+    top: 210px;
+    left: 228px;
+    transform: rotate(29deg);
+}
+
+.tech-home-visual-node {
+    position: absolute;
+    z-index: 3;
+    display: grid;
+    width: 48px;
+    height: 48px;
+    place-items: center;
+    border: 1px solid #2a5e70;
+    border-radius: 7px;
+    color: var(--tech-accent-strong);
+    background: #0e2034;
+    font-size: 18px;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, .2);
+    transition: transform 260ms cubic-bezier(.16, 1, .3, 1), background-color 260ms cubic-bezier(.16, 1, .3, 1), color 260ms cubic-bezier(.16, 1, .3, 1);
+}
+
+.tech-home-visual-node--one { top: 48px; left: 29px; }
+.tech-home-visual-node--two { top: 27px; right: 38px; }
+.tech-home-visual-node--three { right: 16px; bottom: 57px; }
+
+.tech-home-visual:hover .tech-home-visual-node--one { transform: translate(-4px, -4px); }
+.tech-home-visual:hover .tech-home-visual-node--two { transform: translate(4px, -4px); }
+.tech-home-visual:hover .tech-home-visual-node--three { transform: translate(4px, 4px); }
+
+.tech-home-visual-caption {
+    position: absolute;
+    bottom: 20px;
+    left: 34px;
+    z-index: 3;
+    display: grid;
+    gap: 2px;
+    padding-left: 13px;
+    border-left: 2px solid var(--tech-accent);
+}
+
+.tech-home-visual-caption strong {
+    color: var(--tech-text);
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.tech-home-visual-caption span {
+    color: var(--tech-muted);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.caffemmo-tech-home .home-notice-host {
+    margin: 0 0 28px;
+}
+
+.caffemmo-tech-home .home-notice-host .s2-wrapper {
+    border-color: #1d4358;
+    background: #0b182b !important;
+    box-shadow: none !important;
+}
+
+.caffemmo-tech-home .home-notice-host .s2-wrapper::before,
+.caffemmo-tech-home .home-notice-host .s2-header::before {
+    opacity: .28;
+}
+
+.caffemmo-tech-home .home-notice-host .s2-title,
+.caffemmo-tech-home .home-notice-host .s2-pay-btn strong {
+    color: var(--tech-text) !important;
+}
+
+.caffemmo-tech-home .home-notice-host .s2-desc,
+.caffemmo-tech-home .home-notice-host .s2-pay-btn span {
+    color: var(--tech-muted) !important;
+}
+
+.caffemmo-tech-home .home-notice-host .s2-pay-btn {
+    border-color: #20485d !important;
+    background: #0e2035 !important;
+    color: var(--tech-text) !important;
+}
+
+.caffemmo-tech-home .home-notice-host .s2-pay-btn:hover {
+    border-color: var(--tech-accent) !important;
+    background: #102b3d !important;
+}
+
+.caffemmo-tech-home .home-notice-host .s2-header::before,
+.caffemmo-tech-home .home-notice-host .s2-pay-btn::before {
+    color: #042124;
+    background: var(--tech-accent);
+}
+
+.caffemmo-tech-home .home-notice-host .s2-pay-btn::after {
+    color: var(--tech-accent-strong);
+}
+
+.tech-home-services {
+    padding: 0 0 48px;
+    border-bottom: 1px solid var(--tech-line);
+}
+
+.tech-home-services-head {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 0 0 22px;
+    border-bottom: 1px solid var(--tech-line);
+}
+
+.tech-home-services-head > div > span {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--tech-accent);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.tech-home-services-head h2 {
+    margin: 0;
+    color: var(--tech-text);
+    font-size: 34px;
+    font-weight: 800;
+    line-height: 1.12;
+}
+
+.tech-home-services-head > a {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--tech-accent-strong);
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none;
+    transition: color 240ms cubic-bezier(.16, 1, .3, 1), transform 240ms cubic-bezier(.16, 1, .3, 1);
+}
+
+.tech-home-services-head > a i {
+    transition: transform 240ms cubic-bezier(.16, 1, .3, 1);
+}
+
+.tech-home-services-head > a:hover,
+.tech-home-services-head > a:focus-visible {
+    color: #fff;
+    transform: translateX(3px);
+    text-decoration: none;
+}
+
+.tech-home-services-head > a:hover i,
+.tech-home-services-head > a:focus-visible i {
+    transform: translateX(3px);
+}
+
+.tech-home-service-groups {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 36px;
+    padding-top: 30px;
+}
+
+.tech-home-service-group h3 {
+    margin: 0 0 14px;
+    color: #c6d7e5;
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.4;
+}
+
+.tech-home-service-grid {
+    display: grid;
+    gap: 10px;
+}
+
+.tech-home-service-card {
+    --service-accent: var(--tech-accent);
+    position: relative;
+    display: grid;
+    min-height: 142px;
+    grid-template-columns: 48px minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 16px;
+    padding: 20px;
+    overflow: hidden;
+    border: 1px solid #1a3a50;
+    border-radius: 8px;
+    color: inherit;
+    background: var(--tech-surface);
+    text-decoration: none;
+    transition: border-color 260ms cubic-bezier(.16, 1, .3, 1), background-color 260ms cubic-bezier(.16, 1, .3, 1), box-shadow 260ms cubic-bezier(.16, 1, .3, 1), transform 260ms cubic-bezier(.16, 1, .3, 1);
+}
+
+.tech-home-service-card::before {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 3px;
+    content: "";
+    background: var(--service-accent);
+    transform: scaleY(.28);
+    transform-origin: center;
+    transition: transform 260ms cubic-bezier(.16, 1, .3, 1);
+}
+
+.tech-home-service-card:hover,
+.tech-home-service-card:focus-visible {
+    border-color: rgba(98, 242, 229, .78);
+    color: inherit;
+    background: var(--tech-surface-raised);
+    box-shadow: 0 16px 32px rgba(1, 7, 16, .3), 0 0 0 1px rgba(32, 213, 199, .16);
+    transform: translateY(-4px);
+    text-decoration: none;
+}
+
+.tech-home-service-card:hover::before,
+.tech-home-service-card:focus-visible::before {
+    transform: scaleY(1);
+}
+
+.tech-home-service-card:active {
+    transform: translateY(-1px) scale(.99);
+}
+
+.tech-home-service-icon {
+    display: grid;
+    width: 48px;
+    height: 48px;
+    place-items: center;
+    border: 1px solid rgba(32, 213, 199, .24);
+    border-radius: 7px;
+    color: var(--tech-accent-strong);
+    background: #102237;
+    font-size: 17px;
+    transition: color 260ms cubic-bezier(.16, 1, .3, 1), background-color 260ms cubic-bezier(.16, 1, .3, 1), transform 260ms cubic-bezier(.16, 1, .3, 1);
+}
+
+.tech-home-service-card:hover .tech-home-service-icon,
+.tech-home-service-card:focus-visible .tech-home-service-icon {
+    color: #032224;
+    background: var(--tech-accent-strong);
+    transform: translateY(-3px) rotate(-5deg);
+}
+
+.tech-home-service-copy {
+    display: grid;
+    gap: 7px;
+    min-width: 0;
+}
+
+.tech-home-service-copy strong {
+    color: var(--tech-text);
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1.35;
+}
+
+.tech-home-service-copy small {
+    display: -webkit-box;
+    overflow: hidden;
+    color: var(--tech-muted);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.55;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.tech-home-service-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    align-self: end;
+    color: #8eabbf;
+    font-size: 11px;
+    font-weight: 800;
+    line-height: 1;
+    white-space: nowrap;
+    transition: color 260ms cubic-bezier(.16, 1, .3, 1), transform 260ms cubic-bezier(.16, 1, .3, 1);
+}
+
+.tech-home-service-action i {
+    transition: transform 260ms cubic-bezier(.16, 1, .3, 1);
+}
+
+.tech-home-service-card:hover .tech-home-service-action,
+.tech-home-service-card:focus-visible .tech-home-service-action {
+    color: var(--tech-accent-strong);
+    transform: translateX(2px);
+}
+
+.tech-home-service-card:hover .tech-home-service-action i,
+.tech-home-service-card:focus-visible .tech-home-service-action i {
+    transform: translate(2px, -2px);
+}
+
+.caffemmo-tech-home .account-card.card-wallet-home {
+    border: 1px solid var(--tech-line);
+    border-radius: 8px;
+    color: var(--tech-text);
+    background: var(--tech-surface);
+    box-shadow: none;
+}
+
+.caffemmo-tech-home .tech-home-wallet-col {
+    margin-top: 6px;
+}
+
+.caffemmo-tech-home .account-card.tech-home-wallet-card {
+    display: grid;
+    grid-template-columns: minmax(210px, .38fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 30px;
+    padding: 26px !important;
+}
+
+.caffemmo-tech-home .tech-home-wallet-card .my-wallet {
+    padding-right: 30px;
+    margin: 0;
+    border-right: 1px solid var(--tech-line);
+}
+
+.caffemmo-tech-home .tech-home-wallet-card .my-wallet h3 {
+    font-size: 30px;
+}
+
+.caffemmo-tech-home .tech-home-wallet-card .wallet-card-group {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.caffemmo-tech-home .tech-home-wallet-card .wallet-card {
+    min-width: 0;
+    padding: 16px;
+}
+
+.caffemmo-tech-home .tech-home-wallet-card .wallet-card:hover {
+    background: #132c40;
+}
+
+.caffemmo-tech-home .tech-home-wallet-card .wallet-card:hover p {
+    color: var(--tech-muted);
+}
+
+.caffemmo-tech-home .tech-home-wallet-card .wallet-card:hover h3 {
+    color: var(--tech-accent-strong);
+}
+
+.caffemmo-tech-home .tech-home-auth-actions {
+    grid-column: 1 / -1;
+    margin: 0;
+}
+
+.caffemmo-tech-home .account-card.card-wallet-home p,
+.caffemmo-tech-home .account-card.card-wallet-home .wallet-card p {
+    color: var(--tech-muted);
+}
+
+.caffemmo-tech-home .account-card.card-wallet-home h3 {
+    color: var(--tech-accent-strong);
+}
+
+.caffemmo-tech-home .wallet-card-group .wallet-card {
+    border-color: #1b4057;
+    background: #0d1b2f;
+}
+
+.caffemmo-tech-home .home-recent-activity {
+    padding-top: 12px;
+}
+
+.caffemmo-tech-home .home-heading h3 {
+    color: var(--tech-text);
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.caffemmo-tech-home .home-heading h3 i {
+    color: var(--tech-accent);
+}
+
+.caffemmo-tech-home .home-recent-activity .feature-card {
+    margin-bottom: 8px;
+    border: 1px solid #1a3a50;
+    border-radius: 7px;
+    color: var(--tech-muted);
+    background: var(--tech-surface);
+    box-shadow: none;
+}
+
+.caffemmo-tech-home .home-recent-activity .feature-content {
+    padding: 14px;
+}
+
+.caffemmo-tech-home .home-recent-activity .badge {
+    color: #042124;
+    background: var(--tech-accent) !important;
+}
+
+.caffemmo-tech-home .footer-part,
+.caffemmo-tech-home .footer-bottom {
+    border-color: var(--tech-line);
+    color: var(--tech-muted);
+    background: #071224;
+}
+
+.caffemmo-tech-home .footer-part h3,
+.caffemmo-tech-home .footer-part h4,
+.caffemmo-tech-home .footer-part a,
+.caffemmo-tech-home .footer-bottom a {
+    color: var(--tech-text);
+}
+
+@keyframes tech-home-reveal {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes tech-home-core-breathe {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-5px) scale(1.025); }
+}
+
+@media (max-width: 1199px) {
+    .tech-home-hero-inner {
+        padding: 52px 34px;
+    }
+
+    .tech-home-service-groups {
+        grid-template-columns: 1fr;
+    }
+
+    .tech-home-service-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .tech-home-service-card {
+        grid-template-columns: 44px minmax(0, 1fr);
+        min-height: 174px;
+    }
+
+    .tech-home-service-action {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 767px) {
+    .tech-home-hero {
+        min-height: 0;
+        margin-bottom: 28px;
+    }
+
+    .tech-home-hero-grid { opacity: .58; }
+
+    .tech-home-hero-inner {
+        grid-template-columns: 1fr;
+        gap: 32px;
+        padding: 42px 24px 30px;
+    }
+
+    .tech-home-hero h1 {
+        font-size: 40px;
+    }
+
+    .tech-home-hero p {
+        font-size: 14px;
+    }
+
+    .tech-home-visual {
+        width: min(100%, 350px);
+        min-height: 274px;
+        justify-self: center;
+        transform: scale(.92);
+        transform-origin: center top;
+        margin-bottom: -22px;
+    }
+
+    .tech-home-services-head {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .tech-home-services-head h2 {
+        font-size: 28px;
+    }
+
+    .tech-home-service-groups {
+        gap: 28px;
+    }
+
+    .tech-home-service-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .tech-home-service-card {
+        grid-template-columns: 48px minmax(0, 1fr) auto;
+        min-height: 134px;
+    }
+
+    .tech-home-service-action {
+        grid-column: auto;
+    }
+
+    .caffemmo-tech-home .account-card.tech-home-wallet-card {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .caffemmo-tech-home .tech-home-wallet-card .my-wallet {
+        padding: 0 0 18px;
+        border-right: 0;
+        border-bottom: 1px solid var(--tech-line);
+    }
+}
+
+@media (max-width: 480px) {
+    .tech-home-hero-inner {
+        padding: 36px 18px 25px;
+    }
+
+    .tech-home-hero h1 {
+        font-size: 34px;
+    }
+
+    .tech-home-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    .tech-home-button {
+        width: 100%;
+    }
+
+    .tech-home-services-head h2 {
+        font-size: 25px;
+    }
+
+    .tech-home-service-card {
+        grid-template-columns: 44px minmax(0, 1fr);
+        gap: 13px;
+        padding: 17px;
+    }
+
+    .tech-home-service-icon {
+        width: 44px;
+        height: 44px;
+    }
+
+    .tech-home-service-action {
+        grid-column: 1 / -1;
+    }
+
+    .caffemmo-tech-home .tech-home-wallet-card .wallet-card-group {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tech-home-hero-copy,
+    .tech-home-visual,
+    .tech-home-visual-core {
+        animation: none;
+    }
+
+    .tech-home-button,
+    .tech-home-button i,
+    .tech-home-services-head > a,
+    .tech-home-services-head > a i,
+    .tech-home-service-card,
+    .tech-home-service-card::before,
+    .tech-home-service-icon,
+    .tech-home-service-action,
+    .tech-home-service-action i,
+    .tech-home-visual-node {
+        transition: none;
+    }
+
+    .tech-home-button:hover,
+    .tech-home-button:focus-visible,
+    .tech-home-service-card:hover,
+    .tech-home-service-card:focus-visible,
+    .tech-home-services-head > a:hover,
+    .tech-home-services-head > a:focus-visible {
+        transform: none;
+    }
+}
+
 /* ===== END WIDGET BẢNG XẾP HẠNG ===== */
