@@ -3034,4 +3034,21 @@ ul.custom-button-list li {
     }
 }
 
+@supports (content-visibility: auto) {
+    .home-recent-activity {
+        content-visibility: auto;
+        contain-intrinsic-size: auto 420px;
+    }
+
+    .footer-part {
+        content-visibility: auto;
+        contain-intrinsic-size: auto 260px;
+    }
+
+    #products-container .feature-card {
+        content-visibility: auto;
+        contain-intrinsic-size: auto 160px;
+    }
+}
+
 /* ===== END WIDGET BẢNG XẾP HẠNG ===== */

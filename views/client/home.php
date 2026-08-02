@@ -266,7 +266,7 @@ require_once(__DIR__.'/nav.php');
             <?php endif?>
         </div>
         <?php if(!$isProductsPage && $CMSNT->site('status_giao_dich_gan_day') == 1):?>
-        <div class="row">
+        <div class="row home-recent-activity">
             <div class="col-lg-6 mb-3">
                 <div class="home-heading mb-3">
                     <h3><i class="fa-solid fa-cart-shopping m-2"></i> <?=mb_strtoupper(__('Đơn hàng gần đây'));?>

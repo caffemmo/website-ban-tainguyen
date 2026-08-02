@@ -613,17 +613,17 @@
     </div>
 </footer>
 <style>
-    /* Decorative widgets should not keep repainting the desktop interface. */
-    @media (min-width: 992px) {
-        .hotline-phone-ring-circle,
-        .hotline-phone-ring-circle-fill,
-        .hotline-phone-ring-img-circle,
-        .fcta-zalo-nen-nut::before,
-        .fcta-zalo-nen-nut::after,
-        .fcta-zalo-ben-trong-nut i {
-            -webkit-animation: none !important;
-            animation: none !important;
-        }
+    /* Fixed widgets must stay idle while the page scrolls. */
+    .hotline-phone-ring-circle,
+    .hotline-phone-ring-circle-fill,
+    .hotline-phone-ring-img-circle,
+    .fcta-zalo-nen-nut::before,
+    .fcta-zalo-nen-nut::after,
+    .fcta-zalo-ben-trong-nut i,
+    .leaderboard-btn,
+    .backtop {
+        -webkit-animation: none !important;
+        animation: none !important;
     }
 </style>
 <?php
