@@ -14,6 +14,10 @@ $body['footer'] = '
  
 ';
 
+if (!$isProductsPage) {
+    $body['legacy_client_plugins'] = false;
+}
+
 require_once(__DIR__ . '/../../libs/client-session.php');
 require_once(__DIR__ . '/../../libs/service-catalog.php');
 $getUser = client_optional_user($CMSNT);

@@ -925,8 +925,43 @@ $serviceCatalog = caffemmo_service_catalog();
         }
 
         // Load menu categories bằng AJAX
+        const menuCategoryCacheKey = 'caffemmo-menu-categories-v1';
+        const menuCategoryCacheLifetime = 5 * 60 * 1000;
+
+        function getCachedMenuCategories() {
+            try {
+                const cached = JSON.parse(sessionStorage.getItem(menuCategoryCacheKey));
+                if (!cached || Date.now() - cached.savedAt > menuCategoryCacheLifetime) {
+                    return null;
+                }
+                return cached.payload;
+            } catch (error) {
+                return null;
+            }
+        }
+
+        function cacheMenuCategories(response) {
+            try {
+                sessionStorage.setItem(menuCategoryCacheKey, JSON.stringify({
+                    savedAt: Date.now(),
+                    payload: response
+                }));
+            } catch (error) {
+                // Menu loading continues when browser storage is unavailable.
+            }
+        }
+
         $(document).ready(function() {
             // Load menu categories ngay khi trang load
+            const cachedMenu = getCachedMenuCategories();
+            if (cachedMenu && cachedMenu.menu_html) {
+                $('#menu-categories-container').html(cachedMenu.menu_html).addClass('menu-loaded');
+                if ($('#home-categories-container').length) {
+                    $('.home-categories-skeleton').remove();
+                    $('#home-categories-container').append(cachedMenu.home_buttons_html || '');
+                }
+                return;
+            }
             loadMenuCategories();
         });
 
@@ -936,6 +971,7 @@ $serviceCatalog = caffemmo_service_catalog();
                 type: 'GET',
                 dataType: 'json',
                 success: function(response) {
+                    cacheMenuCategories(response);
                     // Load menu dropdown (nav.php)
                     $('#menu-categories-container').html(response.menu_html);
                     $('#menu-categories-container').addClass('menu-loaded');

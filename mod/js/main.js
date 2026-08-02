@@ -8,15 +8,40 @@
         }
 
         cards.forEach(function (card) {
+            var frameId = null;
+            var cardRect = null;
+            var point = { x: 50, y: 0 };
+
+            function renderSpotlight() {
+                card.style.setProperty('--spot-x', point.x.toFixed(2) + '%');
+                card.style.setProperty('--spot-y', point.y.toFixed(2) + '%');
+                frameId = null;
+            }
+
+            card.addEventListener('pointerenter', function () {
+                cardRect = card.getBoundingClientRect();
+            });
+
             card.addEventListener('pointermove', function (event) {
-                var rect = card.getBoundingClientRect();
-                var x = ((event.clientX - rect.left) / rect.width) * 100;
-                var y = ((event.clientY - rect.top) / rect.height) * 100;
-                card.style.setProperty('--spot-x', x.toFixed(2) + '%');
-                card.style.setProperty('--spot-y', y.toFixed(2) + '%');
+                if (event.pointerType === 'touch') {
+                    return;
+                }
+
+                cardRect = cardRect || card.getBoundingClientRect();
+                point.x = ((event.clientX - cardRect.left) / cardRect.width) * 100;
+                point.y = ((event.clientY - cardRect.top) / cardRect.height) * 100;
+
+                if (frameId === null) {
+                    frameId = window.requestAnimationFrame(renderSpotlight);
+                }
             });
 
             card.addEventListener('pointerleave', function () {
+                if (frameId !== null) {
+                    window.cancelAnimationFrame(frameId);
+                    frameId = null;
+                }
+                cardRect = null;
                 card.style.setProperty('--spot-x', '50%');
                 card.style.setProperty('--spot-y', '0%');
             });

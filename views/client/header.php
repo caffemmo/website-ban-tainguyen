@@ -2,6 +2,7 @@
   die('The Request Not Found');
 }
 checkMaintenance();
+$loadLegacyClientPlugins = !isset($body['legacy_client_plugins']) || $body['legacy_client_plugins'] !== false;
 ?>
 <!doctype html>
 <html class="h-100">
@@ -49,9 +50,11 @@ checkMaintenance();
   <link rel="stylesheet" href="<?= BASE_URL('public/client/'); ?>fonts/flaticon/flaticon.css">
   <link rel="stylesheet" href="<?= BASE_URL('public/client/'); ?>fonts/icofont/icofont.min.css">
   <link rel="stylesheet" href="<?= BASE_URL('public/client/'); ?>fonts/fontawesome/fontawesome.min.css">
+  <?php if ($loadLegacyClientPlugins): ?>
   <link rel="stylesheet" href="<?= BASE_URL('public/client/'); ?>vendor/venobox/venobox.min.css">
   <link rel="stylesheet" href="<?= BASE_URL('public/client/'); ?>vendor/slickslider/slick.min.css">
   <link rel="stylesheet" href="<?= BASE_URL('public/client/'); ?>vendor/niceselect/nice-select.min.css">
+  <?php endif; ?>
   <link rel="stylesheet" href="<?= BASE_URL('public/client/'); ?>vendor/bootstrap/bootstrap.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -100,7 +103,7 @@ checkMaintenance();
   <?php endif ?>
   <?= $body['header']; ?>
   <link rel="stylesheet" href="<?= BASE_URL('mod/css/main.css?v=46'); ?>">
-  <script src="<?= base_url('mod/js/main.js?v=3'); ?>"></script>
+  <script src="<?= base_url('mod/js/main.js?v=4'); ?>"></script>
   <?= $CMSNT->site('javascript_header'); ?>
 
 </head>

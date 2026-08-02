@@ -626,8 +626,14 @@
         }
     }
 </style>
+<?php
+$loadLegacyClientPlugins = isset($loadLegacyClientPlugins)
+    ? $loadLegacyClientPlugins
+    : (!isset($body['legacy_client_plugins']) || $body['legacy_client_plugins'] !== false);
+?>
 <script src="<?= BASE_URL('public/client/'); ?>vendor/bootstrap/popper.min.js"></script>
 <script src="<?= BASE_URL('public/client/'); ?>vendor/bootstrap/bootstrap.min.js"></script>
+<?php if ($loadLegacyClientPlugins): ?>
 <script src="<?= BASE_URL('public/client/'); ?>vendor/countdown/countdown.min.js"></script>
 <script src="<?= BASE_URL('public/client/'); ?>vendor/niceselect/nice-select.min.js"></script>
 <script src="<?= BASE_URL('public/client/'); ?>vendor/slickslider/slick.min.js"></script>
@@ -637,12 +643,13 @@
 <script src="<?= BASE_URL('public/client/'); ?>js/accordion.js"></script>
 <script src="<?= BASE_URL('public/client/'); ?>js/venobox.js"></script>
 <script src="<?= BASE_URL('public/client/'); ?>js/slick.js"></script>
-<script src="<?= BASE_URL('public/client/'); ?>js/main.js?v=4"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
     flatpickr("#example-flatpickr-range");
 </script>
 <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+<?php endif; ?>
+<script src="<?= BASE_URL('public/client/'); ?>js/main.js?v=5"></script>
 
 <?= $body['footer']; ?>
 <?= $CMSNT->site('javascript_footer'); ?>

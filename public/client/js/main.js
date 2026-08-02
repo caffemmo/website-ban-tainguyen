@@ -109,7 +109,9 @@
     $(this).text("Copied!");
   }),
   $(".modal").on("shown.bs.modal", function (e) {
-    $(".preview-slider, .thumb-slider").slick("setPosition", 0);
+    if ($.fn.slick && $(".preview-slider, .thumb-slider").length) {
+      $(".preview-slider, .thumb-slider").slick("setPosition", 0);
+    }
   }),
   $(".profile-card.schedule").on("click", function () {
     $(".profile-card.schedule").removeClass("active"),
