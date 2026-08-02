@@ -99,8 +99,8 @@ checkMaintenance();
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
   <?php endif ?>
   <?= $body['header']; ?>
-  <link rel="stylesheet" href="<?= BASE_URL('mod/css/main.css?v=44'); ?>">
-  <script src="<?= base_url('mod/js/main.js?v=2'); ?>"></script>
+  <link rel="stylesheet" href="<?= BASE_URL('mod/css/main.css?v=45'); ?>">
+  <script src="<?= base_url('mod/js/main.js?v=3'); ?>"></script>
   <?= $CMSNT->site('javascript_header'); ?>
 
 </head>
@@ -144,8 +144,18 @@ checkMaintenance();
 
 <style>
   body {
+    font-family: 'Be Vietnam Pro', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     <?= $CMSNT->site('font_family');
     ?>
+  }
+
+  body,
+  button,
+  input,
+  select,
+  textarea {
+    font-family: 'Be Vietnam Pro', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+    letter-spacing: 0;
   }
 
   html {
