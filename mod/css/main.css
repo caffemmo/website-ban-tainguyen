@@ -2675,6 +2675,38 @@ ul.custom-button-list li {
     }
 }
 
+.products-page-heading {
+    display: grid;
+    gap: 6px;
+    margin: 0 0 24px;
+    padding: 0 0 18px;
+    border-bottom: 1px solid #d7e8ee;
+}
+
+.products-page-heading span {
+    color: #007f8a;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+}
+
+.products-page-heading h1 {
+    margin: 0;
+    color: #123248;
+    font-size: 30px;
+    font-weight: 900;
+    line-height: 1.2;
+}
+
+.products-page-heading p {
+    max-width: 660px;
+    margin: 0;
+    color: #527083;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
 .home-service-catalog {
     position: relative;
     isolation: isolate;
@@ -2960,6 +2992,16 @@ ul.custom-button-list li {
 }
 
 @media (max-width: 575px) {
+    .products-page-heading {
+        gap: 5px;
+        margin-bottom: 18px;
+        padding-bottom: 14px;
+    }
+
+    .products-page-heading h1 {
+        font-size: 24px;
+    }
+
     .home-service-catalog {
         padding: 18px;
         border-radius: 14px;

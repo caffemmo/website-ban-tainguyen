@@ -1,6 +1,7 @@
 <?php if (!defined('IN_SITE')) {
     die('The Request Not Found');
 }
+$isProductsPage = isset($caffemmoClientPage) && $caffemmoClientPage === 'products';
 $body = [
     'title' => $CMSNT->site('title'),
     'desc'   => $CMSNT->site('description'),
@@ -16,7 +17,12 @@ $body['footer'] = '
 require_once(__DIR__ . '/../../libs/client-session.php');
 require_once(__DIR__ . '/../../libs/service-catalog.php');
 $getUser = client_optional_user($CMSNT);
-$homeServiceGroups = caffemmo_service_catalog();
+$homeServiceGroups = $isProductsPage ? [] : caffemmo_service_catalog();
+
+if ($isProductsPage) {
+    $body['title'] = __('Tất cả sản phẩm') . ' | ' . $CMSNT->site('title');
+    $body['desc'] = __('Khám phá các sản phẩm và tài nguyên hiện có tại Caffemmo.');
+}
 
 // Kiểm tra và redirect đến trang VAT invoice nếu popup_vat được bật và user chưa có thông tin VAT
 if($CMSNT->site('popup_vat') == 1 && isset($getUser)) {
@@ -85,10 +91,19 @@ require_once(__DIR__.'/nav.php');
 
 <section class="section feature-part">
     <div class="container">
+        <?php if ($isProductsPage): ?>
+        <header class="products-page-heading">
+            <span><?= __('Caffemmo market'); ?></span>
+            <h1><?= __('Tất cả sản phẩm'); ?></h1>
+            <p><?= __('Chọn danh mục hoặc tìm kiếm sản phẩm phù hợp với nhu cầu của bạn.'); ?></p>
+        </header>
+        <?php else: ?>
         <div class="mb-5">
 
         </div>
+        <?php endif; ?>
         <div class="row mb-5">
+            <?php if (!$isProductsPage): ?>
             <?php if($CMSNT->site('notice_home') != ''):?>
             <div class="col-md-12">
                 <?php
@@ -114,7 +129,7 @@ require_once(__DIR__.'/nav.php');
                             <span><?= __('Caffemmo services'); ?></span>
                             <h2 id="home-service-title"><?= __('Dịch vụ hiện có'); ?></h2>
                         </div>
-                        <a href="#products-container"><?= __('Xem sản phẩm'); ?> <i class="fa-solid fa-arrow-down" aria-hidden="true"></i></a>
+                        <a href="<?= base_url('client/products'); ?>"><?= __('Xem sản phẩm'); ?> <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
                     </div>
                     <div class="home-service-grid">
                         <?php foreach ($homeServiceGroups as $serviceGroup): ?>
@@ -134,10 +149,12 @@ require_once(__DIR__.'/nav.php');
                     </div>
                 </section>
             </div>
+            <?php endif; ?>
 
 
 
-            <div class="<?=$CMSNT->site('cot_so_du_ben_phai') == 1 ? 'col-xl-9' : 'col-xl-12';?>">
+            <?php if ($isProductsPage): ?>
+            <div class="col-xl-12">
                 <?php if($CMSNT->site('show_btn_category_home') == 1):?>
                 <!-- Container để load category buttons bằng AJAX -->
                 <ul class="custom-button-list" id="home-categories-container">
@@ -207,7 +224,8 @@ require_once(__DIR__.'/nav.php');
                 </div>
                 
             </div>
-            <?php if($CMSNT->site('cot_so_du_ben_phai') == 1):?>
+            <?php endif; ?>
+            <?php if(!$isProductsPage && $CMSNT->site('cot_so_du_ben_phai') == 1):?>
             <div class="col-xl-3">
                 <div class="account-card card-wallet-home py-4">
                     <?php if(isset($getUser)):?>
@@ -243,7 +261,7 @@ require_once(__DIR__.'/nav.php');
             </div>
             <?php endif?>
         </div>
-        <?php if($CMSNT->site('status_giao_dich_gan_day') == 1):?>
+        <?php if(!$isProductsPage && $CMSNT->site('status_giao_dich_gan_day') == 1):?>
         <div class="row">
             <div class="col-lg-6 mb-3">
                 <div class="home-heading mb-3">
@@ -332,6 +350,7 @@ require_once(__DIR__.'/nav.php');
     </div>
 </section>
 
+<?php if ($isProductsPage): ?>
 <script defer>
 // Biến global để lưu category hiện tại
 let currentCategoryId = '<?=htmlspecialchars($category_id, ENT_QUOTES, 'UTF-8');?>';
@@ -617,6 +636,8 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <?php endif?>
+
+<?php endif; ?>
 
 
 <?php if($CMSNT->site('popup_status') == 1):?>

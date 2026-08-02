@@ -23,7 +23,7 @@ $serviceCatalog = caffemmo_service_catalog();
                 <a class="desktop-sidebar-link <?= isset($action) && $action == 'home' ? 'active' : ''; ?>" href="<?= base_url('client/home'); ?>">
                     <i class="fa-solid fa-table-cells-large" aria-hidden="true"></i><span><?= __('Bảng điều khiển'); ?></span>
                 </a>
-                <a class="desktop-sidebar-link" href="<?= base_url(''); ?>">
+                <a class="desktop-sidebar-link <?= isset($action) && $action == 'products' ? 'active' : ''; ?>" href="<?= base_url('client/products'); ?>">
                     <i class="fa-solid fa-store" aria-hidden="true"></i><span><?= __('Tất cả sản phẩm'); ?></span>
                 </a>
 
@@ -145,8 +145,7 @@ $serviceCatalog = caffemmo_service_catalog();
                 </div>
                 <a href="<?= base_url(); ?>" class="header-logo"><img src="<?= BASE_URL($CMSNT->site('logo_light')); ?>"
                         alt="logo"></a>
-                <form class="header-form" method="GET" action="<?= base_url(); ?>">
-                    <input type="hidden" name="action" value="home">
+                <form class="header-form" method="GET" action="<?= base_url('client/products'); ?>">
                     <input type="text" name="keyword" value="<?= isset($keyword) ? $keyword : ''; ?>"
                         placeholder="<?= __('Tìm kiếm sản phẩm...'); ?>"><button><i class="fas fa-search"></i></button>
                 </form>
@@ -595,7 +594,7 @@ $serviceCatalog = caffemmo_service_catalog();
                 <a class="nav-link <?= active_sidebar_client(['home', '']); ?>" href="<?= base_url('client/home'); ?>">
                     <i class="fa-solid fa-table-cells-large" aria-hidden="true"></i><span><?= __('Bảng điều khiển'); ?></span>
                 </a>
-                <a class="nav-link" href="<?= base_url(''); ?>">
+                <a class="nav-link <?= active_sidebar_client(['products']); ?>" href="<?= base_url('client/products'); ?>">
                     <i class="fa-solid fa-store" aria-hidden="true"></i><span><?= __('Tất cả sản phẩm'); ?></span>
                 </a>
 

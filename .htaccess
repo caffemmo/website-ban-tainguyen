@@ -58,7 +58,7 @@ RewriteRule ^tool/icon-facebook index.php?module=client&action=tool-icon-faceboo
 RewriteRule ^tool/get-2fa index.php?module=client&action=tool-2fa [L]
 RewriteRule ^tool/check-live-facebook index.php?module=client&action=tool-checklive-fb [L]
 RewriteRule ^client/up-tich-xanh/([A-Za-z0-9-]+)$ index.php?module=client&action=up-tich-xanh&service=$1 [L]
-RewriteRule ^category/([A-Za-z0-9-]+) index.php?module=client&action=home&slug=$1 [L]
+RewriteRule ^category/([A-Za-z0-9-]+) index.php?module=client&action=products&slug=$1 [L]
 RewriteRule ^api/buy_product ajaxs/client/product.php [L]
 RewriteRule ^blogs index.php?module=client&action=blogs [L]
 RewriteRule ^blog/([A-Za-z0-9-]+) index.php?module=client&action=blog&slug=$1 [L]

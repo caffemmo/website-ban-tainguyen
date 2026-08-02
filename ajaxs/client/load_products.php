@@ -170,7 +170,7 @@ if ($action == 'search' && !empty($keyword)) {
             <?= __('sản phẩm'); ?></p>
         <div class="pagination">
             <?php
-            $urlDatatable = pagination_client(base_url("?action=home&type=search&limit=$limit&keyword=$keyword&"), $from, $totalDatatable, $limit);
+            $urlDatatable = pagination_client(base_url("?action=products&type=search&limit=$limit&keyword=$keyword&"), $from, $totalDatatable, $limit);
             echo $totalDatatable > $limit ? $urlDatatable : '';
             ?>
         </div>
