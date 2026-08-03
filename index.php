@@ -51,6 +51,7 @@ $allowed_actions = [
     'proxy-list',
     'proxy-renew',
     'up-tich-xanh',
+    'up-tich-xanh-history',
     'profile',
     'recharge-bakong',
     'recharge-bank',

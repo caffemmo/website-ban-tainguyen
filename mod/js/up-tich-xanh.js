@@ -9,6 +9,7 @@
     var loginUrl = app.getAttribute('data-login-url') || ((window.baseUrl || '/') + 'client/login');
     var service = app.getAttribute('data-service') || '';
     var configured = app.getAttribute('data-configured') === '1';
+    var historyUrl = app.getAttribute('data-history-url') || '';
     var form = app.querySelector('[data-up-form]');
     var submit = app.querySelector('[data-up-submit]');
     var notice = app.querySelector('[data-up-notice]');
@@ -46,6 +47,9 @@
             + '<span>Chi phí dịch vụ: ' + String(data.charged_label || '') + '</span>';
         if (data.link) {
             html += '<a href="' + String(data.link).replace(/"/g, '&quot;') + '" target="_blank" rel="noopener noreferrer">Mở link xác minh <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>';
+        }
+        if (historyUrl) {
+            html += '<a href="' + historyUrl + '">Xem lịch sử yêu cầu <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>';
         }
         result.innerHTML = html;
         result.hidden = false;

@@ -100,6 +100,21 @@ function uptichxanh_service_label($service)
     return isset($map[$service]) ? $map[$service] : 'Dịch vụ Up Tích Xanh';
 }
 
+function uptichxanh_order_status($status)
+{
+    $status = strtolower(trim((string) $status));
+    $map = [
+        'success' => ['label' => 'Đã tiếp nhận', 'class' => 'success'],
+        'completed' => ['label' => 'Hoàn tất', 'class' => 'success'],
+        'processing' => ['label' => 'Đang xử lý', 'class' => 'pending'],
+        'pending' => ['label' => 'Đang chờ xử lý', 'class' => 'pending'],
+        'failed' => ['label' => 'Không thành công', 'class' => 'error'],
+        'error' => ['label' => 'Không thành công', 'class' => 'error']
+    ];
+
+    return $map[$status] ?? ['label' => 'Đã tiếp nhận', 'class' => 'pending'];
+}
+
 function uptichxanh_request($method, $endpoint, $query = [], $payload = null)
 {
     $config = uptichxanh_config();

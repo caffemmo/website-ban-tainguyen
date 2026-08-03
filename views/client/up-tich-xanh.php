@@ -29,8 +29,8 @@ $body = [
     'desc' => __('Dịch vụ Get Link Facebook, Up tích Facebook và Up tích Instagram.'),
     'keyword' => 'get link facebook, up tích xanh, up tích facebook, up tích instagram'
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/up-tich-xanh.css?v=9') . '">';
-$body['footer'] = '<script src="' . BASE_URL('mod/js/up-tich-xanh.js?v=1') . '"></script>';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/up-tich-xanh.css?v=10') . '">';
+$body['footer'] = '<script src="' . BASE_URL('mod/js/up-tich-xanh.js?v=2') . '"></script>';
 
 require_once __DIR__ . '/header.php';
 require_once __DIR__ . '/nav.php';
@@ -45,6 +45,7 @@ require_once __DIR__ . '/nav.php';
     data-login-url="<?= htmlspecialchars(base_url('client/login'), ENT_QUOTES, 'UTF-8'); ?>"
     data-service="<?= htmlspecialchars($service, ENT_QUOTES, 'UTF-8'); ?>"
     data-configured="<?= $upConfigured ? '1' : '0'; ?>"
+    data-history-url="<?= htmlspecialchars(base_url('client/up-tich-xanh-history'), ENT_QUOTES, 'UTF-8'); ?>"
 >
     <section class="up-hero" aria-labelledby="up-page-title">
         <div class="up-hero-copy">
@@ -68,6 +69,11 @@ require_once __DIR__ . '/nav.php';
             </a>
         <?php endforeach; ?>
     </section>
+
+    <div class="up-history-link-row">
+        <span><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i> <?= __('Các yêu cầu đã gửi được lưu trong lịch sử riêng của bạn.'); ?></span>
+        <a href="<?= htmlspecialchars(base_url('client/up-tich-xanh-history'), ENT_QUOTES, 'UTF-8'); ?>"><?= __('Lịch sử yêu cầu'); ?> <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+    </div>
 
     <div class="up-content-grid">
         <section class="up-panel" aria-labelledby="up-service-title">

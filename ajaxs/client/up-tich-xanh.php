@@ -101,6 +101,9 @@ if (empty($getUser['token']) || !hash_equals((string) $getUser['token'], $token)
 if (!uptichxanh_is_configured()) {
     uptichxanh_json(['success' => false, 'message' => 'Dịch vụ hiện chưa sẵn sàng.'], 503);
 }
+if (!uptichxanh_ensure_tables()) {
+    uptichxanh_json(['success' => false, 'message' => 'Không thể chuẩn bị lịch sử yêu cầu, vui lòng thử lại sau.'], 503);
+}
 
 $action = uptichxanh_value($input, 'action');
 if ($action !== 'submit') {
@@ -170,8 +173,7 @@ if ($link !== '' && (filter_var($link, FILTER_VALIDATE_URL) === false || strtolo
     $link = '';
 }
 
-uptichxanh_ensure_tables();
-$CMSNT->insert('up_tich_xanh_orders', [
+$historyOrderId = $CMSNT->insert('up_tich_xanh_orders', [
     'user_id' => (int) $getUser['id'],
     'service' => $service,
     'provider_uid' => $uid !== '' ? $uid : null,
@@ -183,6 +185,9 @@ $CMSNT->insert('up_tich_xanh_orders', [
     'provider_response' => json_encode($providerResponse, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
     'created_at' => date('Y-m-d H:i:s')
 ]);
+if (!$historyOrderId) {
+    error_log('Unable to record Up Tich Xanh order for user ' . (int) $getUser['id']);
+}
 
 $safeData = [
     'uid' => $uid,

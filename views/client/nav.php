@@ -8,6 +8,7 @@ $upService = isset($_GET['service']) && in_array($_GET['service'], ['get-link', 
     ? $_GET['service']
     : '';
 $upMenuActive = isset($action) && $action === 'up-tich-xanh';
+$upHistoryActive = isset($action) && $action === 'up-tich-xanh-history';
 if ($upMenuActive && $upService === '') {
     $upService = 'get-link';
 }
@@ -27,7 +28,7 @@ $serviceCatalog = caffemmo_service_catalog();
                     <i class="fa-solid fa-store" aria-hidden="true"></i><span><?= __('Mua tài nguyên'); ?></span>
                 </a>
 
-                <?php foreach ($serviceCatalog as $serviceGroup): ?>
+                <?php foreach ($serviceCatalog as $serviceGroupKey => $serviceGroup): ?>
                 <p class="desktop-sidebar-section-title"><?= __($serviceGroup['title']); ?></p>
                     <?php foreach ($serviceGroup['items'] as $serviceItem): ?>
                     <?php $serviceActive = caffemmo_is_service_active($serviceItem, $action ?? '', $upService); ?>
@@ -39,6 +40,12 @@ $serviceCatalog = caffemmo_service_catalog();
                         </span>
                     </a>
                     <?php endforeach; ?>
+                    <?php if ($serviceGroupKey === 'up-tich-xanh'): ?>
+                    <a class="desktop-sidebar-link desktop-sidebar-service-link <?= $upHistoryActive ? 'active' : ''; ?>" href="<?= base_url('client/up-tich-xanh-history'); ?>" <?= $upHistoryActive ? 'aria-current="page"' : ''; ?>>
+                        <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
+                        <span class="desktop-sidebar-link-label"><strong><?= __('Lịch sử yêu cầu'); ?></strong><small><?= __('Theo dõi dịch vụ đã gửi'); ?></small></span>
+                    </a>
+                    <?php endif; ?>
                 <?php endforeach; ?>
 
                 <?php if($CMSNT->site('status_menu_tools') == 1): ?>
@@ -629,7 +636,7 @@ $serviceCatalog = caffemmo_service_catalog();
                     <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i><span><?= __('Lịch sử đơn hàng'); ?></span>
                 </a>
 
-                <?php foreach ($serviceCatalog as $serviceGroup): ?>
+                <?php foreach ($serviceCatalog as $serviceGroupKey => $serviceGroup): ?>
                 <p class="nav-section-title"><?= __($serviceGroup['title']); ?></p>
                     <?php foreach ($serviceGroup['items'] as $serviceItem): ?>
                     <?php $serviceActive = caffemmo_is_service_active($serviceItem, $action ?? '', $upService); ?>
@@ -638,6 +645,11 @@ $serviceCatalog = caffemmo_service_catalog();
                         <span class="nav-link-label"><strong><?= __($serviceItem['label']); ?></strong><small><?= __($serviceItem['short']); ?></small></span>
                     </a>
                     <?php endforeach; ?>
+                    <?php if ($serviceGroupKey === 'up-tich-xanh'): ?>
+                    <a class="nav-link <?= $upHistoryActive ? 'active' : ''; ?>" href="<?= base_url('client/up-tich-xanh-history'); ?>" <?= $upHistoryActive ? 'aria-current="page"' : ''; ?>>
+                        <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i><span><?= __('Lịch sử yêu cầu'); ?></span>
+                    </a>
+                    <?php endif; ?>
                 <?php endforeach; ?>
 
                 <p class="nav-section-title"><?= __('Hỗ trợ'); ?></p>
