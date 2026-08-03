@@ -52,7 +52,7 @@ if (!function_exists('caffemmo_service_catalog')) {
                         'key' => 'get-link',
                         'label' => 'Get Link Facebook',
                         'short' => 'Lấy link xác minh nhanh',
-                        'description' => 'Gửi thông tin qua server để lấy link xác minh Facebook, không lộ API nhà cung cấp.',
+                        'description' => 'Gửi thông tin để lấy link xác minh Facebook nhanh chóng.',
                         'url' => base_url('client/up-tich-xanh/get-link'),
                         'action' => 'up-tich-xanh',
                         'service' => 'get-link',
