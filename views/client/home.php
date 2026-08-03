@@ -95,17 +95,6 @@ require_once(__DIR__.'/nav.php');
 
 <section class="section feature-part">
     <div class="container">
-        <?php if ($isProductsPage): ?>
-        <header class="products-page-heading">
-            <span><?= __('Caffemmo market'); ?></span>
-            <h1><?= __('Tất cả sản phẩm'); ?></h1>
-            <p><?= __('Chọn danh mục hoặc tìm kiếm sản phẩm phù hợp với nhu cầu của bạn.'); ?></p>
-        </header>
-        <?php else: ?>
-        <div class="mb-5">
-
-        </div>
-        <?php endif; ?>
         <div class="row mb-5">
             <?php if (!$isProductsPage): ?>
             <div class="col-12">
