@@ -216,6 +216,9 @@ function proxy_request_payload($input, $includeQuantity = true)
     }
 
     if ($type === 'IPv6') {
+        if ($authType !== 'LOGIN') {
+            return ['error' => 'IPv6 bán lẻ chỉ hỗ trợ xác thực Login / Password.'];
+        }
         $protocol = strtoupper(proxy_value($input, 'protocol', 'HTTP'));
         if (!in_array($protocol, ['HTTP', 'SOCKS'], true)) {
             return ['error' => 'IPv6 cần chọn protocol HTTP hoặc SOCKS.'];
@@ -521,6 +524,144 @@ function proxy_price_response($providerResponse)
     ];
 }
 
+function proxy_ipv6_retail_price_response($items)
+{
+    $amount = 0;
+    foreach ($items as $item) {
+        $amount += max(0, (float) ($item['retail_price'] ?? 0));
+    }
+    $amount = round($amount, 2);
+    return [
+        'wallet_amount' => $amount,
+        'wallet_label' => function_exists('format_currency') ? format_currency($amount) : number_format($amount, 0, ',', '.') . 'd'
+    ];
+}
+
+function proxy_ipv6_retail_quote($payload)
+{
+    $quantity = max(1, (int) ($payload['quantity'] ?? 1));
+    $items = youproxy_ipv6_retail_available_items($payload, $quantity);
+    if (count($items) !== $quantity) {
+        return [
+            'success' => false,
+            'message' => 'Kho IPv6 hiện không đủ số lượng hoặc thời hạn bạn đã chọn. Vui lòng giảm số lượng, đổi cấu hình hoặc thử lại sau.'
+        ];
+    }
+    return ['success' => true, 'data' => proxy_ipv6_retail_price_response($items)];
+}
+
+function proxy_ipv6_retail_purchase($payload, $input, $getUser)
+{
+    global $CMSNT;
+
+    if (!youproxy_ensure_tables()) {
+        proxy_json(['success' => false, 'message' => 'Không thể chuẩn bị kho IPv6. Vui lòng thử lại sau.'], 500);
+    }
+
+    $quantity = max(1, (int) ($payload['quantity'] ?? 1));
+    try {
+        $reservationToken = bin2hex(random_bytes(24));
+    } catch (Exception $exception) {
+        proxy_json(['success' => false, 'message' => 'Không thể khởi tạo đơn mua IPv6. Vui lòng thử lại.'], 500);
+    }
+
+    $items = youproxy_ipv6_retail_reserve_items($payload, $quantity, $reservationToken);
+    if (count($items) !== $quantity) {
+        proxy_json(['success' => false, 'message' => 'Kho IPv6 vừa thay đổi, vui lòng tải lại giá và thử lại.'], 409);
+    }
+
+    $price = proxy_ipv6_retail_price_response($items);
+    if ((float) $price['wallet_amount'] <= 0) {
+        youproxy_ipv6_retail_release_items($reservationToken);
+        proxy_json(['success' => false, 'message' => 'Giá IPv6 trong kho chưa hợp lệ. Vui lòng liên hệ hỗ trợ.'], 502);
+    }
+    if ((float) $getUser['money'] < (float) $price['wallet_amount']) {
+        youproxy_ipv6_retail_release_items($reservationToken);
+        proxy_json(['success' => false, 'message' => 'Số dư ví không đủ. Vui lòng nạp thêm tiền trước khi mua proxy.'], 422);
+    }
+
+    $transactionId = 'proxy_ipv6_' . bin2hex(random_bytes(8));
+    $userModel = new users();
+    if (!$userModel->RemoveCredits($getUser['id'], $price['wallet_amount'], 'Mua IPv6 lẻ (' . $quantity . ' IP)', $transactionId)) {
+        youproxy_ipv6_retail_release_items($reservationToken);
+        proxy_json(['success' => false, 'message' => 'Không thể trừ tiền trong ví, vui lòng thử lại.'], 500);
+    }
+
+    $ipAddressIds = array_values(array_unique(array_filter(array_map(function ($item) {
+        return trim((string) ($item['provider_ip_id'] ?? ''));
+    }, $items))));
+    if (count($ipAddressIds) !== $quantity) {
+        $userModel->RefundCredits($getUser['id'], $price['wallet_amount'], 'Hoàn tiền mua IPv6 do kho không hợp lệ', $transactionId . '_refund');
+        youproxy_ipv6_retail_release_items($reservationToken);
+        proxy_json(['success' => false, 'message' => 'Kho IPv6 không hợp lệ. Hệ thống đã hoàn tiền vào ví.'], 500);
+    }
+
+    $customerOrderId = $CMSNT->insert('proxy_orders', [
+        'user_id' => (int) $getUser['id'],
+        'provider_order_id' => null,
+        'proxy_type' => 'IPv6',
+        'country' => $payload['country'],
+        'quantity' => $quantity,
+        'rent_period_days' => $payload['rentPeriodDays'],
+        'provider_price' => 0,
+        'wallet_amount' => $price['wallet_amount'],
+        'provider_currency' => 'VND',
+        'auto_extend' => 0,
+        'status' => 'active',
+        'ip_address_ids' => json_encode($ipAddressIds, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+        'provider_payload' => json_encode([
+            'source' => 'ipv6_retail_inventory',
+            'inventory_item_ids' => array_map(function ($item) {
+                return (int) ($item['id'] ?? 0);
+            }, $items)
+        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+        'created_at' => date('Y-m-d H:i:s'),
+        'updated_at' => date('Y-m-d H:i:s')
+    ]);
+    if (!$customerOrderId) {
+        $userModel->RefundCredits($getUser['id'], $price['wallet_amount'], 'Hoàn tiền mua IPv6 do không thể tạo đơn', $transactionId . '_refund');
+        youproxy_ipv6_retail_release_items($reservationToken);
+        proxy_json(['success' => false, 'message' => 'Không thể tạo đơn IPv6. Hệ thống đã hoàn tiền vào ví.'], 500);
+    }
+
+    if (!youproxy_ipv6_retail_allocate_items($reservationToken, $getUser['id'], $customerOrderId, $quantity)) {
+        youproxy_ipv6_retail_revert_allocation($getUser['id'], $customerOrderId);
+        youproxy_ipv6_retail_release_items($reservationToken);
+        $CMSNT->update('proxy_orders', ['status' => 'refunded', 'updated_at' => date('Y-m-d H:i:s')], '`id` = ?', [(int) $customerOrderId]);
+        $userModel->RefundCredits($getUser['id'], $price['wallet_amount'], 'Hoàn tiền mua IPv6 do cấp phát không thành công', $transactionId . '_refund');
+        proxy_json(['success' => false, 'message' => 'Không thể cấp IPv6. Hệ thống đã hoàn tiền vào ví.'], 500);
+    }
+
+    $autoExtend = !empty($input['auto_extend']);
+    $autoExtendWarning = '';
+    if ($autoExtend) {
+        $autoResponse = youproxy_auto_extend([
+            'proxyType' => 'IPv6',
+            'ipAddressIds' => $ipAddressIds,
+            'rentPeriodDays' => $payload['rentPeriodDays'],
+            'autoExtend' => true
+        ]);
+        if (!$autoResponse['success']) {
+            $autoExtend = false;
+            $autoExtendWarning = 'IPv6 đã được cấp nhưng chưa bật được tự động gia hạn.';
+        }
+    }
+    if ($autoExtend) {
+        $CMSNT->update('proxy_orders', ['auto_extend' => 1, 'updated_at' => date('Y-m-d H:i:s')], '`id` = ?', [(int) $customerOrderId]);
+    }
+
+    proxy_json([
+        'success' => true,
+        'message' => $autoExtendWarning !== '' ? $autoExtendWarning : 'Đã cấp ' . $quantity . ' IPv6 từ kho.',
+        'data' => [
+            'order_id' => (string) $customerOrderId,
+            'records' => [],
+            'price' => $price,
+            'wallet_balance' => (float) getUser($getUser['id'], 'money')
+        ]
+    ]);
+}
+
 $input = proxy_input();
 $action = proxy_value($input, 'action');
 if (!in_array($action, ['metadata', 'quote'], true) && (!isset($getUser) || !is_array($getUser))) {
@@ -555,6 +696,13 @@ if ($action === 'quote') {
     if (isset($validated['error'])) {
         proxy_json(['success' => false, 'message' => $validated['error']], 422);
     }
+    if ($validated['payload']['proxyType'] === 'IPv6') {
+        $retailQuote = proxy_ipv6_retail_quote($validated['payload']);
+        if (empty($retailQuote['success'])) {
+            proxy_json(['success' => false, 'message' => $retailQuote['message'] ?? 'Không thể báo giá IPv6 từ kho.'], 422);
+        }
+        proxy_json(['success' => true, 'data' => $retailQuote['data']]);
+    }
     $quote = youproxy_calculate_order($validated['payload']);
     if (!$quote['success']) {
         proxy_json(['success' => false, 'message' => youproxy_error_text($quote)], 422);
@@ -566,6 +714,9 @@ if ($action === 'buy') {
     $validated = proxy_request_payload($input);
     if (isset($validated['error'])) {
         proxy_json(['success' => false, 'message' => $validated['error']], 422);
+    }
+    if ($validated['payload']['proxyType'] === 'IPv6') {
+        proxy_ipv6_retail_purchase($validated['payload'], $input, $getUser);
     }
     $quote = youproxy_calculate_order($validated['payload']);
     if (!$quote['success']) {

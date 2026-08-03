@@ -546,6 +546,343 @@ function youproxy_extract_balance($response)
     return is_numeric($balance) ? (float) $balance : null;
 }
 
+function youproxy_ipv6_retail_batch_quantity()
+{
+    return 10;
+}
+
+function youproxy_ipv6_retail_release_expired_reservations()
+{
+    global $CMSNT;
+    if (!isset($CMSNT)) {
+        return false;
+    }
+
+    return $CMSNT->update('proxy_ipv6_inventory', [
+        'status' => 'available',
+        'reservation_token' => null,
+        'reserved_until' => null,
+        'updated_at' => date('Y-m-d H:i:s')
+    ], '`status` = ? AND `reserved_until` IS NOT NULL AND `reserved_until` < ?', ['reserved', date('Y-m-d H:i:s')]);
+}
+
+function youproxy_ipv6_retail_available_items($payload, $quantity)
+{
+    global $CMSNT;
+    if (!isset($CMSNT) || !youproxy_ensure_tables()) {
+        return [];
+    }
+
+    youproxy_ipv6_retail_release_expired_reservations();
+    $rentDays = max(1, (int) ($payload['rentPeriodDays'] ?? 0));
+    $expiryThreshold = date('Y-m-d H:i:s', time() + max(0, $rentDays - 1) * 86400);
+    return $CMSNT->get_list_safe(
+        'SELECT `id`, `provider_ip_id`, `provider_order_id`, `retail_price`, `date_end`
+        FROM `proxy_ipv6_inventory`
+        WHERE `status` = ?
+            AND `country` = ?
+            AND `protocol` = ?
+            AND `auth_type` = ?
+            AND `rent_period_days` = ?
+            AND `date_end` >= ?
+        ORDER BY `date_end` ASC, `id` ASC
+        LIMIT ?',
+        [
+            'available',
+            (string) ($payload['country'] ?? ''),
+            (string) ($payload['protocol'] ?? 'HTTP'),
+            (string) ($payload['authType'] ?? 'LOGIN'),
+            $rentDays,
+            $expiryThreshold,
+            max(1, (int) $quantity)
+        ]
+    ) ?: [];
+}
+
+function youproxy_ipv6_retail_reserve_items($payload, $quantity, $reservationToken)
+{
+    global $CMSNT;
+    $items = youproxy_ipv6_retail_available_items($payload, $quantity);
+    if (count($items) !== (int) $quantity) {
+        return [];
+    }
+
+    $reservedUntil = date('Y-m-d H:i:s', time() + 120);
+    $claimedIds = [];
+    foreach ($items as $item) {
+        $itemId = (int) ($item['id'] ?? 0);
+        if ($itemId <= 0) {
+            youproxy_ipv6_retail_release_items($reservationToken);
+            return [];
+        }
+        $updated = $CMSNT->update('proxy_ipv6_inventory', [
+            'status' => 'reserved',
+            'reservation_token' => $reservationToken,
+            'reserved_until' => $reservedUntil,
+            'updated_at' => date('Y-m-d H:i:s')
+        ], '`id` = ? AND `status` = ?', [$itemId, 'available']);
+        $claimed = $updated !== false ? $CMSNT->get_row_safe(
+            'SELECT `id` FROM `proxy_ipv6_inventory` WHERE `id` = ? AND `status` = ? AND `reservation_token` = ? LIMIT 1',
+            [$itemId, 'reserved', $reservationToken]
+        ) : false;
+        if (!$claimed) {
+            youproxy_ipv6_retail_release_items($reservationToken);
+            return [];
+        }
+        $claimedIds[] = $itemId;
+    }
+
+    $placeholders = implode(',', array_fill(0, count($claimedIds), '?'));
+    $rows = $CMSNT->get_list_safe(
+        'SELECT `id`, `provider_ip_id`, `retail_price`, `date_end` FROM `proxy_ipv6_inventory` WHERE `reservation_token` = ? AND `status` = ? AND `id` IN (' . $placeholders . ') ORDER BY `date_end` ASC, `id` ASC',
+        array_merge([$reservationToken, 'reserved'], $claimedIds)
+    ) ?: [];
+    if (count($rows) !== count($claimedIds)) {
+        youproxy_ipv6_retail_release_items($reservationToken);
+        return [];
+    }
+    return $rows;
+}
+
+function youproxy_ipv6_retail_release_items($reservationToken)
+{
+    global $CMSNT;
+    if (!isset($CMSNT) || $reservationToken === '') {
+        return false;
+    }
+    return $CMSNT->update('proxy_ipv6_inventory', [
+        'status' => 'available',
+        'reservation_token' => null,
+        'reserved_until' => null,
+        'updated_at' => date('Y-m-d H:i:s')
+    ], '`status` = ? AND `reservation_token` = ?', ['reserved', $reservationToken]);
+}
+
+function youproxy_ipv6_retail_allocate_items($reservationToken, $userId, $customerOrderId, $expectedQuantity)
+{
+    global $CMSNT;
+    if (!isset($CMSNT) || $reservationToken === '') {
+        return false;
+    }
+    $updated = $CMSNT->update('proxy_ipv6_inventory', [
+        'status' => 'sold',
+        'customer_user_id' => (int) $userId,
+        'customer_proxy_order_id' => (int) $customerOrderId,
+        'reservation_token' => null,
+        'reserved_until' => null,
+        'updated_at' => date('Y-m-d H:i:s')
+    ], '`status` = ? AND `reservation_token` = ?', ['reserved', $reservationToken]);
+    if ($updated === false) {
+        return false;
+    }
+
+    $count = $CMSNT->get_row_safe(
+        'SELECT COUNT(*) AS total FROM `proxy_ipv6_inventory` WHERE `customer_proxy_order_id` = ? AND `customer_user_id` = ? AND `status` = ?',
+        [(int) $customerOrderId, (int) $userId, 'sold']
+    );
+    return (int) ($count['total'] ?? 0) === max(1, (int) $expectedQuantity);
+}
+
+function youproxy_ipv6_retail_revert_allocation($userId, $customerOrderId)
+{
+    global $CMSNT;
+    if (!isset($CMSNT)) {
+        return false;
+    }
+
+    return $CMSNT->update('proxy_ipv6_inventory', [
+        'status' => 'available',
+        'customer_user_id' => null,
+        'customer_proxy_order_id' => null,
+        'updated_at' => date('Y-m-d H:i:s')
+    ], '`status` = ? AND `customer_user_id` = ? AND `customer_proxy_order_id` = ?', [
+        'sold',
+        (int) $userId,
+        (int) $customerOrderId
+    ]);
+}
+
+function youproxy_ipv6_retail_store_batch($adminUserId, $payload, $quote, $providerOrder)
+{
+    global $CMSNT;
+    if (!isset($CMSNT) || !youproxy_ensure_tables()) {
+        return ['success' => false, 'message' => 'Không thể chuẩn bị kho IPv6.'];
+    }
+
+    $batchQuantity = youproxy_ipv6_retail_batch_quantity();
+    $price = youproxy_price_context($quote);
+    $providerOrderId = youproxy_extract_order_id($providerOrder);
+    $batchId = $CMSNT->insert('proxy_ipv6_batches', [
+        'provider_order_id' => $providerOrderId !== '' ? $providerOrderId : null,
+        'country' => (string) ($payload['country'] ?? ''),
+        'protocol' => (string) ($payload['protocol'] ?? 'HTTP'),
+        'auth_type' => (string) ($payload['authType'] ?? 'LOGIN'),
+        'rent_period_days' => (int) ($payload['rentPeriodDays'] ?? 0),
+        'goal' => (string) ($payload['goal'] ?? ''),
+        'expected_quantity' => $batchQuantity,
+        'received_quantity' => 0,
+        'provider_price' => (float) $price['provider_price'],
+        'retail_unit_price' => round((float) $price['wallet_amount'] / $batchQuantity, 2),
+        'provider_currency' => (string) $price['provider_currency'],
+        'status' => 'pending_sync',
+        'provider_payload' => json_encode($providerOrder, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+        'created_by' => (int) $adminUserId,
+        'created_at' => date('Y-m-d H:i:s'),
+        'updated_at' => date('Y-m-d H:i:s')
+    ]);
+    if (!$batchId) {
+        return ['success' => false, 'message' => 'Không thể lưu lô IPv6 vừa mua.'];
+    }
+
+    $records = youproxy_normalize_ip_records($providerOrder);
+    if ($providerOrderId !== '') {
+        $records = array_values(array_filter($records, function ($record) use ($providerOrderId) {
+            $recordOrderId = youproxy_find_direct_value($record, ['orderId', 'orderID', 'orderNumber', 'providerOrderId', 'order_id']);
+            return is_scalar($recordOrderId) && trim((string) $recordOrderId) === $providerOrderId;
+        }));
+    }
+    if (count($records) < $batchQuantity && $providerOrderId !== '') {
+        $listResponse = youproxy_ip_addresses('IPv6');
+        if (!empty($listResponse['success'])) {
+            $records = array_values(array_filter(youproxy_normalize_ip_records($listResponse), function ($record) use ($providerOrderId) {
+                $recordOrderId = youproxy_find_direct_value($record, ['orderId', 'orderID', 'orderNumber', 'providerOrderId', 'order_id']);
+                return is_scalar($recordOrderId) && trim((string) $recordOrderId) === $providerOrderId;
+            }));
+        }
+    }
+
+    $received = 0;
+    $seen = [];
+    foreach ($records as $record) {
+        $recordType = strtoupper(trim((string) (youproxy_find_direct_value($record, ['proxyType', 'type']) ?: 'IPv6')));
+        if ($recordType !== 'IPV6') {
+            continue;
+        }
+        $providerIpId = trim((string) (youproxy_find_direct_value($record, ['ipAddressId', 'id']) ?: ''));
+        if ($providerIpId === '' || isset($seen[$providerIpId])) {
+            continue;
+        }
+        $seen[$providerIpId] = true;
+        $dateStartValue = youproxy_find_first_value($record, ['dateStart', 'startDate']);
+        $dateEndValue = youproxy_find_first_value($record, ['dateEnd', 'endDate']);
+        $dateStart = $dateStartValue && strtotime((string) $dateStartValue) !== false ? date('Y-m-d H:i:s', strtotime((string) $dateStartValue)) : null;
+        $dateEnd = $dateEndValue && strtotime((string) $dateEndValue) !== false ? date('Y-m-d H:i:s', strtotime((string) $dateEndValue)) : null;
+        $inserted = $CMSNT->insert('proxy_ipv6_inventory', [
+            'batch_id' => (int) $batchId,
+            'provider_ip_id' => $providerIpId,
+            'provider_order_id' => $providerOrderId !== '' ? $providerOrderId : null,
+            'country' => (string) ($payload['country'] ?? ''),
+            'protocol' => (string) ($payload['protocol'] ?? 'HTTP'),
+            'auth_type' => (string) ($payload['authType'] ?? 'LOGIN'),
+            'rent_period_days' => (int) ($payload['rentPeriodDays'] ?? 0),
+            'retail_price' => round((float) $price['wallet_amount'] / $batchQuantity, 2),
+            'date_start' => $dateStart,
+            'date_end' => $dateEnd,
+            'status' => $dateEnd === null ? 'pending_sync' : 'available',
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s')
+        ]);
+        if ($inserted) {
+            $received++;
+        }
+    }
+
+    $status = $received >= $batchQuantity ? 'active' : 'pending_sync';
+    $CMSNT->update('proxy_ipv6_batches', [
+        'received_quantity' => $received,
+        'status' => $status,
+        'updated_at' => date('Y-m-d H:i:s')
+    ], '`id` = ?', [(int) $batchId]);
+
+    return [
+        'success' => true,
+        'batch_id' => (int) $batchId,
+        'received_quantity' => $received,
+        'expected_quantity' => $batchQuantity,
+        'status' => $status
+    ];
+}
+
+function youproxy_ipv6_retail_sync_batch($batchId)
+{
+    global $CMSNT;
+    if (!isset($CMSNT) || !youproxy_ensure_tables()) {
+        return ['success' => false, 'message' => 'Không thể truy cập kho IPv6.'];
+    }
+
+    $batch = $CMSNT->get_row_safe('SELECT * FROM `proxy_ipv6_batches` WHERE `id` = ? LIMIT 1', [(int) $batchId]);
+    if (!$batch || empty($batch['provider_order_id'])) {
+        return ['success' => false, 'message' => 'Lô IPv6 chưa có mã đơn nhà cung cấp để đồng bộ.'];
+    }
+
+    $listResponse = youproxy_ip_addresses('IPv6');
+    if (empty($listResponse['success'])) {
+        return ['success' => false, 'message' => youproxy_error_text($listResponse, 'Không thể đồng bộ danh sách IPv6 từ nhà cung cấp.')];
+    }
+
+    $records = array_values(array_filter(youproxy_normalize_ip_records($listResponse), function ($record) use ($batch) {
+        $recordOrderId = youproxy_find_direct_value($record, ['orderId', 'orderID', 'orderNumber', 'providerOrderId', 'order_id']);
+        $recordType = strtoupper(trim((string) (youproxy_find_direct_value($record, ['proxyType', 'type']) ?: 'IPv6')));
+        return $recordType === 'IPV6' && is_scalar($recordOrderId) && trim((string) $recordOrderId) === (string) $batch['provider_order_id'];
+    }));
+
+    foreach ($records as $record) {
+        $providerIpId = trim((string) (youproxy_find_direct_value($record, ['ipAddressId', 'id']) ?: ''));
+        if ($providerIpId === '') {
+            continue;
+        }
+        $dateStartValue = youproxy_find_first_value($record, ['dateStart', 'startDate']);
+        $dateEndValue = youproxy_find_first_value($record, ['dateEnd', 'endDate']);
+        $dateStart = $dateStartValue && strtotime((string) $dateStartValue) !== false ? date('Y-m-d H:i:s', strtotime((string) $dateStartValue)) : null;
+        $dateEnd = $dateEndValue && strtotime((string) $dateEndValue) !== false ? date('Y-m-d H:i:s', strtotime((string) $dateEndValue)) : null;
+        $existing = $CMSNT->get_row_safe('SELECT `id`, `status` FROM `proxy_ipv6_inventory` WHERE `provider_ip_id` = ? LIMIT 1', [$providerIpId]);
+        if ($existing) {
+            $updates = [
+                'date_start' => $dateStart,
+                'date_end' => $dateEnd,
+                'updated_at' => date('Y-m-d H:i:s')
+            ];
+            if (in_array((string) $existing['status'], ['pending_sync', 'available'], true)) {
+                $updates['status'] = $dateEnd === null ? 'pending_sync' : 'available';
+            }
+            $CMSNT->update('proxy_ipv6_inventory', $updates, '`id` = ?', [(int) $existing['id']]);
+            continue;
+        }
+        $CMSNT->insert('proxy_ipv6_inventory', [
+            'batch_id' => (int) $batch['id'],
+            'provider_ip_id' => $providerIpId,
+            'provider_order_id' => (string) $batch['provider_order_id'],
+            'country' => (string) $batch['country'],
+            'protocol' => (string) $batch['protocol'],
+            'auth_type' => (string) $batch['auth_type'],
+            'rent_period_days' => (int) $batch['rent_period_days'],
+            'retail_price' => (float) $batch['retail_unit_price'],
+            'date_start' => $dateStart,
+            'date_end' => $dateEnd,
+            'status' => $dateEnd === null ? 'pending_sync' : 'available',
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s')
+        ]);
+    }
+
+    $count = $CMSNT->get_row_safe('SELECT COUNT(*) AS total FROM `proxy_ipv6_inventory` WHERE `batch_id` = ?', [(int) $batch['id']]);
+    $received = (int) ($count['total'] ?? 0);
+    $status = $received >= max(1, (int) $batch['expected_quantity']) ? 'active' : 'pending_sync';
+    $CMSNT->update('proxy_ipv6_batches', [
+        'received_quantity' => $received,
+        'status' => $status,
+        'updated_at' => date('Y-m-d H:i:s')
+    ], '`id` = ?', [(int) $batch['id']]);
+
+    return [
+        'success' => true,
+        'batch_id' => (int) $batch['id'],
+        'received_quantity' => $received,
+        'expected_quantity' => (int) $batch['expected_quantity'],
+        'status' => $status
+    ];
+}
+
 function youproxy_ensure_tables()
 {
     global $CMSNT;
@@ -573,5 +910,60 @@ function youproxy_ensure_tables()
         KEY `proxy_orders_user_id` (`user_id`),
         KEY `proxy_orders_provider_order_id` (`provider_order_id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
-    return $CMSNT->query($sql) !== false;
+    if ($CMSNT->query($sql) === false) {
+        return false;
+    }
+
+    $batchSql = "CREATE TABLE IF NOT EXISTS `proxy_ipv6_batches` (
+        `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+        `provider_order_id` VARCHAR(100) NULL,
+        `country` VARCHAR(12) NOT NULL,
+        `protocol` VARCHAR(10) NOT NULL,
+        `auth_type` VARCHAR(10) NOT NULL,
+        `rent_period_days` INT UNSIGNED NOT NULL,
+        `goal` VARCHAR(200) NOT NULL,
+        `expected_quantity` INT UNSIGNED NOT NULL DEFAULT 10,
+        `received_quantity` INT UNSIGNED NOT NULL DEFAULT 0,
+        `provider_price` DECIMAL(14,6) NOT NULL DEFAULT 0,
+        `retail_unit_price` DECIMAL(18,2) NOT NULL DEFAULT 0,
+        `provider_currency` VARCHAR(10) NOT NULL DEFAULT 'USD',
+        `status` VARCHAR(20) NOT NULL DEFAULT 'pending_sync',
+        `provider_payload` LONGTEXT NULL,
+        `created_by` INT UNSIGNED NOT NULL,
+        `created_at` DATETIME NOT NULL,
+        `updated_at` DATETIME NOT NULL,
+        PRIMARY KEY (`id`),
+        KEY `proxy_ipv6_batches_status` (`status`),
+        KEY `proxy_ipv6_batches_provider_order_id` (`provider_order_id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+    if ($CMSNT->query($batchSql) === false) {
+        return false;
+    }
+
+    $inventorySql = "CREATE TABLE IF NOT EXISTS `proxy_ipv6_inventory` (
+        `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+        `batch_id` INT UNSIGNED NOT NULL,
+        `provider_ip_id` VARCHAR(100) NOT NULL,
+        `provider_order_id` VARCHAR(100) NULL,
+        `country` VARCHAR(12) NOT NULL,
+        `protocol` VARCHAR(10) NOT NULL,
+        `auth_type` VARCHAR(10) NOT NULL,
+        `rent_period_days` INT UNSIGNED NOT NULL,
+        `retail_price` DECIMAL(18,2) NOT NULL DEFAULT 0,
+        `date_start` DATETIME NULL,
+        `date_end` DATETIME NULL,
+        `status` VARCHAR(20) NOT NULL DEFAULT 'available',
+        `reservation_token` VARCHAR(80) NULL,
+        `reserved_until` DATETIME NULL,
+        `customer_user_id` INT UNSIGNED NULL,
+        `customer_proxy_order_id` INT UNSIGNED NULL,
+        `created_at` DATETIME NOT NULL,
+        `updated_at` DATETIME NOT NULL,
+        PRIMARY KEY (`id`),
+        UNIQUE KEY `proxy_ipv6_inventory_provider_ip_id` (`provider_ip_id`),
+        KEY `proxy_ipv6_inventory_available` (`status`, `country`, `protocol`, `auth_type`, `rent_period_days`, `date_end`),
+        KEY `proxy_ipv6_inventory_customer` (`customer_user_id`),
+        KEY `proxy_ipv6_inventory_order` (`customer_proxy_order_id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+    return $CMSNT->query($inventorySql) !== false;
 }

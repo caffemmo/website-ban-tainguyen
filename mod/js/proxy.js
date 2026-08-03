@@ -250,6 +250,33 @@
             field.hidden = !isIpv6;
             $$('select', field).forEach(function (select) { select.disabled = !isIpv6; });
         });
+        var loginAuth = $('[name="auth_type"][value="LOGIN"]');
+        var ipAuth = $('[name="auth_type"][value="IP"]');
+        if (isIpv6 && loginAuth) {
+            loginAuth.checked = true;
+        }
+        if (ipAuth) {
+            ipAuth.disabled = isIpv6;
+            var ipAuthOption = ipAuth.closest('label');
+            if (ipAuthOption) ipAuthOption.hidden = isIpv6;
+        }
+        var ipField = $('[data-ip-field]');
+        if (ipField && isIpv6) {
+            ipField.hidden = true;
+        }
+        var retailNote = $('[data-ipv6-retail-note]');
+        if (retailNote) {
+            retailNote.hidden = !isIpv6;
+        }
+        var promoControl = $('[data-promo-control]');
+        if (promoControl) {
+            promoControl.hidden = isIpv6;
+            var promoInput = $('input', promoControl);
+            if (promoInput) {
+                promoInput.disabled = isIpv6;
+                if (isIpv6) promoInput.value = '';
+            }
+        }
         scheduleBuyQuote();
     }
 
@@ -327,10 +354,14 @@
             var summaryRent = $('[data-summary-rent]');
             var summaryQuantity = $('[data-summary-quantity]');
             var summaryAuth = $('[data-summary-auth]');
+            var summaryDelivery = $('[data-summary-delivery]');
             if (summaryType) summaryType.textContent = typeLabel || '--';
             if (summaryRent) summaryRent.textContent = rentLabel || '--';
             if (summaryQuantity) summaryQuantity.textContent = quantity && quantity.value ? quantity.value : '1';
             if (summaryAuth) summaryAuth.textContent = auth && auth.value === 'IP' ? 'IP whitelist' : 'IP:PORT:USER:PASS';
+            if (summaryDelivery) summaryDelivery.textContent = type === 'IPV6'
+                ? 'Cấp lẻ từ kho sau thanh toán · HTTP + SOCKS5'
+                : 'Cấp tự động sau thanh toán · HTTPS + SOCKS5';
         }
         var total = $('[data-wallet-total]');
         if (!price) {

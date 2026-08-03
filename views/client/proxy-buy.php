@@ -16,8 +16,8 @@ $body = [
     'desc' => __('Mua proxy chính hãng với cấu hình rõ ràng và quản lý tập trung.'),
     'keyword' => 'proxy, mua proxy, proxy premium'
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=9') . '">';
-$body['footer'] = '<script src="' . BASE_URL('mod/js/proxy.js?v=7') . '"></script>';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=10') . '">';
+$body['footer'] = '<script src="' . BASE_URL('mod/js/proxy.js?v=8') . '"></script>';
 
 require_once __DIR__ . '/header.php';
 require_once __DIR__ . '/nav.php';
@@ -142,6 +142,7 @@ require_once __DIR__ . '/nav.php';
                         <input type="number" name="quantity" value="1" min="1" max="100" data-quantity-input aria-label="<?= __('Số lượng proxy'); ?>">
                         <button type="button" data-quantity-plus aria-label="<?= __('Tăng số lượng'); ?>"><i class="fa-solid fa-plus" aria-hidden="true"></i></button>
                     </span>
+                    <small class="proxy-ipv6-retail-note" data-ipv6-retail-note hidden><i class="fa-solid fa-cubes-stacked" aria-hidden="true"></i> <?= __('IPv6 được cấp lẻ từ kho với Login / Password.'); ?></small>
                 </label>
                 <label class="proxy-control">
                     <span><?= __('Mục đích sử dụng'); ?></span>
@@ -166,7 +167,7 @@ require_once __DIR__ . '/nav.php';
 
             <div class="proxy-bottom-row">
                 <label class="proxy-check-row"><input type="checkbox" name="auto_extend" value="1"><span class="proxy-check-box"><i class="fa-solid fa-check" aria-hidden="true"></i></span><span><strong><?= __('Tự động gia hạn'); ?></strong><small><?= __('Giữ proxy hoạt động liên tục'); ?></small></span></label>
-                <label class="proxy-control proxy-promo-control"><span><?= __('Mã giảm giá'); ?></span><input type="text" name="promo_code" maxlength="60" placeholder="Không bắt buộc"></label>
+                <label class="proxy-control proxy-promo-control" data-promo-control><span><?= __('Mã giảm giá'); ?></span><input type="text" name="promo_code" maxlength="60" placeholder="Không bắt buộc"></label>
             </div>
         </form>
 

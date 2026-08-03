@@ -15,6 +15,100 @@ function proxy_admin_save_setting($name, $value)
     return $CMSNT->insert('settings', ['name' => $name, 'value' => $value]);
 }
 
+if (isset($_POST['SyncIpv6RetailBatch'])) {
+    if (checkPermission($getUser['admin'], 'edit_setting') != true) {
+        die('<script type="text/javascript">if(!alert("' . __('Bạn không có quyền sử dụng tính năng này') . '")){window.history.back();}</script>');
+    }
+    if ($CMSNT->site('status_demo') != 0) {
+        die('<script type="text/javascript">if(!alert("' . __('This function cannot be used because this is a demo site') . '")){window.history.back().location.reload();}</script>');
+    }
+
+    $batchId = filter_var($_POST['ipv6_batch_id'] ?? null, FILTER_VALIDATE_INT);
+    if ($batchId === false || $batchId < 1) {
+        admin_msg_error('Lô IPv6 không hợp lệ.', base_url_admin('settings&tab=proxy'), 1200);
+    }
+    $result = youproxy_ipv6_retail_sync_batch($batchId);
+    if (empty($result['success'])) {
+        admin_msg_error($result['message'] ?? 'Không thể đồng bộ lô IPv6.', base_url_admin('settings&tab=proxy'), 1500);
+    }
+    $CMSNT->insert('logs', [
+        'user_id' => $getUser['id'],
+        'ip' => myip(),
+        'device' => getUserAgent(),
+        'createdate' => gettime(),
+        'action' => 'Đồng bộ lô IPv6 bán lẻ #' . $batchId
+    ]);
+    $message = $result['status'] === 'active'
+        ? 'Đã đồng bộ đủ ' . $result['received_quantity'] . '/' . $result['expected_quantity'] . ' IPv6 và mở bán lẻ.'
+        : 'Đã nhận ' . $result['received_quantity'] . '/' . $result['expected_quantity'] . ' IPv6. Lô vẫn chờ đồng bộ thêm.';
+    admin_msg_success($message, base_url_admin('settings&tab=proxy'), 1200);
+}
+
+if (isset($_POST['RestockIpv6Retail'])) {
+    if (checkPermission($getUser['admin'], 'edit_setting') != true) {
+        die('<script type="text/javascript">if(!alert("' . __('Bạn không có quyền sử dụng tính năng này') . '")){window.history.back();}</script>');
+    }
+    if ($CMSNT->site('status_demo') != 0) {
+        die('<script type="text/javascript">if(!alert("' . __('This function cannot be used because this is a demo site') . '")){window.history.back().location.reload();}</script>');
+    }
+    if (!youproxy_is_configured()) {
+        admin_msg_error('Hãy lưu cấu hình YouProxy hợp lệ trước khi nhập kho IPv6.', base_url_admin('settings&tab=proxy'), 1400);
+    }
+
+    $country = strtoupper(trim((string) ($_POST['ipv6_retail_country'] ?? '')));
+    $rentDays = filter_var($_POST['ipv6_retail_rent_days'] ?? null, FILTER_VALIDATE_INT);
+    $protocol = strtoupper(trim((string) ($_POST['ipv6_retail_protocol'] ?? 'HTTP')));
+    $authType = 'LOGIN';
+    $goal = trim((string) ($_POST['ipv6_retail_goal'] ?? 'Marketing'));
+
+    if (!preg_match('/^[A-Z0-9_-]{2,12}$/', $country)
+        || $rentDays === false || $rentDays < 1 || $rentDays > 3650
+        || !in_array($protocol, ['HTTP', 'SOCKS'], true)
+        || $goal === '' || mb_strlen($goal) > 200) {
+        admin_msg_error('Thông tin lô IPv6 không hợp lệ.', base_url_admin('settings&tab=proxy'), 1400);
+    }
+
+    $payload = [
+        'proxyType' => 'IPv6',
+        'country' => $country,
+        'rentPeriodDays' => $rentDays,
+        'goal' => $goal,
+        'authType' => $authType,
+        'protocol' => $protocol,
+        'quantity' => youproxy_ipv6_retail_batch_quantity()
+    ];
+    $quote = youproxy_calculate_order($payload);
+    if (empty($quote['success'])) {
+        admin_msg_error(youproxy_error_text($quote, 'Không thể báo giá lô IPv6.'), base_url_admin('settings&tab=proxy'), 1800);
+    }
+    $price = youproxy_price_context($quote);
+    if ((float) $price['provider_price'] <= 0) {
+        admin_msg_error('YouProxy chưa trả về giá hợp lệ cho lô IPv6 này.', base_url_admin('settings&tab=proxy'), 1500);
+    }
+    $providerOrder = youproxy_create_order($payload);
+    if (empty($providerOrder['success'])) {
+        admin_msg_error(youproxy_error_text($providerOrder, 'Không thể mua lô IPv6 từ YouProxy.'), base_url_admin('settings&tab=proxy'), 1800);
+    }
+    $result = youproxy_ipv6_retail_store_batch($getUser['id'], $payload, $quote, $providerOrder);
+    if (empty($result['success'])) {
+        admin_msg_error($result['message'] ?? 'Lô YouProxy đã tạo nhưng không thể lưu vào kho. Hãy kiểm tra lại ngay.', base_url_admin('settings&tab=proxy'), 1800);
+    }
+    if ($result['status'] !== 'active') {
+        $result = youproxy_ipv6_retail_sync_batch($result['batch_id']);
+    }
+    $CMSNT->insert('logs', [
+        'user_id' => $getUser['id'],
+        'ip' => myip(),
+        'device' => getUserAgent(),
+        'createdate' => gettime(),
+        'action' => 'Nhập kho IPv6 bán lẻ: ' . youproxy_ipv6_retail_batch_quantity() . ' IP ' . $country
+    ]);
+    $message = !empty($result['success']) && ($result['status'] ?? '') === 'active'
+        ? 'Đã nhập kho và mở bán lẻ ' . $result['received_quantity'] . '/' . $result['expected_quantity'] . ' IPv6.'
+        : 'Đã tạo lô IPv6, nhưng đang chờ YouProxy trả đủ IP để mở bán. Bạn có thể bấm Đồng bộ lô sau ít phút.';
+    admin_msg_success($message, base_url_admin('settings&tab=proxy'), 1400);
+}
+
 if (isset($_POST['SaveProxySettings'])) {
     if (checkPermission($getUser['admin'], 'edit_setting') != true) {
         die('<script type="text/javascript">if(!alert("' . __('Bạn không có quyền sử dụng tính năng này') . '")){window.history.back();}</script>');
@@ -68,6 +162,18 @@ if (isset($_POST['SaveProxySettings'])) {
 $proxyConfig = youproxy_config();
 $proxyConfigured = youproxy_is_configured();
 $hasStoredKey = youproxy_db_setting('youproxy_api_key') !== '';
+youproxy_ensure_tables();
+$ipv6RetailStats = $CMSNT->get_row_safe(
+    "SELECT
+        SUM(CASE WHEN `status` = 'available' THEN 1 ELSE 0 END) AS available_total,
+        SUM(CASE WHEN `status` = 'reserved' THEN 1 ELSE 0 END) AS reserved_total,
+        SUM(CASE WHEN `status` = 'sold' THEN 1 ELSE 0 END) AS sold_total,
+        SUM(CASE WHEN `status` = 'pending_sync' THEN 1 ELSE 0 END) AS pending_total
+    FROM `proxy_ipv6_inventory`"
+) ?: [];
+$ipv6RetailBatches = $CMSNT->get_list_safe(
+    'SELECT * FROM `proxy_ipv6_batches` ORDER BY `id` DESC LIMIT 12'
+) ?: [];
 ?>
 
 <style>
@@ -123,9 +229,22 @@ $hasStoredKey = youproxy_db_setting('youproxy_api_key') !== '';
     }
     .proxy-admin-note i { margin-top: 2px; color: #3a82c4; }
     .proxy-admin-save { min-width: 170px; }
+    .proxy-retail-kicker { color: #75869a; font-size: 12px; line-height: 1.55; }
+    .proxy-retail-stat-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+    .proxy-retail-stat { padding: 13px; border: 1px solid #e1eaf3; border-radius: 10px; background: #fbfdff; }
+    .proxy-retail-stat span { display: block; color: #74869a; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+    .proxy-retail-stat strong { display: block; margin-top: 4px; color: #173b63; font-size: 20px; }
+    .proxy-retail-table { margin: 0; font-size: 12px; }
+    .proxy-retail-table th { color: #75869a; font-size: 11px; font-weight: 700; white-space: nowrap; }
+    .proxy-retail-table td { vertical-align: middle; }
+    .proxy-retail-status { display: inline-flex; padding: 4px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+    .proxy-retail-status.active { color: #16774a; background: #e8f8ee; }
+    .proxy-retail-status.pending_sync { color: #96640a; background: #fff4d7; }
+    .proxy-retail-sync-button { white-space: nowrap; }
     @media (max-width: 575.98px) {
         .proxy-admin-intro { align-items: flex-start; flex-direction: column; padding: 18px; }
         .proxy-admin-status { align-self: flex-start; }
+        .proxy-retail-stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
 </style>
 
@@ -215,6 +334,111 @@ $hasStoredKey = youproxy_db_setting('youproxy_api_key') !== '';
             </button>
         </div>
     </form>
+
+    <section class="mt-5">
+        <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
+            <div>
+                <h5 class="mb-1"><i class="fa-solid fa-cubes-stacked me-2 text-primary" aria-hidden="true"></i><?= __('Kho IPv6 bán lẻ'); ?></h5>
+                <p class="mb-0 proxy-retail-kicker"><?= __('Mua theo lô cố định 10 IPv6 từ YouProxy, sau đó khách có thể mua từng IP từ kho này.'); ?></p>
+            </div>
+            <span class="badge text-bg-light border"><?= __('Lô cố định'); ?>: <?= youproxy_ipv6_retail_batch_quantity(); ?> IPv6</span>
+        </div>
+        <div class="row g-4">
+            <div class="col-xl-5">
+                <div class="card proxy-admin-card">
+                    <div class="card-header">
+                        <div class="card-title mb-0"><i class="fa-solid fa-cart-plus me-2 text-primary" aria-hidden="true"></i><?= __('Nhập kho lô mới'); ?></div>
+                    </div>
+                    <div class="card-body">
+                        <p class="proxy-admin-help mb-3"><?= __('Hệ thống mua đúng 10 IPv6 bằng số dư YouProxy. Giá bán lẻ được chốt tại thời điểm nhập kho.'); ?></p>
+                        <form action="" method="POST" autocomplete="off" data-ipv6-restock-form>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label proxy-admin-label" for="ipv6_retail_country"><i class="fa-solid fa-earth-americas" aria-hidden="true"></i><?= __('Mã quốc gia'); ?></label>
+                                    <input type="text" class="form-control" id="ipv6_retail_country" name="ipv6_retail_country" placeholder="USA" maxlength="12" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label proxy-admin-label" for="ipv6_retail_rent_days"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i><?= __('Thời hạn'); ?></label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="ipv6_retail_rent_days" name="ipv6_retail_rent_days" value="30" min="1" max="3650" required>
+                                        <span class="input-group-text"><?= __('ngày'); ?></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label proxy-admin-label" for="ipv6_retail_protocol"><i class="fa-solid fa-plug-circle-bolt" aria-hidden="true"></i><?= __('Protocol'); ?></label>
+                                    <select class="form-select" id="ipv6_retail_protocol" name="ipv6_retail_protocol">
+                                        <option value="HTTP">HTTP</option>
+                                        <option value="SOCKS">SOCKS5</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label proxy-admin-label"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i><?= __('Xác thực'); ?></label>
+                                    <div class="form-control bg-light text-muted"><?= __('Login / Password'); ?></div>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label proxy-admin-label" for="ipv6_retail_goal"><i class="fa-solid fa-bullseye" aria-hidden="true"></i><?= __('Mục đích sử dụng'); ?></label>
+                                    <input type="text" class="form-control" id="ipv6_retail_goal" name="ipv6_retail_goal" value="Marketing" maxlength="200" required>
+                                </div>
+                            </div>
+                            <div class="proxy-admin-note mt-3">
+                                <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                                <span><?= __('Lô chưa nhận đủ IP sẽ ở trạng thái chờ đồng bộ và không xuất hiện cho khách mua.'); ?></span>
+                            </div>
+                            <button type="submit" name="RestockIpv6Retail" class="btn btn-primary w-100 mt-3" <?= !$proxyConfigured ? 'disabled' : ''; ?>>
+                                <i class="fa-solid fa-boxes-stacked me-2" aria-hidden="true"></i><?= __('Mua và nhập kho 10 IPv6'); ?>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-7">
+                <div class="card proxy-admin-card">
+                    <div class="card-header d-flex align-items-start justify-content-between gap-3">
+                        <div>
+                            <div class="card-title mb-1"><i class="fa-solid fa-warehouse me-2 text-primary" aria-hidden="true"></i><?= __('Tình trạng kho'); ?></div>
+                            <div class="proxy-retail-kicker"><?= __('Chỉ IPv6 còn hạn đủ với cấu hình khách chọn mới được phép bán.'); ?></div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="proxy-retail-stat-grid mb-4">
+                            <div class="proxy-retail-stat"><span><?= __('Có thể bán'); ?></span><strong><?= (int) ($ipv6RetailStats['available_total'] ?? 0); ?></strong></div>
+                            <div class="proxy-retail-stat"><span><?= __('Đang giữ chỗ'); ?></span><strong><?= (int) ($ipv6RetailStats['reserved_total'] ?? 0); ?></strong></div>
+                            <div class="proxy-retail-stat"><span><?= __('Đã bán'); ?></span><strong><?= (int) ($ipv6RetailStats['sold_total'] ?? 0); ?></strong></div>
+                            <div class="proxy-retail-stat"><span><?= __('Chờ đồng bộ'); ?></span><strong><?= (int) ($ipv6RetailStats['pending_total'] ?? 0); ?></strong></div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table proxy-retail-table">
+                                <thead><tr><th><?= __('Lô'); ?></th><th><?= __('Cấu hình'); ?></th><th><?= __('Đã nhận'); ?></th><th><?= __('Giá/IP'); ?></th><th><?= __('Trạng thái'); ?></th><th></th></tr></thead>
+                                <tbody>
+                                <?php foreach ($ipv6RetailBatches as $batch): ?>
+                                    <?php
+                                    $batchStatus = (string) ($batch['status'] ?? 'pending_sync');
+                                    $createdAt = strtotime((string) ($batch['created_at'] ?? ''));
+                                    ?>
+                                    <tr>
+                                        <td><strong>#<?= (int) $batch['id']; ?></strong><br><span class="text-muted"><?= $createdAt ? date('d/m/Y H:i', $createdAt) : '--'; ?></span></td>
+                                        <td><?= htmlspecialchars((string) $batch['country'], ENT_QUOTES, 'UTF-8'); ?> · <?= (int) $batch['rent_period_days']; ?> <?= __('ngày'); ?><br><span class="text-muted"><?= htmlspecialchars((string) $batch['protocol'], ENT_QUOTES, 'UTF-8'); ?> · <?= htmlspecialchars((string) $batch['auth_type'], ENT_QUOTES, 'UTF-8'); ?></span></td>
+                                        <td><?= (int) $batch['received_quantity']; ?>/<?= (int) $batch['expected_quantity']; ?></td>
+                                        <td><?= format_currency((float) $batch['retail_unit_price']); ?></td>
+                                        <td><span class="proxy-retail-status <?= $batchStatus === 'active' ? 'active' : 'pending_sync'; ?>"><?= $batchStatus === 'active' ? __('Đang bán') : __('Chờ đồng bộ'); ?></span></td>
+                                        <td>
+                                            <?php if ($batchStatus !== 'active'): ?>
+                                                <form action="" method="POST"><input type="hidden" name="ipv6_batch_id" value="<?= (int) $batch['id']; ?>"><button type="submit" name="SyncIpv6RetailBatch" class="btn btn-sm btn-outline-primary proxy-retail-sync-button"><i class="fa-solid fa-rotate me-1" aria-hidden="true"></i><?= __('Đồng bộ'); ?></button></form>
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                                <?php if (empty($ipv6RetailBatches)): ?>
+                                    <tr><td colspan="6" class="text-center text-muted py-4"><?= __('Chưa có lô IPv6 nào trong kho.'); ?></td></tr>
+                                <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 </div>
 
 <script>
@@ -228,4 +452,5 @@ $hasStoredKey = youproxy_db_setting('youproxy_api_key') !== '';
             button.querySelector('i').className = visible ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye';
         });
     }());
+
 </script>

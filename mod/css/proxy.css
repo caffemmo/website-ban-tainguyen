@@ -598,6 +598,20 @@ body {
     text-align: center;
 }
 
+.proxy-ipv6-retail-note {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 7px;
+    color: #28718a;
+    font-size: 11px;
+    line-height: 1.35;
+}
+
+.proxy-ipv6-retail-note i {
+    color: var(--proxy-cyan);
+}
+
 .proxy-auth-row,
 .proxy-bottom-row {
     display: flex;
