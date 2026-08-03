@@ -3216,4 +3216,324 @@ body {
     }
 }
 
+/* Homepage quick actions: retain the light surface while restoring hierarchy. */
+.home-telegram-actions {
+    gap: 14px;
+    margin-top: 26px;
+    margin-bottom: 22px;
+}
+
+.home-telegram-action {
+    min-height: 82px;
+    gap: 13px;
+    padding: 14px 16px;
+    color: #123a54;
+    border-color: #c3e2e9;
+    box-shadow: 0 5px 16px rgba(17, 74, 97, .08);
+}
+
+.home-telegram-action-icon {
+    width: 38px;
+    height: 38px;
+    flex-basis: 38px;
+    color: #087f95;
+    background: #dff6f8;
+    font-size: 18px;
+}
+
+.home-telegram-action-copy {
+    gap: 4px;
+}
+
+.home-telegram-action-copy strong {
+    color: #123a54;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.home-telegram-action-copy small {
+    color: #4a6c80;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.home-telegram-action:hover,
+.home-telegram-action:focus-visible {
+    color: #092f48;
+    background: #f8feff;
+    border-color: #48bdca;
+    box-shadow: 0 10px 24px rgba(12, 111, 129, .13);
+    transform: translateY(-2px);
+}
+
+.home-service-catalog {
+    padding: 25px;
+    color: #143b53;
+    background: #ffffff;
+    border: 1px solid #addfe6;
+    border-top: 3px solid #0cabb9;
+    border-radius: 8px;
+    box-shadow: 0 14px 30px rgba(16, 71, 92, .10);
+    animation: none;
+}
+
+.home-service-head {
+    align-items: center;
+    margin-bottom: 17px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #dceaf0;
+}
+
+.home-service-head > div > span {
+    color: #147b8b;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.home-service-head h2 {
+    margin-top: 3px;
+    margin-bottom: 0;
+    color: #0d334b;
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.home-service-head .home-service-count {
+    min-height: 30px;
+    padding: 0 11px;
+    color: #087e90;
+    background: #ecfafb;
+    border-color: #a7dfe6;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.home-service-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.home-service-card {
+    --quick-accent: #078fa0;
+    --quick-soft: #e4f7f9;
+    min-height: 78px;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+    color: #153d57;
+    border: 1px solid #cbdfe8;
+    border-radius: 7px;
+    text-align: left;
+    background: #ffffff;
+    box-shadow: 0 3px 10px rgba(17, 71, 92, .05);
+    animation: none;
+    transition: transform 180ms ease, border-color 180ms ease, background-color 180ms ease, box-shadow 180ms ease;
+}
+
+.home-service-card::before,
+.home-service-card::after {
+    display: none;
+}
+
+.home-service-card--resources {
+    --quick-accent: #256ec4;
+    --quick-soft: #eaf3ff;
+    border-color: #bedaf2;
+    background: #fafdff;
+}
+
+.home-service-card--teal {
+    --quick-accent: #078fa0;
+    --quick-soft: #e4f7f9;
+}
+
+.home-service-card--blue {
+    --quick-accent: #286cc1;
+    --quick-soft: #eaf2ff;
+    border-color: #c4dbf5;
+}
+
+.home-service-card--green {
+    --quick-accent: #13865f;
+    --quick-soft: #e8f7ef;
+    border-color: #c6e7d7;
+}
+
+.home-service-card--pink {
+    --quick-accent: #c84983;
+    --quick-soft: #fcedf4;
+    border-color: #f0c9db;
+}
+
+.home-service-card:first-child,
+.home-service-card--recharge {
+    --quick-accent: #ffffff;
+    --quick-soft: rgba(255, 255, 255, .18);
+    color: #ffffff;
+    background: #09aebb;
+    border-color: #09aebb;
+    box-shadow: 0 8px 18px rgba(9, 174, 187, .24);
+}
+
+.home-service-icon,
+.home-service-card:first-child .home-service-icon,
+.home-service-card:hover .home-service-icon,
+.home-service-card:focus-visible .home-service-icon {
+    display: grid;
+    width: 36px;
+    height: 36px;
+    flex: 0 0 36px;
+    place-items: center;
+    color: var(--quick-accent);
+    background: var(--quick-soft);
+    border-radius: 7px;
+    box-shadow: none;
+    font-size: 15px;
+    transform: none;
+}
+
+.home-service-copy {
+    display: grid;
+    min-width: 0;
+    gap: 3px;
+}
+
+.home-service-copy strong {
+    overflow: hidden;
+    color: #123a54;
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.3;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.home-service-copy small {
+    display: block;
+    overflow: hidden;
+    color: #537287;
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.35;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.home-service-meta {
+    display: none;
+}
+
+.home-service-card:first-child .home-service-copy strong,
+.home-service-card--recharge .home-service-copy strong,
+.home-service-card:first-child .home-service-copy small,
+.home-service-card--recharge .home-service-copy small {
+    color: #ffffff;
+}
+
+.home-service-card:hover,
+.home-service-card:focus-visible {
+    color: #153d57;
+    background: #ffffff;
+    border-color: var(--quick-accent);
+    box-shadow: 0 10px 22px rgba(19, 72, 93, .12);
+    transform: translateY(-2px);
+}
+
+.home-service-card:first-child:hover,
+.home-service-card:first-child:focus-visible,
+.home-service-card--recharge:hover,
+.home-service-card--recharge:focus-visible {
+    color: #ffffff;
+    background: #078f9b;
+    border-color: #078f9b;
+    box-shadow: 0 11px 24px rgba(7, 143, 155, .28);
+}
+
+.home-service-card:active {
+    transform: translateY(0) scale(.99);
+}
+
+@media (max-width: 1199px) {
+    .home-service-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 575px) {
+    .home-telegram-actions {
+        gap: 10px;
+        margin-top: 18px;
+        margin-bottom: 16px;
+    }
+
+    .home-telegram-action {
+        min-height: 70px;
+        gap: 10px;
+        padding: 11px 12px;
+    }
+
+    .home-telegram-action-icon {
+        width: 32px;
+        height: 32px;
+        flex-basis: 32px;
+        font-size: 15px;
+    }
+
+    .home-telegram-action-copy strong {
+        font-size: 12px;
+    }
+
+    .home-telegram-action-copy small {
+        font-size: 10px;
+    }
+
+    .home-service-catalog {
+        padding: 18px;
+    }
+
+    .home-service-head {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 14px;
+        padding-bottom: 13px;
+    }
+
+    .home-service-head h2 {
+        font-size: 19px;
+    }
+
+    .home-service-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 9px;
+    }
+
+    .home-service-card {
+        min-height: 68px;
+        gap: 9px;
+        padding: 10px;
+    }
+
+    .home-service-icon,
+    .home-service-card:first-child .home-service-icon,
+    .home-service-card:hover .home-service-icon,
+    .home-service-card:focus-visible .home-service-icon {
+        width: 32px;
+        height: 32px;
+        flex-basis: 32px;
+        border-radius: 6px;
+        font-size: 13px;
+    }
+
+    .home-service-copy strong {
+        font-size: 12px;
+    }
+
+    .home-service-copy small {
+        font-size: 10px;
+    }
+}
+
 /* ===== END WIDGET BẢNG XẾP HẠNG ===== */
