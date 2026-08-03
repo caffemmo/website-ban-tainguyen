@@ -3052,51 +3052,74 @@ ul.custom-button-list li {
 }
 
 /* Compact the primary client surfaces without changing their layout. */
-.header-top-welcome p,
-.header-top-list li a,
-.header-select .select {
-    font-size: 13px;
-}
-
-.header-widget span {
-    font-size: 13px;
-}
-
-.navbar-link {
+body {
     font-size: 14px;
 }
 
+.header-top-welcome p,
+.header-top-list li a,
+.header-select .select {
+    font-size: 12px;
+}
+
+.header-widget span {
+    font-size: 12px;
+}
+
+.navbar-link,
+.nav-info p,
+.nav-info p span {
+    font-size: 13px;
+}
+
+.header-form input {
+    font-size: 13px;
+}
+
 .home-service-head span {
-    font-size: 11px;
+    font-size: 10px;
 }
 
 .home-service-head h2 {
-    font-size: 27px;
+    font-size: 24px;
 }
 
 .home-service-head a {
-    font-size: 12px;
+    font-size: 11px;
 }
 
 .home-service-copy strong {
-    font-size: 17px;
+    font-size: 15px;
 }
 
 .home-service-copy small {
-    font-size: 12px;
+    font-size: 11px;
 }
 
 .home-service-meta {
-    font-size: 10px;
+    font-size: 9px;
+}
+
+.home-notice-host .s2-title {
+    font-size: 14px !important;
+}
+
+.home-notice-host .s2-desc,
+.home-notice-host .s2-pay-btn span {
+    font-size: 11px !important;
+}
+
+.home-notice-host .s2-pay-btn strong {
+    font-size: 12px !important;
 }
 
 @media (max-width: 575px) {
     .home-service-head h2 {
-        font-size: 22px;
+        font-size: 21px;
     }
 
     .home-service-copy strong {
-        font-size: 16px;
+        font-size: 15px;
     }
 }
 
