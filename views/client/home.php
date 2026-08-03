@@ -130,12 +130,16 @@ require_once(__DIR__.'/nav.php');
                 <section class="home-service-catalog" aria-labelledby="home-service-title">
                     <div class="home-service-head">
                         <div>
-                            <span><?= __('Caffemmo services'); ?></span>
-                            <h2 id="home-service-title"><?= __('Dịch vụ hiện có'); ?></h2>
+                            <span><?= __('Truy cập nhanh các dịch vụ thường dùng'); ?></span>
+                            <h2 id="home-service-title"><?= __('Thao tác nhanh'); ?></h2>
                         </div>
-                        <a href="<?= base_url('client/products'); ?>"><?= __('Xem sản phẩm'); ?> <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+                        <span class="home-service-count"><?= $homeServiceCount + 1; ?> <?= __('dịch vụ'); ?> <i class="fa-solid fa-angle-down" aria-hidden="true"></i></span>
                     </div>
                     <div class="home-service-grid">
+                        <a class="home-service-card home-service-card--recharge" href="<?= base_url('?action=recharge-bank'); ?>">
+                            <span class="home-service-icon"><i class="fa-solid fa-wallet" aria-hidden="true"></i></span>
+                            <span class="home-service-copy"><strong><?= __('Nạp tiền'); ?></strong></span>
+                        </a>
                         <?php foreach ($homeServiceGroups as $serviceGroup): ?>
                             <?php foreach ($serviceGroup['items'] as $serviceItem): ?>
                                 <a class="home-service-card home-service-card--<?= htmlspecialchars($serviceItem['tone'], ENT_QUOTES, 'UTF-8'); ?>" href="<?= htmlspecialchars($serviceItem['url'], ENT_QUOTES, 'UTF-8'); ?>">

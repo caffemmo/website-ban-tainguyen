@@ -3123,4 +3123,179 @@ body {
     }
 }
 
+/* Compact quick-action workspace on the public homepage. */
+.home-service-catalog {
+    padding: 24px;
+    color: #eaf2ff;
+    background: #101a2f;
+    border-color: #2a3d5c;
+    border-radius: 8px;
+    box-shadow: 0 16px 35px rgba(8, 18, 39, .14);
+}
+
+.home-service-catalog::before {
+    display: none;
+}
+
+.home-service-head {
+    align-items: flex-start;
+    margin-bottom: 18px;
+}
+
+.home-service-head > div > span {
+    display: block;
+    color: #899ab7;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.home-service-head > div > span::before {
+    display: none;
+}
+
+.home-service-head h2 {
+    margin: 0 0 4px;
+    color: #f5f8ff;
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.home-service-head .home-service-count {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 6px;
+    min-height: 28px;
+    padding: 0 10px;
+    color: #b7e9ff;
+    background: #102942;
+    border: 1px solid #24628b;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.home-service-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.home-service-card {
+    display: flex;
+    min-height: 54px;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    padding: 9px 12px;
+    color: #c5d1e3;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.25;
+    text-align: center;
+    background: #101a2f;
+    border-color: #2b3d5b;
+    border-radius: 7px;
+    box-shadow: none;
+    animation: none;
+}
+
+.home-service-card::before,
+.home-service-card::after {
+    display: none;
+}
+
+.home-service-card:hover,
+.home-service-card:focus-visible {
+    color: #f4fbff;
+    background: #152541;
+    border-color: #3c668d;
+    box-shadow: 0 8px 18px rgba(1, 10, 27, .22);
+    transform: translateY(-2px);
+}
+
+.home-service-card:first-child {
+    color: #ffffff;
+    background: linear-gradient(105deg, #258fea, #16c3d0);
+    border-color: transparent;
+}
+
+.home-service-card:first-child:hover,
+.home-service-card:first-child:focus-visible {
+    color: #ffffff;
+    background: linear-gradient(105deg, #319ff7, #22d1dc);
+    box-shadow: 0 10px 22px rgba(33, 170, 224, .28);
+}
+
+.home-service-icon {
+    width: auto;
+    height: auto;
+    flex: 0 0 auto;
+    color: #24c9ff;
+    background: transparent;
+    box-shadow: none;
+    font-size: 14px;
+}
+
+.home-service-card:first-child .home-service-icon,
+.home-service-card:hover .home-service-icon,
+.home-service-card:focus-visible .home-service-icon {
+    color: inherit;
+    background: transparent;
+    box-shadow: none;
+    transform: none;
+}
+
+.home-service-copy {
+    display: block;
+    min-width: 0;
+}
+
+.home-service-copy strong {
+    color: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+}
+
+.home-service-copy small,
+.home-service-meta {
+    display: none;
+}
+
+@media (max-width: 1199px) {
+    .home-service-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 575px) {
+    .home-service-catalog {
+        padding: 17px;
+    }
+
+    .home-service-head {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .home-service-head h2 {
+        font-size: 16px;
+    }
+
+    .home-service-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .home-service-card {
+        min-height: 50px;
+        gap: 7px;
+        padding: 8px;
+        font-size: 11px;
+    }
+}
+
 /* ===== END WIDGET BẢNG XẾP HẠNG ===== */
