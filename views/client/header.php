@@ -103,6 +103,7 @@ $loadLegacyClientPlugins = !isset($body['legacy_client_plugins']) || $body['lega
   <?php endif ?>
   <?= $body['header']; ?>
   <link rel="stylesheet" href="<?= BASE_URL('mod/css/main.css?v=48'); ?>">
+  <link rel="stylesheet" href="<?= BASE_URL('mod/css/client-shell.css?v=1'); ?>">
   <script src="<?= base_url('mod/js/main.js?v=5'); ?>"></script>
   <?= $CMSNT->site('javascript_header'); ?>
 

@@ -21,7 +21,9 @@ if (!$isProductsPage) {
 require_once(__DIR__ . '/../../libs/client-session.php');
 require_once(__DIR__ . '/../../libs/service-catalog.php');
 $getUser = client_optional_user($CMSNT);
+$isDashboardUser = is_array($getUser);
 $homeServiceGroups = $isProductsPage ? [] : caffemmo_service_catalog();
+$homeServiceItems = $isProductsPage ? [] : caffemmo_service_catalog_flat();
 $homeServiceCount = 0;
 foreach ($homeServiceGroups as $homeServiceGroup) {
     $homeServiceCount += count($homeServiceGroup['items']);
@@ -106,6 +108,43 @@ require_once(__DIR__.'/nav.php');
             <p><?= __('Chọn danh mục hoặc tìm kiếm sản phẩm phù hợp với nhu cầu của bạn.'); ?></p>
         </header>
         <?php else: ?>
+        <?php if ($isDashboardUser): ?>
+        <section class="client-dashboard-hero" aria-labelledby="dashboard-title">
+            <div class="client-dashboard-intro">
+                <span class="client-dashboard-kicker"><i class="fa-solid fa-wave-square" aria-hidden="true"></i><?= __('Không gian làm việc'); ?></span>
+                <h1 id="dashboard-title"><?= __('Chào') ?>, <?= htmlspecialchars((string) $getUser['username'], ENT_QUOTES, 'UTF-8'); ?>.</h1>
+                <p><?= __('Quản lý proxy, đơn hàng và các yêu cầu dịch vụ tại một nơi tập trung.'); ?></p>
+            </div>
+            <div class="client-balance-panel">
+                <span><?= __('Số dư khả dụng'); ?></span>
+                <strong><?= format_currency($getUser['money']); ?></strong>
+                <a href="<?= base_url('?action=recharge-bank'); ?>"><span><?= __('Nạp tiền'); ?></span><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
+            </div>
+        </section>
+        <section class="client-quick-actions" aria-labelledby="quick-actions-title">
+            <div class="client-section-heading">
+                <div>
+                    <span><?= __('Tác vụ nhanh'); ?></span>
+                    <h2 id="quick-actions-title"><?= __('Bắt đầu công việc'); ?></h2>
+                </div>
+                <a href="<?= base_url('client/products'); ?>"><?= __('Mở catalog'); ?><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+            </div>
+            <div class="client-quick-action-grid">
+                <?php foreach (array_slice($homeServiceItems, 0, 4) as $serviceItem): ?>
+                <a class="client-quick-action client-quick-action--<?= htmlspecialchars($serviceItem['tone'], ENT_QUOTES, 'UTF-8'); ?>" href="<?= htmlspecialchars($serviceItem['url'], ENT_QUOTES, 'UTF-8'); ?>">
+                    <span class="client-quick-action-icon"><i class="<?= htmlspecialchars($serviceItem['icon'], ENT_QUOTES, 'UTF-8'); ?>" aria-hidden="true"></i></span>
+                    <span><strong><?= __($serviceItem['label']); ?></strong><small><?= __($serviceItem['short']); ?></small></span>
+                    <i class="fa-solid fa-arrow-up-right-from-square client-quick-action-arrow" aria-hidden="true"></i>
+                </a>
+                <?php endforeach; ?>
+                <a class="client-quick-action client-quick-action--wallet" href="<?= base_url('?action=recharge-bank'); ?>">
+                    <span class="client-quick-action-icon"><i class="fa-solid fa-wallet" aria-hidden="true"></i></span>
+                    <span><strong><?= __('Nạp tiền'); ?></strong><small><?= __('Cập nhật số dư để tiếp tục'); ?></small></span>
+                    <i class="fa-solid fa-arrow-up-right-from-square client-quick-action-arrow" aria-hidden="true"></i>
+                </a>
+            </div>
+        </section>
+        <?php else: ?>
         <section class="tech-home-hero" aria-labelledby="tech-home-title">
             <div class="tech-home-hero-grid" aria-hidden="true"></div>
             <div class="tech-home-hero-inner">
@@ -133,6 +172,7 @@ require_once(__DIR__.'/nav.php');
                 </div>
             </div>
         </section>
+        <?php endif; ?>
         <?php endif; ?>
         <div class="row mb-5">
             <?php if (!$isProductsPage): ?>
@@ -293,7 +333,35 @@ require_once(__DIR__.'/nav.php');
             </div>
             <?php endif?>
         </div>
-        <?php if(!$isProductsPage && $CMSNT->site('status_giao_dich_gan_day') == 1):?>
+        <?php if (!$isProductsPage && $isDashboardUser): ?>
+        <section class="client-dashboard-panels" aria-label="<?= __('Theo dõi tài khoản'); ?>">
+            <article class="client-dashboard-panel">
+                <div class="client-dashboard-panel-icon"><i class="fa-solid fa-server" aria-hidden="true"></i></div>
+                <div>
+                    <span><?= __('Proxy workspace'); ?></span>
+                    <h2><?= __('Proxy của tôi'); ?></h2>
+                    <p><?= __('Theo dõi thông tin kết nối, hạn dùng và các yêu cầu gia hạn trong một màn hình.'); ?></p>
+                </div>
+                <div class="client-dashboard-panel-actions">
+                    <a href="<?= base_url('client/proxy-list'); ?>"><span><?= __('Mở danh sách'); ?></span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+                    <a href="<?= base_url('client/proxy-renew'); ?>"><span><?= __('Gia hạn proxy'); ?></span><i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i></a>
+                </div>
+            </article>
+            <article class="client-dashboard-panel">
+                <div class="client-dashboard-panel-icon client-dashboard-panel-icon--violet"><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i></div>
+                <div>
+                    <span><?= __('Tài khoản'); ?></span>
+                    <h2><?= __('Hoạt động gần đây'); ?></h2>
+                    <p><?= __('Xem đơn hàng, biến động số dư và lịch sử thao tác của chính tài khoản này.'); ?></p>
+                </div>
+                <div class="client-dashboard-panel-actions">
+                    <a href="<?= base_url('product-orders/'); ?>"><span><?= __('Đơn hàng'); ?></span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+                    <a href="<?= base_url('client/transactions'); ?>"><span><?= __('Biến động số dư'); ?></span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+                </div>
+            </article>
+        </section>
+        <?php endif; ?>
+        <?php if(!$isProductsPage && !$isDashboardUser && $CMSNT->site('status_giao_dich_gan_day') == 1):?>
         <div class="row home-recent-activity">
             <div class="col-lg-6 mb-3">
                 <div class="home-heading mb-3">
