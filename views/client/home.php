@@ -138,12 +138,16 @@ require_once(__DIR__.'/nav.php');
                             <span><?= __('Truy cập nhanh các dịch vụ thường dùng'); ?></span>
                             <h2 id="home-service-title"><?= __('Thao tác nhanh'); ?></h2>
                         </div>
-                        <span class="home-service-count"><?= $homeServiceCount + 1; ?> <?= __('dịch vụ'); ?> <i class="fa-solid fa-angle-down" aria-hidden="true"></i></span>
+                        <span class="home-service-count"><?= $homeServiceCount + 2; ?> <?= __('dịch vụ'); ?> <i class="fa-solid fa-angle-down" aria-hidden="true"></i></span>
                     </div>
                     <div class="home-service-grid">
                         <a class="home-service-card home-service-card--recharge" href="<?= base_url('?action=recharge-bank'); ?>">
                             <span class="home-service-icon"><i class="fa-solid fa-wallet" aria-hidden="true"></i></span>
                             <span class="home-service-copy"><strong><?= __('Nạp tiền'); ?></strong></span>
+                        </a>
+                        <a class="home-service-card home-service-card--resources" href="<?= base_url('client/products'); ?>">
+                            <span class="home-service-icon"><i class="fa-solid fa-store" aria-hidden="true"></i></span>
+                            <span class="home-service-copy"><strong><?= __('Mua tài nguyên'); ?></strong></span>
                         </a>
                         <?php foreach ($homeServiceGroups as $serviceGroup): ?>
                             <?php foreach ($serviceGroup['items'] as $serviceItem): ?>
