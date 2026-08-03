@@ -3051,4 +3051,53 @@ ul.custom-button-list li {
     }
 }
 
+/* Compact the primary client surfaces without changing their layout. */
+.header-top-welcome p,
+.header-top-list li a,
+.header-select .select {
+    font-size: 13px;
+}
+
+.header-widget span {
+    font-size: 13px;
+}
+
+.navbar-link {
+    font-size: 14px;
+}
+
+.home-service-head span {
+    font-size: 11px;
+}
+
+.home-service-head h2 {
+    font-size: 27px;
+}
+
+.home-service-head a {
+    font-size: 12px;
+}
+
+.home-service-copy strong {
+    font-size: 17px;
+}
+
+.home-service-copy small {
+    font-size: 12px;
+}
+
+.home-service-meta {
+    font-size: 10px;
+}
+
+@media (max-width: 575px) {
+    .home-service-head h2 {
+        font-size: 22px;
+    }
+
+    .home-service-copy strong {
+        font-size: 16px;
+    }
+}
+
 /* ===== END WIDGET BẢNG XẾP HẠNG ===== */
