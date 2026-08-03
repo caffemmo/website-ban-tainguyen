@@ -486,20 +486,22 @@ foreach ($CMSNT->get_list_safe(" SELECT * FROM `banks` WHERE `status` = ? ", [1]
             echo $result;
         }
         $result = json_decode($result, true);
-        // Web2M's newer MB response exposes transactions[] instead of data[].
-        $transactions = $result['transactions'] ?? $result['data'] ?? null;
+        // MB OpenAPI currently returns data.ChiTietGiaoDich[], while older
+        // Web2M responses expose either transactions[] or a flat data[] list.
+        $transactions = $result['transactions'] ?? $result['data']['ChiTietGiaoDich'] ?? $result['data'] ?? null;
         if (!is_array($transactions)) {
             error_log('[Auto bank][MB] Missing transaction list: ' . (string)($result['message'] ?? 'unknown response'));
             continue;
         }
         foreach ($transactions as $data) {
-            $type           = strtoupper(trim((string)($data['type'] ?? 'IN')));
-            if ($type !== 'IN') {
+            $transactionType = strtoupper(trim((string)($data['type'] ?? $data['CD'] ?? 'IN')));
+            if (!in_array($transactionType, ['IN', '+'], true)) {
                 continue;
             }
-            $tid            = check_string((string)($data['transactionID'] ?? $data['refNo'] ?? ''));
-            $description    = str_replace(' ', '.', check_string((string)($data['description'] ?? '')));
-            $amount         = check_string((string)($data['amount'] ?? $data['creditAmount'] ?? '0'));
+            $type           = 'IN';
+            $tid            = check_string((string)($data['transactionID'] ?? $data['refNo'] ?? $data['SoThamChieu'] ?? ''));
+            $description    = str_replace(' ', '.', check_string((string)($data['description'] ?? $data['MoTa'] ?? '')));
+            $amount         = check_string(str_replace(',', '', (string)($data['amount'] ?? $data['creditAmount'] ?? $data['SoTienGhiCo'] ?? '0')));
             if (empty($tid) || empty($description) || $amount <= 0) {
                 continue;
             }
