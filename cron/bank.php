@@ -481,7 +481,9 @@ foreach ($CMSNT->get_list_safe(" SELECT * FROM `banks` WHERE `status` = ? ", [1]
 
 
     if (strtolower($bank['short_name']) == 'mb' || strtolower($bank['short_name']) == 'mbbank') {
-        $result = curl_get2("https://api.web2m.com/historyapimbnoti/" . $bank['password'] . "/" . $bank['accountNumber'] . "/" . $bank['token']);
+        // MBBank OpenAPI accepts the bank token only; password and account
+        // number belong to the retired RPA endpoint.
+        $result = curl_get2("https://api.web2m.com/historyapiopenmb/" . rawurlencode($bank['token']));
         if ($CMSNT->site('debug_auto_bank') == 1) {
             echo $result;
         }
