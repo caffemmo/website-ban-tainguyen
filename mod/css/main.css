@@ -3115,7 +3115,7 @@ body {
     display: none;
 }
 
-/* Keep the native language and currency controls readable on the cyan header. */
+/* Keep one readable native control arrow for language and currency. */
 .header-top-select {
     gap: 16px;
 }
@@ -3139,9 +3139,9 @@ body {
     font-weight: 600;
     line-height: 20px;
     cursor: pointer;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
+    appearance: auto;
+    -webkit-appearance: menulist;
+    -moz-appearance: menulist;
 }
 
 .header-select .select:focus-visible {
@@ -3152,21 +3152,6 @@ body {
 .header-select .select option {
     color: #15374d;
     background: #ffffff;
-}
-
-.header-select-arrow {
-    display: grid;
-    flex: 0 0 auto;
-    width: 12px;
-    height: 20px;
-    place-items: center;
-    pointer-events: none;
-}
-
-.header-select .header-select-arrow i {
-    margin: 0;
-    color: #ffffff;
-    font-size: 9px;
 }
 
 .home-telegram-actions {
