@@ -108,6 +108,26 @@ require_once(__DIR__.'/nav.php');
         <?php endif; ?>
         <div class="row mb-5">
             <?php if (!$isProductsPage): ?>
+            <div class="col-12">
+                <section class="home-telegram-actions" aria-label="<?= __('Kênh Telegram Caffemmo'); ?>">
+                    <a class="home-telegram-action home-telegram-action--bot" href="https://t.me/mmo_hub_bot" target="_blank" rel="noopener noreferrer">
+                        <span class="home-telegram-action-icon"><i class="fa-brands fa-telegram" aria-hidden="true"></i></span>
+                        <span class="home-telegram-action-copy">
+                            <strong><?= __('Bot Telegram'); ?></strong>
+                            <small><?= __('Tham gia bot Telegram tự động'); ?></small>
+                        </span>
+                        <i class="fa-solid fa-arrow-up-right-from-square home-telegram-action-arrow" aria-hidden="true"></i>
+                    </a>
+                    <a class="home-telegram-action home-telegram-action--channel" href="https://t.me/honghotphobo" target="_blank" rel="noopener noreferrer">
+                        <span class="home-telegram-action-icon"><i class="fa-solid fa-bullhorn" aria-hidden="true"></i></span>
+                        <span class="home-telegram-action-copy">
+                            <strong><?= __('Kênh thông báo'); ?></strong>
+                            <small><?= __('Tham gia nhận tut miễn phí mỗi ngày'); ?></small>
+                        </span>
+                        <i class="fa-solid fa-arrow-up-right-from-square home-telegram-action-arrow" aria-hidden="true"></i>
+                    </a>
+                </section>
+            </div>
             <?php require_once(__DIR__.'/widget_tools.php');?>
             <br>
 
