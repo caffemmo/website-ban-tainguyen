@@ -21,10 +21,10 @@ $serviceCatalog = caffemmo_service_catalog();
             <nav class="desktop-sidebar-nav">
                 <p class="desktop-sidebar-section-title"><?= __('Tổng quan'); ?></p>
                 <a class="desktop-sidebar-link <?= isset($action) && $action == 'home' ? 'active' : ''; ?>" href="<?= base_url('client/home'); ?>">
-                    <i class="fa-solid fa-table-cells-large" aria-hidden="true"></i><span><?= __('Bảng điều khiển'); ?></span>
+                    <i class="fa-solid fa-table-cells-large" aria-hidden="true"></i><span><?= __('Trang chủ'); ?></span>
                 </a>
                 <a class="desktop-sidebar-link <?= isset($action) && $action == 'products' ? 'active' : ''; ?>" href="<?= base_url('client/products'); ?>">
-                    <i class="fa-solid fa-store" aria-hidden="true"></i><span><?= __('Tất cả sản phẩm'); ?></span>
+                    <i class="fa-solid fa-store" aria-hidden="true"></i><span><?= __('Mua tài nguyên'); ?></span>
                 </a>
 
                 <?php foreach ($serviceCatalog as $serviceGroup): ?>
@@ -615,10 +615,10 @@ $serviceCatalog = caffemmo_service_catalog();
             <nav class="nav-list" aria-label="<?= __('Điều hướng mobile'); ?>">
                 <p class="nav-section-title"><?= __('Tổng quan'); ?></p>
                 <a class="nav-link <?= active_sidebar_client(['home', '']); ?>" href="<?= base_url('client/home'); ?>">
-                    <i class="fa-solid fa-table-cells-large" aria-hidden="true"></i><span><?= __('Bảng điều khiển'); ?></span>
+                    <i class="fa-solid fa-table-cells-large" aria-hidden="true"></i><span><?= __('Trang chủ'); ?></span>
                 </a>
                 <a class="nav-link <?= active_sidebar_client(['products']); ?>" href="<?= base_url('client/products'); ?>">
-                    <i class="fa-solid fa-store" aria-hidden="true"></i><span><?= __('Tất cả sản phẩm'); ?></span>
+                    <i class="fa-solid fa-store" aria-hidden="true"></i><span><?= __('Mua tài nguyên'); ?></span>
                 </a>
 
                 <p class="nav-section-title"><?= __('Tài chính'); ?></p>
