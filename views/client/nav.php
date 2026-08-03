@@ -134,6 +134,29 @@ $serviceCatalog = caffemmo_service_catalog();
             </div>
         </div>
     </div>
+    <?php
+    $homeNoticeRaw = trim((string)$CMSNT->site('notice_home'));
+    $homeNoticeText = html_entity_decode(strip_tags($homeNoticeRaw), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    $homeNoticeText = preg_replace('/\s+/u', ' ', trim($homeNoticeText));
+    if ($homeNoticeText === null) {
+        $homeNoticeText = '';
+    }
+    ?>
+    <?php if ($homeNoticeText !== ''): ?>
+    <section class="site-notice-marquee" aria-label="<?= __('Thông báo'); ?>">
+        <div class="container">
+            <span class="site-notice-marquee-icon"><i class="fa-solid fa-circle-info" aria-hidden="true"></i></span>
+            <div class="site-notice-marquee-viewport">
+                <div class="site-notice-marquee-track">
+                    <span class="site-notice-marquee-message"><?= htmlspecialchars($homeNoticeText, ENT_QUOTES, 'UTF-8'); ?></span>
+                    <?php for ($noticeCopy = 0; $noticeCopy < 3; $noticeCopy++): ?>
+                    <span class="site-notice-marquee-message" aria-hidden="true"><?= htmlspecialchars($homeNoticeText, ENT_QUOTES, 'UTF-8'); ?></span>
+                    <?php endfor; ?>
+                </div>
+            </div>
+        </div>
+    </section>
+    <?php endif; ?>
     <header class="header-part">
         <div class="container">
             <div class="header-content">

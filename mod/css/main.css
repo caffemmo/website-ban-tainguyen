@@ -1698,331 +1698,77 @@ ul.custom-button-list li {
     color: var(--gray);
 }
 
-.home-notice-host {
-    margin-bottom: 22px;
+.site-notice-marquee {
+    overflow: hidden;
+    border-bottom: 1px solid #d8e8ec;
+    color: #24465b;
+    background: #ffffff;
     font-family: 'Be Vietnam Pro', sans-serif;
 }
 
-.home-notice-host .s2-wrapper,
-.home-notice-host .s2-container,
-.home-notice-host .s2-header,
-.home-notice-host .s2-pay-btn {
-    font-family: 'Be Vietnam Pro', sans-serif !important;
-}
-
-.home-notice-host .s2-wrapper {
-    position: relative;
-    overflow: hidden;
-    margin: 0;
-    padding: 12px 14px !important;
-    border: 1px solid #dce9ee;
-    border-radius: 14px;
-    background: #fff;
-    box-shadow: 0 8px 22px rgba(31, 69, 88, 0.08) !important;
-    animation: home-notice-in 460ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-.home-notice-host .s2-wrapper::before {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 3px;
-    content: "";
-    background: var(--primary);
-    transform: scaleX(0);
-    transform-origin: left center;
-    animation: home-notice-rail 650ms ease-out 80ms both;
-}
-
-.home-notice-host .s2-container {
-    display: grid;
-    grid-template-columns: minmax(250px, 0.78fr) minmax(0, 1.22fr);
-    gap: 14px;
-    align-items: center;
-    padding: 0 !important;
-    background: transparent !important;
-}
-
-.home-notice-host .s2-header {
-    display: grid;
-    grid-template-columns: 32px minmax(0, 1fr);
-    grid-template-rows: auto auto;
-    column-gap: 10px;
-    align-items: center;
-    min-height: 92px;
-    margin: 0 !important;
-    padding: 8px 12px !important;
-    border: 0 !important;
-    border-radius: 0 !important;
-    background: transparent !important;
-}
-
-.home-notice-host .s2-header::before {
-    display: grid;
-    width: 32px;
-    height: 32px;
-    grid-row: 1 / span 2;
-    place-items: center;
-    border-radius: 9px;
-    color: #087e83;
-    background: #d8f5f3;
-    content: "\f06a";
-    font-family: "Font Awesome 6 Free";
-    font-size: 14px;
-    font-weight: 900;
-    animation: home-notice-icon 520ms ease-out 120ms both;
-}
-
-.home-notice-host .s2-title {
-    max-width: 38ch;
-    margin-bottom: 4px !important;
-    color: #153446 !important;
-    font-size: 17px !important;
-    font-weight: 700 !important;
-    letter-spacing: 0;
-    line-height: 1.32 !important;
-}
-
-.home-notice-host .s2-desc {
-    max-width: 58ch;
-    color: #425d69 !important;
-    font-size: 12.5px !important;
-    font-weight: 500;
-    letter-spacing: 0;
-    line-height: 1.45 !important;
-    text-transform: none !important;
-}
-
-.home-notice-host .s2-payment-row {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
-    align-items: stretch;
-    width: auto;
-}
-
-.home-notice-host .s2-payment {
+.site-notice-marquee .container {
     display: flex;
-    min-width: 0;
-}
-
-.home-notice-host .s2-pay-btn {
-    position: relative;
-    display: grid;
-    flex: 1;
-    grid-template-columns: 32px minmax(0, 1fr) 18px;
-    grid-template-rows: auto auto;
-    column-gap: 10px;
-    row-gap: 0;
+    min-height: 34px;
     align-items: center;
-    align-content: center;
-    min-height: 84px;
-    height: auto !important;
-    padding: 12px 14px !important;
-    border: 1px solid #dce9ed !important;
-    border-radius: 10px !important;
-    color: #153446 !important;
-    background: #f8fbfc !important;
-    box-shadow: 0 2px 8px rgba(31, 69, 88, 0.05);
-    text-align: left;
-    transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
-    animation: home-notice-card-in 460ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    gap: 9px;
 }
 
-.home-notice-host .s2-payment:nth-child(2) .s2-pay-btn {
-    border-color: #b9e6e4 !important;
-    background: #f1fbfb !important;
-    animation-delay: 100ms;
-}
-
-.home-notice-host .s2-pay-btn::before {
+.site-notice-marquee-icon {
     display: grid;
-    width: 32px;
-    height: 32px;
-    grid-row: 1 / span 2;
+    width: 18px;
+    height: 18px;
+    flex: 0 0 18px;
     place-items: center;
-    border-radius: 9px;
-    color: #087e83;
-    background: #d8f5f3;
-    content: "\f1d8";
-    font-family: "Font Awesome 6 Free";
-    font-size: 13px;
-    font-weight: 900;
+    border-radius: 5px;
+    color: #087d8d;
+    background: #dff8f8;
+    font-size: 10px;
 }
 
-.home-notice-host .s2-payment:nth-child(2) .s2-pay-btn::before {
-    content: "\f0c0";
+.site-notice-marquee-viewport {
+    min-width: 0;
+    overflow: hidden;
 }
 
-.home-notice-host .s2-pay-btn::after {
-    grid-column: 3;
-    grid-row: 1 / span 2;
-    content: "\2197";
-    color: #07979a;
-    font-size: 16px;
+.site-notice-marquee-track {
+    display: flex;
+    width: max-content;
+    will-change: transform;
+    animation: site-notice-marquee-scroll 32s linear infinite;
+}
+
+.site-notice-marquee-message {
+    flex: 0 0 auto;
+    padding-right: 72px;
+    color: #24465b;
+    font-size: 11px;
+    font-weight: 600;
     line-height: 1;
-    transition: transform 180ms ease;
+    white-space: nowrap;
 }
 
-.home-notice-host .s2-pay-btn strong {
-    display: block;
-    grid-column: 2;
-    grid-row: 1;
-    max-width: none;
-    margin: 0 0 1px !important;
-    padding: 0 !important;
-    color: #153446 !important;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0 !important;
-    line-height: 1.3;
-    text-align: left !important;
-    text-align-last: left !important;
-    text-justify: none !important;
-    word-spacing: normal !important;
-}
-
-.home-notice-host .s2-pay-btn span {
-    display: block;
-    grid-column: 2;
-    grid-row: 2;
-    max-width: none;
-    margin: 0 !important;
-    padding: 0 !important;
-    color: #5c7480 !important;
-    font-size: 11.5px;
-    letter-spacing: 0 !important;
-    line-height: 1.35;
-    text-align: left !important;
-    text-align-last: left !important;
-    text-justify: none !important;
-    word-spacing: normal !important;
-}
-
-.home-notice-host .s2-pay-btn:hover {
-    opacity: 1 !important;
-    transform: translateY(-2px);
-    border-color: #74cfcc !important;
-    box-shadow: 0 7px 15px rgba(31, 69, 88, 0.11);
-}
-
-.home-notice-host .s2-pay-btn:hover::after {
-    transform: translate(2px, -2px);
-}
-
-.home-notice-host .s2-pay-btn:focus-visible {
-    outline: 3px solid rgba(0, 211, 214, 0.35);
-    outline-offset: 3px;
-}
-
-@keyframes home-notice-in {
-    from {
-        opacity: 0;
-        transform: translateY(8px);
-    }
-
+@keyframes site-notice-marquee-scroll {
     to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes home-notice-rail {
-    to {
-        transform: scaleX(1);
-    }
-}
-
-@keyframes home-notice-icon {
-    from {
-        opacity: 0;
-        transform: scale(0.82);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-@keyframes home-notice-card-in {
-    from {
-        opacity: 0;
-        transform: translateY(7px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@media (max-width: 991px) {
-    .home-notice-host .s2-container {
-        grid-template-columns: 1fr;
-        gap: 6px;
-    }
-
-    .home-notice-host .s2-header {
-        min-height: 78px;
+        transform: translateX(-25%);
     }
 }
 
 @media (max-width: 575px) {
-    .home-notice-host {
-        margin-bottom: 18px;
+    .site-notice-marquee .container {
+        min-height: 32px;
+        gap: 7px;
     }
 
-    .home-notice-host .s2-wrapper {
-        padding: 10px !important;
-        border-radius: 12px;
+    .site-notice-marquee-icon {
+        width: 17px;
+        height: 17px;
+        flex-basis: 17px;
+        font-size: 9px;
     }
 
-    .home-notice-host .s2-container {
-        gap: 8px;
-    }
-
-    .home-notice-host .s2-header {
-        min-height: 86px;
-        padding: 6px 8px !important;
-    }
-
-    .home-notice-host .s2-title {
-        font-size: 16px !important;
-    }
-
-    .home-notice-host .s2-desc {
-        font-size: 12px !important;
-    }
-
-    .home-notice-host .s2-payment-row {
-        grid-template-columns: 1fr;
-    }
-
-    .home-notice-host .s2-pay-btn {
-        min-height: 78px;
-        padding: 10px 12px !important;
-        grid-template-columns: 32px minmax(0, 1fr) 18px;
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .home-notice-host .s2-wrapper,
-    .home-notice-host .s2-wrapper::before,
-    .home-notice-host .s2-header::before,
-    .home-notice-host .s2-pay-btn {
-        animation: none;
-    }
-
-    .home-notice-host .s2-pay-btn,
-    .home-notice-host .s2-pay-btn::after {
-        transition: none;
-    }
-
-    .home-notice-host .s2-pay-btn:hover,
-    .home-notice-host .s2-pay-btn:hover::after {
-        transform: none;
+    .site-notice-marquee-message {
+        padding-right: 48px;
+        font-size: 10px;
     }
 }
 
@@ -3098,19 +2844,6 @@ body {
 
 .home-service-meta {
     font-size: 9px;
-}
-
-.home-notice-host .s2-title {
-    font-size: 14px !important;
-}
-
-.home-notice-host .s2-desc,
-.home-notice-host .s2-pay-btn span {
-    font-size: 11px !important;
-}
-
-.home-notice-host .s2-pay-btn strong {
-    font-size: 12px !important;
 }
 
 @media (max-width: 575px) {
