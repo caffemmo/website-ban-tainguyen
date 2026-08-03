@@ -116,6 +116,7 @@ $serviceCatalog = caffemmo_service_catalog();
                                             <?= getLanguage() == $lang['lang'] ? 'selected' : ''; ?>><?= $lang['lang']; ?></option>
                                     <?php endforeach; ?>
                                 </select>
+                                <span class="header-select-arrow" aria-hidden="true"><i class="fa-solid fa-chevron-down"></i></span>
                             <?php elseif ($CMSNT->site('language_type') == 'gtranslate'): ?>
                                 <?= $CMSNT->site('gtranslate_script'); ?>
                             <?php endif ?>
@@ -128,6 +129,7 @@ $serviceCatalog = caffemmo_service_catalog();
                                     </option>
                                 <?php endforeach; ?>
                             </select>
+                            <span class="header-select-arrow" aria-hidden="true"><i class="fa-solid fa-chevron-down"></i></span>
                         </div>
                     </div>
                 </div>

@@ -3115,6 +3115,65 @@ body {
     display: none;
 }
 
+/* Keep the native language and currency controls readable on the cyan header. */
+.header-top-select {
+    gap: 16px;
+}
+
+.header-select {
+    gap: 6px;
+}
+
+.header-select > i {
+    margin-right: 0;
+}
+
+.header-select .select {
+    min-width: 0;
+    max-width: 116px;
+    padding: 2px 0;
+    border: 0;
+    border-radius: 0;
+    color: #ffffff !important;
+    background: transparent !important;
+    font-weight: 600;
+    line-height: 20px;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.header-select .select:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, .8);
+    outline-offset: 3px;
+}
+
+.header-select .select option {
+    color: #15374d;
+    background: #ffffff;
+}
+
+.header-select-arrow {
+    display: grid;
+    flex: 0 0 auto;
+    width: 12px;
+    height: 20px;
+    place-items: center;
+    pointer-events: none;
+}
+
+.header-select .header-select-arrow i {
+    margin: 0;
+    color: #ffffff;
+    font-size: 9px;
+}
+
+.home-telegram-actions {
+    margin-top: 24px;
+    margin-bottom: 20px;
+}
+
 @media (max-width: 1199px) {
     .home-service-grid {
         grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -3122,6 +3181,14 @@ body {
 }
 
 @media (max-width: 575px) {
+    .header-top-select {
+        gap: 12px;
+    }
+
+    .home-telegram-actions {
+        margin-top: 16px;
+    }
+
     .home-service-catalog {
         padding: 17px;
     }
