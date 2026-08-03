@@ -102,9 +102,8 @@ $loadLegacyClientPlugins = !isset($body['legacy_client_plugins']) || $body['lega
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
   <?php endif ?>
   <?= $body['header']; ?>
-  <link rel="stylesheet" href="<?= BASE_URL('mod/css/main.css?v=48'); ?>">
-  <link rel="stylesheet" href="<?= BASE_URL('mod/css/client-shell.css?v=2'); ?>">
-  <script src="<?= base_url('mod/js/main.js?v=5'); ?>"></script>
+  <link rel="stylesheet" href="<?= BASE_URL('mod/css/main.css?v=47'); ?>">
+  <script src="<?= base_url('mod/js/main.js?v=4'); ?>"></script>
   <?= $CMSNT->site('javascript_header'); ?>
 
 </head>

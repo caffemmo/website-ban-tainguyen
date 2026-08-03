@@ -12,33 +12,16 @@ if ($upMenuActive && $upService === '') {
     $upService = 'get-link';
 }
 $serviceCatalog = caffemmo_service_catalog();
-$isClientHome = isset($action) && $action === 'home';
-$isClientCatalog = isset($action) && $action === 'products';
-$isClientAuthenticated = isset($getUser) && is_array($getUser);
-$clientBodyClasses = 'has-desktop-sidebar caffemmo-client-shell';
-if ($isClientHome) {
-    $clientBodyClasses .= ' caffemmo-tech-home';
-}
-if ($isClientCatalog) {
-    $clientBodyClasses .= ' caffemmo-client-catalog';
-}
-if ($isClientAuthenticated) {
-    $clientBodyClasses .= ' caffemmo-client-authenticated';
-}
 ?>
 
-<body class="<?= htmlspecialchars($clientBodyClasses, ENT_QUOTES, 'UTF-8'); ?>">
+<body class="has-desktop-sidebar">
     <div class="backdrop"></div><a class="backtop" href="#"><i class="fa-sharp fa-solid fa-chevron-up"></i></a>
     <aside class="desktop-app-sidebar" aria-label="<?= __('Điều hướng chính'); ?>">
-        <a class="desktop-sidebar-brand" href="<?= base_url('client/home'); ?>">
-            <img src="<?= BASE_URL($CMSNT->site('logo_light')); ?>" alt="<?= htmlspecialchars($CMSNT->site('title'), ENT_QUOTES, 'UTF-8'); ?>">
-            <span><strong>CAFFEMMO</strong><small><?= __('Digital workspace'); ?></small></span>
-        </a>
         <div class="desktop-sidebar-scroll">
             <nav class="desktop-sidebar-nav">
                 <p class="desktop-sidebar-section-title"><?= __('Tổng quan'); ?></p>
                 <a class="desktop-sidebar-link <?= isset($action) && $action == 'home' ? 'active' : ''; ?>" href="<?= base_url('client/home'); ?>">
-                    <i class="fa-solid fa-table-cells-large" aria-hidden="true"></i><span><?= $isClientAuthenticated ? __('Bảng điều khiển') : __('Trang chủ'); ?></span>
+                    <i class="fa-solid fa-table-cells-large" aria-hidden="true"></i><span><?= __('Bảng điều khiển'); ?></span>
                 </a>
                 <a class="desktop-sidebar-link <?= isset($action) && $action == 'products' ? 'active' : ''; ?>" href="<?= base_url('client/products'); ?>">
                     <i class="fa-solid fa-store" aria-hidden="true"></i><span><?= __('Tất cả sản phẩm'); ?></span>
