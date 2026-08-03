@@ -1,11 +1,11 @@
 /* Shared dark-tech client shell. Kept separate from legacy theme rules for locality. */
 :root {
-    --client-canvas: #070d18;
-    --client-surface: #0c1626;
-    --client-surface-raised: #101e32;
-    --client-surface-strong: #142740;
-    --client-line: #203854;
-    --client-line-bright: #2e5476;
+    --client-canvas: #0b1326;
+    --client-surface: #0f1b34;
+    --client-surface-raised: #13223d;
+    --client-surface-strong: #172b48;
+    --client-line: #1d3350;
+    --client-line-bright: #2b4a70;
     --client-text: #f4f8ff;
     --client-muted: #93a8bd;
     --client-dim: #60778f;
@@ -14,7 +14,7 @@
     --client-green: #65d99a;
     --client-violet: #9f8cff;
     --client-danger: #ff7c92;
-    --client-sidebar-width: 264px;
+    --client-sidebar-width: 284px;
     --client-shadow: 0 16px 34px rgba(0, 0, 0, .2);
 }
 
@@ -48,6 +48,8 @@ body.caffemmo-client-shell {
     bottom: 0;
     left: 0;
     display: flex;
+    flex-direction: column;
+    align-items: stretch;
     width: var(--client-sidebar-width);
     padding: 0 13px 14px;
     overflow: hidden;
@@ -128,8 +130,11 @@ body.caffemmo-client-shell {
 .caffemmo-client-shell .desktop-sidebar-scroll {
     display: flex;
     flex: 1;
+    width: 100%;
     min-height: 0;
-    padding-top: 88px;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 88px 0 24px;
     overflow-x: hidden;
     overflow-y: auto;
     scrollbar-color: #355674 transparent;
@@ -139,6 +144,8 @@ body.caffemmo-client-shell {
 .caffemmo-client-shell .desktop-sidebar-nav {
     display: flex;
     flex: 1;
+    width: 100%;
+    min-width: 0;
     flex-direction: column;
     gap: 3px;
 }
@@ -159,6 +166,9 @@ body.caffemmo-client-shell {
 
 .caffemmo-client-shell .desktop-sidebar-link {
     display: flex;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
     align-items: center;
     min-height: 43px;
     gap: 11px;
@@ -236,6 +246,8 @@ body.caffemmo-client-shell {
 
 .caffemmo-client-shell .desktop-sidebar-support-card {
     display: grid;
+    width: 100%;
+    box-sizing: border-box;
     grid-template-columns: 32px minmax(0, 1fr) 26px;
     align-items: center;
     gap: 8px;
@@ -298,7 +310,7 @@ body.caffemmo-client-shell {
 .caffemmo-client-shell .navbar-part {
     margin-left: var(--client-sidebar-width);
     color: var(--client-text);
-    background: rgba(9, 20, 35, .98);
+    background: #0e1930;
     border-color: var(--client-line);
 }
 
@@ -1384,6 +1396,26 @@ body.caffemmo-client-shell {
     .caffemmo-client-shell .footer-part,
     .caffemmo-client-shell .footer-bottom {
         margin-left: 0;
+    }
+
+    .caffemmo-client-shell .header-top,
+    .caffemmo-client-shell .navbar-part {
+        display: none;
+    }
+
+    .caffemmo-client-shell .header-part {
+        min-height: 64px;
+        border-bottom: 1px solid var(--client-line);
+    }
+
+    .caffemmo-client-shell .header-content {
+        min-height: 64px;
+    }
+
+    .caffemmo-client-shell .header-logo img {
+        width: 142px;
+        height: 38px;
+        object-fit: contain;
     }
 }
 

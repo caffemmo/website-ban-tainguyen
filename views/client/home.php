@@ -176,7 +176,7 @@ require_once(__DIR__.'/nav.php');
         <?php endif; ?>
         <div class="row mb-5">
             <?php if (!$isProductsPage): ?>
-            <?php if($CMSNT->site('notice_home') != ''):?>
+            <?php if(!$isDashboardUser && $CMSNT->site('notice_home') != ''):?>
             <div class="col-md-12">
                 <?php
                 $home_notice = $CMSNT->site('notice_home');
@@ -191,6 +191,7 @@ require_once(__DIR__.'/nav.php');
             </div>
             <?php endif?>
 
+            <?php if (!$isDashboardUser): ?>
             <div class="col-12">
                 <section class="tech-home-services" aria-labelledby="home-service-title">
                     <div class="tech-home-services-head">
@@ -221,6 +222,7 @@ require_once(__DIR__.'/nav.php');
                     </div>
                 </section>
             </div>
+            <?php endif; ?>
             <?php endif; ?>
 
 
@@ -297,7 +299,7 @@ require_once(__DIR__.'/nav.php');
                 
             </div>
             <?php endif; ?>
-            <?php if(!$isProductsPage && $CMSNT->site('cot_so_du_ben_phai') == 1):?>
+            <?php if(!$isProductsPage && !$isDashboardUser && $CMSNT->site('cot_so_du_ben_phai') == 1):?>
             <div class="col-12 tech-home-wallet-col">
                 <div class="account-card card-wallet-home tech-home-wallet-card py-4">
                     <?php if(isset($getUser)):?>
