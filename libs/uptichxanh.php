@@ -234,8 +234,13 @@ function uptichxanh_should_use_api2($response)
     }
 
     $httpCode = (int) ($response['_http_code'] ?? 0);
-    return !empty($response['_transport_error'])
-        || in_array($httpCode, [408, 429, 500, 502, 503, 504], true);
+    if (!empty($response['_transport_error'])) {
+        return true;
+    }
+    if (in_array($httpCode, [400, 401, 403, 413, 415, 422], true)) {
+        return false;
+    }
+    return true;
 }
 
 function uptichxanh_api2_up_fb_call($cookie, $imagePath)
@@ -322,7 +327,7 @@ function uptichxanh_api2_up_fb_call($cookie, $imagePath)
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_FOLLOWLOCATION => false,
         CURLOPT_CONNECTTIMEOUT => 8,
-        CURLOPT_TIMEOUT => $config['timeout'],
+        CURLOPT_TIMEOUT => max(60, $config['timeout']),
         CURLOPT_SSL_VERIFYPEER => true,
         CURLOPT_SSL_VERIFYHOST => 2
     ]);
@@ -396,6 +401,12 @@ function uptichxanh_api2_up_fb_call($cookie, $imagePath)
 function uptichxanh_error_text($response, $fallback = 'Không thể hoàn tất yêu cầu.')
 {
     $httpCode = (int) ($response['_http_code'] ?? 0);
+    $providerMessage = isset($response['message']) && is_scalar($response['message'])
+        ? trim((string) $response['message'])
+        : '';
+    if (($response['_provider'] ?? '') === 'api2' && $providerMessage !== '') {
+        return function_exists('mb_substr') ? mb_substr($providerMessage, 0, 300) : substr($providerMessage, 0, 300);
+    }
     $map = [
         400 => 'Thông tin gửi lên chưa hợp lệ.',
         401 => 'Cấu hình xác thực dịch vụ không hợp lệ.',
