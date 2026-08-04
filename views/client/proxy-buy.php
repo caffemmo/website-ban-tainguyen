@@ -16,7 +16,7 @@ $body = [
     'desc' => __('Mua proxy chính hãng với cấu hình rõ ràng và quản lý tập trung.'),
     'keyword' => 'proxy, mua proxy, proxy premium'
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=20') . '">';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=21') . '">';
 $body['footer'] = '<script src="' . BASE_URL('mod/js/proxy.js?v=8') . '"></script>';
 
 require_once __DIR__ . '/header.php';
@@ -70,12 +70,12 @@ require_once __DIR__ . '/nav.php';
             <fieldset class="proxy-fieldset">
                 <legend><?= __('Loại proxy'); ?></legend>
                 <div class="proxy-type-grid" data-proxy-types>
-                    <button type="button" class="proxy-type-card is-selected" data-proxy-type="IPV4">
+                    <button type="button" class="proxy-type-card proxy-type-card--datacenter is-selected" data-proxy-type="IPV4">
                         <span class="proxy-type-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
                         <span class="proxy-type-content">
-                            <span class="proxy-type-title-row"><strong><?= __('Proxy IPv4 thường'); ?></strong><span class="proxy-type-badges"><em class="proxy-type-badge proxy-type-badge--private">Private</em></span></span>
-                            <small><?= __('Giữ tích chuyên dụng cho nhu cầu phổ biến.'); ?></small>
-                            <span class="proxy-type-tags"><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i>99.9% uptime</em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i>HTTP/SOCKS5</em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Phủ sóng toàn cầu'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Băng thông tốt'); ?></em></span>
+                            <span class="proxy-type-title-row"><strong><?= __('Proxy IPv4 Datacenter'); ?></strong><span class="proxy-type-badges"><em class="proxy-type-badge proxy-type-badge--private">Private</em></span></span>
+                            <small class="proxy-type-description"><?= __('Proxy IPv4 Datacenter là giải pháp phù hợp cho hầu hết nhu cầu sử dụng phổ biến. Hỗ trợ ngâm tích xanh, duy trì IP ổn định và kết nối lâu dài, hạn chế gián đoạn, tốc độ quốc tế và băng thông lớn.'); ?></small>
+                            <span class="proxy-type-tags"><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('IP riêng'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i>HTTP/SOCKS5</em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Hỗ trợ ngâm tích xanh'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Duy trì tích xanh'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Băng thông tốc độ cao'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Tốc độ quốc tế'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Nuôi tài khoản'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Ổn định'); ?></em></span>
                         </span>
                         <i class="fa-solid fa-check proxy-type-check" aria-hidden="true"></i>
                     </button>
