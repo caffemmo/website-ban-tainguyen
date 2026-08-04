@@ -3298,7 +3298,7 @@ body {
 
 .home-service-head .home-service-count::before {
     flex: 0 0 8px;
-    margin-right: 2px;
+    margin-right: 10px;
 }
 
 .home-service-head .home-service-count > i {
