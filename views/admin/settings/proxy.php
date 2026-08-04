@@ -148,6 +148,7 @@ if (isset($_POST['SaveProxySettings'])) {
     $baseUrl = trim((string) ($_POST['youproxy_api_base_url'] ?? ''));
     $usdRate = trim((string) ($_POST['youproxy_usd_rate'] ?? ''));
     $markup = trim((string) ($_POST['youproxy_markup_percent'] ?? ''));
+    $ipv6RetailUnitPrice = trim((string) ($_POST['youproxy_ipv6_retail_unit_price'] ?? ''));
     $timeout = filter_var($_POST['youproxy_timeout'] ?? null, FILTER_VALIDATE_INT);
 
     if ($apiKey !== '' && mb_strlen($apiKey) > 255) {
@@ -162,6 +163,9 @@ if (isset($_POST['SaveProxySettings'])) {
     if (!is_numeric($markup) || (float) $markup < 0 || (float) $markup > 1000) {
         admin_msg_error('Phần trăm markup không hợp lệ.', base_url_admin('settings&tab=proxy'), 1200);
     }
+    if ($ipv6RetailUnitPrice !== '' && (!is_numeric($ipv6RetailUnitPrice) || (float) $ipv6RetailUnitPrice < 0 || (float) $ipv6RetailUnitPrice > 1000000000)) {
+        admin_msg_error('Giá bán IPv6 lẻ không hợp lệ.', base_url_admin('settings&tab=proxy'), 1200);
+    }
     if ($timeout === false || $timeout < 5 || $timeout > 120) {
         admin_msg_error('Timeout phải nằm trong khoảng 5 đến 120 giây.', base_url_admin('settings&tab=proxy'), 1200);
     }
@@ -172,7 +176,20 @@ if (isset($_POST['SaveProxySettings'])) {
     proxy_admin_save_setting('youproxy_api_base_url', rtrim($baseUrl, '/'));
     proxy_admin_save_setting('youproxy_usd_rate', number_format((float) $usdRate, 2, '.', ''));
     proxy_admin_save_setting('youproxy_markup_percent', number_format((float) $markup, 2, '.', ''));
+    proxy_admin_save_setting('youproxy_ipv6_retail_unit_price', $ipv6RetailUnitPrice === '' ? '0' : number_format((float) $ipv6RetailUnitPrice, 2, '.', ''));
     proxy_admin_save_setting('youproxy_timeout', (string) $timeout);
+
+    if ((float) $ipv6RetailUnitPrice > 0) {
+        $normalizedIpv6RetailPrice = number_format((float) $ipv6RetailUnitPrice, 2, '.', '');
+        $CMSNT->update('proxy_ipv6_inventory', [
+            'retail_price' => $normalizedIpv6RetailPrice,
+            'updated_at' => date('Y-m-d H:i:s')
+        ], '`status` IN (?, ?)', ['available', 'reserved']);
+        $CMSNT->update('proxy_ipv6_batches', [
+            'retail_unit_price' => $normalizedIpv6RetailPrice,
+            'updated_at' => date('Y-m-d H:i:s')
+        ], '`status` IN (?, ?)', ['active', 'pending_sync']);
+    }
 
     $CMSNT->insert('logs', [
         'user_id' => $getUser['id'],
@@ -186,6 +203,7 @@ if (isset($_POST['SaveProxySettings'])) {
 }
 
 $proxyConfig = youproxy_config();
+$ipv6RetailUnitPrice = youproxy_ipv6_retail_unit_price();
 $proxyConfigured = youproxy_is_configured();
 $hasStoredKey = youproxy_db_setting('youproxy_api_key') !== '';
 youproxy_ensure_tables();
@@ -339,6 +357,15 @@ $ipv6RetailBatches = $CMSNT->get_list_safe(
                                 <span class="input-group-text">%</span>
                             </div>
                             <div class="proxy-admin-help mt-2"><?= __('Có thể đặt 0 nếu không cộng thêm phí trên giá quy đổi.'); ?></div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label proxy-admin-label" for="youproxy_ipv6_retail_unit_price"><i class="fa-solid fa-tag" aria-hidden="true"></i><?= __('Giá bán IPv6 lẻ / IP'); ?></label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="youproxy_ipv6_retail_unit_price" name="youproxy_ipv6_retail_unit_price" value="<?= $ipv6RetailUnitPrice > 0 ? htmlspecialchars(number_format($ipv6RetailUnitPrice, 2, '.', ''), ENT_QUOTES, 'UTF-8') : ''; ?>" min="0" max="1000000000" step="1000" placeholder="0">
+                                <span class="input-group-text">VND / IP</span>
+                            </div>
+                            <div class="proxy-admin-help mt-2"><?= __('Nhập giá thủ công cho kho chưa bán. Để trống hoặc 0 để tự tính theo giá YouProxy và markup.'); ?></div>
                         </div>
 
                         <div class="mb-1">

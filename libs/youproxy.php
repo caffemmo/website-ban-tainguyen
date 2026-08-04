@@ -561,6 +561,12 @@ function youproxy_ipv6_retail_batch_quantity()
     return 10;
 }
 
+function youproxy_ipv6_retail_unit_price()
+{
+    $value = youproxy_db_setting('youproxy_ipv6_retail_unit_price', '0');
+    return is_numeric($value) && (float) $value > 0 ? round((float) $value, 2) : 0;
+}
+
 function youproxy_ipv6_retail_release_expired_reservations()
 {
     global $CMSNT;
@@ -721,6 +727,10 @@ function youproxy_ipv6_retail_store_batch($adminUserId, $payload, $quote, $provi
 
     $batchQuantity = youproxy_ipv6_retail_batch_quantity();
     $price = youproxy_price_context($quote);
+    $retailUnitPrice = youproxy_ipv6_retail_unit_price();
+    if ($retailUnitPrice <= 0) {
+        $retailUnitPrice = round((float) $price['wallet_amount'] / $batchQuantity, 2);
+    }
     $providerOrderId = youproxy_extract_order_id($providerOrder);
     $batchId = $CMSNT->insert('proxy_ipv6_batches', [
         'provider_order_id' => $providerOrderId !== '' ? $providerOrderId : null,
@@ -733,7 +743,7 @@ function youproxy_ipv6_retail_store_batch($adminUserId, $payload, $quote, $provi
         'received_quantity' => 0,
         'provider_price' => (float) $price['provider_price'],
         'provider_cost_vnd' => youproxy_provider_cost_vnd($price),
-        'retail_unit_price' => round((float) $price['wallet_amount'] / $batchQuantity, 2),
+        'retail_unit_price' => $retailUnitPrice,
         'provider_currency' => (string) $price['provider_currency'],
         'status' => 'pending_sync',
         'provider_payload' => json_encode($providerOrder, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
@@ -786,7 +796,7 @@ function youproxy_ipv6_retail_store_batch($adminUserId, $payload, $quote, $provi
             'protocol' => (string) ($payload['protocol'] ?? 'HTTP'),
             'auth_type' => (string) ($payload['authType'] ?? 'LOGIN'),
             'rent_period_days' => (int) ($payload['rentPeriodDays'] ?? 0),
-            'retail_price' => round((float) $price['wallet_amount'] / $batchQuantity, 2),
+            'retail_price' => $retailUnitPrice,
             'acquisition_unit_cost_vnd' => round(youproxy_provider_cost_vnd($price) / $batchQuantity, 2),
             'date_start' => $dateStart,
             'date_end' => $dateEnd,
