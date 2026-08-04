@@ -98,6 +98,14 @@ require_once __DIR__ . '/nav.php';
                 </div>
             </div>
 
+            <div class="up-notice up-uid-policy" role="note">
+                <i class="fa-solid fa-tag" aria-hidden="true"></i>
+                <div>
+                    <strong><?= __('Chính sách tính phí theo UID'); ?></strong>
+                    <span><?= __('UID đã được xử lý thành công sẽ được miễn phí 0đ khi sử dụng lại. Chỉ UID mới mới tính phí theo giá đang hiển thị.'); ?></span>
+                </div>
+            </div>
+
             <?php if (!$upConfigured): ?>
                 <div class="up-form-lock" id="up-form-state" role="status">
                     <i class="fa-solid fa-lock" aria-hidden="true"></i>

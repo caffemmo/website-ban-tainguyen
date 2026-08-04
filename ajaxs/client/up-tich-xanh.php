@@ -238,8 +238,8 @@ $safeData = [
 ];
 uptichxanh_json([
     'success' => true,
-    'message' => $service === 'get-link'
-        ? 'Đã tạo link xác minh.'
-        : ($isRepeatUid ? 'UID này đã được xác minh trước đó, yêu cầu lần này được miễn phí.' : 'Yêu cầu xác minh đã được tiếp nhận.'),
+    'message' => $isRepeatUid
+        ? 'UID này đã được xử lý thành công trước đó, lần sử dụng này được miễn phí 0đ.'
+        : ($service === 'get-link' ? 'Đã tạo link xác minh.' : 'Yêu cầu xác minh đã được tiếp nhận.'),
     'data' => $safeData
 ]);

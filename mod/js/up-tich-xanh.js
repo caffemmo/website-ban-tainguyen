@@ -51,10 +51,25 @@
         }
     }
 
+    function escapeHtml(value) {
+        return String(value || '').replace(/[&<>"']/g, function (character) {
+            return {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            }[character];
+        });
+    }
+
     function showResult(data) {
         if (!result) return;
         var html = '<strong>Yêu cầu đã hoàn tất</strong>'
             + '<span>Chi phí dịch vụ: ' + String(data.charged_label || '') + '</span>';
+        if (data.uid) {
+            html += '<span>UID \u0111\u00e3 x\u1eed l\u00fd: ' + escapeHtml(data.uid) + '</span>';
+        }
         if (data.link) {
             html += '<a href="' + String(data.link).replace(/"/g, '&quot;') + '" target="_blank" rel="noopener noreferrer">Mở link xác minh <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>';
         }

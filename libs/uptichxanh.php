@@ -116,7 +116,9 @@ function uptichxanh_service_label($service)
 
 function uptichxanh_extract_uid($service, $cookie)
 {
-    $cookieName = $service === 'up-ig' ? 'ds_user_id' : ($service === 'up-fb' ? 'c_user' : '');
+    $cookieName = $service === 'up-ig'
+        ? 'ds_user_id'
+        : (in_array($service, ['get-link', 'up-fb'], true) ? 'c_user' : '');
     if ($cookieName === '') {
         return '';
     }
@@ -133,7 +135,7 @@ function uptichxanh_extract_uid($service, $cookie)
 function uptichxanh_find_successful_uid_order($userId, $service, $uid)
 {
     global $CMSNT;
-    if (!isset($CMSNT) || !is_object($CMSNT) || $uid === '' || !in_array($service, ['up-fb', 'up-ig'], true)) {
+    if (!isset($CMSNT) || !is_object($CMSNT) || $uid === '' || !in_array($service, ['get-link', 'up-fb', 'up-ig'], true)) {
         return null;
     }
 
