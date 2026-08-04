@@ -17,6 +17,12 @@
     var result = app.querySelector('[data-up-result]');
     var imageMeta = app.querySelector('[data-up-image-meta]');
     var imageTitle = app.querySelector('[data-up-image-title]');
+    var imagePreview = app.querySelector('[data-up-image-preview]');
+    var imagePreviewImage = app.querySelector('[data-up-image-preview-image]');
+    var imagePreviewName = app.querySelector('[data-up-image-preview-name]');
+    var imagePreviewInfo = app.querySelector('[data-up-image-preview-info]');
+    var imageRemove = app.querySelector('[data-up-image-remove]');
+    var imagePreviewUrl = '';
     var imageValidationToken = 0;
 
     function redirectToLogin() {
@@ -81,6 +87,35 @@
         imageMeta.textContent = message || '';
     }
 
+    function clearImagePreview() {
+        if (imagePreviewUrl) {
+            URL.revokeObjectURL(imagePreviewUrl);
+            imagePreviewUrl = '';
+        }
+        if (imagePreviewImage) {
+            imagePreviewImage.removeAttribute('src');
+            imagePreviewImage.alt = 'Ảnh giấy tờ đã chọn';
+        }
+        if (imagePreviewName) imagePreviewName.textContent = '';
+        if (imagePreviewInfo) imagePreviewInfo.textContent = '';
+        if (imagePreview) imagePreview.hidden = true;
+    }
+
+    function showImagePreview(file) {
+        if (!imagePreview || !imagePreviewImage) return;
+        clearImagePreview();
+        imagePreviewUrl = URL.createObjectURL(file);
+        imagePreviewImage.src = imagePreviewUrl;
+        imagePreviewImage.alt = 'Ảnh giấy tờ đã chọn: ' + file.name;
+        if (imagePreviewName) imagePreviewName.textContent = file.name;
+        if (imagePreviewInfo) imagePreviewInfo.textContent = 'Đang đọc ảnh...';
+        imagePreview.hidden = false;
+    }
+
+    function setImagePreviewInfo(message) {
+        if (imagePreviewInfo) imagePreviewInfo.textContent = message || '';
+    }
+
     function formatFileSize(bytes) {
         if (bytes < 1024 * 1024) return Math.max(1, Math.round(bytes / 1024)) + 'KB';
         return (bytes / (1024 * 1024)).toFixed(2).replace(/\.00$/, '') + 'MB';
@@ -119,10 +154,12 @@
         var validation = await validateImageFile(file);
         if (validation.error) {
             setImageState('error', validation.error);
+            setImagePreviewInfo(validation.error);
             if (imageTitle) imageTitle.textContent = 'Ảnh chưa hợp lệ';
             return validation.error;
         }
         setImageState('valid', 'Ảnh hợp lệ · ' + validation.dimensions.width + '×' + validation.dimensions.height + 'px · ' + formatFileSize(file.size));
+        setImagePreviewInfo(validation.dimensions.width + '×' + validation.dimensions.height + 'px · ' + formatFileSize(file.size));
         if (imageTitle) imageTitle.textContent = 'Ảnh đã sẵn sàng';
         return '';
     }
@@ -165,6 +202,9 @@
             setMessage(notice, data.message || 'Yêu cầu đã được xử lý thành công.', 'success');
             showResult(data.data || {});
             form.reset();
+            clearImagePreview();
+            setImageState('empty', 'Chưa chọn ảnh');
+            if (imageTitle) imageTitle.textContent = 'Chọn ảnh giấy tờ';
         } catch (error) {
             setMessage(notice, error.message || 'Không thể hoàn tất yêu cầu.', 'error');
         } finally {
@@ -181,18 +221,29 @@
         var currentToken = ++imageValidationToken;
         var file = image.files && image.files[0];
         if (!file) {
+            clearImagePreview();
             setImageState('empty', 'Chưa chọn ảnh');
             if (imageTitle) imageTitle.textContent = 'Chọn ảnh giấy tờ';
             return;
         }
+        showImagePreview(file);
         var error = await validateSelectedImage(file);
         if (currentToken !== imageValidationToken) return;
         if (error) {
             image.value = '';
+            clearImagePreview();
             setMessage(notice, error, 'error');
         } else {
             setMessage(notice, 'Ảnh đã đạt yêu cầu, bạn có thể gửi yêu cầu.', 'success');
         }
+    });
+    if (imageRemove) imageRemove.addEventListener('click', function () {
+        imageValidationToken += 1;
+        if (image) image.value = '';
+        clearImagePreview();
+        setImageState('empty', 'Chưa chọn ảnh');
+        if (imageTitle) imageTitle.textContent = 'Chọn ảnh giấy tờ';
+        setMessage(notice, '', 'info');
     });
     if (form) form.addEventListener('submit', function (event) {
         event.preventDefault();

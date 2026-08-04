@@ -29,8 +29,8 @@ $body = [
     'desc' => __('Dịch vụ Get Link Facebook, Up tích Facebook và Up tích Instagram.'),
     'keyword' => 'get link facebook, up tích xanh, up tích facebook, up tích instagram'
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/up-tich-xanh.css?v=11') . '">';
-$body['footer'] = '<script src="' . BASE_URL('mod/js/up-tich-xanh.js?v=4') . '"></script>';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/up-tich-xanh.css?v=12') . '">';
+$body['footer'] = '<script src="' . BASE_URL('mod/js/up-tich-xanh.js?v=5') . '"></script>';
 
 require_once __DIR__ . '/header.php';
 require_once __DIR__ . '/nav.php';
@@ -126,6 +126,14 @@ require_once __DIR__ . '/nav.php';
                             <small class="up-upload-status" data-up-image-meta data-state="empty" aria-live="polite">Chưa chọn ảnh</small>
                             <input id="up_image" type="file" name="image" accept="image/png,image/jpeg,image/webp"<?= !$upConfigured ? ' disabled' : ''; ?> required>
                         </label>
+                        <div class="up-image-preview" data-up-image-preview hidden>
+                            <img data-up-image-preview-image alt="Ảnh giấy tờ đã chọn">
+                            <div class="up-image-preview-copy">
+                                <strong data-up-image-preview-name></strong>
+                                <small data-up-image-preview-info></small>
+                            </div>
+                            <button type="button" class="up-image-preview-remove" data-up-image-remove aria-label="Xóa ảnh đã chọn"><i class="fa-solid fa-xmark" aria-hidden="true"></i> Xóa</button>
+                        </div>
                     </div>
                     <div class="up-price-row"><span><?= __('Chi phí mỗi lượt'); ?></span><strong><?= format_currency($servicePrice); ?></strong></div>
                     <button class="up-submit-button" data-up-submit type="submit"<?= !$upConfigured ? ' disabled' : ''; ?>><i class="fa-solid fa-paper-plane" aria-hidden="true"></i> <?= __('Gửi yêu cầu xác minh'); ?></button>

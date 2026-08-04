@@ -403,6 +403,15 @@
 .up-upload-status[data-state='valid'] { border-color: #a8e1ca; color: #087655; background: #effbf5; }
 .up-upload-status[data-state='error'] { border-color: #efb4b4; color: #a13d3d; background: #fff5f5; }
 .up-upload-box input { display: none; }
+.up-image-preview { display: grid; grid-template-columns: 58px minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid #d7e5eb; border-radius: 8px; background: #f8fbfc; }
+.up-image-preview[hidden] { display: none; }
+.up-image-preview img { width: 58px; height: 58px; border: 1px solid #cfe0e7; border-radius: 6px; object-fit: cover; background: #eef5f7; }
+.up-image-preview-copy { display: grid; min-width: 0; gap: 4px; }
+.up-image-preview-copy strong { overflow-wrap: anywhere; color: #234961; font-size: 11px; line-height: 1.4; }
+.up-image-preview-copy small { color: #5c7b8f; font-size: 10px; line-height: 1.4; }
+.up-image-preview-remove { display: inline-flex; min-height: 30px; align-items: center; gap: 4px; flex: 0 0 auto; border: 1px solid #efb4b4; border-radius: 6px; padding: 5px 8px; color: #a13d3d; background: #fff5f5; font: inherit; font-size: 10px; font-weight: 700; cursor: pointer; }
+.up-image-preview-remove:hover { border-color: #d97777; background: #ffeded; }
+.up-image-preview-remove:focus-visible { border-color: #d74343; box-shadow: 0 0 0 3px rgba(215, 67, 67, .14); outline: none; }
 
 .up-submit-button { min-height: 46px; border: 0; border-radius: 7px; background: #dce9ee; color: #7290a1; font: inherit; font-size: 13px; font-weight: 700; cursor: not-allowed; transition: background-color 180ms ease, box-shadow 180ms ease, transform 180ms ease; }
 .up-submit-button:not(:disabled) { color: #fff; background: #009ea7; cursor: pointer; }
