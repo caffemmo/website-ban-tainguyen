@@ -52,12 +52,21 @@ function uptichxanh_config()
     $apiKey = uptichxanh_db_setting('uptichxanh_api_key');
     $baseUrl = uptichxanh_db_setting('uptichxanh_api_base_url');
     $timeoutSetting = uptichxanh_db_setting('uptichxanh_timeout', '');
+    $api2Key = uptichxanh_db_setting('uptichxanh_api2_key');
+    $api2BaseUrl = uptichxanh_db_setting('uptichxanh_api2_base_url');
+    $api2Enabled = uptichxanh_db_setting('uptichxanh_api2_enabled', '0') === '1';
 
     if ($apiKey === '') {
         $apiKey = uptichxanh_env('UPTICHXANH_API_KEY');
     }
     if ($baseUrl === '') {
         $baseUrl = uptichxanh_env('UPTICHXANH_API_BASE_URL', 'https://viaxanh69.com/uptichxanh');
+    }
+    if ($api2Key === '') {
+        $api2Key = uptichxanh_env('UPTICHXANH_API2_KEY');
+    }
+    if ($api2BaseUrl === '') {
+        $api2BaseUrl = uptichxanh_env('UPTICHXANH_API2_BASE_URL', 'https://viameta.co/bot');
     }
 
     $timeout = $timeoutSetting !== ''
@@ -67,6 +76,11 @@ function uptichxanh_config()
     return [
         'api_key' => $apiKey,
         'base_url' => rtrim($baseUrl, '/'),
+        'api2' => [
+            'enabled' => $api2Enabled,
+            'api_key' => $api2Key,
+            'base_url' => rtrim($api2BaseUrl, '/')
+        ],
         'timeout' => max(5, min(120, $timeout)),
         'prices' => $prices
     ];
@@ -161,12 +175,12 @@ function uptichxanh_request($method, $endpoint, $query = [], $payload = null)
     curl_close($curl);
 
     if ($raw === false || $curlError !== '') {
-        return ['ok' => false, 'http_code' => $httpCode, 'body' => null, 'error' => 'Không thể kết nối đến dịch vụ.'];
+        return ['ok' => false, 'http_code' => $httpCode, 'body' => null, 'error' => 'Không thể kết nối đến dịch vụ.', 'transport_error' => true];
     }
 
     $body = json_decode($raw, true);
     if (!is_array($body)) {
-        return ['ok' => false, 'http_code' => $httpCode, 'body' => null, 'error' => 'Dịch vụ trả về dữ liệu không hợp lệ.'];
+        return ['ok' => false, 'http_code' => $httpCode, 'body' => null, 'error' => 'Dịch vụ trả về dữ liệu không hợp lệ.', 'transport_error' => false];
     }
 
     $providerSuccess = isset($body['status']) && strtolower((string) $body['status']) === 'success';
@@ -174,7 +188,8 @@ function uptichxanh_request($method, $endpoint, $query = [], $payload = null)
         'ok' => $httpCode >= 200 && $httpCode < 300 && $providerSuccess,
         'http_code' => $httpCode,
         'body' => $body,
-        'error' => ''
+        'error' => '',
+        'transport_error' => false
     ];
 }
 
@@ -190,13 +205,192 @@ function uptichxanh_api_call($method, $endpoint, $query = [], $payload = null)
             'status' => isset($body['status']) ? (string) $body['status'] : 'error',
             'message' => $message !== '' ? $message : $response['error'],
             'data' => isset($body['data']) && is_array($body['data']) ? $body['data'] : [],
-            '_http_code' => $response['http_code']
+            '_http_code' => $response['http_code'],
+            '_transport_error' => !empty($response['transport_error']),
+            '_provider' => 'api1'
         ];
     }
 
     $body['success'] = true;
     $body['_http_code'] = $response['http_code'];
+    $body['_transport_error'] = false;
+    $body['_provider'] = 'api1';
     return $body;
+}
+
+function uptichxanh_api2_is_configured()
+{
+    $config = uptichxanh_config();
+    return !empty($config['api2']['enabled'])
+        && $config['api2']['api_key'] !== ''
+        && filter_var($config['api2']['base_url'], FILTER_VALIDATE_URL) !== false
+        && strtolower((string) parse_url($config['api2']['base_url'], PHP_URL_SCHEME)) === 'https';
+}
+
+function uptichxanh_should_use_api2($response)
+{
+    if (!is_array($response) || !uptichxanh_api2_is_configured()) {
+        return false;
+    }
+
+    $httpCode = (int) ($response['_http_code'] ?? 0);
+    return !empty($response['_transport_error'])
+        || in_array($httpCode, [408, 429, 500, 502, 503, 504], true);
+}
+
+function uptichxanh_api2_up_fb_call($cookie, $imagePath)
+{
+    $config = uptichxanh_config();
+    if (!uptichxanh_api2_is_configured()) {
+        return [
+            'success' => false,
+            'message' => 'API 2 dự phòng chưa được cấu hình.',
+            'data' => [],
+            '_http_code' => 0,
+            '_transport_error' => false,
+            '_provider' => 'api2'
+        ];
+    }
+    if (!is_file($imagePath) || !is_readable($imagePath)) {
+        return [
+            'success' => false,
+            'message' => 'Không thể đọc ảnh xác minh để gửi sang API 2.',
+            'data' => [],
+            '_http_code' => 0,
+            '_transport_error' => false,
+            '_provider' => 'api2'
+        ];
+    }
+    if ((int) filesize($imagePath) > 5 * 1024 * 1024) {
+        return [
+            'success' => false,
+            'message' => 'Ảnh vượt quá giới hạn 5MB của API 2.',
+            'data' => [],
+            '_http_code' => 413,
+            '_transport_error' => false,
+            '_provider' => 'api2'
+        ];
+    }
+    if (!function_exists('curl_init') || !class_exists('CURLFile')) {
+        return [
+            'success' => false,
+            'message' => 'Máy chủ chưa bật PHP cURL để dùng API 2.',
+            'data' => [],
+            '_http_code' => 0,
+            '_transport_error' => false,
+            '_provider' => 'api2'
+        ];
+    }
+
+    $mime = 'application/octet-stream';
+    if (function_exists('finfo_open')) {
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $detectedMime = $finfo ? finfo_file($finfo, $imagePath) : false;
+        if ($finfo) {
+            finfo_close($finfo);
+        }
+        if (is_string($detectedMime) && $detectedMime !== '') {
+            $mime = $detectedMime;
+        }
+    }
+    if (!in_array($mime, ['image/jpeg', 'image/png'], true)) {
+        return [
+            'success' => false,
+            'message' => 'API 2 chỉ nhận ảnh JPG hoặc PNG.',
+            'data' => [],
+            '_http_code' => 415,
+            '_transport_error' => false,
+            '_provider' => 'api2'
+        ];
+    }
+
+    $curl = curl_init();
+    curl_setopt_array($curl, [
+        CURLOPT_URL => $config['api2']['base_url'] . '/ajax/uptick_fb.php',
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => [
+            'cookie' => (string) $cookie,
+            'confirm' => 'true',
+            'image' => new CURLFile($imagePath, $mime, basename($imagePath))
+        ],
+        CURLOPT_HTTPHEADER => [
+            'Accept: text/event-stream',
+            'Cache-Control: no-cache',
+            'X-Api-Key: ' . $config['api2']['api_key'],
+            'User-Agent: Caffemmo-Social/1.0'
+        ],
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_FOLLOWLOCATION => false,
+        CURLOPT_CONNECTTIMEOUT => 8,
+        CURLOPT_TIMEOUT => $config['timeout'],
+        CURLOPT_SSL_VERIFYPEER => true,
+        CURLOPT_SSL_VERIFYHOST => 2
+    ]);
+
+    $raw = curl_exec($curl);
+    $curlError = curl_error($curl);
+    $httpCode = (int) curl_getinfo($curl, CURLINFO_HTTP_CODE);
+    curl_close($curl);
+
+    if ($raw === false || $curlError !== '') {
+        return [
+            'success' => false,
+            'message' => 'Không thể kết nối đến API 2 dự phòng.',
+            'data' => [],
+            '_http_code' => $httpCode,
+            '_transport_error' => true,
+            '_provider' => 'api2'
+        ];
+    }
+
+    $done = false;
+    $message = '';
+    $eventLines = preg_split('/\r\n|\n|\r/', (string) $raw);
+    foreach ($eventLines as $line) {
+        if (strpos($line, 'data:') !== 0) {
+            continue;
+        }
+        $event = json_decode(trim(substr($line, 5)), true);
+        if (!is_array($event)) {
+            continue;
+        }
+        $type = strtolower(trim((string) ($event['type'] ?? '')));
+        $payload = isset($event['payload']) && is_array($event['payload']) ? $event['payload'] : [];
+        $eventMessage = isset($payload['message']) && is_scalar($payload['message'])
+            ? trim((string) $payload['message'])
+            : (isset($payload['msg']) && is_scalar($payload['msg']) ? trim((string) $payload['msg']) : '');
+        if ($eventMessage !== '') {
+            $message = $eventMessage;
+        }
+        if ($type === 'done') {
+            $done = true;
+            break;
+        }
+        if ($type === 'error') {
+            break;
+        }
+    }
+
+    if ($httpCode >= 200 && $httpCode < 300 && $done) {
+        return [
+            'success' => true,
+            'status' => 'success',
+            'message' => $message !== '' ? $message : 'Yêu cầu xác minh đã được tiếp nhận.',
+            'data' => [],
+            '_http_code' => $httpCode,
+            '_transport_error' => false,
+            '_provider' => 'api2'
+        ];
+    }
+
+    return [
+        'success' => false,
+        'message' => $message !== '' ? $message : 'API 2 không hoàn tất yêu cầu xác minh.',
+        'data' => [],
+        '_http_code' => $httpCode,
+        '_transport_error' => false,
+        '_provider' => 'api2'
+    ];
 }
 
 function uptichxanh_error_text($response, $fallback = 'Không thể hoàn tất yêu cầu.')

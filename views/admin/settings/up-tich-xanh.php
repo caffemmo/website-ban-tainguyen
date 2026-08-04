@@ -35,6 +35,9 @@ if (isset($_POST['SaveUpTichXanhSettings'])) {
 
     $apiKey = trim((string) ($_POST['uptichxanh_api_key'] ?? ''));
     $baseUrl = rtrim(trim((string) ($_POST['uptichxanh_api_base_url'] ?? '')), '/');
+    $api2Enabled = isset($_POST['uptichxanh_api2_enabled']) ? '1' : '0';
+    $api2Key = trim((string) ($_POST['uptichxanh_api2_key'] ?? ''));
+    $api2BaseUrl = rtrim(trim((string) ($_POST['uptichxanh_api2_base_url'] ?? '')), '/');
     $timeout = filter_var($_POST['uptichxanh_timeout'] ?? null, FILTER_VALIDATE_INT);
     $getLinkPrice = uptichxanh_admin_price($_POST, 'uptichxanh_price_get_link');
     $upFbPrice = uptichxanh_admin_price($_POST, 'uptichxanh_price_up_fb');
@@ -43,8 +46,14 @@ if (isset($_POST['SaveUpTichXanhSettings'])) {
     if ($apiKey !== '' && mb_strlen($apiKey) > 255) {
         admin_msg_error('Khóa API không hợp lệ.', base_url_admin('settings&tab=up-tich-xanh'), 1200);
     }
+    if ($api2Key !== '' && mb_strlen($api2Key) > 255) {
+        admin_msg_error('Khóa API 2 không hợp lệ.', base_url_admin('settings&tab=up-tich-xanh'), 1200);
+    }
     if ($baseUrl === '' || filter_var($baseUrl, FILTER_VALIDATE_URL) === false || strtolower((string) parse_url($baseUrl, PHP_URL_SCHEME)) !== 'https') {
         admin_msg_error('URL dịch vụ phải là một địa chỉ HTTPS hợp lệ.', base_url_admin('settings&tab=up-tich-xanh'), 1200);
+    }
+    if ($api2BaseUrl === '' || filter_var($api2BaseUrl, FILTER_VALIDATE_URL) === false || strtolower((string) parse_url($api2BaseUrl, PHP_URL_SCHEME)) !== 'https') {
+        admin_msg_error('URL API 2 phải là một địa chỉ HTTPS hợp lệ.', base_url_admin('settings&tab=up-tich-xanh'), 1200);
     }
     if ($timeout === false || $timeout < 5 || $timeout > 120) {
         admin_msg_error('Timeout phải nằm trong khoảng 5 đến 120 giây.', base_url_admin('settings&tab=up-tich-xanh'), 1200);
@@ -56,7 +65,12 @@ if (isset($_POST['SaveUpTichXanhSettings'])) {
     if ($apiKey !== '') {
         uptichxanh_admin_save_setting('uptichxanh_api_key', $apiKey);
     }
+    if ($api2Key !== '') {
+        uptichxanh_admin_save_setting('uptichxanh_api2_key', $api2Key);
+    }
     uptichxanh_admin_save_setting('uptichxanh_api_base_url', $baseUrl);
+    uptichxanh_admin_save_setting('uptichxanh_api2_base_url', $api2BaseUrl);
+    uptichxanh_admin_save_setting('uptichxanh_api2_enabled', $api2Enabled);
     uptichxanh_admin_save_setting('uptichxanh_timeout', (string) $timeout);
     uptichxanh_admin_save_setting('uptichxanh_price_get_link', $getLinkPrice);
     uptichxanh_admin_save_setting('uptichxanh_price_up_fb', $upFbPrice);
@@ -75,6 +89,7 @@ if (isset($_POST['SaveUpTichXanhSettings'])) {
 $upConfig = uptichxanh_config();
 $upConfigured = uptichxanh_is_configured();
 $hasStoredKey = uptichxanh_db_setting('uptichxanh_api_key') !== '' || $upConfig['api_key'] !== '';
+$hasStoredApi2Key = uptichxanh_db_setting('uptichxanh_api2_key') !== '' || $upConfig['api2']['api_key'] !== '';
 ?>
 
 <style>
@@ -93,6 +108,9 @@ $hasStoredKey = uptichxanh_db_setting('uptichxanh_api_key') !== '' || $upConfig[
     .upx-admin-help { color:#75869a; font-size:12px; line-height:1.5; }
     .upx-admin-note { display:flex; gap:10px; padding:12px 14px; border:1px solid #dbeaf4; border-radius:10px; color:#47657f; background:#f2f8fc; font-size:12px; line-height:1.55; }
     .upx-admin-note i { margin-top:2px; color:#0b9ba8; }
+    .upx-admin-switch { display:flex; align-items:center; gap:12px; min-height:38px; padding:10px 12px; border:1px solid #e7edf5; border-radius:10px; background:#fbfdff; }
+    .upx-admin-switch input { width:2.5rem; height:1.35rem; margin:0; cursor:pointer; }
+    .upx-admin-switch label { margin:0; font-weight:700; cursor:pointer; }
     .upx-admin-save { min-width:180px; }
     @media (max-width:575.98px) { .upx-admin-intro { align-items:flex-start; flex-direction:column; padding:18px; } }
 </style>
@@ -144,6 +162,36 @@ $hasStoredKey = uptichxanh_db_setting('uptichxanh_api_key') !== '' || $upConfig[
                 </div>
             </div>
         </div>
+        <div class="row g-4 mt-0">
+            <div class="col-12">
+                <div class="card upx-admin-card">
+                    <div class="card-header"><div class="card-title mb-0"><i class="fa-solid fa-shuffle me-2 text-primary" aria-hidden="true"></i><?= __('API 2 dự phòng cho Up tích Facebook'); ?></div></div>
+                    <div class="card-body">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-xl-4">
+                                <div class="upx-admin-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="uptichxanh_api2_enabled" name="uptichxanh_api2_enabled" value="1" <?= !empty($upConfig['api2']['enabled']) ? 'checked' : ''; ?>>
+                                    <label for="uptichxanh_api2_enabled"><?= __('Tự động chuyển sang API 2 khi API 1 lỗi'); ?></label>
+                                </div>
+                            </div>
+                            <div class="col-xl-4">
+                                <label class="form-label upx-admin-label" for="uptichxanh_api2_key"><i class="fa-solid fa-key" aria-hidden="true"></i><?= __('Khóa API 2'); ?></label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="uptichxanh_api2_key" name="uptichxanh_api2_key" placeholder="<?= $hasStoredApi2Key ? __('Đã lưu khóa máy chủ, để trống để giữ nguyên') : __('Nhập khóa API 2 trên máy chủ'); ?>" autocomplete="new-password">
+                                    <button type="button" class="btn btn-outline-secondary" id="uptichxanh_api2_key_toggle" title="<?= __('Hiện hoặc ẩn khóa API 2'); ?>" aria-label="<?= __('Hiện hoặc ẩn khóa API 2'); ?>"><i class="fa-solid fa-eye-slash" aria-hidden="true"></i></button>
+                                </div>
+                            </div>
+                            <div class="col-xl-4">
+                                <label class="form-label upx-admin-label" for="uptichxanh_api2_base_url"><i class="fa-solid fa-globe" aria-hidden="true"></i><?= __('URL API 2'); ?></label>
+                                <input type="url" class="form-control" id="uptichxanh_api2_base_url" name="uptichxanh_api2_base_url" value="<?= htmlspecialchars($upConfig['api2']['base_url'], ENT_QUOTES, 'UTF-8'); ?>" required inputmode="url">
+                            </div>
+                        </div>
+                        <div class="upx-admin-note mt-3"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i><span><?= __('Chỉ dùng cho Up tích Facebook. API 2 nhận ảnh dạng tệp và trả kết quả theo luồng máy chủ. Nếu API 1 đã nhận yêu cầu nhưng báo lỗi sau đó, việc chuyển tiếp có thể tạo yêu cầu trùng; chỉ bật khi bạn chấp nhận cơ chế này.'); ?></span></div>
+                        <div class="upx-admin-help mt-2"><i class="fa-solid fa-lock me-1" aria-hidden="true"></i><?= __('Khóa API 2 chỉ lưu ở server và không trả về giao diện khách hàng.'); ?></div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="d-flex justify-content-end mt-4"><button type="submit" name="SaveUpTichXanhSettings" class="btn btn-primary upx-admin-save"><i class="fa-solid fa-floppy-disk me-2" aria-hidden="true"></i><?= __('Lưu cấu hình'); ?></button></div>
     </form>
 </div>
@@ -157,6 +205,15 @@ $hasStoredKey = uptichxanh_db_setting('uptichxanh_api_key') !== '' || $upConfig[
             var visible = input.type === 'text';
             input.type = visible ? 'password' : 'text';
             button.querySelector('i').className = visible ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye';
+        });
+
+        var api2Input = document.getElementById('uptichxanh_api2_key');
+        var api2Button = document.getElementById('uptichxanh_api2_key_toggle');
+        if (!api2Input || !api2Button) return;
+        api2Button.addEventListener('click', function () {
+            var visible = api2Input.type === 'text';
+            api2Input.type = visible ? 'password' : 'text';
+            api2Button.querySelector('i').className = visible ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye';
         });
     }());
 </script>

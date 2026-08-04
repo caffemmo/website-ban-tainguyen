@@ -175,6 +175,11 @@ if (!$userModel->RemoveCredits($getUser['id'], $salePrice, 'Sử dụng ' . upti
 }
 
 $providerResponse = uptichxanh_api_call('POST', $endpoint, [], $payload);
+$providerName = 'api1';
+if (!$providerResponse['success'] && $service === 'up-fb' && uptichxanh_should_use_api2($providerResponse)) {
+    $providerResponse = uptichxanh_api2_up_fb_call($cookie, $uploadedPath);
+    $providerName = 'api2';
+}
 if ($uploadedPath !== '') {
     @unlink($uploadedPath);
 }
@@ -187,6 +192,10 @@ $data = isset($providerResponse['data']) && is_array($providerResponse['data']) 
 $providerCost = isset($data['cost']) && is_numeric($data['cost']) ? (float) $data['cost'] : 0;
 $providerBalance = isset($data['new_balance']) && is_numeric($data['new_balance']) ? (float) $data['new_balance'] : null;
 $uid = isset($data['uid']) && is_scalar($data['uid']) ? trim((string) $data['uid']) : '';
+$providerStatus = (string) ($providerResponse['status'] ?? 'success');
+if ($providerName === 'api2') {
+    $providerStatus = 'success';
+}
 $link = isset($data['link']) && is_scalar($data['link']) ? trim((string) $data['link']) : '';
 if ($link !== '' && (filter_var($link, FILTER_VALIDATE_URL) === false || strtolower((string) parse_url($link, PHP_URL_SCHEME)) !== 'https')) {
     $link = '';
@@ -200,8 +209,12 @@ $historyOrderId = $CMSNT->insert('up_tich_xanh_orders', [
     'provider_cost' => $providerCost,
     'charged_amount' => $salePrice,
     'provider_balance' => $providerBalance,
-    'provider_status' => (string) ($providerResponse['status'] ?? 'success'),
-    'provider_response' => json_encode($providerResponse, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+    'provider_status' => $providerStatus,
+    'provider_response' => json_encode([
+        'success' => true,
+        'message' => (string) ($providerResponse['message'] ?? ''),
+        'provider_status' => $providerStatus
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
     'created_at' => date('Y-m-d H:i:s')
 ]);
 if (!$historyOrderId) {
