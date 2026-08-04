@@ -49,7 +49,7 @@ $body = [
     'desc' => __('Theo dõi các yêu cầu Up tích xanh đã gửi.'),
     'keyword' => 'lịch sử up tích xanh, get link facebook, up tích facebook, up tích instagram'
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/up-tich-xanh.css?v=14') . '">';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/up-tich-xanh.css?v=15') . '">';
 
 require_once __DIR__ . '/header.php';
 require_once __DIR__ . '/nav.php';
