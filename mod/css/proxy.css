@@ -352,14 +352,14 @@ body {
 
 .proxy-type-grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
 }
 
 .proxy-type-card {
     display: flex;
-    min-height: 78px;
-    align-items: center;
+    min-height: 112px;
+    align-items: flex-start;
     gap: 10px;
     padding: 12px;
     border: 1px solid var(--proxy-line);
@@ -410,12 +410,34 @@ body {
 }
 
 .proxy-type-card small {
-    overflow: hidden;
     color: var(--proxy-muted);
     font-size: 10px;
     line-height: 1.3;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+}
+
+.proxy-type-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+.proxy-type-tags em {
+    padding: 3px 6px;
+    border: 1px solid #cfe2e8;
+    border-radius: 4px;
+    color: #376276;
+    background: #f7fbfc;
+    font-size: 9px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.proxy-type-card.is-selected .proxy-type-tags em {
+    border-color: #b8e5e8;
+    color: #087e99;
+    background: #f1fcfd;
 }
 
 .proxy-type-check {
@@ -1734,7 +1756,7 @@ body {
     }
 
     .proxy-type-card {
-        min-height: 70px;
+        min-height: 106px;
         padding: 9px;
     }
 
@@ -1751,6 +1773,15 @@ body {
 
     .proxy-type-card small {
         font-size: 9px;
+    }
+
+    .proxy-type-tags {
+        gap: 3px;
+    }
+
+    .proxy-type-tags em {
+        padding: 2px 4px;
+        font-size: 8px;
     }
 
     .proxy-country-picker {
@@ -1880,6 +1911,12 @@ body {
 
     .proxy-renew-item-date small {
         text-align: left;
+    }
+}
+
+@media (max-width: 480px) {
+    .proxy-type-grid {
+        grid-template-columns: 1fr;
     }
 }
 

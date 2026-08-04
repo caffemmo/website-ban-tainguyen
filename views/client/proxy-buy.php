@@ -72,22 +72,38 @@ require_once __DIR__ . '/nav.php';
                 <div class="proxy-type-grid" data-proxy-types>
                     <button type="button" class="proxy-type-card is-selected" data-proxy-type="IPV4">
                         <span class="proxy-type-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
-                        <span><strong>IPv4</strong><small><?= __('Phổ biến, dễ dùng'); ?></small></span>
+                        <span>
+                            <strong><?= __('Proxy IPv4 thường'); ?></strong>
+                            <small><?= __('Phổ biến, dễ dùng cho nhu cầu hằng ngày'); ?></small>
+                            <span class="proxy-type-tags"><em>HTTP/SOCKS5</em><em><?= __('Nhiều quốc gia'); ?></em></span>
+                        </span>
                         <i class="fa-solid fa-check proxy-type-check" aria-hidden="true"></i>
                     </button>
                     <button type="button" class="proxy-type-card" data-proxy-type="IPV6" hidden>
                         <span class="proxy-type-icon"><i class="fa-solid fa-network-wired" aria-hidden="true"></i></span>
-                        <span><strong>IPv6</strong><small><?= __('Tiết kiệm chi phí'); ?></small></span>
+                        <span>
+                            <strong><?= __('Proxy IPv6 thường'); ?></strong>
+                            <small><?= __('Tiết kiệm chi phí, phù hợp nhu cầu cơ bản'); ?></small>
+                            <span class="proxy-type-tags"><em><?= __('IP riêng'); ?></em><em><?= __('Chi phí tốt'); ?></em></span>
+                        </span>
                         <i class="fa-solid fa-check proxy-type-check" aria-hidden="true"></i>
                     </button>
                     <button type="button" class="proxy-type-card" data-proxy-type="ISP">
                         <span class="proxy-type-icon"><i class="fa-solid fa-building-shield" aria-hidden="true"></i></span>
-                        <span><strong>ISP</strong><small><?= __('Ổn định cho tài khoản'); ?></small></span>
+                        <span>
+                            <strong><?= __('Proxy ISP / Dân cư'); ?></strong>
+                            <small><?= __('IP dân cư tĩnh, ổn định cho tài khoản'); ?></small>
+                            <span class="proxy-type-tags"><em>Private</em><em>HTTP/SOCKS5</em><em><?= __('Hỗ trợ 24/7'); ?></em></span>
+                        </span>
                         <i class="fa-solid fa-check proxy-type-check" aria-hidden="true"></i>
                     </button>
                     <button type="button" class="proxy-type-card" data-proxy-type="MOBILE">
                         <span class="proxy-type-icon"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i></span>
-                        <span><strong>Mobile</strong><small><?= __('Có rotation linh hoạt'); ?></small></span>
+                        <span>
+                            <strong><?= __('Proxy Mobile'); ?></strong>
+                            <small><?= __('Có rotation linh hoạt theo nhu cầu'); ?></small>
+                            <span class="proxy-type-tags"><em><?= __('Rotation'); ?></em><em><?= __('Linh hoạt'); ?></em></span>
+                        </span>
                         <i class="fa-solid fa-check proxy-type-check" aria-hidden="true"></i>
                     </button>
                 </div>
