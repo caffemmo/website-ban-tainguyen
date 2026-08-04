@@ -16,7 +16,7 @@ $body = [
     'desc' => __('Mua proxy chính hãng với cấu hình rõ ràng và quản lý tập trung.'),
     'keyword' => 'proxy, mua proxy, proxy premium'
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=16') . '">';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=17') . '">';
 $body['footer'] = '<script src="' . BASE_URL('mod/js/proxy.js?v=8') . '"></script>';
 
 require_once __DIR__ . '/header.php';
@@ -72,37 +72,37 @@ require_once __DIR__ . '/nav.php';
                 <div class="proxy-type-grid" data-proxy-types>
                     <button type="button" class="proxy-type-card is-selected" data-proxy-type="IPV4">
                         <span class="proxy-type-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
-                        <span>
-                            <strong><?= __('Proxy IPv4 thường'); ?></strong>
-                            <small><?= __('Phổ biến, dễ dùng cho nhu cầu hằng ngày'); ?></small>
-                            <span class="proxy-type-tags"><em>HTTP/SOCKS5</em><em><?= __('Nhiều quốc gia'); ?></em></span>
+                        <span class="proxy-type-content">
+                            <span class="proxy-type-title-row"><strong><?= __('Proxy IPv4 thường'); ?></strong><span class="proxy-type-badges"><em class="proxy-type-badge">Ngầm tích xanh</em><em class="proxy-type-badge proxy-type-badge--private">Private</em></span></span>
+                            <small><?= __('Ngầm tích, giữ tích chuyên dụng cho nhu cầu phổ biến.'); ?></small>
+                            <span class="proxy-type-tags"><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i>99.9% uptime</em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i>HTTP/SOCKS5</em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Phủ sóng toàn cầu'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Băng thông tốt'); ?></em></span>
                         </span>
                         <i class="fa-solid fa-check proxy-type-check" aria-hidden="true"></i>
                     </button>
-                    <button type="button" class="proxy-type-card" data-proxy-type="IPV6" hidden>
+                    <button type="button" class="proxy-type-card" data-proxy-type="IPV6">
                         <span class="proxy-type-icon"><i class="fa-solid fa-network-wired" aria-hidden="true"></i></span>
-                        <span>
-                            <strong><?= __('Proxy IPv6 thường'); ?></strong>
-                            <small><?= __('Tiết kiệm chi phí, phù hợp nhu cầu cơ bản'); ?></small>
-                            <span class="proxy-type-tags"><em><?= __('IP riêng'); ?></em><em><?= __('Chi phí tốt'); ?></em></span>
+                        <span class="proxy-type-content">
+                            <span class="proxy-type-title-row"><strong><?= __('Proxy IPv6 thường'); ?></strong><span class="proxy-type-badges"><em class="proxy-type-badge">Ngầm tích xanh</em><em class="proxy-type-badge proxy-type-badge--private">Private</em></span></span>
+                            <small><?= __('IP riêng, tiết kiệm chi phí, phù hợp nhu cầu cơ bản.'); ?></small>
+                            <span class="proxy-type-tags"><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('IP riêng'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i>HTTP/SOCKS5</em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Tiết kiệm chi phí'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Phù hợp nhu cầu cơ bản'); ?></em></span>
                         </span>
                         <i class="fa-solid fa-check proxy-type-check" aria-hidden="true"></i>
                     </button>
                     <button type="button" class="proxy-type-card" data-proxy-type="ISP">
                         <span class="proxy-type-icon"><i class="fa-solid fa-building-shield" aria-hidden="true"></i></span>
-                        <span>
-                            <strong><?= __('Proxy ISP / Dân cư'); ?></strong>
-                            <small><?= __('IP dân cư tĩnh, ổn định cho tài khoản'); ?></small>
-                            <span class="proxy-type-tags"><em>Private</em><em>HTTP/SOCKS5</em><em><?= __('Hỗ trợ 24/7'); ?></em></span>
+                        <span class="proxy-type-content">
+                            <span class="proxy-type-title-row"><strong><?= __('Proxy Dân cư (ISP)'); ?></strong><span class="proxy-type-badges"><em class="proxy-type-badge">Ngầm tích xanh</em><em class="proxy-type-badge proxy-type-badge--private">Private</em></span></span>
+                            <small><?= __('Proxy dân cư tĩnh, chuyển ngầm tích, giữ tốc độ cao, phù hợp cho tài khoản.'); ?></small>
+                            <span class="proxy-type-tags"><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('IP dân cư tĩnh (ISP)'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('ASN cao cấp'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i>HTTP/SOCKS5</em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Phản hồi nhanh'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Hỗ trợ 24/7'); ?></em></span>
                         </span>
                         <i class="fa-solid fa-check proxy-type-check" aria-hidden="true"></i>
                     </button>
                     <button type="button" class="proxy-type-card" data-proxy-type="MOBILE">
                         <span class="proxy-type-icon"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i></span>
-                        <span>
-                            <strong><?= __('Proxy Mobile'); ?></strong>
-                            <small><?= __('Có rotation linh hoạt theo nhu cầu'); ?></small>
-                            <span class="proxy-type-tags"><em><?= __('Rotation'); ?></em><em><?= __('Linh hoạt'); ?></em></span>
+                        <span class="proxy-type-content">
+                            <span class="proxy-type-title-row"><strong><?= __('Proxy Mobile'); ?></strong><span class="proxy-type-badges"><em class="proxy-type-badge">Ngầm tích xanh</em><em class="proxy-type-badge proxy-type-badge--private">Private</em></span></span>
+                            <small><?= __('Rotation linh hoạt cho tác vụ cần thay đổi IP.'); ?></small>
+                            <span class="proxy-type-tags"><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Rotation linh hoạt'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Phủ sóng toàn cầu'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i>HTTP/SOCKS5</em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Hỗ trợ 24/7'); ?></em></span>
                         </span>
                         <i class="fa-solid fa-check proxy-type-check" aria-hidden="true"></i>
                     </button>
