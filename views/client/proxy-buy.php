@@ -16,7 +16,7 @@ $body = [
     'desc' => __('Mua proxy chính hãng với cấu hình rõ ràng và quản lý tập trung.'),
     'keyword' => 'proxy, mua proxy, proxy premium'
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=17') . '">';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=18') . '">';
 $body['footer'] = '<script src="' . BASE_URL('mod/js/proxy.js?v=8') . '"></script>';
 
 require_once __DIR__ . '/header.php';
@@ -91,7 +91,7 @@ require_once __DIR__ . '/nav.php';
                     <button type="button" class="proxy-type-card" data-proxy-type="ISP">
                         <span class="proxy-type-icon"><i class="fa-solid fa-building-shield" aria-hidden="true"></i></span>
                         <span class="proxy-type-content">
-                            <span class="proxy-type-title-row"><strong><?= __('Proxy Dân cư (ISP)'); ?></strong><span class="proxy-type-badges"><em class="proxy-type-badge">Ngâm tích xanh</em><em class="proxy-type-badge proxy-type-badge--private">Private</em></span></span>
+                            <span class="proxy-type-title-row"><span class="proxy-type-title"><strong><?= __('Proxy Dân cư (ISP)'); ?></strong><img class="proxy-type-gif" src="<?= BASE_URL('mod/img/proxy-green-badge.gif'); ?>" alt="<?= __('Ngâm tích xanh'); ?>"></span><span class="proxy-type-badges"><em class="proxy-type-badge">Ngâm tích xanh</em><em class="proxy-type-badge proxy-type-badge--private">Private</em></span></span>
                             <small><?= __('Proxy dân cư tĩnh, ngâm tích, giữ tốc độ cao, phù hợp cho tài khoản.'); ?></small>
                             <span class="proxy-type-tags"><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('IP dân cư tĩnh (ISP)'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('ASN cao cấp'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i>HTTP/SOCKS5</em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Phản hồi nhanh'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Hỗ trợ 24/7'); ?></em></span>
                         </span>

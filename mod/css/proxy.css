@@ -416,6 +416,20 @@ body {
     gap: 8px;
 }
 
+.proxy-type-title {
+    display: inline-flex;
+    min-width: 0;
+    align-items: center;
+    gap: 6px;
+}
+
+.proxy-type-gif {
+    width: 25px;
+    height: 25px;
+    flex: 0 0 25px;
+    object-fit: contain;
+}
+
 .proxy-type-card strong {
     font-size: 13px;
     font-weight: 800;
@@ -1823,6 +1837,10 @@ body {
 
     .proxy-type-title-row {
         display: block;
+    }
+
+    .proxy-type-title {
+        display: inline-flex;
     }
 
     .proxy-type-badges {
