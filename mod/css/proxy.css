@@ -427,6 +427,7 @@ body {
 .proxy-type-title {
     display: inline-flex;
     min-width: 0;
+    flex: 1 1 auto;
     align-items: center;
     gap: 6px;
 }
@@ -1857,7 +1858,9 @@ body {
     }
 
     .proxy-type-title-row {
-        display: block;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
     }
 
     .proxy-type-title {
@@ -1865,8 +1868,8 @@ body {
     }
 
     .proxy-type-badges {
-        justify-content: flex-start;
-        margin-top: 5px;
+        margin-left: auto;
+        justify-content: flex-end;
     }
 
     .proxy-type-tags {
