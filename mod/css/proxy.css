@@ -130,15 +130,15 @@ body {
 
 .proxy-page[data-proxy-page="buy"] .proxy-page-heading {
     min-height: 0;
-    align-items: flex-end;
-    padding: 0 0 18px;
+    align-items: center;
+    padding: 22px 24px;
     margin-bottom: 22px;
-    border: 0;
-    border-bottom: 1px solid #d7e8ed;
-    border-radius: 0;
-    background: transparent;
-    box-shadow: none;
-    overflow: visible;
+    border: 1px solid #d7e8ed;
+    border-left-width: 3px;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 8px 18px rgba(31, 66, 91, .06);
+    overflow: hidden;
 }
 
 .proxy-page[data-proxy-page="buy"] .proxy-page-heading::after { display: none; }
@@ -1704,7 +1704,7 @@ body {
         margin-bottom: 16px;
     }
 
-    .proxy-page[data-proxy-page="buy"] .proxy-page-heading { display: flex; min-height: 0; padding: 0 0 16px; }
+    .proxy-page[data-proxy-page="buy"] .proxy-page-heading { display: flex; min-height: 0; padding: 20px 18px; border: 1px solid #d7e8ed; border-left-width: 3px; border-radius: 8px; background: #fff; box-shadow: 0 8px 18px rgba(31, 66, 91, .06); overflow: hidden; }
     .proxy-page[data-proxy-page="buy"] .proxy-page-heading > div:first-child { display: block; }
     .proxy-page[data-proxy-page="buy"] .proxy-page-heading h1 { font-size: 25px; white-space: normal; }
     .proxy-page[data-proxy-page="buy"] .proxy-page-heading p { max-width: none; margin-top: 5px; font-size: 12px; }
