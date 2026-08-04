@@ -3285,13 +3285,25 @@ body {
 }
 
 .home-service-head .home-service-count {
+    gap: 9px;
     min-height: 30px;
-    padding: 0 11px;
+    padding: 0 14px;
     color: #087e90;
     background: #ecfafb;
     border-color: #a7dfe6;
     font-size: 11px;
     font-weight: 800;
+    line-height: 1;
+}
+
+.home-service-head .home-service-count::before {
+    flex: 0 0 8px;
+    margin-right: 2px;
+}
+
+.home-service-head .home-service-count > i {
+    flex: 0 0 auto;
+    margin-left: 3px;
 }
 
 .home-service-grid {
