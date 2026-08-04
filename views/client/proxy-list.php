@@ -13,7 +13,7 @@ $body = [
     'desc' => __('Quản lý proxy đã mua, thông tin đăng nhập và thời hạn.'),
     'keyword' => 'proxy của tôi, quản lý proxy'
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=11') . '">';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=12') . '">';
 $body['footer'] = '<script src="' . BASE_URL('mod/js/proxy.js?v=7') . '"></script>';
 
 require_once __DIR__ . '/header.php';

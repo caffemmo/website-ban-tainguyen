@@ -144,8 +144,8 @@ body {
 .proxy-page[data-proxy-page="buy"] .proxy-page-heading::after { display: none; }
 .proxy-page[data-proxy-page="buy"] .proxy-page-heading > div:first-child { display: block; min-width: 0; }
 .proxy-page[data-proxy-page="buy"] .proxy-eyebrow { margin-bottom: 7px; padding-left: 9px; border-left: 3px solid var(--proxy-cyan); font-size: 10px; }
-.proxy-page[data-proxy-page="buy"] .proxy-page-heading h1 { margin: 0 0 5px; font-size: 30px; line-height: 1.1; }
-.proxy-page[data-proxy-page="buy"] .proxy-page-heading p { max-width: 720px; font-size: 12.5px; line-height: 1.45; }
+.proxy-page[data-proxy-page="buy"] .proxy-page-heading h1 { display: block; margin: 0 0 5px; font-size: 30px; line-height: 1.1; }
+.proxy-page[data-proxy-page="buy"] .proxy-page-heading p { display: block; max-width: 720px; font-size: 12.5px; line-height: 1.45; }
 .proxy-page[data-proxy-page="buy"] .proxy-wallet-card { min-width: 185px; padding-left: 24px; padding-bottom: 1px; }
 
 .proxy-heading-actions {
