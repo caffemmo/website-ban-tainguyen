@@ -3327,38 +3327,38 @@ body {
     --quick-soft: #eaf3ff;
     border-color: #bedaf2;
     background: #fafdff;
-    animation: home-resource-attention 5.6s ease-in-out infinite;
+    animation: home-resource-attention 4.8s ease-in-out infinite;
 }
 
 @keyframes home-resource-attention {
-    0%, 68%, 100% {
+    0%, 62%, 100% {
         opacity: 1;
         transform: translate3d(0, 0, 0);
         box-shadow: 0 3px 10px rgba(17, 71, 92, .05);
     }
 
-    71% {
-        opacity: .88;
-        transform: translate3d(-2px, 0, 0) rotate(-.35deg);
+    65% {
+        opacity: .78;
+        transform: translate3d(-4px, 0, 0) rotate(-.9deg);
         border-color: #6ab9ed;
-        box-shadow: 0 0 0 3px rgba(37, 110, 196, .12), 0 9px 22px rgba(37, 110, 196, .18);
+        box-shadow: 0 0 0 4px rgba(37, 110, 196, .16), 0 11px 26px rgba(37, 110, 196, .22);
     }
 
-    74% {
+    69% {
         opacity: 1;
-        transform: translate3d(2px, 0, 0) rotate(.35deg);
+        transform: translate3d(5px, 0, 0) rotate(1deg);
         border-color: #256ec4;
+        box-shadow: 0 0 0 4px rgba(37, 110, 196, .18), 0 12px 28px rgba(37, 110, 196, .25);
+    }
+
+    73% {
+        opacity: .82;
+        transform: translate3d(-4px, 0, 0) rotate(-.8deg);
+        border-color: #6ab9ed;
         box-shadow: 0 0 0 3px rgba(37, 110, 196, .14), 0 10px 24px rgba(37, 110, 196, .2);
     }
 
-    77% {
-        opacity: .9;
-        transform: translate3d(-1px, 0, 0) rotate(-.2deg);
-        border-color: #6ab9ed;
-        box-shadow: 0 0 0 2px rgba(37, 110, 196, .1), 0 8px 20px rgba(37, 110, 196, .14);
-    }
-
-    80%, 84% {
+    77%, 82% {
         opacity: 1;
         transform: translate3d(0, 0, 0);
         border-color: #bedaf2;
