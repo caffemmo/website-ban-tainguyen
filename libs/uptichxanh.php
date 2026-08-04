@@ -84,8 +84,8 @@ function uptichxanh_service_endpoint($service)
 {
     $map = [
         'get-link' => 'getlink',
-        'up-fb' => 'upfb',
-        'up-ig' => 'upig'
+        'up-fb' => 'fb',
+        'up-ig' => 'ig'
     ];
     return isset($map[$service]) ? $map[$service] : false;
 }
