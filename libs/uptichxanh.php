@@ -169,9 +169,13 @@ function uptichxanh_request($method, $endpoint, $query = [], $payload = null)
         return ['ok' => false, 'http_code' => $httpCode, 'body' => null, 'error' => 'Dịch vụ trả về dữ liệu không hợp lệ.'];
     }
 
-    $providerSuccess = isset($body['status']) && strtolower((string) $body['status']) === 'success';
+    $providerStatus = strtolower(trim((string) ($body['status'] ?? '')));
+    $acceptedStatuses = ['success', 'completed', 'pending', 'processing', 'queued', 'accepted'];
+    $providerSuccess = $httpCode >= 200 && $httpCode < 300
+        && (in_array($providerStatus, $acceptedStatuses, true)
+            || (isset($body['success']) && filter_var($body['success'], FILTER_VALIDATE_BOOLEAN)));
     return [
-        'ok' => $httpCode >= 200 && $httpCode < 300 && $providerSuccess,
+        'ok' => $providerSuccess,
         'http_code' => $httpCode,
         'body' => $body,
         'error' => ''
