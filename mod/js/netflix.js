@@ -64,7 +64,8 @@
                 throw new Error('API không trả về link xem hợp lệ.');
             }
 
-            showResult('Đã tạo link xem Netflix', `Link còn hiệu lực khoảng ${formatRemaining(data.time_remaining)}.`, false);
+            const chargeNote = data.charged_label ? ` Đã trừ ${data.charged_label}.` : '';
+            showResult('Đã tạo link xem Netflix', `Link còn hiệu lực khoảng ${formatRemaining(data.time_remaining)}.${chargeNote}`, false);
             logId = String(data.log_id || logId || '');
             if (pcLink && data.pc_link) {
                 pcLink.href = data.pc_link;

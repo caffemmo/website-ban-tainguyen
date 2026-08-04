@@ -128,6 +128,25 @@
 }
 
 .netflix-notice i { flex: 0 0 auto; margin-top: 2px; color: #c51f2a; }
+.netflix-price-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 0 0 16px;
+    padding: 11px 14px;
+    border: 1px solid #e5d6b7;
+    border-radius: 8px;
+    color: #6f5a2c;
+    background: #fffaf0;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.netflix-price-row span { display: inline-flex; align-items: center; gap: 8px; }
+.netflix-price-row span i { color: #b98219; }
+.netflix-price-row strong { color: #8d5f08; font-size: 13px; white-space: nowrap; }
+
 .netflix-submit-button {
     display: inline-flex;
     min-height: 46px;

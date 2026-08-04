@@ -8,13 +8,14 @@ require_once __DIR__ . '/../../libs/netflix.php';
 
 $getUser = client_optional_user($CMSNT);
 $netflixAuthenticated = is_array($getUser);
+$netflixPrice = netflix_service_price();
 $body = [
     'title' => __('Xem Netflix') . ' | ' . $CMSNT->site('title'),
     'desc' => __('Lấy link xem Netflix nhanh chóng.'),
     'keyword' => 'xem netflix, netflix'
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/netflix.css?v=1') . '">';
-$body['footer'] = '<script src="' . BASE_URL('mod/js/netflix.js?v=1') . '"></script>';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/netflix.css?v=2') . '">';
+$body['footer'] = '<script src="' . BASE_URL('mod/js/netflix.js?v=2') . '"></script>';
 
 require_once __DIR__ . '/header.php';
 require_once __DIR__ . '/nav.php';
@@ -54,6 +55,11 @@ require_once __DIR__ . '/nav.php';
             <div class="netflix-notice" role="note">
                 <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
                 <span><?= __('Hệ thống chỉ hiển thị link xem, không lưu hoặc hiển thị cookie Netflix.'); ?></span>
+            </div>
+
+            <div class="netflix-price-row">
+                <span><i class="fa-solid fa-tags" aria-hidden="true"></i><?= __('Chi phí mỗi lần lấy link'); ?></span>
+                <strong><?= $netflixPrice > 0 ? format_currency($netflixPrice) : __('Chưa thiết lập'); ?></strong>
             </div>
 
             <button class="netflix-submit-button" data-netflix-submit type="button"<?= !$netflixAuthenticated || !netflix_api_is_configured() ? ' disabled' : ''; ?>>

@@ -4,6 +4,7 @@ require_once dirname(__DIR__, 2) . '/libs/db.php';
 require_once dirname(__DIR__, 2) . '/config.php';
 require_once dirname(__DIR__, 2) . '/libs/lang.php';
 require_once dirname(__DIR__, 2) . '/libs/helper.php';
+require_once dirname(__DIR__, 2) . '/libs/database/users.php';
 require_once dirname(__DIR__, 2) . '/libs/client-session.php';
 require_once dirname(__DIR__, 2) . '/libs/netflix.php';
 
@@ -36,19 +37,57 @@ if ($action !== 'get_cookie' && $action !== 'regenerate_link') {
 
 $logId = isset($_POST['log_id']) && is_scalar($_POST['log_id']) ? trim((string) $_POST['log_id']) : '';
 if ($action === 'get_cookie') {
+    $salePrice = netflix_service_price();
+    if ($salePrice <= 0) {
+        netflix_json(['success' => false, 'message' => 'Dịch vụ Netflix chưa được thiết lập giá bán.'], 503);
+    }
+    if ((float) $getUser['money'] < $salePrice) {
+        netflix_json(['success' => false, 'message' => 'Số dư ví không đủ để sử dụng dịch vụ Netflix.'], 422);
+    }
+    if (!netflix_ensure_orders_table()) {
+        netflix_json(['success' => false, 'message' => 'Không thể chuẩn bị lịch sử Netflix, vui lòng thử lại sau.'], 503);
+    }
+
+    $transactionId = 'netflix_' . bin2hex(random_bytes(8));
+    $userModel = new users();
+    if (!$userModel->RemoveCredits($getUser['id'], $salePrice, 'Sử dụng Xem Netflix', $transactionId)) {
+        netflix_json(['success' => false, 'message' => 'Không thể trừ tiền trong ví, vui lòng thử lại.'], 500);
+    }
+
     $result = netflix_get_cookie();
 } elseif ($action === 'regenerate_link') {
+    if (!netflix_ensure_orders_table()) {
+        netflix_json(['success' => false, 'message' => 'Không thể kiểm tra quyền tạo lại link Netflix.'], 503);
+    }
+    if ($logId === '' || !netflix_order_belongs_to_user($getUser['id'], $logId)) {
+        netflix_json(['success' => false, 'message' => 'Link Netflix không thuộc tài khoản của bạn.'], 403);
+    }
     $result = netflix_regenerate_token($logId);
 } else {
     netflix_json(['success' => false, 'message' => 'Thao tác không hợp lệ.'], 400);
 }
 if (!$result['success']) {
+    if ($action === 'get_cookie' && isset($userModel, $salePrice, $transactionId)) {
+        $userModel->RefundCredits($getUser['id'], $salePrice, 'Hoàn tiền Xem Netflix do giao dịch lỗi', $transactionId . '_refund');
+    }
     $status = $result['code'] === 'not_configured' ? 503 : 502;
     netflix_json(['success' => false, 'message' => $result['message']], $status);
+}
+
+$data = $result['data'];
+if ($action === 'get_cookie') {
+    $providerLogId = isset($data['log_id']) && is_scalar($data['log_id']) ? trim((string) $data['log_id']) : '';
+    if ($providerLogId !== '' && !netflix_record_order($getUser['id'], $providerLogId, $salePrice)) {
+        $userModel->RefundCredits($getUser['id'], $salePrice, 'Hoàn tiền Xem Netflix do không lưu được giao dịch', $transactionId . '_refund');
+        netflix_json(['success' => false, 'message' => 'Không thể lưu giao dịch Netflix, vui lòng thử lại sau.'], 503);
+    }
+    $data['charged_amount'] = $salePrice;
+    $data['charged_label'] = format_currency($salePrice);
+    $data['wallet_balance'] = (float) getUser($getUser['id'], 'money');
 }
 
 netflix_json([
     'success' => true,
     'message' => 'Đã tạo link xem Netflix.',
-    'data' => $result['data']
+    'data' => $data
 ]);

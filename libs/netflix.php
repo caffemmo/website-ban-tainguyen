@@ -44,6 +44,17 @@ if (!function_exists('netflix_api_key')) {
     }
 }
 
+if (!function_exists('netflix_service_price')) {
+    function netflix_service_price()
+    {
+        $price = netflix_db_setting('netflix_price', '');
+        if ($price === '') {
+            $price = netflix_env('CAFFEMMO_NETFLIX_PRICE', '15000');
+        }
+        return is_numeric($price) ? max(0, (float) $price) : 0;
+    }
+}
+
 if (!function_exists('netflix_is_enabled')) {
     function netflix_is_enabled()
     {
@@ -55,7 +66,61 @@ if (!function_exists('netflix_is_enabled')) {
 if (!function_exists('netflix_api_is_configured')) {
     function netflix_api_is_configured()
     {
-        return netflix_is_enabled() && netflix_api_key() !== '';
+        return netflix_is_enabled() && netflix_api_key() !== '' && netflix_service_price() > 0;
+    }
+}
+
+if (!function_exists('netflix_ensure_orders_table')) {
+    function netflix_ensure_orders_table()
+    {
+        global $CMSNT;
+        if (!isset($CMSNT) || !is_object($CMSNT)) {
+            return false;
+        }
+
+        $sql = "CREATE TABLE IF NOT EXISTS `netflix_orders` (
+            `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+            `user_id` INT UNSIGNED NOT NULL,
+            `log_id` VARCHAR(100) NOT NULL,
+            `charged_amount` DECIMAL(18,2) NOT NULL DEFAULT 0,
+            `created_at` DATETIME NOT NULL,
+            PRIMARY KEY (`id`),
+            UNIQUE KEY `netflix_orders_log_id` (`log_id`),
+            KEY `netflix_orders_user_id` (`user_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+        return $CMSNT->query($sql) !== false;
+    }
+}
+
+if (!function_exists('netflix_order_belongs_to_user')) {
+    function netflix_order_belongs_to_user($userId, $logId)
+    {
+        global $CMSNT;
+        if (!isset($CMSNT) || !is_object($CMSNT)) {
+            return false;
+        }
+
+        return (bool) $CMSNT->get_row_safe(
+            'SELECT `id` FROM `netflix_orders` WHERE `user_id` = ? AND `log_id` = ? LIMIT 1',
+            [(int) $userId, trim((string) $logId)]
+        );
+    }
+}
+
+if (!function_exists('netflix_record_order')) {
+    function netflix_record_order($userId, $logId, $chargedAmount)
+    {
+        global $CMSNT;
+        if (!isset($CMSNT) || !is_object($CMSNT)) {
+            return false;
+        }
+
+        return $CMSNT->insert('netflix_orders', [
+            'user_id' => (int) $userId,
+            'log_id' => trim((string) $logId),
+            'charged_amount' => (float) $chargedAmount,
+            'created_at' => date('Y-m-d H:i:s')
+        ]);
     }
 }
 
@@ -84,7 +149,7 @@ if (!function_exists('netflix_get_cookie')) {
     function netflix_get_cookie()
     {
         $apiKey = netflix_api_key();
-        if ($apiKey === '') {
+        if (!netflix_api_is_configured()) {
             return [
                 'success' => false,
                 'code' => 'not_configured',
@@ -188,7 +253,7 @@ if (!function_exists('netflix_regenerate_token')) {
     {
         $apiKey = netflix_api_key();
         $logId = trim((string) $logId);
-        if ($apiKey === '') {
+        if (!netflix_api_is_configured()) {
             return [
                 'success' => false,
                 'code' => 'not_configured',

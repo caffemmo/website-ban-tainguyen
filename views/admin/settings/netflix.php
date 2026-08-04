@@ -16,6 +16,15 @@ function netflix_admin_save_setting($name, $value)
     return $CMSNT->insert('settings', ['name' => $name, 'value' => $value]);
 }
 
+function netflix_admin_price($value)
+{
+    $value = trim((string) $value);
+    if ($value === '' || !is_numeric($value) || (float) $value <= 0 || (float) $value > 1000000000) {
+        return false;
+    }
+    return number_format((float) $value, 2, '.', '');
+}
+
 if (isset($_POST['SaveNetflixSettings'])) {
     if (checkPermission($getUser['admin'], 'edit_setting') != true) {
         die('<script type="text/javascript">if(!alert("' . __('Bạn không có quyền sử dụng tính năng này') . '")){window.history.back();}</script>');
@@ -26,14 +35,19 @@ if (isset($_POST['SaveNetflixSettings'])) {
 
     $apiKey = trim((string) ($_POST['netflix_api_key'] ?? ''));
     $enabled = isset($_POST['netflix_enabled']) ? '1' : '0';
+    $price = netflix_admin_price($_POST['netflix_price'] ?? '');
     if ($apiKey !== '' && mb_strlen($apiKey) > 255) {
         admin_msg_error('Khóa API Netflix không hợp lệ.', base_url_admin('settings&tab=netflix'), 1200);
+    }
+    if ($price === false) {
+        admin_msg_error('Giá Netflix phải lớn hơn 0 và hợp lệ.', base_url_admin('settings&tab=netflix'), 1200);
     }
 
     if ($apiKey !== '') {
         netflix_admin_save_setting('netflix_api_key', $apiKey);
     }
     netflix_admin_save_setting('netflix_enabled', $enabled);
+    netflix_admin_save_setting('netflix_price', $price);
 
     $CMSNT->insert('logs', [
         'user_id' => $getUser['id'],
@@ -47,6 +61,7 @@ if (isset($_POST['SaveNetflixSettings'])) {
 
 $netflixConfigured = netflix_api_is_configured();
 $netflixEnabled = netflix_is_enabled();
+$netflixPrice = netflix_service_price();
 $hasStoredKey = netflix_db_setting('netflix_api_key') !== '' || netflix_env('CAFFEMMO_NETFLIX_API_KEY') !== '';
 ?>
 
@@ -106,7 +121,15 @@ $hasStoredKey = netflix_db_setting('netflix_api_key') !== '' || netflix_env('CAF
                             <input class="form-check-input" type="checkbox" role="switch" id="netflix_enabled" name="netflix_enabled" value="1" <?= $netflixEnabled ? 'checked' : ''; ?>>
                             <label class="form-check-label fw-semibold" for="netflix_enabled"><?= __('Cho phép khách hàng dùng Netflix'); ?></label>
                         </div>
-                        <div class="netflix-admin-help mb-3"><?= __('Khi tắt, nút lấy link sẽ tạm khóa nhưng API key vẫn được giữ lại.'); ?></div>
+                        <div class="mb-4">
+                            <label class="form-label netflix-admin-label" for="netflix_price"><i class="fa-solid fa-tags" aria-hidden="true"></i><?= __('Giá mỗi lần lấy link'); ?></label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="netflix_price" name="netflix_price" value="<?= htmlspecialchars(number_format($netflixPrice, 2, '.', ''), ENT_QUOTES, 'UTF-8'); ?>" min="1" max="1000000000" step="1000" required>
+                                <span class="input-group-text">VND</span>
+                            </div>
+                            <div class="netflix-admin-help mt-2"><?= __('Giá được trừ một lần khi khách hàng lấy link mới. Tạo lại link không trừ thêm tiền.'); ?></div>
+                        </div>
+                        <div class="netflix-admin-help mb-3"><?= __('Khi tắt, nút lấy link sẽ tạm khóa nhưng API key và giá vẫn được giữ lại.'); ?></div>
                         <div class="netflix-admin-help"><strong><?= __('Endpoint lấy cookie:'); ?></strong><br><code>api.tiembanh4k.com/api/ctv-api/get-cookie</code></div>
                         <div class="netflix-admin-help mt-2"><strong><?= __('Endpoint làm mới link:'); ?></strong><br><code>backend-c0r3-7xpq9zn2025.onrender.com/api/ctv-api/regenerate-token</code></div>
                     </div>
