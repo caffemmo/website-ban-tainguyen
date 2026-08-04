@@ -14,10 +14,12 @@ $upWalletBalance = $upIsAuthenticated ? format_currency($getUser['money']) : __(
 $upWalletUrl = $upIsAuthenticated ? base_url('recharge-bank') : base_url('client/login');
 $upWalletAction = $upIsAuthenticated ? __('Nạp tiền') : __('Đăng nhập');
 
+$serviceCatalog = caffemmo_service_catalog();
 $services = [];
-foreach (caffemmo_service_catalog()['up-tich-xanh']['items'] as $catalogItem) {
+foreach ($serviceCatalog['up-tich-xanh']['items'] as $catalogItem) {
     $services[$catalogItem['key']] = $catalogItem;
 }
+$netflixService = $serviceCatalog['streaming']['items'][0] ?? null;
 
 $service = isset($_GET['service']) && isset($services[$_GET['service']]) ? $_GET['service'] : 'get-link';
 $currentService = $services[$service];
@@ -60,7 +62,7 @@ require_once __DIR__ . '/nav.php';
         </div>
     </section>
 
-    <section class="up-service-tabs" aria-label="<?= __('Chọn dịch vụ Up tích xanh'); ?>">
+    <section class="up-service-tabs" aria-label="<?= __('Chọn dịch vụ nhanh'); ?>">
         <?php foreach ($services as $key => $item): ?>
             <a class="up-service-tab up-service-tab--<?= htmlspecialchars($item['tone'], ENT_QUOTES, 'UTF-8'); ?> <?= $service === $key ? 'is-active' : ''; ?>" href="<?= htmlspecialchars($item['url'], ENT_QUOTES, 'UTF-8'); ?>" <?= $service === $key ? 'aria-current="page"' : ''; ?>>
                 <span class="up-service-tab-icon"><i class="<?= htmlspecialchars($item['icon'], ENT_QUOTES, 'UTF-8'); ?>" aria-hidden="true"></i></span>
@@ -68,6 +70,13 @@ require_once __DIR__ . '/nav.php';
                 <i class="fa-solid fa-arrow-up-right-from-square up-service-tab-arrow" aria-hidden="true"></i>
             </a>
         <?php endforeach; ?>
+        <?php if (is_array($netflixService)): ?>
+            <a class="up-service-tab up-service-tab--<?= htmlspecialchars($netflixService['tone'], ENT_QUOTES, 'UTF-8'); ?>" href="<?= htmlspecialchars($netflixService['url'], ENT_QUOTES, 'UTF-8'); ?>">
+                <span class="up-service-tab-icon"><i class="<?= htmlspecialchars($netflixService['icon'], ENT_QUOTES, 'UTF-8'); ?>" aria-hidden="true"></i></span>
+                <span><strong><?= __($netflixService['label']); ?></strong><small><?= __($netflixService['short']); ?></small></span>
+                <i class="fa-solid fa-arrow-up-right-from-square up-service-tab-arrow" aria-hidden="true"></i>
+            </a>
+        <?php endif; ?>
     </section>
 
     <div class="up-history-link-row">

@@ -85,6 +85,22 @@ if (!function_exists('caffemmo_service_catalog')) {
                         'requires_login' => true
                     ]
                 ]
+            ],
+            'streaming' => [
+                'title' => 'Dịch vụ Streaming',
+                'items' => [
+                    [
+                        'key' => 'netflix',
+                        'label' => 'Xem Netflix',
+                        'short' => 'Tìm sản phẩm Netflix',
+                        'description' => 'Mở nhanh các sản phẩm Netflix đang được cung cấp tại Caffemmo.',
+                        'url' => base_url('client/products?keyword=Netflix'),
+                        'action' => 'products',
+                        'icon' => 'fa-solid fa-play',
+                        'tone' => 'red',
+                        'requires_login' => true
+                    ]
+                ]
             ]
         ];
     }

@@ -3395,6 +3395,12 @@ body {
     border-color: #f0c9db;
 }
 
+.home-service-card--red {
+    --quick-accent: #b30f16;
+    --quick-soft: #fff0f1;
+    border-color: #f0c6ca;
+}
+
 .home-service-card:first-child,
 .home-service-card--recharge {
     --quick-accent: #ffffff;

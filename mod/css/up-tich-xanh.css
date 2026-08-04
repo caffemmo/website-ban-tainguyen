@@ -119,7 +119,7 @@
 
 .up-service-tabs {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 8px;
     margin-top: 18px;
     margin-bottom: 20px;
@@ -153,6 +153,7 @@
 
 .up-service-tab--blue::before { background: #347de0; }
 .up-service-tab--pink::before { background: #d94388; }
+.up-service-tab--red::before { background: #d71920; }
 .up-service-tab:hover,
 .up-service-tab:focus-visible,
 .up-service-tab.is-active {
@@ -165,6 +166,8 @@
 .up-service-tab--blue.is-active { border-color: #347de0; }
 .up-service-tab--pink:focus-visible,
 .up-service-tab--pink.is-active { border-color: #d94388; }
+.up-service-tab--red:focus-visible,
+.up-service-tab--red.is-active { border-color: #d71920; }
 
 .up-service-tab-icon {
     display: grid;
@@ -178,6 +181,7 @@
 
 .up-service-tab--teal .up-service-tab-icon { color: #008f9b; background: #ddf6f7; }
 .up-service-tab--blue .up-service-tab-icon { color: #226fca; background: #e4efff; }
+.up-service-tab--red .up-service-tab-icon { color: #b30f16; background: #fff0f1; }
 .up-service-tab--pink .up-service-tab-icon { color: #d23a7d; background: #fde8f1; }
 .up-service-tab > span:nth-child(2) { display: grid; min-width: 0; gap: 4px; }
 .up-service-tab strong { color: #17344f; font-size: 13px; line-height: 1.35; }
@@ -463,6 +467,7 @@
 .up-service-tab { animation: up-fade-in 360ms ease-out both; }
 .up-service-tab:nth-child(2) { animation-delay: 45ms; }
 .up-service-tab:nth-child(3) { animation-delay: 90ms; }
+.up-service-tab:nth-child(4) { animation-delay: 135ms; }
 .up-panel { animation: up-fade-in 420ms ease-out 100ms both; }
 
 @keyframes up-fade-in {
@@ -477,6 +482,10 @@
     border-color: #00aeb7;
     box-shadow: 0 0 0 3px rgba(0, 174, 183, .16);
     outline: none;
+}
+
+@media (max-width: 1199px) {
+    .up-service-tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 991px) {
