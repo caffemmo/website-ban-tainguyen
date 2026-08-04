@@ -9,6 +9,7 @@ $upService = isset($_GET['service']) && in_array($_GET['service'], ['get-link', 
     : '';
 $upMenuActive = isset($action) && $action === 'up-tich-xanh';
 $upHistoryActive = isset($action) && $action === 'up-tich-xanh-history';
+$netflixHistoryActive = isset($action) && $action === 'netflix-history';
 if ($upMenuActive && $upService === '') {
     $upService = 'get-link';
 }
@@ -44,6 +45,12 @@ $serviceCatalog = caffemmo_service_catalog();
                     <a class="desktop-sidebar-link desktop-sidebar-service-link <?= $upHistoryActive ? 'active' : ''; ?>" href="<?= base_url('client/up-tich-xanh-history'); ?>" <?= $upHistoryActive ? 'aria-current="page"' : ''; ?>>
                         <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
                         <span class="desktop-sidebar-link-label"><strong><?= __('Lịch sử yêu cầu'); ?></strong><small><?= __('Theo dõi dịch vụ đã gửi'); ?></small></span>
+                    </a>
+                    <?php endif; ?>
+                    <?php if ($serviceGroupKey === 'streaming'): ?>
+                    <a class="desktop-sidebar-link desktop-sidebar-service-link <?= $netflixHistoryActive ? 'active' : ''; ?>" href="<?= base_url('client/netflix-history'); ?>" <?= $netflixHistoryActive ? 'aria-current="page"' : ''; ?>>
+                        <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
+                        <span class="desktop-sidebar-link-label"><strong><?= __('Lịch sử Netflix'); ?></strong><small><?= __('Xem và tạo lại link'); ?></small></span>
                     </a>
                     <?php endif; ?>
                 <?php endforeach; ?>
@@ -648,6 +655,11 @@ $serviceCatalog = caffemmo_service_catalog();
                     <?php if ($serviceGroupKey === 'up-tich-xanh'): ?>
                     <a class="nav-link <?= $upHistoryActive ? 'active' : ''; ?>" href="<?= base_url('client/up-tich-xanh-history'); ?>" <?= $upHistoryActive ? 'aria-current="page"' : ''; ?>>
                         <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i><span><?= __('Lịch sử yêu cầu'); ?></span>
+                    </a>
+                    <?php endif; ?>
+                    <?php if ($serviceGroupKey === 'streaming'): ?>
+                    <a class="nav-link <?= $netflixHistoryActive ? 'active' : ''; ?>" href="<?= base_url('client/netflix-history'); ?>" <?= $netflixHistoryActive ? 'aria-current="page"' : ''; ?>>
+                        <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i><span><?= __('Lịch sử Netflix'); ?></span>
                     </a>
                     <?php endif; ?>
                 <?php endforeach; ?>
