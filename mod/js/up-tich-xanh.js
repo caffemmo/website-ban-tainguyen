@@ -11,10 +11,12 @@
     var configured = app.getAttribute('data-configured') === '1';
     var historyUrl = app.getAttribute('data-history-url') || '';
     var form = app.querySelector('[data-up-form]');
+    var image = form ? form.querySelector('[name="image"]') : null;
     var submit = app.querySelector('[data-up-submit]');
     var notice = app.querySelector('[data-up-notice]');
     var result = app.querySelector('[data-up-result]');
     var imageMeta = app.querySelector('[data-up-image-meta]');
+    var imageTitle = app.querySelector('[data-up-image-title]');
     var imageValidationToken = 0;
 
     function redirectToLogin() {
@@ -73,33 +75,55 @@
         });
     }
 
+    function setImageState(state, message) {
+        if (!imageMeta) return;
+        imageMeta.dataset.state = state;
+        imageMeta.textContent = message || '';
+    }
+
+    function formatFileSize(bytes) {
+        if (bytes < 1024 * 1024) return Math.max(1, Math.round(bytes / 1024)) + 'KB';
+        return (bytes / (1024 * 1024)).toFixed(2).replace(/\.00$/, '') + 'MB';
+    }
+
+    function hasAllowedImageType(file) {
+        var allowedTypes = ['image/png', 'image/jpeg', 'image/webp'];
+        if (allowedTypes.indexOf(file.type) !== -1) return true;
+        var fileName = String(file.name || '').toLowerCase();
+        return /\.(png|jpe?g|webp)$/.test(fileName);
+    }
+
     async function validateImageFile(file) {
         if (!file) {
-            return 'Vui lòng chọn ảnh giấy tờ xác minh.';
+            return { error: 'Vui lòng chọn ảnh giấy tờ xác minh.' };
         }
-        if (['image/png', 'image/jpeg', 'image/webp'].indexOf(file.type) === -1) {
-            return 'Chỉ nhận ảnh PNG, JPG hoặc WEBP.';
+        if (!hasAllowedImageType(file)) {
+            return { error: 'Chỉ nhận ảnh PNG, JPG hoặc WEBP.' };
         }
         if (file.size > 10 * 1024 * 1024) {
-            return 'Ảnh không được vượt quá 10MB.';
+            return { error: 'Ảnh không được vượt quá 10MB.' };
         }
         var dimensions = await imageDimensions(file);
         if (!dimensions) {
-            return 'Không thể đọc ảnh, vui lòng chọn file PNG, JPG hoặc WEBP hợp lệ.';
+            return { error: 'Không thể đọc ảnh, vui lòng chọn file PNG, JPG hoặc WEBP hợp lệ.' };
         }
         if (dimensions.width < 1500 || dimensions.height < 1000) {
-            return 'Ảnh phải có kích thước tối thiểu 1500×1000px.';
+            return { error: 'Ảnh phải có kích thước tối thiểu 1500×1000px.' };
         }
-        return '';
+        return { error: '', dimensions: dimensions };
     }
 
     async function validateSelectedImage(file) {
-        var error = await validateImageFile(file);
-        if (error) {
-            if (imageMeta) imageMeta.textContent = error;
-            return error;
+        setImageState('checking', 'Đang kiểm tra ảnh...');
+        if (imageTitle) imageTitle.textContent = 'Đang kiểm tra ảnh...';
+        var validation = await validateImageFile(file);
+        if (validation.error) {
+            setImageState('error', validation.error);
+            if (imageTitle) imageTitle.textContent = 'Ảnh chưa hợp lệ';
+            return validation.error;
         }
-        if (imageMeta) imageMeta.textContent = 'Đã chọn ảnh hợp lệ: ' + file.name;
+        setImageState('valid', 'Ảnh hợp lệ · ' + validation.dimensions.width + '×' + validation.dimensions.height + 'px · ' + formatFileSize(file.size));
+        if (imageTitle) imageTitle.textContent = 'Ảnh đã sẵn sàng';
         return '';
     }
 
@@ -110,7 +134,6 @@
             return;
         }
         var cookie = form.querySelector('[name="cookie"]');
-        var image = form.querySelector('[name="image"]');
         if (!cookie || cookie.value.trim().length < 10) {
             setMessage(notice, 'Vui lòng nhập cookie đầy đủ trước khi gửi.', 'error');
             cookie && cookie.focus();
@@ -158,7 +181,8 @@
         var currentToken = ++imageValidationToken;
         var file = image.files && image.files[0];
         if (!file) {
-            if (imageMeta) imageMeta.textContent = '';
+            setImageState('empty', 'Chưa chọn ảnh');
+            if (imageTitle) imageTitle.textContent = 'Chọn ảnh giấy tờ';
             return;
         }
         var error = await validateSelectedImage(file);

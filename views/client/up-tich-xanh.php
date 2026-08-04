@@ -29,8 +29,8 @@ $body = [
     'desc' => __('Dịch vụ Get Link Facebook, Up tích Facebook và Up tích Instagram.'),
     'keyword' => 'get link facebook, up tích xanh, up tích facebook, up tích instagram'
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/up-tich-xanh.css?v=10') . '">';
-$body['footer'] = '<script src="' . BASE_URL('mod/js/up-tich-xanh.js?v=3') . '"></script>';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/up-tich-xanh.css?v=11') . '">';
+$body['footer'] = '<script src="' . BASE_URL('mod/js/up-tich-xanh.js?v=4') . '"></script>';
 
 require_once __DIR__ . '/header.php';
 require_once __DIR__ . '/nav.php';
@@ -121,9 +121,9 @@ require_once __DIR__ . '/nav.php';
                         <span><?= __('Ảnh giấy tờ xác minh'); ?></span>
                         <label class="up-upload-box<?= $upConfigured ? ' is-enabled' : ''; ?>" for="up_image">
                             <i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i>
-                            <strong><?= __('Chọn ảnh giấy tờ'); ?></strong>
+                            <strong data-up-image-title><?= __('Chọn ảnh giấy tờ'); ?></strong>
                             <small>PNG, JPG, WEBP · tối thiểu 1500×1000px · <?= __('tối đa 10MB'); ?></small>
-                            <small data-up-image-meta aria-live="polite"></small>
+                            <small class="up-upload-status" data-up-image-meta data-state="empty" aria-live="polite">Chưa chọn ảnh</small>
                             <input id="up_image" type="file" name="image" accept="image/png,image/jpeg,image/webp"<?= !$upConfigured ? ' disabled' : ''; ?> required>
                         </label>
                     </div>
