@@ -1549,8 +1549,12 @@ function base_url($url = '')
         $host = $allowed_domains[0]; // Domain mặc định
     }
 
-    // Xác định giao thức (HTTPS hoặc HTTP)
-    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
+    // Giữ HTTPS khi website chạy sau reverse proxy hoặc Cloudflare.
+    $forwardedProto = strtolower(trim(explode(',', (string) ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? ''), 2)[0]));
+    $isHttps = (!empty($_SERVER['HTTPS']) && strtolower((string) $_SERVER['HTTPS']) !== 'off')
+        || (int) ($_SERVER['SERVER_PORT'] ?? 0) === 443
+        || $forwardedProto === 'https';
+    $protocol = $isHttps ? 'https' : 'http';
 
     // Xử lý localhost riêng (nếu cần)
     if ($host === 'localhost') {
