@@ -47,6 +47,7 @@ $allowed_actions = [
     'product-order',
     'product-orders',
     'products',
+    'netflix',
     'proxy-buy',
     'proxy-list',
     'proxy-renew',
