@@ -77,6 +77,40 @@ function proxy_metadata_cache_write($data)
     }
 }
 
+function proxy_metadata_filter_ipv6_inventory($data)
+{
+    global $CMSNT;
+    if (!is_array($data) || !isset($data['types']['IPV6']['countries'])) {
+        return $data;
+    }
+
+    $availableCountries = [];
+    if (isset($CMSNT) && youproxy_ensure_tables()) {
+        $rows = $CMSNT->get_list_safe(
+            'SELECT DISTINCT `country` FROM `proxy_ipv6_inventory` WHERE `status` = ? AND `date_end` >= ?',
+            ['available', date('Y-m-d H:i:s')]
+        ) ?: [];
+        foreach ($rows as $row) {
+            $country = strtoupper(trim((string) ($row['country'] ?? '')));
+            if ($country !== '') {
+                $availableCountries[$country] = true;
+            }
+        }
+    }
+
+    $data['types']['IPV6']['countries'] = array_values(array_filter(
+        (array) $data['types']['IPV6']['countries'],
+        function ($country) use ($availableCountries) {
+            if (!is_array($country)) {
+                return false;
+            }
+            $value = strtoupper(trim((string) ($country['value'] ?? '')));
+            return $value !== '' && isset($availableCountries[$value]);
+        }
+    ));
+    return $data;
+}
+
 function proxy_metadata_fetch()
 {
     $typeResponse = youproxy_proxy_types();
@@ -680,7 +714,7 @@ if (!youproxy_is_configured()) {
 if ($action === 'metadata') {
     $result = proxy_metadata_cache_read();
     if ($result !== null) {
-        proxy_json(['success' => true, 'data' => $result]);
+        proxy_json(['success' => true, 'data' => proxy_metadata_filter_ipv6_inventory($result)]);
     }
 
     $metadata = proxy_metadata_fetch();
@@ -688,7 +722,7 @@ if ($action === 'metadata') {
         proxy_json(['success' => false, 'message' => $metadata['message'] ?? 'Không thể tải cấu hình proxy.'], 502);
     }
     proxy_metadata_cache_write($metadata['data']);
-    proxy_json(['success' => true, 'data' => $metadata['data']]);
+    proxy_json(['success' => true, 'data' => proxy_metadata_filter_ipv6_inventory($metadata['data'])]);
 }
 
 if ($action === 'quote') {

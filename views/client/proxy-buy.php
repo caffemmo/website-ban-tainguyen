@@ -75,7 +75,7 @@ require_once __DIR__ . '/nav.php';
                         <span><strong>IPv4</strong><small><?= __('Phổ biến, dễ dùng'); ?></small></span>
                         <i class="fa-solid fa-check proxy-type-check" aria-hidden="true"></i>
                     </button>
-                    <button type="button" class="proxy-type-card" data-proxy-type="IPV6">
+                    <button type="button" class="proxy-type-card" data-proxy-type="IPV6" hidden>
                         <span class="proxy-type-icon"><i class="fa-solid fa-network-wired" aria-hidden="true"></i></span>
                         <span><strong>IPv6</strong><small><?= __('Tiết kiệm chi phí'); ?></small></span>
                         <i class="fa-solid fa-check proxy-type-check" aria-hidden="true"></i>
