@@ -424,9 +424,9 @@ body {
 }
 
 .proxy-type-gif {
-    width: 25px;
-    height: 25px;
-    flex: 0 0 25px;
+    width: 18px;
+    height: 18px;
+    flex: 0 0 18px;
     object-fit: contain;
 }
 
