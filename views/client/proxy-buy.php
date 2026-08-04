@@ -16,7 +16,7 @@ $body = [
     'desc' => __('Mua proxy chính hãng với cấu hình rõ ràng và quản lý tập trung.'),
     'keyword' => 'proxy, mua proxy, proxy premium'
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=19') . '">';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=20') . '">';
 $body['footer'] = '<script src="' . BASE_URL('mod/js/proxy.js?v=8') . '"></script>';
 
 require_once __DIR__ . '/header.php';
@@ -88,12 +88,12 @@ require_once __DIR__ . '/nav.php';
                         </span>
                         <i class="fa-solid fa-check proxy-type-check" aria-hidden="true"></i>
                     </button>
-                    <button type="button" class="proxy-type-card" data-proxy-type="ISP">
+                    <button type="button" class="proxy-type-card proxy-type-card--isp" data-proxy-type="ISP">
                         <span class="proxy-type-icon"><i class="fa-solid fa-building-shield" aria-hidden="true"></i></span>
                         <span class="proxy-type-content">
-                            <span class="proxy-type-title-row"><span class="proxy-type-title"><strong><?= __('Proxy Dân cư (ISP)'); ?></strong><img class="proxy-type-gif" src="<?= BASE_URL('mod/img/proxy-green-badge.gif'); ?>" alt="<?= __('Ngâm tích xanh'); ?>"></span><span class="proxy-type-badges"><em class="proxy-type-badge">Ngâm tích xanh</em><em class="proxy-type-badge proxy-type-badge--private">Private</em></span></span>
-                            <small><?= __('Proxy dân cư tĩnh, ngâm tích, giữ tốc độ cao, phù hợp cho tài khoản.'); ?></small>
-                            <span class="proxy-type-tags"><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('IP dân cư tĩnh (ISP)'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('ASN cao cấp'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i>HTTP/SOCKS5</em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Phản hồi nhanh'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Hỗ trợ 24/7'); ?></em></span>
+                            <span class="proxy-type-title-row"><span class="proxy-type-title"><strong><?= __('Proxy Dân Cư Tĩnh (ISP)'); ?></strong><img class="proxy-type-gif" src="<?= BASE_URL('mod/img/proxy-green-badge.gif'); ?>" alt="<?= __('Ngâm tích xanh'); ?>"></span><span class="proxy-type-badges"><em class="proxy-type-badge">Ngâm tích xanh</em><em class="proxy-type-badge proxy-type-badge--private">Private</em></span></span>
+                            <small class="proxy-type-description"><?= __('Proxy Dân Cư Tĩnh (ISP) hỗ trợ ngâm tích xanh, duy trì uy tín IP và kết nối ổn định trong thời gian dài. Đây là lựa chọn phù hợp cho cá nhân và doanh nghiệp cần IP có độ tin cậy cao, hạn chế CAPTCHA, giảm nguy cơ bị đánh dấu và đảm bảo hiệu suất hoạt động liên tục.'); ?></small>
+                            <span class="proxy-type-tags"><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('IP dân cư tĩnh (ISP)'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('ASN cao cấp'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Hỗ trợ băng thông lớn'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Tùy chọn theo quốc gia'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Hỗ trợ ngâm tích xanh'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Duy trì IP ổn định'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Hạn chế CAPTCHA'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Phiên kết nối không giới hạn thời gian'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Hỗ trợ HTTP(S) & SOCKS5'); ?></em></span>
                         </span>
                         <i class="fa-solid fa-check proxy-type-check" aria-hidden="true"></i>
                     </button>
