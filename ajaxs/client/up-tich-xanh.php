@@ -104,7 +104,7 @@ function uptichxanh_upload_image()
 
     return [
         'path' => $path,
-        'url' => base_url('assets/storage/up-tich-xanh/' . rawurlencode($filename))
+        'url' => base_url('ajaxs/client/up-tich-xanh-image.php?file=' . rawurlencode($filename))
     ];
 }
 
