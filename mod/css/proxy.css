@@ -129,19 +129,24 @@ body {
 }
 
 .proxy-page[data-proxy-page="buy"] .proxy-page-heading {
-    min-height: 108px;
-    padding: 18px 22px;
-    margin-bottom: 18px;
-    border-left-width: 3px;
-    box-shadow: 0 8px 18px rgba(31, 66, 91, .06);
+    min-height: 0;
+    align-items: flex-end;
+    padding: 0 0 18px;
+    margin-bottom: 22px;
+    border: 0;
+    border-bottom: 1px solid #d7e8ed;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    overflow: visible;
 }
 
 .proxy-page[data-proxy-page="buy"] .proxy-page-heading::after { display: none; }
-.proxy-page[data-proxy-page="buy"] .proxy-page-heading > div:first-child { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-areas: 'eyebrow eyebrow' 'title description'; align-items: end; column-gap: 16px; row-gap: 3px; min-width: 0; }
-.proxy-page[data-proxy-page="buy"] .proxy-eyebrow { grid-area: eyebrow; margin-bottom: 1px; font-size: 10px; }
-.proxy-page[data-proxy-page="buy"] .proxy-page-heading h1 { grid-area: title; margin: 0; font-size: 28px; line-height: 1.1; white-space: nowrap; }
-.proxy-page[data-proxy-page="buy"] .proxy-page-heading p { grid-area: description; max-width: 690px; padding-bottom: 1px; font-size: 12px; line-height: 1.45; }
-.proxy-page[data-proxy-page="buy"] .proxy-wallet-card { min-width: 175px; padding-left: 20px; }
+.proxy-page[data-proxy-page="buy"] .proxy-page-heading > div:first-child { display: block; min-width: 0; }
+.proxy-page[data-proxy-page="buy"] .proxy-eyebrow { margin-bottom: 7px; padding-left: 9px; border-left: 3px solid var(--proxy-cyan); font-size: 10px; }
+.proxy-page[data-proxy-page="buy"] .proxy-page-heading h1 { margin: 0 0 5px; font-size: 30px; line-height: 1.1; }
+.proxy-page[data-proxy-page="buy"] .proxy-page-heading p { max-width: 720px; font-size: 12.5px; line-height: 1.45; }
+.proxy-page[data-proxy-page="buy"] .proxy-wallet-card { min-width: 185px; padding-left: 24px; padding-bottom: 1px; }
 
 .proxy-heading-actions {
     display: flex;
@@ -1699,10 +1704,11 @@ body {
         margin-bottom: 16px;
     }
 
-    .proxy-page[data-proxy-page="buy"] .proxy-page-heading { display: flex; min-height: 0; padding: 20px 18px; }
+    .proxy-page[data-proxy-page="buy"] .proxy-page-heading { display: flex; min-height: 0; padding: 0 0 16px; }
     .proxy-page[data-proxy-page="buy"] .proxy-page-heading > div:first-child { display: block; }
     .proxy-page[data-proxy-page="buy"] .proxy-page-heading h1 { font-size: 25px; white-space: normal; }
     .proxy-page[data-proxy-page="buy"] .proxy-page-heading p { max-width: none; margin-top: 5px; font-size: 12px; }
+    .proxy-page[data-proxy-page="buy"] .proxy-wallet-card { width: 100%; min-width: 0; align-items: flex-start; padding: 14px 0 0; border-top: 1px solid #d7e8ed; border-left: 0; }
 
     .proxy-page-heading h1 {
         font-size: 25px;
