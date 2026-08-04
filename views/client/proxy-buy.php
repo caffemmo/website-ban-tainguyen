@@ -93,7 +93,7 @@ require_once __DIR__ . '/nav.php';
                         <span class="proxy-type-content">
                             <span class="proxy-type-title-row"><strong><?= __('Proxy IPv6 thường'); ?></strong><span class="proxy-type-badges"><em class="proxy-type-badge">Ngâm tích xanh</em><em class="proxy-type-badge proxy-type-badge--private">Private</em></span></span>
                             <small><?= __('IP riêng, tiết kiệm chi phí, phù hợp nhu cầu cơ bản.'); ?></small>
-                            <span class="proxy-type-tags"><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('IP riêng'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i>HTTP/SOCKS5</em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Tiết kiệm chi phí'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Phù hợp nhu cầu cơ bản'); ?></em></span>
+                            <span class="proxy-type-tags"><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('IP riêng'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i>HTTP/SOCKS5</em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Hỗ trợ ngâm tích xanh'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Tốc độ quốc tế'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Tiết kiệm chi phí'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Phù hợp nhu cầu cơ bản'); ?></em></span>
                         </span>
                         <i class="fa-solid fa-check proxy-type-check" aria-hidden="true"></i>
                     </button>
