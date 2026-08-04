@@ -146,7 +146,7 @@ require_once __DIR__ . '/nav.php';
                 </label>
                 <label class="proxy-control">
                     <span><?= __('Mục đích sử dụng'); ?></span>
-                    <input type="text" name="goal" value="Marketing" maxlength="200" placeholder="Ví dụ: Quản lý quảng cáo" required>
+                    <input type="text" name="goal" value="Facebook" maxlength="200" placeholder="Ví dụ: Quản lý quảng cáo" required>
                 </label>
             </div>
 

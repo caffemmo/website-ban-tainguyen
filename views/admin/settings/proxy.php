@@ -4,6 +4,19 @@
 
 require_once __DIR__ . '/../../../libs/youproxy.php';
 
+$ipv6CountryOptions = [];
+if (youproxy_is_configured()) {
+    $ipv6CountryResponse = youproxy_countries('IPv6');
+    if (!empty($ipv6CountryResponse['success'])) {
+        $ipv6CountryOptions = youproxy_response_options(
+            $ipv6CountryResponse,
+            ['countries', 'items'],
+            ['alpha3code', 'alpha3', 'countryCode', 'code'],
+            ['name', 'countryName', 'title']
+        );
+    }
+}
+
 function proxy_admin_save_setting($name, $value)
 {
     global $CMSNT;
@@ -59,7 +72,20 @@ if (isset($_POST['RestockIpv6Retail'])) {
     $rentDays = filter_var($_POST['ipv6_retail_rent_days'] ?? null, FILTER_VALIDATE_INT);
     $protocol = strtoupper(trim((string) ($_POST['ipv6_retail_protocol'] ?? 'HTTP')));
     $authType = 'LOGIN';
-    $goal = trim((string) ($_POST['ipv6_retail_goal'] ?? 'Marketing'));
+    $goal = trim((string) ($_POST['ipv6_retail_goal'] ?? 'Facebook'));
+
+    if (!empty($ipv6CountryOptions)) {
+        $supportedCountries = [];
+        foreach ($ipv6CountryOptions as $option) {
+            $supportedCountry = strtoupper(trim((string) ($option['value'] ?? '')));
+            if ($supportedCountry !== '') {
+                $supportedCountries[$supportedCountry] = true;
+            }
+        }
+        if (!isset($supportedCountries[$country])) {
+            admin_msg_error('Mã quốc gia IPv6 không nằm trong danh sách YouProxy đang cung cấp.', base_url_admin('settings&tab=proxy'), 1600);
+        }
+    }
 
     if (!preg_match('/^[A-Z0-9_-]{2,12}$/', $country)
         || $rentDays === false || $rentDays < 1 || $rentDays > 3650
@@ -355,7 +381,18 @@ $ipv6RetailBatches = $CMSNT->get_list_safe(
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label class="form-label proxy-admin-label" for="ipv6_retail_country"><i class="fa-solid fa-earth-americas" aria-hidden="true"></i><?= __('Mã quốc gia'); ?></label>
-                                    <input type="text" class="form-control" id="ipv6_retail_country" name="ipv6_retail_country" placeholder="USA" maxlength="12" required>
+                                    <?php if (!empty($ipv6CountryOptions)): ?>
+                                        <select class="form-select" id="ipv6_retail_country" name="ipv6_retail_country" required>
+                                            <option value=""><?= __('Chọn quốc gia'); ?></option>
+                                            <?php foreach ($ipv6CountryOptions as $option): ?>
+                                                <option value="<?= htmlspecialchars((string) $option['value'], ENT_QUOTES, 'UTF-8'); ?>">
+                                                    <?= htmlspecialchars((string) $option['label'], ENT_QUOTES, 'UTF-8'); ?> (<?= htmlspecialchars((string) $option['value'], ENT_QUOTES, 'UTF-8'); ?>)
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    <?php else: ?>
+                                        <input type="text" class="form-control" id="ipv6_retail_country" name="ipv6_retail_country" placeholder="USA" maxlength="12" required>
+                                    <?php endif; ?>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label proxy-admin-label" for="ipv6_retail_rent_days"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i><?= __('Thời hạn'); ?></label>
@@ -377,7 +414,7 @@ $ipv6RetailBatches = $CMSNT->get_list_safe(
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label proxy-admin-label" for="ipv6_retail_goal"><i class="fa-solid fa-bullseye" aria-hidden="true"></i><?= __('Mục đích sử dụng'); ?></label>
-                                    <input type="text" class="form-control" id="ipv6_retail_goal" name="ipv6_retail_goal" value="Marketing" maxlength="200" required>
+                                    <input type="text" class="form-control" id="ipv6_retail_goal" name="ipv6_retail_goal" value="Facebook" maxlength="200" required>
                                 </div>
                             </div>
                             <div class="proxy-admin-note mt-3">
