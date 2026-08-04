@@ -127,7 +127,11 @@ require_once(__DIR__.'/nav.php');
                             <span><?= __('Truy cập nhanh các dịch vụ thường dùng'); ?></span>
                             <h2 id="home-service-title"><?= __('Thao tác nhanh'); ?></h2>
                         </div>
-                        <span class="home-service-count"><?= $homeServiceCount + 2; ?> <?= __('dịch vụ'); ?> <i class="fa-solid fa-angle-down" aria-hidden="true"></i></span>
+                        <span class="home-service-count">
+                            <span class="home-service-count-icon" aria-hidden="true"><i class="fa-solid fa-layer-group"></i></span>
+                            <span class="home-service-count-label"><?= $homeServiceCount + 2; ?> <?= __('dịch vụ'); ?></span>
+                            <i class="fa-solid fa-angle-down" aria-hidden="true"></i>
+                        </span>
                     </div>
                     <div class="home-service-grid">
                         <a class="home-service-card home-service-card--recharge" href="<?= base_url('?action=recharge-bank'); ?>">

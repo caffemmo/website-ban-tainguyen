@@ -3285,6 +3285,8 @@ body {
 }
 
 .home-service-head .home-service-count {
+    display: inline-flex;
+    align-items: center;
     gap: 9px;
     min-height: 30px;
     padding: 0 14px;
@@ -3296,14 +3298,46 @@ body {
     line-height: 1;
 }
 
-.home-service-head .home-service-count::before {
-    flex: 0 0 8px;
-    margin-right: 10px;
+.home-service-head .home-service-count::before,
+.home-service-head .home-service-count span::before {
+    display: none;
+    content: none;
+}
+
+.home-service-head .home-service-count .home-service-count-icon {
+    display: inline-flex;
+    width: 30px;
+    height: 30px;
+    flex: 0 0 30px;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    color: #087e90;
+    background: #d9f6f8;
+    border-radius: 10px;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.home-service-head .home-service-count .home-service-count-icon i {
+    font-size: 13px;
+}
+
+.home-service-head .home-service-count .home-service-count-label {
+    display: inline-block;
+    gap: 0;
+    color: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    letter-spacing: .12em;
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
 }
 
 .home-service-head .home-service-count > i {
     flex: 0 0 auto;
-    margin-left: 3px;
+    margin-left: 8px;
 }
 
 .home-service-grid {
