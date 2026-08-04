@@ -59,8 +59,12 @@ if ($action === 'get_cookie') {
     if (!netflix_ensure_orders_table()) {
         netflix_json(['success' => false, 'message' => 'Không thể kiểm tra quyền tạo lại link Netflix.'], 503);
     }
-    if ($logId === '' || !netflix_order_belongs_to_user($getUser['id'], $logId)) {
+    $order = $logId !== '' ? netflix_order_for_user($getUser['id'], $logId) : null;
+    if (!$order) {
         netflix_json(['success' => false, 'message' => 'Link Netflix không thuộc tài khoản của bạn.'], 403);
+    }
+    if (!netflix_order_under_warranty($order['created_at'] ?? '')) {
+        netflix_json(['success' => false, 'message' => 'Gói bảo hành Netflix 30 ngày của giao dịch này đã hết hạn.'], 410);
     }
     $result = netflix_regenerate_token($logId);
 } else {

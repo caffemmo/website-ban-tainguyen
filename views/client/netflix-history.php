@@ -89,25 +89,28 @@ require_once __DIR__ . '/nav.php';
                         <th><?= __('Giao dịch'); ?></th>
                         <th><?= __('Chi phí'); ?></th>
                         <th><?= __('Thời gian'); ?></th>
+                        <th><?= __('Bảo hành'); ?></th>
                         <th><?= __('Link mới'); ?></th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($historyOrders as $historyOrder): ?>
+                    <?php $historyUnderWarranty = netflix_order_under_warranty($historyOrder['created_at'] ?? ''); ?>
                     <tr>
                         <td><span class="netflix-history-service"><strong><?= __('Xem Netflix'); ?></strong><small>#<?= (int) $historyOrder['id']; ?></small></span></td>
                         <td><span class="netflix-history-charge"><?= format_currency((float) $historyOrder['charged_amount']); ?></span></td>
                         <td><span class="netflix-history-time"><?= htmlspecialchars((string) $historyOrder['created_at'], ENT_QUOTES, 'UTF-8'); ?></span></td>
+                        <td><span class="netflix-history-warranty <?= $historyUnderWarranty ? 'is-active' : 'is-expired'; ?>"><?= $historyUnderWarranty ? __('Trong hạn bảo hành 30 ngày') : __('Đã hết bảo hành'); ?></span></td>
                         <td>
                             <div class="netflix-history-actions">
-                                <button class="netflix-history-refresh" data-netflix-history-refresh data-log-id="<?= htmlspecialchars((string) $historyOrder['log_id'], ENT_QUOTES, 'UTF-8'); ?>" type="button">
-                                    <i class="fa-solid fa-rotate" aria-hidden="true"></i> <?= __('Tạo lại link'); ?>
+                                <button class="netflix-history-refresh<?= $historyUnderWarranty ? '' : ' is-expired'; ?>" data-netflix-history-refresh data-log-id="<?= htmlspecialchars((string) $historyOrder['log_id'], ENT_QUOTES, 'UTF-8'); ?>" type="button"<?= $historyUnderWarranty ? '' : ' disabled'; ?>>
+                                    <i class="fa-solid fa-rotate" aria-hidden="true"></i> <?= $historyUnderWarranty ? __('Tạo lại miễn phí') : __('Bảo hành đã hết'); ?>
                                 </button>
                                 <div class="netflix-history-result-actions" data-netflix-history-result hidden>
                                     <a data-netflix-history-pc target="_blank" rel="noopener noreferrer" hidden><i class="fa-solid fa-desktop" aria-hidden="true"></i> <?= __('Máy tính'); ?></a>
                                     <a data-netflix-history-mobile target="_blank" rel="noopener noreferrer" hidden><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> <?= __('Điện thoại'); ?></a>
                                 </div>
-                                <span class="netflix-history-message" data-netflix-history-message role="status"></span>
+                                <span class="netflix-history-message" data-netflix-history-message role="status"><?= $historyUnderWarranty ? '' : __('Lấy link mới sẽ tính theo giá hiện tại.'); ?></span>
                             </div>
                         </td>
                     </tr>

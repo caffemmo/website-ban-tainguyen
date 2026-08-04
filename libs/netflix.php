@@ -92,18 +92,33 @@ if (!function_exists('netflix_ensure_orders_table')) {
     }
 }
 
-if (!function_exists('netflix_order_belongs_to_user')) {
-    function netflix_order_belongs_to_user($userId, $logId)
+if (!function_exists('netflix_order_for_user')) {
+    function netflix_order_for_user($userId, $logId)
     {
         global $CMSNT;
         if (!isset($CMSNT) || !is_object($CMSNT)) {
-            return false;
+            return null;
         }
 
-        return (bool) $CMSNT->get_row_safe(
-            'SELECT `id` FROM `netflix_orders` WHERE `user_id` = ? AND `log_id` = ? LIMIT 1',
+        return $CMSNT->get_row_safe(
+            'SELECT `id`, `created_at`, `charged_amount` FROM `netflix_orders` WHERE `user_id` = ? AND `log_id` = ? LIMIT 1',
             [(int) $userId, trim((string) $logId)]
         );
+    }
+}
+
+if (!function_exists('netflix_order_belongs_to_user')) {
+    function netflix_order_belongs_to_user($userId, $logId)
+    {
+        return (bool) netflix_order_for_user($userId, $logId);
+    }
+}
+
+if (!function_exists('netflix_order_under_warranty')) {
+    function netflix_order_under_warranty($createdAt)
+    {
+        $createdTimestamp = strtotime((string) $createdAt);
+        return $createdTimestamp !== false && time() <= ($createdTimestamp + (30 * 86400));
     }
 }
 

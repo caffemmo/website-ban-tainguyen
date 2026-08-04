@@ -64,7 +64,7 @@
             if (result) result.hidden = false;
             if (message) {
                 message.dataset.state = 'success';
-                message.textContent = `Đã tạo lại, link còn hiệu lực khoảng ${formatRemaining(data.time_remaining)}.`;
+                message.textContent = `Đã tạo lại miễn phí, link còn hiệu lực khoảng ${formatRemaining(data.time_remaining)}.`;
             }
         } catch (error) {
             if (message) {

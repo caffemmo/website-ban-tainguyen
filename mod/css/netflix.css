@@ -112,6 +112,12 @@
 .netflix-panel-heading > div { min-width: 0; }
 .netflix-panel-kicker { margin-bottom: 6px; color: #b30f16; font-size: 11px; letter-spacing: .08em; }
 .netflix-panel h2 { margin: 0 0 5px; color: #122b46; font-size: 20px; font-weight: 800; line-height: 1.3; }
+.netflix-feature-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 20px 0 18px; padding: 0; list-style: none; }
+.netflix-feature-list li { display: flex; min-width: 0; align-items: flex-start; gap: 9px; padding: 11px 10px; border: 1px solid #e1ebf0; border-radius: 8px; color: #35576e; background: #fbfdfe; }
+.netflix-feature-list li > i { flex: 0 0 auto; margin-top: 2px; color: #c51f2a; }
+.netflix-feature-list span { display: grid; min-width: 0; gap: 3px; }
+.netflix-feature-list strong { color: #173b56; font-size: 12px; line-height: 1.3; }
+.netflix-feature-list small { color: #6c8494; font-size: 11px; line-height: 1.4; }
 
 .netflix-notice {
     display: flex;
@@ -146,6 +152,8 @@
 .netflix-price-row span { display: inline-flex; align-items: center; gap: 8px; }
 .netflix-price-row span i { color: #b98219; }
 .netflix-price-row strong { color: #8d5f08; font-size: 13px; white-space: nowrap; }
+.netflix-charge-note { display: flex; align-items: flex-start; gap: 8px; margin: -6px 0 15px; color: #6f5a2c; font-size: 11px; line-height: 1.5; }
+.netflix-charge-note i { flex: 0 0 auto; margin-top: 2px; color: #b98219; }
 
 .netflix-submit-button {
     display: inline-flex;
@@ -214,7 +222,7 @@
 .netflix-history-summary { color: #758a98; font-size: 12px; }
 .netflix-history-summary strong { color: #a3161e; font-size: 14px; }
 .netflix-history-table-wrap { overflow-x: auto; border: 1px solid #d6e5ec; border-radius: 8px; background: #fff; }
-.netflix-history-table { width: 100%; min-width: 760px; border-collapse: collapse; color: #35576e; font-size: 12px; }
+.netflix-history-table { width: 100%; min-width: 900px; border-collapse: collapse; color: #35576e; font-size: 12px; }
 .netflix-history-table th { padding: 12px 14px; border-bottom: 1px solid #d6e5ec; color: #627d8f; background: #f7fafc; font-size: 10px; font-weight: 800; letter-spacing: .05em; text-align: left; text-transform: uppercase; white-space: nowrap; }
 .netflix-history-table td { padding: 15px 14px; border-top: 1px solid #e1edf1; vertical-align: middle; }
 .netflix-history-table tbody tr:first-child td { border-top: 0; }
@@ -223,11 +231,15 @@
 .netflix-history-service strong { color: #173b56; font-size: 12px; }
 .netflix-history-service small, .netflix-history-time { color: #7790a0; font-size: 11px; }
 .netflix-history-charge { color: #a3161e; font-size: 12px; font-weight: 800; white-space: nowrap; }
+.netflix-history-warranty { display: inline-flex; min-height: 26px; align-items: center; padding: 4px 8px; border: 1px solid; border-radius: 999px; font-size: 10px; font-weight: 800; white-space: nowrap; }
+.netflix-history-warranty.is-active { border-color: #a9dfc8; color: #087655; background: #effbf5; }
+.netflix-history-warranty.is-expired { border-color: #efb4b4; color: #a13d3d; background: #fff5f5; }
 .netflix-history-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; min-width: 270px; }
 .netflix-history-refresh, .netflix-history-result-actions a { display: inline-flex; min-height: 38px; align-items: center; justify-content: center; gap: 7px; padding: 8px 11px; border: 1px solid #e5a8ac; border-radius: 7px; color: #a3161e; background: #fff; font: inherit; font-size: 11px; font-weight: 800; text-decoration: none; transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease, opacity 180ms ease; }
 .netflix-history-refresh { cursor: pointer; }
 .netflix-history-refresh:hover:not(:disabled), .netflix-history-result-actions a:hover { border-color: #c51f2a; box-shadow: 0 5px 12px rgba(197, 31, 42, .12); transform: translateY(-1px); }
 .netflix-history-refresh:disabled { cursor: wait; opacity: .65; }
+.netflix-history-refresh.is-expired { border-color: #d8e1e6; color: #8195a0; background: #f3f6f8; cursor: not-allowed; }
 .netflix-history-result-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .netflix-history-result-actions a { border-color: #b9cbd4; color: #446477; }
 .netflix-history-message { flex-basis: 100%; color: #758a98; font-size: 11px; line-height: 1.4; }
@@ -250,6 +262,7 @@
     .netflix-hero { align-items: flex-start; flex-direction: column; padding: 20px 18px; }
     .netflix-hero h1 { font-size: 25px; }
     .netflix-panel { padding: 19px; }
+    .netflix-feature-list { grid-template-columns: 1fr; gap: 8px; }
     .netflix-result-actions { display: grid; grid-template-columns: 1fr; }
     .netflix-result-actions a { justify-content: center; }
     .netflix-history-hero { align-items: flex-start; flex-direction: column; padding: 20px 18px; }
