@@ -811,6 +811,7 @@ if ($action === 'buy') {
         'quantity' => $validated['payload']['quantity'],
         'rent_period_days' => $validated['payload']['rentPeriodDays'],
         'provider_price' => $price['provider_price'],
+        'provider_cost_vnd' => youproxy_provider_cost_vnd($price),
         'wallet_amount' => $price['wallet_amount'],
         'provider_currency' => $price['provider_currency'],
         'auto_extend' => $autoExtend ? 1 : 0,

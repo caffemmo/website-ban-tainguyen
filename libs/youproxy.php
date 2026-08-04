@@ -534,6 +534,16 @@ function youproxy_price_context($response)
     ];
 }
 
+function youproxy_provider_cost_vnd($price)
+{
+    $amount = max(0, (float) ($price['provider_price'] ?? 0));
+    $currency = strtoupper(trim((string) ($price['provider_currency'] ?? 'USD')));
+    if ($currency === 'VND') {
+        return round($amount, 2);
+    }
+    return round($amount * max(1, (float) ($price['usd_rate'] ?? youproxy_config()['usd_rate'])), 2);
+}
+
 function youproxy_extract_order_id($response)
 {
     $id = youproxy_find_first_value($response, ['orderId', 'orderID', 'orderNumber', 'providerOrderId', 'order_id']);
@@ -722,6 +732,7 @@ function youproxy_ipv6_retail_store_batch($adminUserId, $payload, $quote, $provi
         'expected_quantity' => $batchQuantity,
         'received_quantity' => 0,
         'provider_price' => (float) $price['provider_price'],
+        'provider_cost_vnd' => youproxy_provider_cost_vnd($price),
         'retail_unit_price' => round((float) $price['wallet_amount'] / $batchQuantity, 2),
         'provider_currency' => (string) $price['provider_currency'],
         'status' => 'pending_sync',
@@ -776,6 +787,7 @@ function youproxy_ipv6_retail_store_batch($adminUserId, $payload, $quote, $provi
             'auth_type' => (string) ($payload['authType'] ?? 'LOGIN'),
             'rent_period_days' => (int) ($payload['rentPeriodDays'] ?? 0),
             'retail_price' => round((float) $price['wallet_amount'] / $batchQuantity, 2),
+            'acquisition_unit_cost_vnd' => round(youproxy_provider_cost_vnd($price) / $batchQuantity, 2),
             'date_start' => $dateStart,
             'date_end' => $dateEnd,
             'status' => $dateEnd === null ? 'pending_sync' : 'available',
@@ -978,6 +990,10 @@ function youproxy_ipv6_retail_sync_batch_legacy($batchId, $providerResponse = nu
             'auth_type' => (string) $batch['auth_type'],
             'rent_period_days' => (int) $batch['rent_period_days'],
             'retail_price' => (float) $batch['retail_unit_price'],
+            'acquisition_unit_cost_vnd' => round(
+                (float) ($batch['provider_cost_vnd'] ?? 0) / max(1, (int) $batch['expected_quantity']),
+                2
+            ),
             'date_start' => $dateStart,
             'date_end' => $dateEnd,
             'status' => $dateEnd === null ? 'pending_sync' : 'available',
@@ -1070,6 +1086,10 @@ function youproxy_ipv6_retail_sync_batch($batchId, $providerResponse = null)
             'auth_type' => (string) $batch['auth_type'],
             'rent_period_days' => (int) $batch['rent_period_days'],
             'retail_price' => (float) $batch['retail_unit_price'],
+            'acquisition_unit_cost_vnd' => round(
+                (float) ($batch['provider_cost_vnd'] ?? 0) / max(1, (int) $batch['expected_quantity']),
+                2
+            ),
             'date_start' => $dateStart,
             'date_end' => $dateEnd,
             'status' => $dateEnd === null ? 'pending_sync' : 'available',
@@ -1112,6 +1132,7 @@ function youproxy_ensure_tables()
         `quantity` INT UNSIGNED NOT NULL DEFAULT 1,
         `rent_period_days` INT UNSIGNED NOT NULL DEFAULT 0,
         `provider_price` DECIMAL(14,6) NOT NULL DEFAULT 0,
+        `provider_cost_vnd` DECIMAL(18,2) NOT NULL DEFAULT 0,
         `wallet_amount` DECIMAL(18,2) NOT NULL DEFAULT 0,
         `provider_currency` VARCHAR(10) NOT NULL DEFAULT 'USD',
         `auto_extend` TINYINT(1) NOT NULL DEFAULT 0,
@@ -1139,6 +1160,7 @@ function youproxy_ensure_tables()
         `expected_quantity` INT UNSIGNED NOT NULL DEFAULT 10,
         `received_quantity` INT UNSIGNED NOT NULL DEFAULT 0,
         `provider_price` DECIMAL(14,6) NOT NULL DEFAULT 0,
+        `provider_cost_vnd` DECIMAL(18,2) NOT NULL DEFAULT 0,
         `retail_unit_price` DECIMAL(18,2) NOT NULL DEFAULT 0,
         `provider_currency` VARCHAR(10) NOT NULL DEFAULT 'USD',
         `status` VARCHAR(20) NOT NULL DEFAULT 'pending_sync',
@@ -1164,6 +1186,7 @@ function youproxy_ensure_tables()
         `auth_type` VARCHAR(10) NOT NULL,
         `rent_period_days` INT UNSIGNED NOT NULL,
         `retail_price` DECIMAL(18,2) NOT NULL DEFAULT 0,
+        `acquisition_unit_cost_vnd` DECIMAL(18,2) NOT NULL DEFAULT 0,
         `date_start` DATETIME NULL,
         `date_end` DATETIME NULL,
         `status` VARCHAR(20) NOT NULL DEFAULT 'available',
@@ -1179,5 +1202,22 @@ function youproxy_ensure_tables()
         KEY `proxy_ipv6_inventory_customer` (`customer_user_id`),
         KEY `proxy_ipv6_inventory_order` (`customer_proxy_order_id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
-    return $CMSNT->query($inventorySql) !== false;
+    if ($CMSNT->query($inventorySql) === false) {
+        return false;
+    }
+
+    foreach ([
+        ['proxy_orders', 'provider_cost_vnd', 'DECIMAL(18,2) NOT NULL DEFAULT 0 AFTER `provider_price`'],
+        ['proxy_ipv6_batches', 'provider_cost_vnd', 'DECIMAL(18,2) NOT NULL DEFAULT 0 AFTER `provider_price`'],
+        ['proxy_ipv6_inventory', 'acquisition_unit_cost_vnd', 'DECIMAL(18,2) NOT NULL DEFAULT 0 AFTER `retail_price`']
+    ] as $column) {
+        $exists = $CMSNT->get_row_safe(
+            'SHOW COLUMNS FROM `' . $column[0] . '` LIKE ?',
+            [$column[1]]
+        );
+        if (!$exists && $CMSNT->query('ALTER TABLE `' . $column[0] . '` ADD COLUMN `' . $column[1] . '` ' . $column[2]) === false) {
+            return false;
+        }
+    }
+    return true;
 }
