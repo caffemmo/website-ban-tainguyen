@@ -6,9 +6,9 @@ if (!defined('IN_SITE')) {
 require_once __DIR__ . '/../../models/is_admin.php';
 require_once __DIR__ . '/../../libs/locket-gold.php';
 $body = [
-    'title' => 'Đơn Locket Gold',
-    'desc' => 'Quản lý đơn Locket Gold',
-    'keyword' => 'locket gold orders'
+    'title' => 'Đơn Locket Gold Vĩnh Viễn',
+    'desc' => 'Quản lý đơn Locket Gold Vĩnh Viễn',
+    'keyword' => 'locket gold vĩnh viễn orders'
 ];
 require_once __DIR__ . '/header.php';
 require_once __DIR__ . '/sidebar.php';
@@ -19,7 +19,7 @@ if (checkPermission($getUser['admin'], 'view_orders_product') != true) {
 }
 
 if (!locket_gold_ensure_orders_table()) {
-    die('<script type="text/javascript">if(!alert("Chưa thể chuẩn bị bảng đơn Locket Gold")){window.history.back();}</script>');
+    die('<script type="text/javascript">if(!alert("Chưa thể chuẩn bị bảng đơn Locket Gold Vĩnh Viễn")){window.history.back();}</script>');
 }
 
 $allowedStatuses = ['pending', 'processing', 'completed', 'failed'];
@@ -42,7 +42,7 @@ if (isset($_POST['SaveLocketGoldOrder'])) {
 
     $order = $CMSNT->get_row_safe('SELECT * FROM `locket_gold_orders` WHERE `id` = ? LIMIT 1', [(int) $orderId]);
     if (!$order) {
-        admin_msg_error('Không tìm thấy đơn Locket Gold.', base_url_admin('locket-gold-orders'), 1200);
+        admin_msg_error('Không tìm thấy đơn Locket Gold Vĩnh Viễn.', base_url_admin('locket-gold-orders'), 1200);
     }
 
     $completedAt = $status === 'completed' ? ($order['completed_at'] ?: date('Y-m-d H:i:s')) : null;
@@ -56,7 +56,7 @@ if (isset($_POST['SaveLocketGoldOrder'])) {
     ], ' `id` = ? ', [(int) $orderId]);
 
     if (!$updated) {
-        admin_msg_error('Không thể cập nhật đơn Locket Gold.', base_url_admin('locket-gold-orders'), 1200);
+        admin_msg_error('Không thể cập nhật đơn Locket Gold Vĩnh Viễn.', base_url_admin('locket-gold-orders'), 1200);
     }
 
     $CMSNT->insert('logs', [
@@ -64,9 +64,9 @@ if (isset($_POST['SaveLocketGoldOrder'])) {
         'ip' => myip(),
         'device' => getUserAgent(),
         'createdate' => gettime(),
-        'action' => 'Cập nhật đơn Locket Gold #' . $order['order_code'] . ' thành ' . locket_gold_status_label($status)
+        'action' => 'Cập nhật đơn Locket Gold Vĩnh Viễn #' . $order['order_code'] . ' thành ' . locket_gold_status_label($status)
     ]);
-    admin_msg_success('Đã cập nhật đơn Locket Gold.', base_url_admin('locket-gold-orders'), 900);
+    admin_msg_success('Đã cập nhật đơn Locket Gold Vĩnh Viễn.', base_url_admin('locket-gold-orders'), 900);
 }
 
 if (isset($_POST['RefundLocketGoldOrder'])) {
@@ -85,7 +85,7 @@ if (isset($_POST['RefundLocketGoldOrder'])) {
 
     $order = $CMSNT->get_row_safe('SELECT * FROM `locket_gold_orders` WHERE `id` = ? LIMIT 1', [(int) $orderId]);
     if (!$order) {
-        admin_msg_error('Không tìm thấy đơn Locket Gold.', base_url_admin('locket-gold-orders'), 1200);
+        admin_msg_error('Không tìm thấy đơn Locket Gold Vĩnh Viễn.', base_url_admin('locket-gold-orders'), 1200);
     }
     if ((float) $order['refund_amount'] > 0 || $order['status'] === 'refunded') {
         admin_msg_error('Đơn này đã được hoàn tiền trước đó.', base_url_admin('locket-gold-orders'), 1200);
@@ -94,7 +94,7 @@ if (isset($_POST['RefundLocketGoldOrder'])) {
     $refundAmount = (float) $order['charged_amount'];
     $userModel = new users();
     $refundTransaction = 'REFUND_LOCKET_GOLD_' . $order['order_code'];
-    if (!$userModel->RefundCredits($order['user_id'], $refundAmount, 'Hoàn tiền đơn Locket Gold ' . $order['order_code'], $refundTransaction)) {
+    if (!$userModel->RefundCredits($order['user_id'], $refundAmount, 'Hoàn tiền đơn Locket Gold Vĩnh Viễn ' . $order['order_code'], $refundTransaction)) {
         admin_msg_error('Không thể hoàn tiền cho tài khoản khách hàng.', base_url_admin('locket-gold-orders'), 1200);
     }
 
@@ -113,9 +113,9 @@ if (isset($_POST['RefundLocketGoldOrder'])) {
         'ip' => myip(),
         'device' => getUserAgent(),
         'createdate' => gettime(),
-        'action' => 'Hoàn tiền đơn Locket Gold #' . $order['order_code'] . ': ' . $note
+        'action' => 'Hoàn tiền đơn Locket Gold Vĩnh Viễn #' . $order['order_code'] . ': ' . $note
     ]);
-    admin_msg_success('Đã hoàn tiền đơn Locket Gold.', base_url_admin('locket-gold-orders'), 900);
+    admin_msg_success('Đã hoàn tiền đơn Locket Gold Vĩnh Viễn.', base_url_admin('locket-gold-orders'), 900);
 }
 
 $limit = validate_int($_GET['limit'] ?? 20, 10, 100) ?: 20;
@@ -199,7 +199,7 @@ $pagination = pagination($baseOrdersUrl, $from, $total, $limit);
     <div class="container-fluid">
         <div class="locket-orders-intro">
             <div>
-                <h1><i class="fa-solid fa-crown me-2" aria-hidden="true"></i><?= __('Đơn Locket Gold'); ?></h1>
+                <h1><i class="fa-solid fa-crown me-2" aria-hidden="true"></i><?= __('Đơn Locket Gold Vĩnh Viễn'); ?></h1>
                 <p><?= __('Xử lý thủ công, cập nhật trạng thái và hoàn tiền trực tiếp từ Admin Panel.'); ?></p>
             </div>
             <a class="btn btn-dark btn-sm" href="<?= base_url_admin('settings&tab=locket-gold'); ?>"><i class="fa-solid fa-sliders me-1" aria-hidden="true"></i><?= __('Cấu hình giá'); ?></a>
@@ -228,7 +228,7 @@ $pagination = pagination($baseOrdersUrl, $from, $total, $limit);
                 </form>
 
                 <?php if (empty($orders)): ?>
-                <div class="text-center text-muted py-5"><i class="fa-solid fa-inbox d-block mb-2 fs-3"></i><?= __('Chưa có đơn Locket Gold phù hợp.'); ?></div>
+                <div class="text-center text-muted py-5"><i class="fa-solid fa-inbox d-block mb-2 fs-3"></i><?= __('Chưa có đơn Locket Gold Vĩnh Viễn phù hợp.'); ?></div>
                 <?php else: ?>
                 <div class="locket-orders-table-wrap">
                     <table class="locket-orders-table">

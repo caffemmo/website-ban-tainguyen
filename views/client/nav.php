@@ -57,7 +57,7 @@ $serviceCatalog = caffemmo_service_catalog();
                     <?php if ($serviceGroupKey === 'digital'): ?>
                     <a class="desktop-sidebar-link desktop-sidebar-service-link <?= $locketGoldHistoryActive ? 'active' : ''; ?>" href="<?= base_url('client/locket-gold-history'); ?>" <?= $locketGoldHistoryActive ? 'aria-current="page"' : ''; ?>>
                         <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
-                        <span class="desktop-sidebar-link-label"><strong><?= __('Lịch sử Locket Gold'); ?></strong><small><?= __('Theo dõi đơn đã gửi'); ?></small></span>
+                        <span class="desktop-sidebar-link-label"><strong><?= __('Lịch sử Locket Gold Vĩnh Viễn'); ?></strong><small><?= __('Theo dõi đơn đã gửi'); ?></small></span>
                     </a>
                     <?php endif; ?>
                 <?php endforeach; ?>
@@ -671,7 +671,7 @@ $serviceCatalog = caffemmo_service_catalog();
                     <?php endif; ?>
                     <?php if ($serviceGroupKey === 'digital'): ?>
                     <a class="nav-link <?= $locketGoldHistoryActive ? 'active' : ''; ?>" href="<?= base_url('client/locket-gold-history'); ?>" <?= $locketGoldHistoryActive ? 'aria-current="page"' : ''; ?>>
-                        <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i><span><?= __('Lịch sử Locket Gold'); ?></span>
+                        <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i><span><?= __('Lịch sử Locket Gold Vĩnh Viễn'); ?></span>
                     </a>
                     <?php endif; ?>
                 <?php endforeach; ?>

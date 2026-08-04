@@ -107,9 +107,9 @@ if (!function_exists('caffemmo_service_catalog')) {
                 'items' => [
                     [
                         'key' => 'locket-gold',
-                        'label' => 'Locket Gold',
+                        'label' => 'Locket Gold Vĩnh Viễn',
                         'short' => 'Nâng cấp tài khoản nhanh',
-                        'description' => 'Chọn gói phù hợp, gửi username và theo dõi trạng thái xử lý ngay trên Caffemmo.',
+                        'description' => 'Chọn gói Locket Gold Vĩnh Viễn, gửi username và theo dõi trạng thái xử lý ngay trên Caffemmo.',
                         'url' => base_url('client/locket-gold'),
                         'action' => 'locket-gold',
                         'icon' => 'fa-solid fa-crown',

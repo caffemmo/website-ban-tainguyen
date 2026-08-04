@@ -57,7 +57,7 @@ if (!locket_gold_ensure_orders_table()) {
 $orderCode = locket_gold_order_code();
 $transactionId = 'LOCKET_GOLD_' . $orderCode;
 $userModel = new users();
-if (!$userModel->RemoveCredits($getUser['id'], $salePrice, 'Tạo đơn Locket Gold ' . $package['label'], $transactionId)) {
+if (!$userModel->RemoveCredits($getUser['id'], $salePrice, 'Tạo đơn Locket Gold Vĩnh Viễn ' . $package['label'], $transactionId)) {
     locket_gold_json(['success' => false, 'message' => 'Không thể trừ tiền trong ví, vui lòng thử lại.'], 500);
 }
 
@@ -77,7 +77,7 @@ $inserted = $CMSNT->insert('locket_gold_orders', [
 ]);
 
 if (!$inserted) {
-    $userModel->RefundCredits($getUser['id'], $salePrice, 'Hoàn tiền đơn Locket Gold lỗi lưu đơn ' . $orderCode, 'REFUND_' . $transactionId);
+    $userModel->RefundCredits($getUser['id'], $salePrice, 'Hoàn tiền đơn Locket Gold Vĩnh Viễn lỗi lưu đơn ' . $orderCode, 'REFUND_' . $transactionId);
     locket_gold_json(['success' => false, 'message' => 'Không thể tạo đơn, số dư đã được hoàn lại nếu giao dịch thành công.'], 500);
 }
 

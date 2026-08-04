@@ -34,9 +34,9 @@ $historyQuery = $historyBaseUrl . '?limit=' . $historyLimit . '&';
 $historyPagination = pagination_client($historyQuery, $historyFrom, $historyTotal, $historyLimit);
 
 $body = [
-    'title' => __('Lịch sử Locket Gold') . ' | ' . $CMSNT->site('title'),
-    'desc' => __('Theo dõi các đơn Locket Gold đã gửi.'),
-    'keyword' => 'lịch sử locket gold, đơn locket'
+    'title' => __('Lịch sử Locket Gold Vĩnh Viễn') . ' | ' . $CMSNT->site('title'),
+    'desc' => __('Theo dõi các đơn Locket Gold Vĩnh Viễn đã gửi.'),
+    'keyword' => 'lịch sử locket gold vĩnh viễn, đơn locket'
 ];
 $body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/locket-gold.css?v=1') . '">';
 
@@ -48,7 +48,7 @@ require_once __DIR__ . '/nav.php';
     <section class="locket-history-hero" aria-labelledby="locket-history-title">
         <div>
             <span class="locket-eyebrow"><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i> Caffemmo Service</span>
-            <h1 id="locket-history-title"><?= __('Lịch sử Locket Gold'); ?></h1>
+            <h1 id="locket-history-title"><?= __('Lịch sử Locket Gold Vĩnh Viễn'); ?></h1>
             <p><?= __('Theo dõi trạng thái xử lý và thông tin các đơn đã gửi.'); ?></p>
         </div>
         <a class="locket-history-new-link" href="<?= htmlspecialchars(base_url('client/locket-gold'), ENT_QUOTES, 'UTF-8'); ?>"><i class="fa-solid fa-plus" aria-hidden="true"></i> <?= __('Tạo đơn mới'); ?></a>
@@ -72,7 +72,7 @@ require_once __DIR__ . '/nav.php';
         <?php elseif (empty($historyOrders)): ?>
         <div class="locket-history-empty">
             <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
-            <strong><?= __('Chưa có đơn Locket Gold'); ?></strong>
+            <strong><?= __('Chưa có đơn Locket Gold Vĩnh Viễn'); ?></strong>
             <span><?= __('Đơn mới sẽ xuất hiện tại đây để bạn theo dõi trạng thái xử lý.'); ?></span>
         </div>
         <?php else: ?>

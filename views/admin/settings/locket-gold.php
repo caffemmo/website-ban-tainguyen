@@ -61,9 +61,9 @@ if (isset($_POST['SaveLocketGoldSettings'])) {
         'ip' => myip(),
         'device' => getUserAgent(),
         'createdate' => gettime(),
-        'action' => __('Cập nhật cấu hình Locket Gold')
+        'action' => __('Cập nhật cấu hình Locket Gold Vĩnh Viễn')
     ]);
-    admin_msg_success('Đã lưu cấu hình Locket Gold.', base_url_admin('settings&tab=locket-gold'), 900);
+    admin_msg_success('Đã lưu cấu hình Locket Gold Vĩnh Viễn.', base_url_admin('settings&tab=locket-gold'), 900);
 }
 
 $locketGoldEnabled = locket_gold_enabled();
@@ -95,7 +95,7 @@ $locketGoldPackages = locket_gold_packages();
 <div class="tab-pane text-muted show active" id="locket-gold-settings" role="tabpanel">
     <div class="locket-admin-intro">
         <div>
-            <h4><i class="fa-solid fa-crown me-2" aria-hidden="true"></i><?= __('Cấu hình Locket Gold'); ?></h4>
+            <h4><i class="fa-solid fa-crown me-2" aria-hidden="true"></i><?= __('Cấu hình Locket Gold Vĩnh Viễn'); ?></h4>
             <p><?= __('Quản lý giá bán, thời hạn bảo hành và trạng thái nhận đơn thủ công.'); ?></p>
         </div>
         <span class="locket-admin-status <?= $locketGoldEnabled ? 'is-ready' : ''; ?>"><i class="fa-solid fa-circle" aria-hidden="true"></i><?= $locketGoldEnabled ? __('Đang mở bán') : __('Đang tắt'); ?></span>
@@ -127,7 +127,7 @@ $locketGoldPackages = locket_gold_packages();
                     <div class="card-body">
                         <div class="form-check form-switch form-check-lg mb-4">
                             <input class="form-check-input" type="checkbox" role="switch" id="locket_gold_enabled" name="locket_gold_enabled" value="1" <?= $locketGoldEnabled ? 'checked' : ''; ?>>
-                            <label class="form-check-label fw-semibold" for="locket_gold_enabled"><?= __('Cho phép khách tạo đơn Locket Gold'); ?></label>
+                            <label class="form-check-label fw-semibold" for="locket_gold_enabled"><?= __('Cho phép khách tạo đơn Locket Gold Vĩnh Viễn'); ?></label>
                         </div>
                         <div class="mb-4">
                             <label class="form-label locket-admin-label" for="locket_gold_warranty_days"><i class="fa-solid fa-shield-heart" aria-hidden="true"></i><?= __('Thời hạn bảo hành'); ?></label>

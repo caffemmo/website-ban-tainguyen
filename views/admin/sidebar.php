@@ -1029,7 +1029,7 @@ if (!defined('IN_SITE')) {
                                 <a href="<?= base_url_admin('locket-gold-orders'); ?>"
                                     class="side-menu__item <?= active_sidebar(['locket-gold-orders']); ?>">
                                     <i class="fa-solid fa-crown side-menu__icon" style="color: #eab308;"></i>
-                                    <span class="side-menu__label">Đơn Locket Gold</span>
+                                    <span class="side-menu__label">Đơn Locket Gold Vĩnh Viễn</span>
                                 </a>
                             </li>
                         <?php endif ?>

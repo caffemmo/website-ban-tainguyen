@@ -20,9 +20,9 @@ foreach ($locketGoldPackages as $package) {
 }
 
 $body = [
-    'title' => __('Locket Gold') . ' | ' . $CMSNT->site('title'),
-    'desc' => __('Nâng cấp tài khoản Locket Gold nhanh chóng từ Caffemmo.'),
-    'keyword' => 'locket gold, nâng cấp locket'
+    'title' => __('Locket Gold Vĩnh Viễn') . ' | ' . $CMSNT->site('title'),
+    'desc' => __('Nâng cấp tài khoản Locket Gold Vĩnh Viễn nhanh chóng từ Caffemmo.'),
+    'keyword' => 'locket gold vĩnh viễn, nâng cấp locket'
 ];
 $body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/locket-gold.css?v=1') . '">';
 $body['footer'] = '<script src="' . BASE_URL('mod/js/locket-gold.js?v=1') . '"></script>';
@@ -44,7 +44,7 @@ require_once __DIR__ . '/nav.php';
     <section class="locket-hero" aria-labelledby="locket-page-title">
         <div>
             <span class="locket-eyebrow"><i class="fa-solid fa-crown" aria-hidden="true"></i> Caffemmo Service</span>
-            <h1 id="locket-page-title"><?= __('Locket Gold'); ?></h1>
+            <h1 id="locket-page-title"><?= __('Locket Gold Vĩnh Viễn'); ?></h1>
             <p><?= __('Chọn gói phù hợp, nhập username và theo dõi đơn ngay trên Caffemmo.'); ?></p>
         </div>
         <span class="locket-status <?= $locketGoldEnabled ? 'is-ready' : 'is-closed'; ?>" role="status"><i class="fa-solid fa-circle" aria-hidden="true"></i><?= $locketGoldEnabled ? __('Đang nhận đơn') : __('Tạm đóng'); ?></span>
@@ -56,12 +56,12 @@ require_once __DIR__ . '/nav.php';
                 <span class="locket-step">01</span>
                 <div>
                     <span class="locket-panel-kicker"><?= __('Chọn gói'); ?></span>
-                    <h2 id="locket-package-title"><?= __('Gói Locket Gold'); ?></h2>
+                    <h2 id="locket-package-title"><?= __('Gói Locket Gold Vĩnh Viễn'); ?></h2>
                     <p><?= __('Mỗi gói hỗ trợ số lượng tài khoản khác nhau.'); ?></p>
                 </div>
             </div>
 
-            <div class="locket-package-grid" role="radiogroup" aria-label="<?= __('Chọn gói Locket Gold'); ?>">
+            <div class="locket-package-grid" role="radiogroup" aria-label="<?= __('Chọn gói Locket Gold Vĩnh Viễn'); ?>">
                 <?php foreach ($locketGoldPackages as $package): ?>
                 <button class="locket-package-card<?= $package['key'] === 'vip-1' ? ' is-selected' : ''; ?>" data-locket-package="<?= htmlspecialchars($package['key'], ENT_QUOTES, 'UTF-8'); ?>" type="button" role="radio" aria-checked="<?= $package['key'] === 'vip-1' ? 'true' : 'false'; ?>">
                     <span class="locket-package-card-top"><strong><?= htmlspecialchars($package['label'], ENT_QUOTES, 'UTF-8'); ?></strong><i class="fa-solid fa-crown" aria-hidden="true"></i></span>
