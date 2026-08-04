@@ -48,6 +48,7 @@ $tab_config = [
     'proxy'                => ['file' => 'proxy.php',                'icon' => 'fa-solid fa-server',                                 'label' => __('Proxy')],
     'proxy-accounting'     => ['file' => 'proxy-accounting.php',      'icon' => 'fa-solid fa-calculator',                              'label' => __('Kế toán Proxy')],
     'up-tich-xanh'         => ['file' => 'up-tich-xanh.php',         'icon' => 'fa-solid fa-circle-check',                           'label' => __('Up tích xanh')],
+    'netflix'              => ['file' => 'netflix.php',              'icon' => 'fa-solid fa-play',                                  'label' => __('Netflix')],
     'telegram-template'    => ['file' => 'telegram-template.php',    'icon' => 'fa-brands fa-telegram',                                'label' => __('Telegram Template')],
     'mail-template'        => ['file' => 'mail-template.php',        'icon' => 'fa-solid fa-envelope',                                 'label' => __('Mail Template')],
     'security'             => ['file' => 'security.php',             'icon' => 'fa-solid fa-shield-halved',                            'label' => __('Bảo mật')],

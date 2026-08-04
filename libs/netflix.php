@@ -3,24 +3,59 @@ if (!defined('IN_SITE')) {
     die('The Request Not Found');
 }
 
+if (!function_exists('netflix_env')) {
+    function netflix_env($key, $fallback = '')
+    {
+        if (isset($_ENV[$key]) && trim((string) $_ENV[$key]) !== '') {
+            return trim((string) $_ENV[$key]);
+        }
+        if (isset($_SERVER[$key]) && trim((string) $_SERVER[$key]) !== '') {
+            return trim((string) $_SERVER[$key]);
+        }
+        $value = getenv($key);
+        return $value !== false && trim((string) $value) !== '' ? trim((string) $value) : $fallback;
+    }
+}
+
+if (!function_exists('netflix_db_setting')) {
+    function netflix_db_setting($name, $fallback = '')
+    {
+        global $CMSNT;
+        static $cache = [];
+
+        if (array_key_exists($name, $cache)) {
+            return $cache[$name];
+        }
+        if (!isset($CMSNT) || !is_object($CMSNT)) {
+            return $fallback;
+        }
+
+        $row = $CMSNT->get_row_safe('SELECT `value` FROM `settings` WHERE `name` = ? LIMIT 1', [$name]);
+        $cache[$name] = $row && isset($row['value']) ? trim((string) $row['value']) : $fallback;
+        return $cache[$name];
+    }
+}
+
 if (!function_exists('netflix_api_key')) {
     function netflix_api_key()
     {
-        $key = getenv('CAFFEMMO_NETFLIX_API_KEY');
-        if ($key === false || $key === '') {
-            $key = isset($_SERVER['CAFFEMMO_NETFLIX_API_KEY']) ? $_SERVER['CAFFEMMO_NETFLIX_API_KEY'] : '';
-        }
-        if (($key === false || $key === '') && isset($_ENV['CAFFEMMO_NETFLIX_API_KEY'])) {
-            $key = $_ENV['CAFFEMMO_NETFLIX_API_KEY'];
-        }
-        return trim((string) $key);
+        $key = netflix_db_setting('netflix_api_key');
+        return $key !== '' ? $key : netflix_env('CAFFEMMO_NETFLIX_API_KEY');
+    }
+}
+
+if (!function_exists('netflix_is_enabled')) {
+    function netflix_is_enabled()
+    {
+        $setting = netflix_db_setting('netflix_enabled', '');
+        return $setting === '' || $setting === '1';
     }
 }
 
 if (!function_exists('netflix_api_is_configured')) {
     function netflix_api_is_configured()
     {
-        return netflix_api_key() !== '';
+        return netflix_is_enabled() && netflix_api_key() !== '';
     }
 }
 
