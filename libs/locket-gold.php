@@ -60,7 +60,7 @@ if (!function_exists('locket_gold_packages')) {
             ],
             [
                 'key' => 'lifetime',
-                'label' => 'Vĩnh viễn',
+                'label' => 'Locket Gold Vĩnh Viễn',
                 'max_accounts' => 3,
                 'setting' => 'locket_gold_price_lifetime',
                 'default_price' => 79000,
