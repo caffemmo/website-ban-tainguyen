@@ -3327,43 +3327,49 @@ body {
     --quick-soft: #eaf3ff;
     border-color: #bedaf2;
     background: #fafdff;
-    animation: home-resource-attention 4.8s ease-in-out infinite;
+    animation: home-resource-attention 3s linear infinite;
 }
 
 @keyframes home-resource-attention {
-    0%, 62%, 100% {
+    0%, 64%, 65%, 100% {
         opacity: 1;
         transform: translate3d(0, 0, 0);
         box-shadow: 0 3px 10px rgba(17, 71, 92, .05);
     }
 
-    65% {
-        opacity: .78;
-        transform: translate3d(-4px, 0, 0) rotate(-.9deg);
+    4% {
+        opacity: .86;
+        transform: translate3d(-4px, 0, 0) rotate(-.8deg);
         border-color: #6ab9ed;
         box-shadow: 0 0 0 4px rgba(37, 110, 196, .16), 0 11px 26px rgba(37, 110, 196, .22);
     }
 
-    69% {
-        opacity: 1;
-        transform: translate3d(5px, 0, 0) rotate(1deg);
+    8% {
+        opacity: .96;
+        transform: translate3d(4px, 0, 0) rotate(.8deg);
         border-color: #256ec4;
         box-shadow: 0 0 0 4px rgba(37, 110, 196, .18), 0 12px 28px rgba(37, 110, 196, .25);
     }
 
-    73% {
-        opacity: .82;
+    12% {
+        opacity: .84;
         transform: translate3d(-4px, 0, 0) rotate(-.8deg);
         border-color: #6ab9ed;
         box-shadow: 0 0 0 3px rgba(37, 110, 196, .14), 0 10px 24px rgba(37, 110, 196, .2);
     }
 
-    77%, 82% {
-        opacity: 1;
-        transform: translate3d(0, 0, 0);
-        border-color: #bedaf2;
-        box-shadow: 0 3px 10px rgba(17, 71, 92, .05);
-    }
+    16% { transform: translate3d(4px, 0, 0) rotate(.8deg); }
+    20% { transform: translate3d(-4px, 0, 0) rotate(-.8deg); }
+    24% { transform: translate3d(4px, 0, 0) rotate(.8deg); }
+    28% { transform: translate3d(-4px, 0, 0) rotate(-.8deg); }
+    32% { transform: translate3d(4px, 0, 0) rotate(.8deg); }
+    36% { transform: translate3d(-4px, 0, 0) rotate(-.8deg); }
+    40% { transform: translate3d(4px, 0, 0) rotate(.8deg); }
+    44% { transform: translate3d(-4px, 0, 0) rotate(-.8deg); }
+    48% { transform: translate3d(4px, 0, 0) rotate(.8deg); }
+    52% { transform: translate3d(-4px, 0, 0) rotate(-.8deg); }
+    56% { transform: translate3d(3px, 0, 0) rotate(.6deg); }
+    60% { transform: translate3d(-2px, 0, 0) rotate(-.4deg); }
 }
 
 .home-service-card--teal {
