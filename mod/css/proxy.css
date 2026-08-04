@@ -380,6 +380,10 @@ body {
     min-height: 220px;
 }
 
+.proxy-type-card.proxy-type-card--ipv6 {
+    min-height: 220px;
+}
+
 .proxy-type-card:hover,
 .proxy-type-card:focus-visible {
     border-color: #6bcfd8;
@@ -1838,6 +1842,10 @@ body {
     }
 
     .proxy-type-card.proxy-type-card--datacenter {
+        min-height: 216px;
+    }
+
+    .proxy-type-card.proxy-type-card--ipv6 {
         min-height: 216px;
     }
 

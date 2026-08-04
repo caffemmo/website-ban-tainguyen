@@ -16,7 +16,7 @@ $body = [
     'desc' => __('Mua proxy chính hãng với cấu hình rõ ràng và quản lý tập trung.'),
     'keyword' => 'proxy, mua proxy, proxy premium'
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=21') . '">';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=22') . '">';
 $body['footer'] = '<script src="' . BASE_URL('mod/js/proxy.js?v=8') . '"></script>';
 
 require_once __DIR__ . '/header.php';
@@ -79,12 +79,12 @@ require_once __DIR__ . '/nav.php';
                         </span>
                         <i class="fa-solid fa-check proxy-type-check" aria-hidden="true"></i>
                     </button>
-                    <button type="button" class="proxy-type-card" data-proxy-type="IPV6">
+                    <button type="button" class="proxy-type-card proxy-type-card--ipv6" data-proxy-type="IPV6">
                         <span class="proxy-type-icon"><i class="fa-solid fa-network-wired" aria-hidden="true"></i></span>
                         <span class="proxy-type-content">
-                            <span class="proxy-type-title-row"><strong><?= __('Proxy IPv6 thường'); ?></strong><span class="proxy-type-badges"><em class="proxy-type-badge proxy-type-badge--private">Private</em></span></span>
-                            <small><?= __('IP riêng, tiết kiệm chi phí, phù hợp nhu cầu cơ bản.'); ?></small>
-                            <span class="proxy-type-tags"><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('IP riêng'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i>HTTP/SOCKS5</em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Tiết kiệm chi phí'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Phù hợp nhu cầu cơ bản'); ?></em></span>
+                            <span class="proxy-type-title-row"><strong><?= __('Proxy IPv6'); ?></strong><span class="proxy-type-badges"><em class="proxy-type-badge proxy-type-badge--private">Private</em></span></span>
+                            <small class="proxy-type-description"><?= __('IP riêng, tiết kiệm chi phí, hỗ trợ ngâm tích xanh, phù hợp nhu cầu cơ bản. Dùng để nuôi Facebook, Instagram, Gmail, tốc độ cao và không giới hạn băng thông.'); ?></small>
+                            <span class="proxy-type-tags"><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('IP riêng'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i>HTTP/SOCKS5</em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Hỗ trợ ngâm tích xanh'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Băng thông tốc độ cao'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Nuôi tài khoản'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Tốc độ quốc tế'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Tiết kiệm chi phí'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Phù hợp cho nhu cầu cơ bản'); ?></em></span>
                         </span>
                         <i class="fa-solid fa-check proxy-type-check" aria-hidden="true"></i>
                     </button>
