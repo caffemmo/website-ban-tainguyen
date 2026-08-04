@@ -84,8 +84,8 @@ function uptichxanh_service_endpoint($service)
 {
     $map = [
         'get-link' => 'getlink',
-        'up-fb' => 'fb',
-        'up-ig' => 'ig'
+        'up-fb' => 'upfb',
+        'up-ig' => 'upig'
     ];
     return isset($map[$service]) ? $map[$service] : false;
 }
@@ -169,13 +169,9 @@ function uptichxanh_request($method, $endpoint, $query = [], $payload = null)
         return ['ok' => false, 'http_code' => $httpCode, 'body' => null, 'error' => 'Dịch vụ trả về dữ liệu không hợp lệ.'];
     }
 
-    $providerStatus = strtolower(trim((string) ($body['status'] ?? '')));
-    $acceptedStatuses = ['success', 'completed', 'pending', 'processing', 'queued', 'accepted'];
-    $providerSuccess = $httpCode >= 200 && $httpCode < 300
-        && (in_array($providerStatus, $acceptedStatuses, true)
-            || (isset($body['success']) && filter_var($body['success'], FILTER_VALIDATE_BOOLEAN)));
+    $providerSuccess = isset($body['status']) && strtolower((string) $body['status']) === 'success';
     return [
-        'ok' => $providerSuccess,
+        'ok' => $httpCode >= 200 && $httpCode < 300 && $providerSuccess,
         'http_code' => $httpCode,
         'body' => $body,
         'error' => ''
