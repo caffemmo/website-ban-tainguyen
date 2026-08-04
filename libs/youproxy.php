@@ -803,7 +803,128 @@ function youproxy_ipv6_retail_store_batch($adminUserId, $payload, $quote, $provi
     ];
 }
 
-function youproxy_ipv6_retail_sync_batch($batchId)
+function youproxy_ipv6_retail_existing_records()
+{
+    global $CMSNT;
+    if (!isset($CMSNT)) {
+        return [];
+    }
+    return $CMSNT->get_list_safe(
+        'SELECT `provider_ip_id`, `batch_id` FROM `proxy_ipv6_inventory` WHERE `provider_ip_id` IS NOT NULL',
+        []
+    ) ?: [];
+}
+
+function youproxy_ipv6_retail_match_records($records, $batch)
+{
+    global $CMSNT;
+    $groups = [];
+    foreach ((array) $records as $record) {
+        $recordType = strtoupper(trim((string) (youproxy_find_direct_value($record, ['proxyType', 'type']) ?: 'IPv6')));
+        $providerIpId = trim((string) (youproxy_find_direct_value($record, ['ipAddressId', 'id']) ?: ''));
+        $orderId = trim((string) (youproxy_find_direct_value($record, ['orderId', 'orderID', 'orderNumber', 'providerOrderId', 'order_id']) ?: ''));
+        if ($recordType !== 'IPV6' || $providerIpId === '' || $orderId === '') {
+            continue;
+        }
+        if (!isset($groups[$orderId])) {
+            $groups[$orderId] = [];
+        }
+        $groups[$orderId][] = $record;
+    }
+
+    $expectedQuantity = max(1, (int) ($batch['expected_quantity'] ?? 0));
+    $storedOrderId = trim((string) ($batch['provider_order_id'] ?? ''));
+    if ($storedOrderId !== '' && isset($groups[$storedOrderId]) && count($groups[$storedOrderId]) >= $expectedQuantity) {
+        return [
+            'records' => array_slice($groups[$storedOrderId], 0, $expectedQuantity),
+            'provider_order_id' => $storedOrderId,
+            'match_mode' => 'provider_id'
+        ];
+    }
+
+    $existingRecords = [];
+    if (isset($CMSNT)) {
+        foreach (youproxy_ipv6_retail_existing_records() as $existing) {
+            $providerIpId = trim((string) ($existing['provider_ip_id'] ?? ''));
+            if ($providerIpId !== '') {
+                $existingRecords[$providerIpId] = (int) ($existing['batch_id'] ?? 0);
+            }
+        }
+    }
+
+    $expectedCountry = strtoupper(trim((string) ($batch['country'] ?? '')));
+    $expectedProtocol = strtoupper(trim((string) ($batch['protocol'] ?? '')));
+    $createdAt = strtotime((string) ($batch['created_at'] ?? ''));
+    $candidates = [];
+    foreach ($groups as $orderId => $group) {
+        if (count($group) !== $expectedQuantity) {
+            continue;
+        }
+        $groupStart = null;
+        $groupEnd = null;
+        $valid = true;
+        foreach ($group as $record) {
+            $providerIpId = trim((string) (youproxy_find_direct_value($record, ['ipAddressId', 'id']) ?: ''));
+            if (isset($existingRecords[$providerIpId]) && $existingRecords[$providerIpId] !== (int) ($batch['id'] ?? 0)) {
+                $valid = false;
+                break;
+            }
+            $country = strtoupper(trim((string) (youproxy_find_direct_value($record, ['country', 'countryCode']) ?: '')));
+            if ($expectedCountry !== '' && $country !== '' && $country !== $expectedCountry) {
+                $valid = false;
+                break;
+            }
+            $protocol = strtoupper(trim((string) (youproxy_find_direct_value($record, ['protocol']) ?: '')));
+            if ($expectedProtocol !== '' && $protocol !== '' && $protocol !== $expectedProtocol) {
+                $valid = false;
+                break;
+            }
+            $dateStartValue = youproxy_find_first_value($record, ['dateStart', 'startDate']);
+            $dateEndValue = youproxy_find_first_value($record, ['dateEnd', 'endDate']);
+            $dateStart = $dateStartValue !== null ? strtotime((string) $dateStartValue) : false;
+            $dateEnd = $dateEndValue !== null ? strtotime((string) $dateEndValue) : false;
+            if ($dateStart === false || $dateEnd === false) {
+                $valid = false;
+                break;
+            }
+            $groupStart = $groupStart === null ? $dateStart : min($groupStart, $dateStart);
+            $groupEnd = $groupEnd === null ? $dateEnd : max($groupEnd, $dateEnd);
+        }
+        if (!$valid || $groupStart === null || $groupEnd === null) {
+            continue;
+        }
+        $durationDays = (int) round(($groupEnd - $groupStart) / 86400);
+        if (abs($durationDays - max(1, (int) ($batch['rent_period_days'] ?? 0))) > 2) {
+            continue;
+        }
+        $timeDistance = $createdAt !== false ? abs($groupStart - $createdAt) : 0;
+        if ($createdAt !== false && $timeDistance > 14 * 86400) {
+            continue;
+        }
+        $candidates[] = [
+            'order_id' => $orderId,
+            'records' => $group,
+            'time_distance' => $timeDistance
+        ];
+    }
+
+    if (empty($candidates)) {
+        return ['records' => [], 'provider_order_id' => '', 'match_mode' => 'none'];
+    }
+    usort($candidates, function ($left, $right) {
+        return $left['time_distance'] <=> $right['time_distance'];
+    });
+    if (isset($candidates[1]) && ($candidates[1]['time_distance'] - $candidates[0]['time_distance']) < 120) {
+        return ['records' => [], 'provider_order_id' => '', 'match_mode' => 'ambiguous'];
+    }
+    return [
+        'records' => $candidates[0]['records'],
+        'provider_order_id' => $candidates[0]['order_id'],
+        'match_mode' => 'metadata'
+    ];
+}
+
+function youproxy_ipv6_retail_sync_batch_legacy($batchId, $providerResponse = null)
 {
     global $CMSNT;
     if (!isset($CMSNT) || !youproxy_ensure_tables()) {
@@ -880,6 +1001,99 @@ function youproxy_ipv6_retail_sync_batch($batchId)
         'received_quantity' => $received,
         'expected_quantity' => (int) $batch['expected_quantity'],
         'status' => $status
+    ];
+}
+
+function youproxy_ipv6_retail_sync_batch($batchId, $providerResponse = null)
+{
+    global $CMSNT;
+    if (!isset($CMSNT) || !youproxy_ensure_tables()) {
+        return ['success' => false, 'message' => 'IPv6 inventory is not available.'];
+    }
+
+    $batch = $CMSNT->get_row_safe('SELECT * FROM `proxy_ipv6_batches` WHERE `id` = ? LIMIT 1', [(int) $batchId]);
+    if (!$batch || empty($batch['provider_order_id'])) {
+        return ['success' => false, 'message' => 'IPv6 batch has no provider order reference.'];
+    }
+
+    $records = is_array($providerResponse) ? youproxy_normalize_ip_records($providerResponse) : [];
+    $match = youproxy_ipv6_retail_match_records($records, $batch);
+    if (empty($match['records'])) {
+        $listResponse = youproxy_ip_addresses('IPv6');
+        if (empty($listResponse['success'])) {
+            return ['success' => false, 'message' => youproxy_error_text($listResponse, 'Unable to sync IPv6 inventory.')];
+        }
+        $match = youproxy_ipv6_retail_match_records(youproxy_normalize_ip_records($listResponse), $batch);
+    }
+
+    $providerOrderId = trim((string) ($match['provider_order_id'] ?? ''));
+    if ($providerOrderId !== '' && $providerOrderId !== (string) $batch['provider_order_id']) {
+        $CMSNT->update('proxy_ipv6_batches', [
+            'provider_order_id' => $providerOrderId,
+            'updated_at' => date('Y-m-d H:i:s')
+        ], '`id` = ?', [(int) $batch['id']]);
+        $batch['provider_order_id'] = $providerOrderId;
+    }
+
+    foreach ((array) ($match['records'] ?? []) as $record) {
+        $providerIpId = trim((string) (youproxy_find_direct_value($record, ['ipAddressId', 'id']) ?: ''));
+        if ($providerIpId === '') {
+            continue;
+        }
+        $dateStartValue = youproxy_find_first_value($record, ['dateStart', 'startDate']);
+        $dateEndValue = youproxy_find_first_value($record, ['dateEnd', 'endDate']);
+        $dateStart = $dateStartValue && strtotime((string) $dateStartValue) !== false ? date('Y-m-d H:i:s', strtotime((string) $dateStartValue)) : null;
+        $dateEnd = $dateEndValue && strtotime((string) $dateEndValue) !== false ? date('Y-m-d H:i:s', strtotime((string) $dateEndValue)) : null;
+        $existing = $CMSNT->get_row_safe('SELECT `id`, `batch_id`, `status` FROM `proxy_ipv6_inventory` WHERE `provider_ip_id` = ? LIMIT 1', [$providerIpId]);
+        if ($existing && (int) $existing['batch_id'] !== (int) $batch['id']) {
+            continue;
+        }
+        if ($existing) {
+            $updates = [
+                'provider_order_id' => $providerOrderId !== '' ? $providerOrderId : (string) $batch['provider_order_id'],
+                'date_start' => $dateStart,
+                'date_end' => $dateEnd,
+                'updated_at' => date('Y-m-d H:i:s')
+            ];
+            if (in_array((string) $existing['status'], ['pending_sync', 'available'], true)) {
+                $updates['status'] = $dateEnd === null ? 'pending_sync' : 'available';
+            }
+            $CMSNT->update('proxy_ipv6_inventory', $updates, '`id` = ?', [(int) $existing['id']]);
+            continue;
+        }
+        $CMSNT->insert('proxy_ipv6_inventory', [
+            'batch_id' => (int) $batch['id'],
+            'provider_ip_id' => $providerIpId,
+            'provider_order_id' => $providerOrderId !== '' ? $providerOrderId : (string) $batch['provider_order_id'],
+            'country' => (string) $batch['country'],
+            'protocol' => (string) $batch['protocol'],
+            'auth_type' => (string) $batch['auth_type'],
+            'rent_period_days' => (int) $batch['rent_period_days'],
+            'retail_price' => (float) $batch['retail_unit_price'],
+            'date_start' => $dateStart,
+            'date_end' => $dateEnd,
+            'status' => $dateEnd === null ? 'pending_sync' : 'available',
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s')
+        ]);
+    }
+
+    $count = $CMSNT->get_row_safe('SELECT COUNT(*) AS total FROM `proxy_ipv6_inventory` WHERE `batch_id` = ?', [(int) $batch['id']]);
+    $received = (int) ($count['total'] ?? 0);
+    $status = $received >= max(1, (int) $batch['expected_quantity']) ? 'active' : 'pending_sync';
+    $CMSNT->update('proxy_ipv6_batches', [
+        'received_quantity' => $received,
+        'status' => $status,
+        'updated_at' => date('Y-m-d H:i:s')
+    ], '`id` = ?', [(int) $batch['id']]);
+
+    return [
+        'success' => true,
+        'batch_id' => (int) $batch['id'],
+        'received_quantity' => $received,
+        'expected_quantity' => (int) $batch['expected_quantity'],
+        'status' => $status,
+        'match_mode' => $match['match_mode'] ?? 'none'
     ];
 }
 
