@@ -114,6 +114,38 @@ function uptichxanh_service_label($service)
     return isset($map[$service]) ? $map[$service] : 'Dịch vụ Up Tích Xanh';
 }
 
+function uptichxanh_extract_uid($service, $cookie)
+{
+    $cookieName = $service === 'up-ig' ? 'ds_user_id' : ($service === 'up-fb' ? 'c_user' : '');
+    if ($cookieName === '') {
+        return '';
+    }
+
+    $pattern = '/(?:^|;\s*)' . preg_quote($cookieName, '/') . '=([^;]+)/i';
+    if (!preg_match($pattern, (string) $cookie, $matches)) {
+        return '';
+    }
+
+    $uid = trim((string) ($matches[1] ?? ''));
+    return preg_match('/^\d{1,100}$/', $uid) ? $uid : '';
+}
+
+function uptichxanh_find_successful_uid_order($userId, $service, $uid)
+{
+    global $CMSNT;
+    if (!isset($CMSNT) || !is_object($CMSNT) || $uid === '' || !in_array($service, ['up-fb', 'up-ig'], true)) {
+        return null;
+    }
+
+    return $CMSNT->get_row_safe(
+        "SELECT `id`, `provider_uid`, `provider_status` FROM `up_tich_xanh_orders`
+         WHERE `user_id` = ? AND `service` = ? AND `provider_uid` = ?
+         AND `provider_status` IN ('success', 'completed')
+         ORDER BY `id` DESC LIMIT 1",
+        [(int) $userId, $service, $uid]
+    );
+}
+
 function uptichxanh_order_status($status)
 {
     $status = strtolower(trim((string) $status));
