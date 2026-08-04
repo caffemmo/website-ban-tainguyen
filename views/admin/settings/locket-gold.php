@@ -19,7 +19,7 @@ function locket_gold_admin_save_setting($name, $value)
 function locket_gold_admin_price($value)
 {
     $value = trim((string) $value);
-    if ($value === '' || !is_numeric($value) || (float) $value <= 0 || (float) $value > 1000000000) {
+    if ($value === '' || !is_numeric($value) || !is_finite((float) $value) || (float) $value <= 0) {
         return false;
     }
     return number_format((float) $value, 2, '.', '');
@@ -112,7 +112,7 @@ $locketGoldPackages = locket_gold_packages();
                         <div class="mb-3">
                             <label class="form-label locket-admin-label" for="<?= htmlspecialchars($package['setting'], ENT_QUOTES, 'UTF-8'); ?>"><i class="fa-solid fa-crown" aria-hidden="true"></i><?= htmlspecialchars($package['label'], ENT_QUOTES, 'UTF-8'); ?> <small class="text-muted">(<?= (int) $package['max_accounts']; ?> tài khoản)</small></label>
                             <div class="input-group">
-                                <input type="number" class="form-control" id="<?= htmlspecialchars($package['setting'], ENT_QUOTES, 'UTF-8'); ?>" name="<?= htmlspecialchars($package['setting'], ENT_QUOTES, 'UTF-8'); ?>" value="<?= htmlspecialchars(number_format((float) $package['price'], 2, '.', ''), ENT_QUOTES, 'UTF-8'); ?>" min="1" max="1000000000" step="1000" required>
+                                <input type="number" class="form-control" id="<?= htmlspecialchars($package['setting'], ENT_QUOTES, 'UTF-8'); ?>" name="<?= htmlspecialchars($package['setting'], ENT_QUOTES, 'UTF-8'); ?>" value="<?= htmlspecialchars(number_format((float) $package['price'], 2, '.', ''), ENT_QUOTES, 'UTF-8'); ?>" min="0.01" step="any" required>
                                 <span class="input-group-text">VND</span>
                             </div>
                         </div>
