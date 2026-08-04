@@ -222,10 +222,11 @@
 .netflix-history-summary { color: #758a98; font-size: 12px; }
 .netflix-history-summary strong { color: #a3161e; font-size: 14px; }
 .netflix-history-table-wrap { overflow-x: auto; border: 1px solid #d6e5ec; border-radius: 8px; background: #fff; }
-.netflix-history-table { width: 100%; min-width: 900px; border-collapse: collapse; color: #35576e; font-size: 12px; }
-.netflix-history-table th { padding: 12px 14px; border-bottom: 1px solid #d6e5ec; color: #627d8f; background: #f7fafc; font-size: 10px; font-weight: 800; letter-spacing: .05em; text-align: left; text-transform: uppercase; white-space: nowrap; }
-.netflix-history-table td { padding: 15px 14px; border-top: 1px solid #e1edf1; vertical-align: middle; }
-.netflix-history-table tbody tr:first-child td { border-top: 0; }
+.netflix-history-table { width: 100%; min-width: 900px; border: 0 !important; border-collapse: collapse; color: #35576e; font-size: 12px; }
+.netflix-history-table th { padding: 12px 14px; border: 0 !important; border-bottom: 1px solid #d6e5ec !important; color: #627d8f; background: #f7fafc; font-size: 10px; font-weight: 800; letter-spacing: .05em; text-align: left; text-transform: uppercase; white-space: nowrap; }
+.netflix-history-table td { padding: 15px 14px; border: 0 !important; border-top: 1px solid #e1edf1 !important; vertical-align: middle; }
+.netflix-history-table tbody tr:first-child td { border-top: 0 !important; }
+.netflix-history-table tbody tr:last-child td { border-bottom: 0 !important; }
 .netflix-history-table tbody tr:hover { background: #fffafa; }
 .netflix-history-service { display: grid; gap: 3px; min-width: 150px; }
 .netflix-history-service strong { color: #173b56; font-size: 12px; }

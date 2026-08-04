@@ -14,7 +14,7 @@ $body = [
     'desc' => __('Lấy link xem Netflix nhanh chóng.'),
     'keyword' => 'xem netflix, netflix'
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/netflix.css?v=4') . '">';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/netflix.css?v=5') . '">';
 $body['footer'] = '<script src="' . BASE_URL('mod/js/netflix.js?v=2') . '"></script>';
 
 require_once __DIR__ . '/header.php';

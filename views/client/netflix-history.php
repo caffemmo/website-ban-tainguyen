@@ -38,7 +38,7 @@ $body = [
     'desc' => __('Xem lại các lần lấy link Netflix và tạo lại link khi cần.'),
     'keyword' => 'lịch sử netflix, tạo lại link netflix'
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/netflix.css?v=4') . '">';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/netflix.css?v=5') . '">';
 $body['footer'] = '<script src="' . BASE_URL('mod/js/netflix-history.js?v=1') . '"></script>';
 
 require_once __DIR__ . '/header.php';
