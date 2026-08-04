@@ -1211,9 +1211,9 @@ function youproxy_ensure_tables()
         ['proxy_ipv6_batches', 'provider_cost_vnd', 'DECIMAL(18,2) NOT NULL DEFAULT 0 AFTER `provider_price`'],
         ['proxy_ipv6_inventory', 'acquisition_unit_cost_vnd', 'DECIMAL(18,2) NOT NULL DEFAULT 0 AFTER `retail_price`']
     ] as $column) {
-        $exists = $CMSNT->get_row_safe(
-            'SHOW COLUMNS FROM `' . $column[0] . '` LIKE ?',
-            [$column[1]]
+        // MariaDB does not accept prepared placeholders in SHOW COLUMNS.
+        $exists = $CMSNT->get_row(
+            "SHOW COLUMNS FROM `" . $column[0] . "` LIKE '" . addslashes($column[1]) . "'"
         );
         if (!$exists && $CMSNT->query('ALTER TABLE `' . $column[0] . '` ADD COLUMN `' . $column[1] . '` ' . $column[2]) === false) {
             return false;
