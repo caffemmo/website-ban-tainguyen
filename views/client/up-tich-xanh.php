@@ -29,7 +29,7 @@ $body = [
     'desc' => __('Dịch vụ Get Link Facebook, Up tích Facebook và Up tích Instagram.'),
     'keyword' => 'get link facebook, up tích xanh, up tích facebook, up tích instagram'
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/up-tich-xanh.css?v=13') . '">';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/up-tich-xanh.css?v=14') . '">';
 $body['footer'] = '<script src="' . BASE_URL('mod/js/up-tich-xanh.js?v=5') . '"></script>';
 
 require_once __DIR__ . '/header.php';
