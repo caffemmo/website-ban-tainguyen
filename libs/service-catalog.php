@@ -101,6 +101,22 @@ if (!function_exists('caffemmo_service_catalog')) {
                         'requires_login' => true
                     ]
                 ]
+            ],
+            'digital' => [
+                'title' => 'Dịch vụ số',
+                'items' => [
+                    [
+                        'key' => 'locket-gold',
+                        'label' => 'Locket Gold',
+                        'short' => 'Nâng cấp tài khoản nhanh',
+                        'description' => 'Chọn gói phù hợp, gửi username và theo dõi trạng thái xử lý ngay trên Caffemmo.',
+                        'url' => base_url('client/locket-gold'),
+                        'action' => 'locket-gold',
+                        'icon' => 'fa-solid fa-crown',
+                        'tone' => 'yellow',
+                        'requires_login' => true
+                    ]
+                ]
             ]
         ];
     }

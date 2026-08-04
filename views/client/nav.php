@@ -10,6 +10,7 @@ $upService = isset($_GET['service']) && in_array($_GET['service'], ['get-link', 
 $upMenuActive = isset($action) && $action === 'up-tich-xanh';
 $upHistoryActive = isset($action) && $action === 'up-tich-xanh-history';
 $netflixHistoryActive = isset($action) && $action === 'netflix-history';
+$locketGoldHistoryActive = isset($action) && $action === 'locket-gold-history';
 if ($upMenuActive && $upService === '') {
     $upService = 'get-link';
 }
@@ -51,6 +52,12 @@ $serviceCatalog = caffemmo_service_catalog();
                     <a class="desktop-sidebar-link desktop-sidebar-service-link <?= $netflixHistoryActive ? 'active' : ''; ?>" href="<?= base_url('client/netflix-history'); ?>" <?= $netflixHistoryActive ? 'aria-current="page"' : ''; ?>>
                         <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
                         <span class="desktop-sidebar-link-label"><strong><?= __('Lịch sử Netflix'); ?></strong><small><?= __('Xem và tạo lại link'); ?></small></span>
+                    </a>
+                    <?php endif; ?>
+                    <?php if ($serviceGroupKey === 'digital'): ?>
+                    <a class="desktop-sidebar-link desktop-sidebar-service-link <?= $locketGoldHistoryActive ? 'active' : ''; ?>" href="<?= base_url('client/locket-gold-history'); ?>" <?= $locketGoldHistoryActive ? 'aria-current="page"' : ''; ?>>
+                        <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
+                        <span class="desktop-sidebar-link-label"><strong><?= __('Lịch sử Locket Gold'); ?></strong><small><?= __('Theo dõi đơn đã gửi'); ?></small></span>
                     </a>
                     <?php endif; ?>
                 <?php endforeach; ?>
@@ -660,6 +667,11 @@ $serviceCatalog = caffemmo_service_catalog();
                     <?php if ($serviceGroupKey === 'streaming'): ?>
                     <a class="nav-link <?= $netflixHistoryActive ? 'active' : ''; ?>" href="<?= base_url('client/netflix-history'); ?>" <?= $netflixHistoryActive ? 'aria-current="page"' : ''; ?>>
                         <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i><span><?= __('Lịch sử Netflix'); ?></span>
+                    </a>
+                    <?php endif; ?>
+                    <?php if ($serviceGroupKey === 'digital'): ?>
+                    <a class="nav-link <?= $locketGoldHistoryActive ? 'active' : ''; ?>" href="<?= base_url('client/locket-gold-history'); ?>" <?= $locketGoldHistoryActive ? 'aria-current="page"' : ''; ?>>
+                        <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i><span><?= __('Lịch sử Locket Gold'); ?></span>
                     </a>
                     <?php endif; ?>
                 <?php endforeach; ?>

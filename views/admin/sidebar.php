@@ -1024,6 +1024,15 @@ if (!defined('IN_SITE')) {
                                 </a>
                             </li>
                         <?php endif ?>
+                        <?php if (checkPermission($getUser['admin'], 'view_orders_product') == true): ?>
+                            <li class="slide">
+                                <a href="<?= base_url_admin('locket-gold-orders'); ?>"
+                                    class="side-menu__item <?= active_sidebar(['locket-gold-orders']); ?>">
+                                    <i class="fa-solid fa-crown side-menu__icon" style="color: #eab308;"></i>
+                                    <span class="side-menu__label">Đơn Locket Gold</span>
+                                </a>
+                            </li>
+                        <?php endif ?>
                         <?php if (checkPermission($getUser['admin'], 'view_currency') == true): ?>
                             <li class="slide">
                                 <a href="<?= base_url_admin('currency-list'); ?>"
