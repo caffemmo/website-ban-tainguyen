@@ -418,16 +418,18 @@ body {
 }
 
 .proxy-type-title-row {
-    position: relative;
-    display: block;
+    display: flex;
     min-height: 22px;
-    padding-right: 152px;
+    align-items: center;
+    gap: 8px;
+    padding-right: 24px;
 }
 
 .proxy-type-title {
     display: inline-flex;
     min-width: 0;
     max-width: 100%;
+    flex: 0 1 auto;
     align-items: center;
     gap: 6px;
 }
@@ -456,10 +458,8 @@ body {
 }
 
 .proxy-type-badges {
-    position: absolute;
-    top: 0;
-    right: 22px;
     display: flex;
+    flex: 0 0 auto;
     flex-wrap: wrap;
     justify-content: flex-end;
     gap: 4px;
@@ -480,6 +480,21 @@ body {
 .proxy-type-badge--private {
     color: #087d62;
     background: #d9f7ec;
+}
+
+.proxy-type-frame-badge {
+    position: absolute;
+    top: -12px;
+    right: 28px;
+    z-index: 2;
+    padding: 4px 9px;
+    border-radius: 5px;
+    color: #fff;
+    background: #3b82f6;
+    font-size: 10px;
+    font-weight: 800;
+    line-height: 1.1;
+    white-space: nowrap;
 }
 
 .proxy-type-tags {
@@ -1864,7 +1879,9 @@ body {
 
     .proxy-type-title-row {
         min-height: 20px;
-        padding-right: 132px;
+        flex-wrap: wrap;
+        align-items: center;
+        padding-right: 20px;
     }
 
     .proxy-type-title {
@@ -1872,8 +1889,14 @@ body {
     }
 
     .proxy-type-badges {
-        right: 18px;
         justify-content: flex-end;
+    }
+
+    .proxy-type-frame-badge {
+        top: -11px;
+        right: 18px;
+        padding: 3px 7px;
+        font-size: 8px;
     }
 
     .proxy-type-tags {
