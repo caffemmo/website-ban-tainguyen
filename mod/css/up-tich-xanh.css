@@ -205,24 +205,30 @@
     border-bottom: 1px solid #d7e7ed;
 }
 
+.up-history-page { max-width: 1420px; }
+.up-history-page .up-history-panel { border-top: 3px solid #0caeb7; box-shadow: 0 14px 30px rgba(24, 76, 90, .08); }
 .up-history-overview-copy { min-width: 0; }
 .up-history-overview h1 { margin: 7px 0 5px; color: #13314a; font-size: 25px; font-weight: 800; line-height: 1.22; }
 .up-history-overview p { margin: 0; color: #607b8e; font-size: 12px; line-height: 1.55; }
-.up-history-back-link { display: inline-flex; min-height: 36px; align-items: center; gap: 7px; flex: 0 0 auto; padding: 8px 11px; border: 1px solid #b7dde2; border-radius: 7px; color: #007c86; background: #f5fcfc; font-size: 12px; font-weight: 800; text-decoration: none; }
+.up-history-back-link { display: inline-flex; min-height: 40px; align-items: center; gap: 7px; flex: 0 0 auto; padding: 9px 13px; border: 1px solid #b7dde2; border-radius: 7px; color: #007c86; background: #f5fcfc; box-shadow: 0 3px 8px rgba(24, 76, 90, .05); font-size: 12px; font-weight: 800; text-decoration: none; }
 .up-history-back-link:hover { border-color: #0caeb7; color: #00616a; background: #ebfafa; }
 
-.up-history-panel { padding: 18px; }
-.up-history-filter { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 17px; }
-.up-history-filter label { display: grid; min-width: 210px; gap: 6px; color: #31536a; font-size: 11px; font-weight: 700; }
+.up-history-panel { padding: 24px; }
+.up-history-filter { display: grid; grid-template-columns: minmax(190px, 240px) minmax(150px, 220px) minmax(0, 1fr); align-items: end; gap: 14px; margin-bottom: 18px; padding: 13px 14px; border: 1px solid #dce9ee; border-radius: 8px; background: #f8fbfc; }
+.up-history-filter label { display: grid; min-width: 0; gap: 6px; color: #31536a; font-size: 11px; font-weight: 700; }
 .up-history-filter select { min-height: 37px; border: 1px solid #cbdfe9; border-radius: 7px; padding: 7px 31px 7px 10px; color: #294b62; background: #fbfdfe; font-size: 12px; }
 .up-history-filter select:focus-visible { border-color: #00aeb7; box-shadow: 0 0 0 3px rgba(0, 174, 183, .16); outline: none; }
-.up-history-summary { color: #688195; font-size: 11px; }
+.up-history-summary { justify-self: end; padding-bottom: 10px; color: #688195; font-size: 11px; text-align: right; }
 .up-history-summary strong { color: #0b8e98; font-size: 13px; }
-.up-history-table-wrap { overflow-x: auto; border: 1px solid #d6e5ec; border-radius: 8px; }
+.up-history-table-wrap { overflow-x: auto; border: 1px solid #d6e5ec; border-radius: 8px; background: #fff; box-shadow: 0 5px 14px rgba(24, 76, 90, .04); }
 .up-history-table { width: 100%; min-width: 760px; border-collapse: collapse; color: #35576e; font-size: 12px; }
-.up-history-table th { padding: 11px 12px; color: #627d8f; background: #f4f9fb; font-size: 10px; font-weight: 800; letter-spacing: .05em; text-align: left; text-transform: uppercase; white-space: nowrap; }
-.up-history-table td { padding: 13px 12px; border-top: 1px solid #e1edf1; vertical-align: middle; }
+.up-history-table th,
+.up-history-table td { border-right: 0; border-left: 0; }
+.up-history-table th { padding: 12px 14px; border-bottom: 1px solid #d6e5ec; color: #627d8f; background: #f4f9fb; font-size: 10px; font-weight: 800; letter-spacing: .05em; text-align: left; text-transform: uppercase; white-space: nowrap; }
+.up-history-table td { padding: 15px 14px; border-top: 1px solid #e1edf1; vertical-align: middle; }
 .up-history-table tbody tr:hover { background: #f9fcfd; }
+.up-history-table tbody tr:first-child td { border-top: 0; }
+.up-history-table tbody tr:last-child td { border-bottom: 0; }
 .up-history-service { display: grid; gap: 3px; min-width: 150px; }
 .up-history-service strong { color: #173b56; font-size: 12px; }
 .up-history-service small, .up-history-time { color: #7790a0; font-size: 10px; }
@@ -480,9 +486,10 @@
     .up-history-overview { align-items: flex-start; flex-direction: column; gap: 13px; }
     .up-history-overview h1 { font-size: 21px; }
     .up-history-back-link { width: 100%; justify-content: center; }
-    .up-history-panel { padding: 13px; }
-    .up-history-filter { align-items: stretch; flex-direction: column; gap: 10px; }
+    .up-history-panel { padding: 16px; }
+    .up-history-filter { grid-template-columns: 1fr; align-items: stretch; gap: 10px; padding: 12px; }
     .up-history-filter label { min-width: 0; }
+    .up-history-summary { justify-self: start; padding-bottom: 0; text-align: left; }
     .up-history-pagination { justify-content: center; }
     .up-panel { padding: 19px; }
     .up-panel-heading { display: grid; gap: 13px; }
