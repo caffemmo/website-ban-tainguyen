@@ -194,7 +194,11 @@
         }
         var html = '<option value="">' + escapeHtml(placeholder || 'Chọn một tùy chọn') + '</option>';
         (options || []).forEach(function (option) {
-            html += '<option value="' + escapeHtml(option.value) + '">' + escapeHtml(option.label) + '</option>';
+            var optionLabel = option.label;
+            if (select.matches('[data-rent-select]') && /^\d+$/.test(String(optionLabel || '').trim())) {
+                optionLabel = String(optionLabel).trim() + ' ngày';
+            }
+            html += '<option value="' + escapeHtml(option.value) + '">' + escapeHtml(optionLabel) + '</option>';
         });
         select.innerHTML = html;
         select.disabled = !(options && options.length);
