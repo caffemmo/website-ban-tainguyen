@@ -43,8 +43,15 @@ function uptichxanh_upload_image()
     }
 
     $file = $_FILES['image'];
-    if (($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK || !is_uploaded_file($file['tmp_name'])) {
-        return ['error' => 'Ảnh tải lên không hợp lệ.'];
+    $uploadError = (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE);
+    if ($uploadError !== UPLOAD_ERR_OK || !is_uploaded_file($file['tmp_name'])) {
+        $uploadErrors = [
+            UPLOAD_ERR_INI_SIZE => 'Ảnh vượt quá giới hạn upload của máy chủ.',
+            UPLOAD_ERR_FORM_SIZE => 'Ảnh vượt quá giới hạn cho phép của biểu mẫu.',
+            UPLOAD_ERR_PARTIAL => 'Ảnh tải lên chưa hoàn tất, vui lòng thử lại.',
+            UPLOAD_ERR_NO_FILE => 'Vui lòng chọn ảnh giấy tờ xác minh.'
+        ];
+        return ['error' => $uploadErrors[$uploadError] ?? 'Ảnh tải lên không hợp lệ.'];
     }
     if ((int) ($file['size'] ?? 0) > 10 * 1024 * 1024) {
         return ['error' => 'Ảnh không được vượt quá 10MB.'];
@@ -58,13 +65,25 @@ function uptichxanh_upload_image()
             finfo_close($finfo);
         }
     }
+    $imageInfo = @getimagesize($file['tmp_name']);
+    if ($mime === '' && is_array($imageInfo)) {
+        $mime = (string) ($imageInfo['mime'] ?? '');
+    }
+    if (strtolower($mime) === 'image/jpg') {
+        $mime = 'image/jpeg';
+    }
     $extensions = [
         'image/jpeg' => 'jpg',
         'image/png' => 'png',
         'image/webp' => 'webp'
     ];
-    if (!isset($extensions[$mime]) || @getimagesize($file['tmp_name']) === false) {
+    if (!isset($extensions[$mime]) || $imageInfo === false) {
         return ['error' => 'Chỉ nhận ảnh JPG, PNG hoặc WEBP hợp lệ.'];
+    }
+    $width = (int) ($imageInfo[0] ?? 0);
+    $height = (int) ($imageInfo[1] ?? 0);
+    if ($width < 1500 || $height < 1000) {
+        return ['error' => 'Ảnh phải có kích thước tối thiểu 1500×1000px.'];
     }
 
     $directory = dirname(__DIR__, 2) . '/assets/storage/up-tich-xanh/';

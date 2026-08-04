@@ -14,6 +14,8 @@
     var submit = app.querySelector('[data-up-submit]');
     var notice = app.querySelector('[data-up-notice]');
     var result = app.querySelector('[data-up-result]');
+    var imageMeta = app.querySelector('[data-up-image-meta]');
+    var imageValidationToken = 0;
 
     function redirectToLogin() {
         window.location.href = loginUrl;
@@ -55,6 +57,52 @@
         result.hidden = false;
     }
 
+    function imageDimensions(file) {
+        return new Promise(function (resolve) {
+            var url = URL.createObjectURL(file);
+            var image = new Image();
+            image.onload = function () {
+                URL.revokeObjectURL(url);
+                resolve({ width: image.naturalWidth, height: image.naturalHeight });
+            };
+            image.onerror = function () {
+                URL.revokeObjectURL(url);
+                resolve(null);
+            };
+            image.src = url;
+        });
+    }
+
+    async function validateImageFile(file) {
+        if (!file) {
+            return 'Vui lòng chọn ảnh giấy tờ xác minh.';
+        }
+        if (['image/png', 'image/jpeg', 'image/webp'].indexOf(file.type) === -1) {
+            return 'Chỉ nhận ảnh PNG, JPG hoặc WEBP.';
+        }
+        if (file.size > 10 * 1024 * 1024) {
+            return 'Ảnh không được vượt quá 10MB.';
+        }
+        var dimensions = await imageDimensions(file);
+        if (!dimensions) {
+            return 'Không thể đọc ảnh, vui lòng chọn file PNG, JPG hoặc WEBP hợp lệ.';
+        }
+        if (dimensions.width < 1500 || dimensions.height < 1000) {
+            return 'Ảnh phải có kích thước tối thiểu 1500×1000px.';
+        }
+        return '';
+    }
+
+    async function validateSelectedImage(file) {
+        var error = await validateImageFile(file);
+        if (error) {
+            if (imageMeta) imageMeta.textContent = error;
+            return error;
+        }
+        if (imageMeta) imageMeta.textContent = 'Đã chọn ảnh hợp lệ: ' + file.name;
+        return '';
+    }
+
     async function submitForm() {
         if (!configured || !form || !submit) return;
         if (!token) {
@@ -72,8 +120,9 @@
             setMessage(notice, 'Vui lòng chọn ảnh giấy tờ xác minh.', 'error');
             return;
         }
-        if (image && image.files.length && image.files[0].size > 10 * 1024 * 1024) {
-            setMessage(notice, 'Ảnh không được vượt quá 10MB.', 'error');
+        var imageError = image && image.files.length ? await validateSelectedImage(image.files[0]) : '';
+        if (imageError) {
+            setMessage(notice, imageError, 'error');
             return;
         }
         var body = new FormData(form);
@@ -105,6 +154,22 @@
         return;
     }
     if (notice) notice.hidden = false;
+    if (image) image.addEventListener('change', async function () {
+        var currentToken = ++imageValidationToken;
+        var file = image.files && image.files[0];
+        if (!file) {
+            if (imageMeta) imageMeta.textContent = '';
+            return;
+        }
+        var error = await validateSelectedImage(file);
+        if (currentToken !== imageValidationToken) return;
+        if (error) {
+            image.value = '';
+            setMessage(notice, error, 'error');
+        } else {
+            setMessage(notice, 'Ảnh đã đạt yêu cầu, bạn có thể gửi yêu cầu.', 'success');
+        }
+    });
     if (form) form.addEventListener('submit', function (event) {
         event.preventDefault();
         submitForm();
