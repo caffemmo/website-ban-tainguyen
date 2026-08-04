@@ -16,7 +16,7 @@ $body = [
     'desc' => __('Mua proxy chính hãng với cấu hình rõ ràng và quản lý tập trung.'),
     'keyword' => 'proxy, mua proxy, proxy premium'
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=26') . '">';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=25') . '">';
 $body['footer'] = '<script src="' . BASE_URL('mod/js/proxy.js?v=8') . '"></script>';
 
 require_once __DIR__ . '/header.php';
@@ -71,30 +71,27 @@ require_once __DIR__ . '/nav.php';
                 <legend><?= __('Loại proxy'); ?></legend>
                 <div class="proxy-type-grid" data-proxy-types>
                     <button type="button" class="proxy-type-card proxy-type-card--datacenter is-selected" data-proxy-type="IPV4">
-                        <span class="proxy-type-frame-badge">Ngâm tích xanh</span>
                         <span class="proxy-type-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
                         <span class="proxy-type-content">
-                            <span class="proxy-type-title-row"><strong><?= __('Proxy IPv4 Datacenter'); ?></strong><span class="proxy-type-badges"><em class="proxy-type-badge proxy-type-badge--private">Private</em></span></span>
+                            <span class="proxy-type-title-row"><strong><?= __('Proxy IPv4 Datacenter'); ?></strong><span class="proxy-type-badges"><em class="proxy-type-badge">Ngâm tích xanh</em><em class="proxy-type-badge proxy-type-badge--private">Private</em></span></span>
                             <small class="proxy-type-description"><?= __('Proxy IPv4 Datacenter là giải pháp phù hợp cho hầu hết nhu cầu sử dụng phổ biến. Hỗ trợ ngâm tích xanh, duy trì IP ổn định và kết nối lâu dài, hạn chế gián đoạn, tốc độ quốc tế và băng thông lớn.'); ?></small>
                             <span class="proxy-type-tags"><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('IP riêng'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i>HTTP/SOCKS5</em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Hỗ trợ ngâm tích xanh'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Duy trì tích xanh'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Băng thông tốc độ cao'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Tốc độ quốc tế'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Nuôi tài khoản'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Ổn định'); ?></em></span>
                         </span>
                         <i class="fa-solid fa-check proxy-type-check" aria-hidden="true"></i>
                     </button>
                     <button type="button" class="proxy-type-card" data-proxy-type="IPV6">
-                        <span class="proxy-type-frame-badge">Ngâm tích xanh</span>
                         <span class="proxy-type-icon"><i class="fa-solid fa-network-wired" aria-hidden="true"></i></span>
                         <span class="proxy-type-content">
-                            <span class="proxy-type-title-row"><strong><?= __('Proxy IPv6 thường'); ?></strong><span class="proxy-type-badges"><em class="proxy-type-badge proxy-type-badge--private">Private</em></span></span>
+                            <span class="proxy-type-title-row"><strong><?= __('Proxy IPv6 thường'); ?></strong><span class="proxy-type-badges"><em class="proxy-type-badge">Ngâm tích xanh</em><em class="proxy-type-badge proxy-type-badge--private">Private</em></span></span>
                             <small><?= __('IP riêng, tiết kiệm chi phí, phù hợp nhu cầu cơ bản.'); ?></small>
                             <span class="proxy-type-tags"><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('IP riêng'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i>HTTP/SOCKS5</em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Tiết kiệm chi phí'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Phù hợp nhu cầu cơ bản'); ?></em></span>
                         </span>
                         <i class="fa-solid fa-check proxy-type-check" aria-hidden="true"></i>
                     </button>
                     <button type="button" class="proxy-type-card proxy-type-card--isp" data-proxy-type="ISP">
-                        <span class="proxy-type-frame-badge">Ngâm tích xanh</span>
                         <span class="proxy-type-icon"><i class="fa-solid fa-building-shield" aria-hidden="true"></i></span>
                         <span class="proxy-type-content">
-                            <span class="proxy-type-title-row"><span class="proxy-type-title"><strong><?= __('Proxy Dân Cư Tĩnh (ISP)'); ?></strong><img class="proxy-type-gif" src="<?= BASE_URL('mod/img/proxy-green-badge.gif'); ?>" alt="<?= __('Ngâm tích xanh'); ?>"></span><span class="proxy-type-badges"><em class="proxy-type-badge proxy-type-badge--private">Private</em></span></span>
+                            <span class="proxy-type-title-row"><span class="proxy-type-title"><strong><?= __('Proxy Dân Cư Tĩnh (ISP)'); ?></strong><img class="proxy-type-gif" src="<?= BASE_URL('mod/img/proxy-green-badge.gif'); ?>" alt="<?= __('Ngâm tích xanh'); ?>"></span><span class="proxy-type-badges"><em class="proxy-type-badge">Ngâm tích xanh</em><em class="proxy-type-badge proxy-type-badge--private">Private</em></span></span>
                             <small class="proxy-type-description"><?= __('Proxy Dân Cư Tĩnh (ISP) hỗ trợ tăng tiến độ ngâm tích xanh, duy trì uy tín IP và kết nối ổn định trong thời gian dài. Giảm nguy cơ bị đánh dấu và đảm bảo hiệu suất hoạt động liên tục.'); ?></small>
                             <span class="proxy-type-tags"><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('IP dân cư tĩnh (ISP)'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('ASN cao cấp'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Hỗ trợ băng thông lớn'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Tùy chọn theo quốc gia'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Hỗ trợ ngâm tích xanh'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Duy trì IP ổn định'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Hạn chế CAPTCHA'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Phiên kết nối không giới hạn thời gian'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Hỗ trợ HTTP(S) & SOCKS5'); ?></em></span>
                         </span>
