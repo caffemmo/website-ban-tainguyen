@@ -418,16 +418,16 @@ body {
 }
 
 .proxy-type-title-row {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 8px;
+    position: relative;
+    display: block;
+    min-height: 22px;
+    padding-right: 152px;
 }
 
 .proxy-type-title {
     display: inline-flex;
     min-width: 0;
-    flex: 1 1 auto;
+    max-width: 100%;
     align-items: center;
     gap: 6px;
 }
@@ -456,8 +456,10 @@ body {
 }
 
 .proxy-type-badges {
+    position: absolute;
+    top: 0;
+    right: 22px;
     display: flex;
-    flex: 0 0 auto;
     flex-wrap: wrap;
     justify-content: flex-end;
     gap: 4px;
@@ -516,6 +518,9 @@ body {
 
 .proxy-type-check {
     display: none;
+    position: absolute;
+    top: 14px;
+    right: 12px;
     align-self: flex-start;
     color: var(--proxy-cyan);
     font-size: 11px;
@@ -1858,9 +1863,8 @@ body {
     }
 
     .proxy-type-title-row {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
+        min-height: 20px;
+        padding-right: 132px;
     }
 
     .proxy-type-title {
@@ -1868,7 +1872,7 @@ body {
     }
 
     .proxy-type-badges {
-        margin-left: auto;
+        right: 18px;
         justify-content: flex-end;
     }
 
