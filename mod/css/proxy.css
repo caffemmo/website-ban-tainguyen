@@ -1863,17 +1863,30 @@ body {
     }
 
     .proxy-type-title-row {
+        display: flex;
+        flex-direction: column;
         min-height: 20px;
-        padding-right: 132px;
+        align-items: flex-start;
+        gap: 5px;
+        padding-right: 0;
     }
 
     .proxy-type-title {
         display: inline-flex;
+        min-width: 0;
+        max-width: 100%;
     }
 
     .proxy-type-badges {
-        right: 18px;
-        justify-content: flex-end;
+        position: static;
+        order: -1;
+        align-self: flex-start;
+        justify-content: flex-start;
+    }
+
+    .proxy-type-badge {
+        padding: 3px 5px;
+        font-size: 8px;
     }
 
     .proxy-type-tags {
