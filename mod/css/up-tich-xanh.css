@@ -35,12 +35,12 @@
 .up-hero {
     position: relative;
     display: flex;
-    min-height: 122px;
+    min-height: 0;
     align-items: center;
     justify-content: space-between;
     gap: 34px;
     overflow: hidden;
-    padding: 22px 28px;
+    padding: 22px 24px;
     border: 1px solid #d7e8ed;
     border-left: 3px solid #10b7be;
     border-radius: 8px;
@@ -77,15 +77,20 @@
     text-transform: uppercase;
 }
 
-.up-eyebrow { color: #078fa0; }
+.up-eyebrow {
+    margin-bottom: 7px;
+    padding-left: 9px;
+    border-left: 3px solid #10b7be;
+    color: #078fa0;
+}
 
 .up-hero h1 {
-    margin: 10px 0 7px;
+    margin: 0 0 5px;
     color: #11283f;
-    font-size: clamp(28px, 3vw, 36px);
+    font-size: 30px;
     font-weight: 800;
     letter-spacing: 0;
-    line-height: 1.05;
+    line-height: 1.1;
 }
 
 .up-hero p {
@@ -93,16 +98,17 @@
     margin: 0;
     color: #617b8f;
     font-size: 12.5px;
-    line-height: 1.5;
+    line-height: 1.45;
 }
 
 .up-wallet-card {
     position: relative;
     z-index: 1;
     display: grid;
-    min-width: 180px;
+    min-width: 185px;
     gap: 5px;
-    padding-left: 28px;
+    padding-left: 24px;
+    padding-bottom: 1px;
     text-align: right;
 }
 
@@ -482,9 +488,9 @@
 
 @media (max-width: 600px) {
     .up-page { padding: 18px 12px 56px; }
-    .up-hero { display: grid; gap: 18px; min-height: 0; padding: 23px 19px; }
+    .up-hero { display: grid; gap: 18px; min-height: 0; padding: 20px 18px; }
     .up-hero::after { display: none; }
-    .up-hero h1 { font-size: 31px; }
+    .up-hero h1 { font-size: 25px; }
     .up-wallet-card { min-width: 0; padding: 14px 0 0; border-top: 1px solid #d7e8ed; text-align: left; }
     .up-service-tabs { grid-template-columns: 1fr; gap: 8px; }
     .up-service-tab { min-height: 66px; }
