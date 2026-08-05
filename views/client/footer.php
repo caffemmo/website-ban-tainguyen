@@ -661,6 +661,7 @@ $loadLegacyClientPlugins = isset($loadLegacyClientPlugins)
             fetch(presenceEndpoint, {
                 method: 'POST',
                 credentials: 'same-origin',
+                body: new URLSearchParams({page: window.location.pathname}),
                 keepalive: true
             }).catch(function() {});
         };
@@ -673,7 +674,7 @@ $loadLegacyClientPlugins = isset($loadLegacyClientPlugins)
         });
         window.addEventListener('pagehide', function() {
             if (navigator.sendBeacon) {
-                navigator.sendBeacon(presenceEndpoint, new Blob(['heartbeat=1'], {type: 'text/plain'}));
+                navigator.sendBeacon(presenceEndpoint, new URLSearchParams({page: window.location.pathname}));
             }
         });
     })();

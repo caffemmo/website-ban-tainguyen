@@ -78,40 +78,71 @@ function caffemmo_telegram_stats_authorized($message)
     return $username !== '' && in_array($username, $allowedUsernames, true);
 }
 
-function caffemmo_telegram_stats_message($stats)
+function caffemmo_telegram_stats_compare_text($label, $current, $previous)
 {
-    $today = $stats['today'];
-    $week = $stats['week'];
+    [$change, $percent] = caffemmo_telegram_stats_change($current, $previous);
+    $trend = $change > 0 ? 'Tăng' : ($change < 0 ? 'Giảm' : 'Không đổi');
+    $percentText = $percent === null ? 'N/A' : ($percent >= 0 ? '+' : '') . $percent . '%';
+    return $label . ': ' . $trend . ' ' . $percentText . ' (' . caffemmo_telegram_stats_money($change) . ')';
+}
+
+function caffemmo_telegram_stats_period_short($label, $period)
+{
+    return $label . ': ' . format_cash($period['orders']) . ' don | DT ' . caffemmo_telegram_stats_money($period['revenue'])
+        . ' | Von da ghi nhan ' . caffemmo_telegram_stats_money($period['cost'])
+        . ' | LN sau von ' . caffemmo_telegram_stats_money($period['known_profit']);
+}
+
+function caffemmo_telegram_stats_revenue_message($stats)
+{
     $month = $stats['month'];
     $previousMonth = $stats['previous_month'];
-    [$profitChange, $profitPercent] = caffemmo_telegram_stats_change($month['profit'], $previousMonth['profit']);
-    [$revenueChange, $revenuePercent] = caffemmo_telegram_stats_change($month['revenue'], $previousMonth['revenue']);
-    $profitTrend = $profitChange > 0 ? '🟢 Tăng' : ($profitChange < 0 ? '🔴 Giảm' : '⚪ Không đổi');
-    $revenueTrend = $revenueChange > 0 ? '🟢 Tăng' : ($revenueChange < 0 ? '🔴 Giảm' : '⚪ Không đổi');
-    $profitPercentText = $profitPercent === null ? 'N/A' : ($profitPercent >= 0 ? '+' : '') . $profitPercent . '%';
-    $revenuePercentText = $revenuePercent === null ? 'N/A' : ($revenuePercent >= 0 ? '+' : '') . $revenuePercent . '%';
+    $message = "💰 *DOANH THU VA LOI NHUAN*\n";
+    $message .= "\n" . caffemmo_telegram_stats_period_short('Hom nay', $stats['today']);
+    $message .= "\n" . caffemmo_telegram_stats_period_short('Tuan nay', $stats['week']);
+    $message .= "\n" . caffemmo_telegram_stats_period_short('Thang nay', $month);
+    $message .= "\n\n*So voi thang truoc*\n";
+    $message .= caffemmo_telegram_stats_compare_text('Doanh thu', $month['revenue'], $previousMonth['revenue']);
+    $message .= "\n" . caffemmo_telegram_stats_compare_text('Loi nhuan sau von da ghi nhan', $month['known_profit'], $previousMonth['known_profit']);
+    $message .= "\n\n*Chi tiet thang nay*\n";
+    foreach ($month['breakdown'] as $service) {
+        $message .= "\n- " . $service['label'] . ': ' . format_cash($service['orders']) . ' don | DT ' . caffemmo_telegram_stats_money($service['revenue']);
+        if ((float) $service['unknown_cost_revenue'] > 0) {
+            $message .= ' | Von: CHUA CO | LN: CHUA XAC DINH';
+        } else {
+            $message .= ' | Von ' . caffemmo_telegram_stats_money($service['cost']) . ' | LN ' . caffemmo_telegram_stats_money($service['known_profit']);
+        }
+    }
+    $message .= "\n\n*Pham vi tinh:* Tai nguyen khong hoan/rac, proxy chua hoan, Up Tich Xanh thanh cong, Netflix, Locket Gold hoan tat va gia han proxy. Tai khoan chu shop `xuabthabgz221zgg` da loai tru.\n";
+    $message .= "Von da ghi nhan chua bao gom gia von rieng cua Netflix, Locket Gold va gia han proxy.";
+    return $message;
+}
 
-    $message = "📊 *THỐNG KÊ WEBSITE*\n";
-    $message .= "------------------------------------\n";
-    $message .= "🟢 *Đang online:* `" . format_cash($stats['online']) . "` khách\n";
-    $message .= "👥 *Khách duy nhất hôm nay:* `" . format_cash($stats['unique_today']) . "`\n";
-    $message .= "🔁 *Tổng lượt vào hôm nay:* `" . format_cash($stats['visits_today']) . "`\n";
-    $message .= "------------------------------------\n";
-    $message .= "📅 *Hôm nay*\n";
-    $message .= "🛒 Đơn: `" . format_cash($today['orders']) . "` | Doanh thu: *" . caffemmo_telegram_stats_money($today['revenue']) . "*\n";
-    $message .= "📈 Lợi nhuận tạm tính: *" . caffemmo_telegram_stats_money($today['profit']) . "*\n";
-    $message .= "📅 *Tuần này*\n";
-    $message .= "🛒 Đơn: `" . format_cash($week['orders']) . "` | Doanh thu: *" . caffemmo_telegram_stats_money($week['revenue']) . "*\n";
-    $message .= "📈 Lợi nhuận tạm tính: *" . caffemmo_telegram_stats_money($week['profit']) . "*\n";
-    $message .= "📅 *Tháng này*\n";
-    $message .= "🛒 Đơn: `" . format_cash($month['orders']) . "` | Doanh thu: *" . caffemmo_telegram_stats_money($month['revenue']) . "*\n";
-    $message .= "📈 Lợi nhuận tạm tính: *" . caffemmo_telegram_stats_money($month['profit']) . "*\n";
-    $message .= "⚠️ Doanh thu chưa có giá vốn: *" . caffemmo_telegram_stats_money($month['unknown_cost_revenue']) . "*\n";
-    $message .= "------------------------------------\n";
-    $message .= "📊 *So với tháng trước*\n";
-    $message .= "💰 Doanh thu: {$revenueTrend} `{$revenuePercentText}` (" . caffemmo_telegram_stats_money($revenueChange) . ")\n";
-    $message .= "📈 Lợi nhuận: {$profitTrend} `{$profitPercentText}` (" . caffemmo_telegram_stats_money($profitChange) . ")\n";
-    $message .= "⚠️ Lợi nhuận là số tạm tính theo giá vốn đã lưu; Netflix, Locket Gold và gia hạn proxy chưa có giá vốn riêng trong database.";
+function caffemmo_telegram_stats_message($stats)
+{
+    $traffic = $stats['traffic_today'];
+    $yesterday = $stats['traffic_yesterday'];
+    $message = "📊 *THONG KE WEBSITE*\n";
+    $message .= "\n🟢 Online: *" . format_cash($stats['online']) . "*\n";
+    $message .= "↗ Khach vao hom nay: *" . format_cash($traffic['entries']) . "* (hom qua " . format_cash($yesterday['entries']) . ")\n";
+    $message .= "👥 Khach duy nhat: *" . format_cash($traffic['unique_entries']) . "*\n";
+    $message .= "↘ Khach roi hom nay: *" . format_cash($traffic['leaves']) . "* (hom qua " . format_cash($yesterday['leaves']) . ")\n";
+    $message .= "\n*Top muc duoc xem hom nay*\n";
+    if (empty($stats['top_pages_today'])) {
+        $message .= "Chua co du lieu.\n";
+    } else {
+        foreach ($stats['top_pages_today'] as $index => $page) {
+            $message .= ($index + 1) . '. ' . $page['page_label'] . ': ' . format_cash($page['unique_visitors']) . ' khach / ' . format_cash($page['visits']) . ' luot\n';
+        }
+    }
+    $message .= "\n*Phien gan day*\n";
+    foreach (array_slice($stats['recent_visits'], 0, 5) as $visit) {
+        $type = ($visit['visitor_type'] ?? '') === 'new' ? 'moi' : 'cu';
+        $status = ($visit['status'] ?? '') === 'online' ? 'online' : 'da roi';
+        $activity = implode(' > ', array_slice($visit['activity'] ?? [], 0, 3));
+        $message .= '- `' . $visit['visitor_code'] . '` ' . $type . ' | ' . $status . ' | ' . caffemmo_telegram_stats_duration($visit['duration_seconds']) . ' | ' . ($activity ?: ($visit['last_page_label'] ?: 'Khong ro')) . "\n";
+    }
+    $message .= "\nDoanh thu va loi nhuan chi xem khi gui /revenue.";
     return $message;
 }
 
@@ -134,14 +165,16 @@ if (!is_array($message) || !caffemmo_telegram_stats_authorized($message)) {
 }
 
 $text = trim((string) ($message['text'] ?? ''));
-if (!preg_match('/^\/(stats|help)(?:@[a-zA-Z0-9_]+)?(?:\s|$)/i', $text, $matches)) {
+if (!preg_match('/^\/(stats|revenue|help)(?:@[a-zA-Z0-9_]+)?(?:\s|$)/i', $text, $matches)) {
     http_response_code(200);
     exit;
 }
 
 $chatId = (string) ($message['chat']['id'] ?? '');
 if (strtolower($matches[1]) === 'help') {
-    caffemmo_telegram_stats_send($chatId, "🤖 *Bot thống kê Caffemmo*\n\nGửi `/stats` để xem online, lượt truy cập, doanh thu và lợi nhuận website.");
+    caffemmo_telegram_stats_send($chatId, "🤖 *Bot thong ke Caffemmo*\n\n`/stats` - online, khach vao/roi, muc duoc xem va phien gan day.\n`/revenue` - doanh thu, von da ghi nhan, loi nhuan va so sanh thang.");
+} elseif (strtolower($matches[1]) === 'revenue') {
+    caffemmo_telegram_stats_send($chatId, caffemmo_telegram_stats_revenue_message(caffemmo_telegram_stats_dashboard()));
 } else {
     caffemmo_telegram_stats_send($chatId, caffemmo_telegram_stats_message(caffemmo_telegram_stats_dashboard()));
 }

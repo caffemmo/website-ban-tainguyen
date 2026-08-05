@@ -1837,7 +1837,8 @@ if ($_POST['action'] == 'set_telegram_stats_webhook') {
     curl_setopt($commandsCh, CURLOPT_POST, true);
     curl_setopt($commandsCh, CURLOPT_POSTFIELDS, http_build_query([
         'commands' => json_encode([
-            ['command' => 'stats', 'description' => 'Thống kê online, lượt truy cập và lợi nhuận'],
+            ['command' => 'stats', 'description' => 'Thống kê online, khách vào/rời và mục đã xem'],
+            ['command' => 'revenue', 'description' => 'Doanh thu, giá vốn và lợi nhuận theo dịch vụ'],
             ['command' => 'help', 'description' => 'Hướng dẫn bot thống kê']
         ], JSON_UNESCAPED_UNICODE)
     ]));

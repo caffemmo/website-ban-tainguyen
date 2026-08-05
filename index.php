@@ -26,7 +26,7 @@ if ($action === false) {
 }
 
 if ($module === 'client') {
-    caffemmo_telegram_stats_track_visit();
+    caffemmo_telegram_stats_track_visit($module . '/' . $action);
 }
 
 // Các Action được phép

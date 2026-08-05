@@ -8,7 +8,8 @@ require_once __DIR__ . '/../libs/helper.php';
 require_once __DIR__ . '/../libs/telegram-statistics.php';
 
 $CMSNT = new DB();
-caffemmo_telegram_stats_touch_session();
+$pageKey = isset($_POST['page']) ? trim((string) $_POST['page']) : '';
+caffemmo_telegram_stats_touch_session($pageKey);
 
 http_response_code(204);
 exit;
