@@ -2288,6 +2288,21 @@ ul.custom-button-list li {
         background: #14263e;
     }
 
+    .nav-account-card--link {
+        color: inherit;
+        text-decoration: none;
+        transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+    }
+
+    .nav-account-card--link:hover,
+    .nav-account-card--link:focus-visible {
+        color: inherit;
+        border-color: rgba(0, 211, 214, 0.42);
+        background: #17334e;
+        outline: none;
+        transform: translateY(-1px);
+    }
+
     .nav-account-avatar {
         display: grid;
         width: 38px;

@@ -622,7 +622,11 @@ $serviceCatalog = caffemmo_service_catalog();
             </button>
         </div>
         <div class="nav-content">
-            <div class="nav-account-card">
+            <?php if (!isset($getUser)): ?>
+                <a class="nav-account-card nav-account-card--link" href="<?= base_url('client/login'); ?>" aria-label="<?= __('Đăng nhập để mua hàng'); ?>">
+            <?php else: ?>
+                <div class="nav-account-card">
+            <?php endif; ?>
                 <span class="nav-account-avatar"><i class="fa-solid fa-user" aria-hidden="true"></i></span>
                 <span class="nav-account-copy">
                     <strong><?= isset($getUser) ? htmlspecialchars($getUser['username'], ENT_QUOTES, 'UTF-8') : __('Khách truy cập'); ?></strong>
@@ -631,7 +635,11 @@ $serviceCatalog = caffemmo_service_catalog();
                 <?php if (isset($getUser)): ?>
                     <span class="nav-account-balance"><?= format_currency($getUser['money']); ?></span>
                 <?php endif; ?>
-            </div>
+            <?php if (!isset($getUser)): ?>
+                </a>
+            <?php else: ?>
+                </div>
+            <?php endif; ?>
 
             <nav class="nav-list" aria-label="<?= __('Điều hướng mobile'); ?>">
                 <p class="nav-section-title"><?= __('Tổng quan'); ?></p>
