@@ -1791,6 +1791,76 @@ if ($_POST['action'] == 'test_telegram') {
     }
 }
 
+// Đăng ký webhook miễn phí cho lệnh thống kê dùng cùng bot thông báo đơn hàng.
+if ($_POST['action'] == 'set_telegram_stats_webhook') {
+    if (checkPermission($getUser['admin'], 'edit_setting') != true) {
+        die(json_encode(['status' => 'error', 'msg' => __('Bạn không có quyền sử dụng tính năng này')]));
+    }
+
+    $botToken = trim((string) $CMSNT->site('telegram_token'));
+    $chatId = trim((string) $CMSNT->site('telegram_chat_id'));
+    $apiBase = trim((string) $CMSNT->site('telegram_url'));
+    $secret = trim((string) $CMSNT->site('telegram_assistant_secret_token'));
+    if ($botToken === '' || $chatId === '') {
+        die(json_encode(['status' => 'error', 'msg' => __('Vui lòng cấu hình Bot Token và Chat ID ở phía trên trước')]));
+    }
+    if ($apiBase === '') {
+        $apiBase = 'https://api.telegram.org/';
+    }
+
+    $webhookFields = ['url' => base_url('api/webhook_telegram_stats.php')];
+    if ($secret !== '') {
+        $webhookFields['secret_token'] = $secret;
+    }
+    $apiUrl = rtrim($apiBase, '/') . '/bot' . $botToken . '/setWebhook';
+    $ch = curl_init($apiUrl);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($webhookFields));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+    $response = curl_exec($ch);
+    $curlError = curl_error($ch);
+    curl_close($ch);
+    if ($curlError !== '') {
+        die(json_encode(['status' => 'error', 'msg' => __('Không thể kết nối Telegram API') . ': ' . htmlspecialchars($curlError, ENT_QUOTES, 'UTF-8')]));
+    }
+
+    $result = json_decode((string) $response, true);
+    if (!isset($result['ok']) || $result['ok'] !== true) {
+        $description = isset($result['description']) ? $result['description'] : __('Telegram API trả về lỗi không xác định');
+        die(json_encode(['status' => 'error', 'msg' => __('Telegram API lỗi') . ': ' . htmlspecialchars($description, ENT_QUOTES, 'UTF-8')]));
+    }
+
+    $commandsApiUrl = rtrim($apiBase, '/') . '/bot' . $botToken . '/setMyCommands';
+    $commandsCh = curl_init($commandsApiUrl);
+    curl_setopt($commandsCh, CURLOPT_POST, true);
+    curl_setopt($commandsCh, CURLOPT_POSTFIELDS, http_build_query([
+        'commands' => json_encode([
+            ['command' => 'stats', 'description' => 'Thống kê online, lượt truy cập và lợi nhuận'],
+            ['command' => 'help', 'description' => 'Hướng dẫn bot thống kê']
+        ], JSON_UNESCAPED_UNICODE)
+    ]));
+    curl_setopt($commandsCh, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($commandsCh, CURLOPT_TIMEOUT, 15);
+    curl_setopt($commandsCh, CURLOPT_CONNECTTIMEOUT, 10);
+    $commandsResponse = json_decode((string) curl_exec($commandsCh), true);
+    curl_close($commandsCh);
+    $commandsResponse = isset($commandsResponse['ok']) && $commandsResponse['ok'] === true;
+    $CMSNT->insert('logs', [
+        'user_id' => $getUser['id'],
+        'ip' => myip(),
+        'device' => getUserAgent(),
+        'createdate' => gettime(),
+        'action' => 'Đăng ký webhook Telegram thống kê miễn phí'
+    ]);
+    $message = __('Đã cập nhật webhook thống kê thành công. Hãy gửi /stats cho bot.');
+    if (!$commandsResponse) {
+        $message .= ' ' . __('Webhook đã hoạt động nhưng chưa cập nhật được menu lệnh.');
+    }
+    die(json_encode(['status' => 'success', 'msg' => $message]));
+}
+
 // Cập nhật setting từ trang Addons
 if ($_POST['action'] == 'updateSetting') {
     if (checkPermission($getUser['admin'], 'edit_setting') != true) {

@@ -237,6 +237,14 @@ if (isset($_POST['SaveSettings'])) {
                             </div>
                         </div>
 
+                        <div class="alert alert-info border-info mb-3">
+                            <div class="fw-semibold mb-1"><i class="fas fa-chart-line me-2"></i>Thống kê Telegram tự code</div>
+                            <div class="small mb-2">Dùng cùng Bot Token và Chat ID ở trên, không cần mua Addon Bot Quản Lý Telegram.</div>
+                            <button type="button" class="btn btn-info btn-sm" id="btnSetTelegramStatsWebhook">
+                                <i class="fas fa-link me-1"></i>Cập nhật webhook /stats
+                            </button>
+                        </div>
+
                         <!-- Telegram API URL -->
                         <div class="mb-3">
                             <label class="form-label fw-medium d-flex align-items-center">
@@ -1085,6 +1093,30 @@ if (isset($_POST['SaveSettings'])) {
                             text: response.msg,
                         });
                     }
+                }
+            });
+        });
+
+        $('#btnSetTelegramStatsWebhook').click(function() {
+            var button = $(this);
+            button.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i>Đang cập nhật...');
+            $.ajax({
+                url: '<?= base_url("ajaxs/admin/update.php"); ?>',
+                type: 'POST',
+                dataType: 'json',
+                data: { action: 'set_telegram_stats_webhook' },
+                success: function(response) {
+                    Swal.fire({
+                        icon: response.status === 'success' ? 'success' : 'error',
+                        title: response.status === 'success' ? 'Thành công' : 'Lỗi',
+                        text: response.msg || 'Không có phản hồi từ máy chủ'
+                    });
+                },
+                error: function() {
+                    Swal.fire({ icon: 'error', title: 'Lỗi', text: 'Không thể kết nối máy chủ' });
+                },
+                complete: function() {
+                    button.prop('disabled', false).html('<i class="fas fa-link me-1"></i>Cập nhật webhook /stats');
                 }
             });
         });
