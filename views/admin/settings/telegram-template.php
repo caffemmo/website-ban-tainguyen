@@ -56,7 +56,7 @@ if (isset($_POST['SaveSettings'])) {
                                                         </thead>
                                                         <tbody>
                                                             <tr>
-                                                                <td><?= __('Thông báo mua hàng'); ?></td>
+                                                                <td><?= __('Thông báo đơn hàng thành công'); ?></td>
                                                                 <td>
                                                                     <textarea class="form-control mb-2" rows="3"
                                                                         name="noti_buy_product"><?= $CMSNT->site('noti_buy_product'); ?></textarea>
@@ -64,10 +64,12 @@ if (isset($_POST['SaveSettings'])) {
                                                                         <li><b>{domain}</b> => Tên website của quý
                                                                             khách.</li>
                                                                         <li><b>{username}</b> => Tên thành viên.</li>
+                                                                        <li><b>{service}</b> => Tên dịch vụ hoặc sản phẩm.</li>
                                                                         <li><b>{trans_id}</b> => Mã đơn hàng.</li>
                                                                         <li><b>{product}</b> => Sản phẩm mua.</li>
                                                                         <li><b>{amount}</b> => Số lượng mua.</li>
                                                                         <li><b>{pay}</b> => Số tiền thanh toán.</li>
+                                                                        <li><b>{details}</b> => Chi tiết an toàn của đơn dịch vụ.</li>
                                                                         <li><b>{ip}</b> => Địa chỉ IP mua hàng.
                                                                         </li>
                                                                         <li><b>{time}</b> => Thời gian mua hàng</li>

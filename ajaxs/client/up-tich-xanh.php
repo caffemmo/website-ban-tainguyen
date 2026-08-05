@@ -228,6 +228,15 @@ $historyOrderId = $CMSNT->insert('up_tich_xanh_orders', [
 if (!$historyOrderId) {
     error_log('Unable to record Up Tich Xanh order for user ' . (int) $getUser['id']);
 }
+queueServiceOrderNotification(
+    $getUser,
+    uptichxanh_service_label($service),
+    $chargedAmount,
+    $historyOrderId ? (string) $historyOrderId : $transactionId,
+    1,
+    $isRepeatUid ? 'UID đã xử lý trước đó, miễn phí 0đ' : 'Yêu cầu đã được tiếp nhận',
+    ['source' => 'up_tich_xanh', 'service_code' => $service, 'provider' => $providerName]
+);
 
 $safeData = [
     'uid' => $uid,

@@ -305,6 +305,80 @@ class TelegramQueue
     }
 
     /**
+     * Queue thông báo đơn hàng thành công từ các dịch vụ ngoài kho tài nguyên.
+     * Dùng lại template noti_buy_product để không cần thêm cấu hình bot mới.
+     *
+     * @param array $user User data
+     * @param string $service Tên dịch vụ
+     * @param float $totalAmount Tổng thanh toán
+     * @param string $orderId Mã giao dịch/đơn hàng
+     * @param int|string $quantity Số lượng hiển thị
+     * @param string $details Chi tiết an toàn của đơn hàng
+     * @param array $metadata Metadata bổ sung cho queue
+     * @return int|false
+     */
+    public function queueServiceOrderNotificationAdmin(
+        $user,
+        $service,
+        $totalAmount,
+        $orderId = '',
+        $quantity = 1,
+        $details = '',
+        $metadata = []
+    ) {
+        if ($this->db->site('telegram_status') != 1) {
+            return false;
+        }
+
+        $template = $this->db->site('noti_buy_product');
+        if (empty($template)) {
+            return false;
+        }
+
+        $service = trim((string) $service);
+        $orderId = trim((string) $orderId);
+        $details = trim((string) $details);
+        $metadata = is_array($metadata) ? $metadata : [];
+        $metadata = array_merge([
+            'type' => 'service_order_success_admin',
+            'source' => 'service_order',
+            'user_id' => isset($user['id']) ? $user['id'] : null,
+            'service' => $service,
+            'order_id' => $orderId
+        ], $metadata);
+
+        $message = str_replace([
+            '{domain}',
+            '{username}',
+            '{service}',
+            '{product}',
+            '{product_name}',
+            '{amount}',
+            '{pay}',
+            '{trans_id}',
+            '{order_id}',
+            '{details}',
+            '{ip}',
+            '{time}'
+        ], [
+            isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : 'N/A',
+            isset($user['username']) ? $user['username'] : 'N/A',
+            $service !== '' ? $service : 'N/A',
+            $service !== '' ? $service : 'N/A',
+            $service !== '' ? $service : 'N/A',
+            (string) $quantity,
+            format_currency($totalAmount),
+            $orderId !== '' ? $orderId : 'N/A',
+            $orderId !== '' ? $orderId : 'N/A',
+            $details !== '' ? $details : 'N/A',
+            myip(),
+            gettime()
+        ], $template);
+
+        return $this->queueMessage($message, null, null, 1, $metadata);
+    }
+
+    /**
      * Queue thông báo đánh giá sản phẩm mới cho Admin
      * 
      * @param array $user User data (người đánh giá)

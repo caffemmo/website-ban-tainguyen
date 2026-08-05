@@ -1208,6 +1208,28 @@ function sendMessTelegram($my_text, $token = '', $chat_id = '', $proxy = '', $pr
         'source' => 'helper'
     ]);
 }
+function queueServiceOrderNotification($user, $service, $totalAmount, $orderId = '', $quantity = 1, $details = '', $metadata = [])
+{
+    global $CMSNT;
+
+    if (!isset($CMSNT) || !is_object($CMSNT)) {
+        return false;
+    }
+    if (!class_exists('TelegramQueue')) {
+        require_once(__DIR__ . '/TelegramQueue.php');
+    }
+
+    $telegramQueue = new TelegramQueue();
+    return $telegramQueue->queueServiceOrderNotificationAdmin(
+        is_array($user) ? $user : [],
+        $service,
+        $totalAmount,
+        $orderId,
+        $quantity,
+        $details,
+        $metadata
+    );
+}
 function getFlag($flag)
 {
 

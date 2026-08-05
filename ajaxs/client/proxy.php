@@ -684,6 +684,16 @@ function proxy_ipv6_retail_purchase($payload, $input, $getUser)
         $CMSNT->update('proxy_orders', ['auto_extend' => 1, 'updated_at' => date('Y-m-d H:i:s')], '`id` = ?', [(int) $customerOrderId]);
     }
 
+    queueServiceOrderNotification(
+        $getUser,
+        'Mua Proxy IPv6',
+        $price['wallet_amount'],
+        (string) $customerOrderId,
+        $quantity,
+        $payload['country'] . ' | ' . $payload['rentPeriodDays'] . ' ngày',
+        ['source' => 'proxy_ipv6_purchase']
+    );
+
     proxy_json([
         'success' => true,
         'message' => $autoExtendWarning !== '' ? $autoExtendWarning : 'Đã cấp ' . $quantity . ' IPv6 từ kho.',
@@ -803,7 +813,7 @@ if ($action === 'buy') {
     }
 
     global $CMSNT;
-    $CMSNT->insert('proxy_orders', [
+    $customerOrderId = $CMSNT->insert('proxy_orders', [
         'user_id' => (int) $getUser['id'],
         'provider_order_id' => $orderId !== '' ? $orderId : null,
         'proxy_type' => $validated['payload']['proxyType'],
@@ -821,6 +831,15 @@ if ($action === 'buy') {
         'created_at' => date('Y-m-d H:i:s'),
         'updated_at' => date('Y-m-d H:i:s')
     ]);
+    queueServiceOrderNotification(
+        $getUser,
+        'Mua Proxy ' . $validated['payload']['proxyType'],
+        $price['wallet_amount'],
+        $orderId !== '' ? $orderId : $transactionId,
+        $validated['payload']['quantity'],
+        $validated['payload']['country'] . ' | ' . $validated['payload']['rentPeriodDays'] . ' ngày',
+        ['source' => 'proxy_purchase', 'customer_order_id' => $customerOrderId ?: null]
+    );
     $safeRecords = array_map('proxy_sanitized_record', $records);
     proxy_json([
         'success' => true,
@@ -905,6 +924,15 @@ if ($action === 'renew_quote' || $action === 'renew') {
         $userModel->RefundCredits($getUser['id'], $priceContext['wallet_amount'], 'Hoàn tiền gia hạn proxy do giao dịch lỗi', $transactionId . '_refund');
         proxy_json(['success' => false, 'message' => youproxy_error_text($extendResponse, 'Gia hạn thất bại, hệ thống đã hoàn tiền vào ví.')], 502);
     }
+    queueServiceOrderNotification(
+        $getUser,
+        'Gia hạn Proxy ' . $type,
+        $priceContext['wallet_amount'],
+        $transactionId,
+        count($allowedIds),
+        $rent . ' ngày',
+        ['source' => 'proxy_renew']
+    );
     proxy_json(['success' => true, 'message' => 'Gia hạn proxy thành công.', 'data' => [
         'price' => $price,
         'wallet_balance' => (float) getUser($getUser['id'], 'money')

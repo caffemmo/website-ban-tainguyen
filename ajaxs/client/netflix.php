@@ -85,6 +85,15 @@ if ($action === 'get_cookie') {
         $userModel->RefundCredits($getUser['id'], $salePrice, 'Hoàn tiền Xem Netflix do không lưu được giao dịch', $transactionId . '_refund');
         netflix_json(['success' => false, 'message' => 'Không thể lưu giao dịch Netflix, vui lòng thử lại sau.'], 503);
     }
+    queueServiceOrderNotification(
+        $getUser,
+        'Xem Netflix',
+        $salePrice,
+        $providerLogId !== '' ? $providerLogId : $transactionId,
+        1,
+        'Gói bảo hành 30 ngày',
+        ['source' => 'netflix_purchase']
+    );
     $data['charged_amount'] = $salePrice;
     $data['charged_label'] = format_currency($salePrice);
     $data['wallet_balance'] = (float) getUser($getUser['id'], 'money');

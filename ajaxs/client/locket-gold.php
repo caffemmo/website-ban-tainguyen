@@ -81,6 +81,16 @@ if (!$inserted) {
     locket_gold_json(['success' => false, 'message' => 'Không thể tạo đơn, số dư đã được hoàn lại nếu giao dịch thành công.'], 500);
 }
 
+queueServiceOrderNotification(
+    $getUser,
+    'Locket Gold Vĩnh Viễn - ' . $package['label'],
+    $salePrice,
+    $orderCode,
+    count($normalized['usernames']),
+    'Trạng thái: Đang xử lý',
+    ['source' => 'locket_gold_purchase', 'package_key' => $package['key']]
+);
+
 $freshUser = $CMSNT->get_row_safe('SELECT `money` FROM `users` WHERE `id` = ? LIMIT 1', [(int) $getUser['id']]);
 locket_gold_json([
     'success' => true,
