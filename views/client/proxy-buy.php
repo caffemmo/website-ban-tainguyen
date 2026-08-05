@@ -14,7 +14,7 @@ $body = [
     'desc' => __('Mua proxy chính hãng với cấu hình rõ ràng và quản lý tập trung.'),
     'keyword' => 'proxy, mua proxy, proxy premium'
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=32') . '">';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=33') . '">';
 $body['footer'] = '<script src="' . BASE_URL('mod/js/proxy.js?v=9') . '"></script>';
 
 require_once __DIR__ . '/header.php';
@@ -33,9 +33,8 @@ require_once __DIR__ . '/nav.php';
                 <span class="proxy-guides-toggle-icon"><i class="fa-solid fa-book-open" aria-hidden="true"></i></span>
                 <span class="proxy-guides-toggle-copy">
                     <strong><?= __('Hướng dẫn sử dụng Proxy'); ?></strong>
-                    <small><?= count($proxyGuides); ?> <?= __('tài liệu có sẵn · Bấm để xem danh sách'); ?></small>
                 </span>
-                <i class="fa-solid fa-chevron-down proxy-guides-toggle-arrow" aria-hidden="true"></i>
+                <i class="fa-solid fa-arrow-circle-down proxy-guides-toggle-arrow" aria-hidden="true"></i>
             </button>
             <div class="proxy-guides-content" id="proxy-guides-panel" data-proxy-guides-panel hidden>
                 <p class="proxy-guides-description"><?= __('Chọn tài liệu phù hợp để xem hướng dẫn cài đặt và sử dụng.'); ?></p>
