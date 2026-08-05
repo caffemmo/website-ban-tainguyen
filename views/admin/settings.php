@@ -46,6 +46,7 @@ $tab_config = [
     'general'              => ['file' => 'general.php',              'icon' => 'bx bx-cog',                                            'label' => __('Cài đặt chung')],
     'connection'           => ['file' => 'connection.php',           'icon' => 'bx bx-plug',                                           'label' => __('Kết nối')],
     'proxy'                => ['file' => 'proxy.php',                'icon' => 'fa-solid fa-server',                                 'label' => __('Proxy')],
+    'client-guides'        => ['file' => 'client-guides.php',        'icon' => 'fa-solid fa-book-open',                              'label' => __('Hướng dẫn khách')],
     'proxy-accounting'     => ['file' => 'proxy-accounting.php',      'icon' => 'fa-solid fa-calculator',                              'label' => __('Kế toán Proxy')],
     'up-tich-xanh'         => ['file' => 'up-tich-xanh.php',         'icon' => 'fa-solid fa-circle-check',                           'label' => __('Up tích xanh')],
     'netflix'              => ['file' => 'netflix.php',              'icon' => 'fa-solid fa-play',                                  'label' => __('Netflix')],

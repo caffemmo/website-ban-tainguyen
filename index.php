@@ -5,8 +5,10 @@ require_once(__DIR__ . '/config.php');
 require_once(__DIR__ . '/libs/lang.php');
 require_once(__DIR__ . '/libs/helper.php');
 require_once(__DIR__ . '/libs/database/users.php');
+require_once(__DIR__ . '/libs/client-guides.php');
 require_once(__DIR__ . '/libs/telegram-statistics.php');
 $CMSNT = new DB();
+caffemmo_client_guides_ensure_setting();
 caffemmo_telegram_stats_ensure_settings();
 
 

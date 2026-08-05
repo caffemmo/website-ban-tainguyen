@@ -5,6 +5,7 @@ require_once __DIR__ . '/../../libs/client-session.php';
 require_once __DIR__ . '/../../libs/youproxy.php';
 
 $getUser = client_optional_user($CMSNT);
+$proxyGuides = caffemmo_client_guides_get();
 $proxyIsAuthenticated = is_array($getUser);
 $proxyUserToken = $proxyIsAuthenticated ? (string) ($getUser['token'] ?? '') : '';
 $proxyWalletBalance = $proxyIsAuthenticated ? format_currency($getUser['money']) : __('Đăng nhập để mua');
@@ -41,6 +42,31 @@ require_once __DIR__ . '/nav.php';
             <a href="<?= htmlspecialchars($proxyWalletUrl, ENT_QUOTES, 'UTF-8'); ?>"><?= $proxyWalletAction; ?> <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
         </div>
     </section>
+
+    <?php if (!empty($proxyGuides)): ?>
+        <section class="proxy-guides" aria-labelledby="proxy-guides-title">
+            <div class="proxy-guides-heading">
+                <div>
+                    <span class="proxy-guides-eyebrow"><i class="fa-solid fa-book-open" aria-hidden="true"></i> <?= __('Hỗ trợ sử dụng'); ?></span>
+                    <h2 id="proxy-guides-title"><?= __('Hướng dẫn Proxy'); ?></h2>
+                    <p><?= __('Chọn tài liệu phù hợp để xem hướng dẫn cài đặt và sử dụng.'); ?></p>
+                </div>
+                <span class="proxy-guides-count"><i class="fa-solid fa-file-lines" aria-hidden="true"></i> <?= count($proxyGuides); ?> <?= __('tài liệu'); ?></span>
+            </div>
+            <div class="proxy-guides-grid">
+                <?php foreach ($proxyGuides as $guide): ?>
+                    <a class="proxy-guide-link" href="<?= htmlspecialchars($guide['url'], ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener noreferrer">
+                        <span class="proxy-guide-icon"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></span>
+                        <span class="proxy-guide-copy">
+                            <strong><?= htmlspecialchars($guide['title'], ENT_QUOTES, 'UTF-8'); ?></strong>
+                            <small><?= __('Mở tài liệu'); ?></small>
+                        </span>
+                        <i class="fa-solid fa-chevron-right proxy-guide-arrow" aria-hidden="true"></i>
+                    </a>
+                <?php endforeach; ?>
+            </div>
+        </section>
+    <?php endif; ?>
 
     <div class="proxy-status" data-proxy-status role="status" aria-live="polite" hidden></div>
 
