@@ -218,27 +218,27 @@ function caffemmo_telegram_stats_page_context($pageKey = '')
     $pageKey = preg_replace('#/\d+$#', '', $pageKey);
 
     $labels = [
-        'client/home' => 'Trang chu',
-        'client/products' => 'Danh sach san pham',
-        'client/product' => 'Chi tiet san pham',
-        'client/product-order' => 'Dat hang tai nguyen',
-        'client/product-orders' => 'Lich su tai nguyen',
+        'client/home' => 'Trang chủ',
+        'client/products' => 'Danh sách sản phẩm',
+        'client/product' => 'Chi tiết sản phẩm',
+        'client/product-order' => 'Đặt hàng tài nguyên',
+        'client/product-orders' => 'Lịch sử tài nguyên',
         'client/proxy-buy' => 'Mua proxy',
-        'client/proxy-list' => 'Danh sach proxy',
-        'client/proxy-renew' => 'Gia han proxy',
-        'client/up-tich-xanh' => 'Dich vu Up Tich Xanh',
-        'client/up-tich-xanh-history' => 'Lich su Up Tich Xanh',
-        'client/netflix' => 'Dich vu Netflix',
-        'client/netflix-history' => 'Lich su Netflix',
-        'client/locket-gold' => 'Dich vu Locket Gold',
-        'client/locket-gold-history' => 'Lich su Locket Gold',
-        'client/recharge-bank' => 'Nap tien ngan hang',
-        'client/transactions' => 'Lich su giao dich',
-        'client/profile' => 'Ho so tai khoan',
-        'client/login' => 'Dang nhap',
-        'client/register' => 'Dang ky'
+        'client/proxy-list' => 'Danh sách proxy',
+        'client/proxy-renew' => 'Gia hạn proxy',
+        'client/up-tich-xanh' => 'Dịch vụ Up Tích Xanh',
+        'client/up-tich-xanh-history' => 'Lịch sử Up Tích Xanh',
+        'client/netflix' => 'Dịch vụ Netflix',
+        'client/netflix-history' => 'Lịch sử Netflix',
+        'client/locket-gold' => 'Dịch vụ Locket Gold',
+        'client/locket-gold-history' => 'Lịch sử Locket Gold',
+        'client/recharge-bank' => 'Nạp tiền ngân hàng',
+        'client/transactions' => 'Lịch sử giao dịch',
+        'client/profile' => 'Hồ sơ tài khoản',
+        'client/login' => 'Đăng nhập',
+        'client/register' => 'Đăng ký'
     ];
-    $label = $labels[$pageKey] ?? ('Muc: ' . str_replace(['client/', '-', '_'], ['', ' ', ' '], $pageKey));
+    $label = $labels[$pageKey] ?? ('Mục: ' . str_replace(['client/', '-', '_'], ['', ' ', ' '], $pageKey));
     return ['key' => substr($pageKey, 0, 191), 'label' => substr($label, 0, 255)];
 }
 
@@ -259,7 +259,7 @@ function caffemmo_telegram_stats_duration($seconds)
     $seconds = max(0, (int) $seconds);
     $minutes = intdiv($seconds, 60);
     $remainingSeconds = $seconds % 60;
-    return $minutes > 0 ? $minutes . ' phut ' . $remainingSeconds . ' giay' : $remainingSeconds . ' giay';
+    return $minutes > 0 ? $minutes . ' phút ' . $remainingSeconds . ' giây' : $remainingSeconds . ' giây';
 }
 
 function caffemmo_telegram_stats_html($value)
@@ -339,7 +339,7 @@ function caffemmo_telegram_stats_activity_log($visitId, $limit = 8)
     ) ?: [];
     $history = [];
     foreach ($rows as $row) {
-        $history[] = (string) ($row['page_label'] ?? 'Khong ro') . ' (' . caffemmo_telegram_stats_duration($row['duration_seconds'] ?? 0) . ')';
+        $history[] = (string) ($row['page_label'] ?? 'Không rõ') . ' (' . caffemmo_telegram_stats_duration($row['duration_seconds'] ?? 0) . ')';
     }
     return $history;
 }
@@ -407,25 +407,25 @@ function caffemmo_telegram_stats_notify_presence($event, $session)
     $snapshot = caffemmo_telegram_stats_presence_snapshot();
     $today = $snapshot['today'];
     $yesterday = $snapshot['yesterday'];
-    $typeLabel = ($session['visitor_type'] ?? 'returning') === 'new' ? 'Khach moi' : 'Khach cu';
+    $typeLabel = ($session['visitor_type'] ?? 'returning') === 'new' ? 'Khách mới' : 'Khách cũ';
     $visitorCode = caffemmo_telegram_stats_visitor_code($session['visitor_key'] ?? $session['session_key'] ?? '');
     $message = $event === 'enter'
-        ? "🌐 <b>KHACH VUA VAO WEBSITE</b>\n"
-            . "👤 Ma khach: <code>" . caffemmo_telegram_stats_html($visitorCode) . "</code> (an danh)\n"
-            . "🏷 Loai: <b>" . caffemmo_telegram_stats_html($typeLabel) . "</b>\n"
-            . "📍 Dang xem: <b>" . caffemmo_telegram_stats_html($session['last_page_label'] ?? 'Trang chu') . "</b>\n"
-            . "🟢 Dang online: <b>" . format_cash($snapshot['online']) . "</b>\n"
-            . "↗ Luot vao hom nay: <b>" . format_cash($today['entries']) . "</b> (hom qua " . format_cash($yesterday['entries']) . ")\n"
-            . "👥 Khach duy nhat hom nay: <b>" . format_cash($today['unique_entries']) . "</b>"
-        : "🚪 <b>KHACH ROI WEBSITE</b>\n"
-            . "👤 Ma khach: <code>" . caffemmo_telegram_stats_html($visitorCode) . "</code> (an danh)\n"
-            . "🏷 Loai: <b>" . caffemmo_telegram_stats_html($typeLabel) . "</b>\n"
-            . "⏱ O lai: <b>" . caffemmo_telegram_stats_duration($session['duration_seconds'] ?? 0) . "</b>\n"
-            . "📍 Muc cuoi: <b>" . caffemmo_telegram_stats_html($session['last_page_label'] ?? 'Khong ro') . "</b>\n"
-            . "📚 Lich su: " . caffemmo_telegram_stats_html(implode(' -> ', caffemmo_telegram_stats_activity_log($session['visit_id'] ?? 0))) . "\n"
-            . "ℹ️ Ly do ghi nhan: Khong nhan heartbeat qua 5 phut; khong the ket luan chinh xac khach dong tab hay mat ket noi.\n"
-            . "🟢 Dang online: <b>" . format_cash($snapshot['online']) . "</b>\n"
-            . "↘ Luot roi hom nay: <b>" . format_cash($today['leaves']) . "</b> (hom qua " . format_cash($yesterday['leaves']) . ")";
+        ? "🌐 <b>KHÁCH VỪA VÀO WEBSITE</b>\n"
+            . "👤 Mã khách: <code>" . caffemmo_telegram_stats_html($visitorCode) . "</code> (ẩn danh)\n"
+            . "🏷 Loại: <b>" . caffemmo_telegram_stats_html($typeLabel) . "</b>\n"
+            . "📍 Đang xem: <b>" . caffemmo_telegram_stats_html($session['last_page_label'] ?? 'Trang chủ') . "</b>\n"
+            . "🟢 Đang online: <b>" . format_cash($snapshot['online']) . "</b>\n"
+            . "↗ Lượt vào hôm nay: <b>" . format_cash($today['entries']) . "</b> (hôm qua " . format_cash($yesterday['entries']) . ")\n"
+            . "👥 Khách duy nhất hôm nay: <b>" . format_cash($today['unique_entries']) . "</b>"
+        : "🚪 <b>KHÁCH RỜI WEBSITE</b>\n"
+            . "👤 Mã khách: <code>" . caffemmo_telegram_stats_html($visitorCode) . "</code> (ẩn danh)\n"
+            . "🏷 Loại: <b>" . caffemmo_telegram_stats_html($typeLabel) . "</b>\n"
+            . "⏱ Ở lại: <b>" . caffemmo_telegram_stats_duration($session['duration_seconds'] ?? 0) . "</b>\n"
+            . "📍 Mục cuối: <b>" . caffemmo_telegram_stats_html($session['last_page_label'] ?? 'Không rõ') . "</b>\n"
+            . "📚 Lịch sử: " . caffemmo_telegram_stats_html(implode(' → ', caffemmo_telegram_stats_activity_log($session['visit_id'] ?? 0))) . "\n"
+            . "ℹ️ Lý do ghi nhận: Không nhận heartbeat quá 5 phút; không thể kết luận chính xác khách đóng tab hay mất kết nối.\n"
+            . "🟢 Đang online: <b>" . format_cash($snapshot['online']) . "</b>\n"
+            . "↘ Lượt rời hôm nay: <b>" . format_cash($today['leaves']) . "</b> (hôm qua " . format_cash($yesterday['leaves']) . ")";
     $queue = new TelegramQueue();
     return $queue->queueMessage($message, null, null, 2, [
         'type' => 'visitor_presence',
@@ -557,7 +557,7 @@ function caffemmo_telegram_stats_sweep_live_sessions()
                     'duration_seconds' => $duration,
                     'last_page_key' => $row['last_page_key'] ?? null,
                     'last_page_label' => $row['last_page_label'] ?? null,
-                    'leave_reason' => 'Khong nhan heartbeat qua 5 phut'
+                    'leave_reason' => 'Không nhận heartbeat quá 5 phút'
                 ], ' `id` = ? AND `ended_at` IS NULL ', [$visitId]);
             }
             $closed++;
@@ -567,7 +567,7 @@ function caffemmo_telegram_stats_sweep_live_sessions()
                 'visitor_key' => $row['visitor_key'],
                 'visitor_type' => $row['visitor_type'] ?? 'returning',
                 'duration_seconds' => $duration,
-                'last_page_label' => $row['last_page_label'] ?? 'Khong ro'
+                'last_page_label' => $row['last_page_label'] ?? 'Không rõ'
             ]);
         }
     }
