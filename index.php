@@ -5,6 +5,7 @@ require_once(__DIR__ . '/config.php');
 require_once(__DIR__ . '/libs/lang.php');
 require_once(__DIR__ . '/libs/helper.php');
 require_once(__DIR__ . '/libs/database/users.php');
+require_once(__DIR__ . '/libs/telegram-statistics.php');
 $CMSNT = new DB();
 
 
@@ -21,6 +22,10 @@ $home   = $module == 'client' ? $CMSNT->site('home_page') : 'home';
 $action = !empty($_GET['action']) ? validate_path($_GET['action']) : $home;
 if ($action === false) {
     $action = $home;
+}
+
+if ($module === 'client') {
+    caffemmo_telegram_stats_track_visit();
 }
 
 // Các Action được phép

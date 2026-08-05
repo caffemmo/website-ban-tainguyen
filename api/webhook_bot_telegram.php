@@ -5,6 +5,7 @@ require_once(__DIR__ . "/../libs/db.php");
 require_once(__DIR__ . "/../config.php");
 require_once(__DIR__ . "/../libs/lang.php");
 require_once(__DIR__ . "/../libs/helper.php");
+require_once(__DIR__ . "/../libs/telegram-statistics.php");
 require_once(__DIR__ . "/../libs/database/users.php");
 $CMSNT = new DB();
 
@@ -139,6 +140,43 @@ if (!in_array($sender_username, array_map('strtolower', $allowed_usernames))) {
 // KHAI BÁO MẢNG LỆNH $commands
 // -----------------------------------------------------
 $commands = [
+    'stats' => function() use ($chat_id, $CMSNT) {
+        $stats = caffemmo_telegram_stats_dashboard();
+        $today = $stats['today'];
+        $week = $stats['week'];
+        $month = $stats['month'];
+        $previousMonth = $stats['previous_month'];
+        [$profitChange, $profitPercent] = caffemmo_telegram_stats_change($month['profit'], $previousMonth['profit']);
+        [$revenueChange, $revenuePercent] = caffemmo_telegram_stats_change($month['revenue'], $previousMonth['revenue']);
+        $profitTrend = $profitChange > 0 ? '🟢 Tăng' : ($profitChange < 0 ? '🔴 Giảm' : '⚪ Không đổi');
+        $revenueTrend = $revenueChange > 0 ? '🟢 Tăng' : ($revenueChange < 0 ? '🔴 Giảm' : '⚪ Không đổi');
+        $profitPercentText = $profitPercent === null ? 'N/A' : ($profitPercent >= 0 ? '+' : '') . $profitPercent . '%';
+        $revenuePercentText = $revenuePercent === null ? 'N/A' : ($revenuePercent >= 0 ? '+' : '') . $revenuePercent . '%';
+
+        $message = "📊 *THỐNG KÊ WEBSITE*\n";
+        $message .= "------------------------------------\n";
+        $message .= "🟢 *Đang online:* `" . format_cash($stats['online']) . "` khách\n";
+        $message .= "👥 *Khách duy nhất hôm nay:* `" . format_cash($stats['unique_today']) . "`\n";
+        $message .= "🔁 *Tổng lượt vào hôm nay:* `" . format_cash($stats['visits_today']) . "`\n";
+        $message .= "------------------------------------\n";
+        $message .= "📅 *Hôm nay*\n";
+        $message .= "🛒 Đơn: `" . format_cash($today['orders']) . "` | Doanh thu: *" . caffemmo_telegram_stats_money($today['revenue']) . "*\n";
+        $message .= "📈 Lợi nhuận tạm tính: *" . caffemmo_telegram_stats_money($today['profit']) . "*\n";
+        $message .= "📅 *Tuần này*\n";
+        $message .= "🛒 Đơn: `" . format_cash($week['orders']) . "` | Doanh thu: *" . caffemmo_telegram_stats_money($week['revenue']) . "*\n";
+        $message .= "📈 Lợi nhuận tạm tính: *" . caffemmo_telegram_stats_money($week['profit']) . "*\n";
+        $message .= "📅 *Tháng này*\n";
+        $message .= "🛒 Đơn: `" . format_cash($month['orders']) . "` | Doanh thu: *" . caffemmo_telegram_stats_money($month['revenue']) . "*\n";
+        $message .= "📈 Lợi nhuận tạm tính: *" . caffemmo_telegram_stats_money($month['profit']) . "*\n";
+        $message .= "⚠️ Doanh thu chưa có giá vốn: *" . caffemmo_telegram_stats_money($month['unknown_cost_revenue']) . "*\n";
+        $message .= "------------------------------------\n";
+        $message .= "📊 *So với tháng trước*\n";
+        $message .= "💰 Doanh thu: {$revenueTrend} `{$revenuePercentText}` (" . caffemmo_telegram_stats_money($revenueChange) . ")\n";
+        $message .= "📈 Lợi nhuận: {$profitTrend} `{$profitPercentText}` (" . caffemmo_telegram_stats_money($profitChange) . ")\n";
+        $message .= "⚠️ Lợi nhuận là số tạm tính theo giá vốn đã lưu; Netflix, Locket Gold và gia hạn proxy chưa có giá vốn riêng trong database.\n";
+        sendMessage($chat_id, $message);
+    },
+
     'addfund' => function($params) use ($chat_id, $CMSNT) {
         // Tách tham số
         [$usernameParam, $amountParam, $reasonParam] = $params;
@@ -1307,6 +1345,7 @@ function sendHelpMenu($chat_id) {
 ------------------------------------
 **[4.] LỆNH THỐNG KÊ - BÁO CÁO**
 ------------------------------------
+📊 *Tổng quan website:* `/stats`
 📅 *Doanh thu hôm nay:* `/revenuetoday`  
 📅 *Doanh thu tuần này:* `/revenueweek`  
 📅 *Doanh thu tháng này:* `/revenuemonth`  
@@ -1350,6 +1389,7 @@ function setBotCommands($botToken) {
         ['command' => 'revenuetoday', 'description' => 'Doanh thu hôm nay: /revenuetoday'],
         ['command' => 'revenueweek', 'description' => 'Doanh thu tuần này: /revenueweek'],
         ['command' => 'revenuemonth', 'description' => 'Doanh thu tháng này: /revenuemonth'],
+        ['command' => 'stats', 'description' => 'Tổng quan online, lượt truy cập và lợi nhuận: /stats'],
         
         ['command' => 'listusers', 'description' => 'Danh sách thành viên: /listusers'],
         ['command' => 'topusers', 'description' => 'TOP Nạp tiền: /topusers'],
@@ -1374,7 +1414,3 @@ function setBotCommands($botToken) {
 
 $botToken = $CMSNT->site('telegram_assistant_token');
 setBotCommands($botToken);
-
-
- 
- 
