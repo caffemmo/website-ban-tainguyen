@@ -17,7 +17,7 @@ $body = [
     'desc' => __('Mua proxy chính hãng với cấu hình rõ ràng và quản lý tập trung.'),
     'keyword' => 'proxy, mua proxy, proxy premium'
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=29') . '">';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=30') . '">';
 $body['footer'] = '<script src="' . BASE_URL('mod/js/proxy.js?v=9') . '"></script>';
 
 require_once __DIR__ . '/header.php';
@@ -44,16 +44,16 @@ require_once __DIR__ . '/nav.php';
     </section>
 
     <?php if (!empty($proxyGuides)): ?>
-        <details class="proxy-guides">
-            <summary class="proxy-guides-toggle">
+        <section class="proxy-guides">
+            <button class="proxy-guides-toggle" type="button" data-proxy-guides-toggle aria-expanded="false" aria-controls="proxy-guides-panel">
                 <span class="proxy-guides-toggle-icon"><i class="fa-solid fa-book-open" aria-hidden="true"></i></span>
                 <span class="proxy-guides-toggle-copy">
                     <strong><?= __('Hướng dẫn sử dụng Proxy'); ?></strong>
                     <small><?= count($proxyGuides); ?> <?= __('tài liệu có sẵn · Bấm để xem danh sách'); ?></small>
                 </span>
                 <i class="fa-solid fa-chevron-down proxy-guides-toggle-arrow" aria-hidden="true"></i>
-            </summary>
-            <div class="proxy-guides-content">
+            </button>
+            <div class="proxy-guides-content" id="proxy-guides-panel" data-proxy-guides-panel hidden>
                 <p class="proxy-guides-description"><?= __('Chọn tài liệu phù hợp để xem hướng dẫn cài đặt và sử dụng.'); ?></p>
                 <div class="proxy-guides-grid">
                     <?php foreach ($proxyGuides as $guide): ?>
@@ -69,6 +69,19 @@ require_once __DIR__ . '/nav.php';
                 </div>
             </div>
         </section>
+        <script>
+            (function() {
+                var toggle = document.querySelector('[data-proxy-guides-toggle]');
+                var panel = document.querySelector('[data-proxy-guides-panel]');
+                if (!toggle || !panel) return;
+                toggle.addEventListener('click', function() {
+                    var isOpen = toggle.getAttribute('aria-expanded') === 'true';
+                    toggle.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+                    panel.hidden = isOpen;
+                    toggle.closest('.proxy-guides').classList.toggle('is-open', !isOpen);
+                });
+            }());
+        </script>
     <?php endif; ?>
 
     <div class="proxy-status" data-proxy-status role="status" aria-live="polite" hidden></div>

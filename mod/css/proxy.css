@@ -159,6 +159,7 @@ body {
 
 .proxy-guides-toggle {
     display: flex;
+    width: 100%;
     min-height: 62px;
     align-items: center;
     gap: 11px;
@@ -169,12 +170,9 @@ body {
     background: #fff;
     box-shadow: 0 8px 18px rgba(31, 66, 91, .05);
     cursor: pointer;
-    list-style: none;
+    font: inherit;
+    text-align: left;
     transition: border-color .2s ease, background-color .2s ease, box-shadow .2s ease;
-}
-
-.proxy-guides-toggle::-webkit-details-marker {
-    display: none;
 }
 
 .proxy-guides-toggle:hover {
@@ -182,7 +180,7 @@ body {
     background: #fbfeff;
 }
 
-.proxy-guides[open] .proxy-guides-toggle {
+.proxy-guides.is-open .proxy-guides-toggle {
     border-bottom-color: #e4eef1;
     border-radius: 8px 8px 0 0;
     box-shadow: none;
@@ -227,7 +225,7 @@ body {
     transition: transform .2s ease;
 }
 
-.proxy-guides[open] .proxy-guides-toggle-arrow {
+.proxy-guides.is-open .proxy-guides-toggle-arrow {
     transform: rotate(180deg);
 }
 
@@ -237,6 +235,10 @@ body {
     border-top: 0;
     border-radius: 0 0 8px 8px;
     background: #fff;
+}
+
+.proxy-guides-content[hidden] {
+    display: none !important;
 }
 
 .proxy-guides-description {
