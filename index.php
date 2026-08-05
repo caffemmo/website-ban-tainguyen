@@ -7,6 +7,7 @@ require_once(__DIR__ . '/libs/helper.php');
 require_once(__DIR__ . '/libs/database/users.php');
 require_once(__DIR__ . '/libs/telegram-statistics.php');
 $CMSNT = new DB();
+caffemmo_telegram_stats_ensure_settings();
 
 
 

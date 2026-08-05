@@ -17,8 +17,10 @@ require_once(__DIR__ . '/../libs/lang.php');
 require_once(__DIR__ . '/../libs/helper.php');
 require_once(__DIR__ . '/../config.php');
 require_once(__DIR__ . '/../libs/TelegramQueue.php');
+require_once(__DIR__ . '/../libs/telegram-statistics.php');
 
 $CMSNT = new DB();
+caffemmo_telegram_stats_ensure_settings();
 
 // Kiểm tra key
 if (!isset($_GET['key'])) {
@@ -42,6 +44,7 @@ $CMSNT->update("settings", [
 
 // Khởi tạo TelegramQueue
 $telegramQueue = new TelegramQueue();
+caffemmo_telegram_stats_sweep_live_sessions();
 
 // Kiểm tra Telegram đã bật chưa
 if ($CMSNT->site('telegram_status') != 1) {

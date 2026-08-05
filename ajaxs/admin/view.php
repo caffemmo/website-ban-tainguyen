@@ -6,6 +6,7 @@ require_once(__DIR__ . "/../../libs/db.php");
 require_once(__DIR__ . "/../../libs/lang.php");
 require_once(__DIR__ . "/../../libs/helper.php");
 require_once(__DIR__ . '/../../models/is_admin.php');
+require_once(__DIR__ . '/../../libs/telegram-statistics.php');
 
 
 if (!isset($_POST['action'])) {
@@ -859,6 +860,7 @@ if ($_POST['action'] == 'view_chart_thong_ke_don_hang') {
     $labels = [];
     $revenues = [];
     $profits = [];
+    $excludedUsername = caffemmo_telegram_stats_excluded_username();
 
     if ($time_range == 'today') {
         // Thống kê theo giờ trong ngày hôm nay
@@ -867,7 +869,7 @@ if ($_POST['action'] == 'view_chart_thong_ke_don_hang') {
             $hour_start = sprintf("%02d:00:00", $hour);
             $hour_end = sprintf("%02d:59:59", $hour);
             $query = "SELECT SUM(pay) AS total_pay, SUM(cost) AS total_cost FROM product_order 
-                      WHERE `refund` = 0 AND DATE(create_gettime) = '$today' 
+                      WHERE `refund` = 0 AND NOT EXISTS (SELECT 1 FROM `users` stats_user WHERE stats_user.`id` = product_order.`buyer` AND LOWER(stats_user.`username`) = '$excludedUsername') AND DATE(create_gettime) = '$today'
                       AND TIME(create_gettime) >= '$hour_start' AND TIME(create_gettime) <= '$hour_end'";
             $result = $CMSNT->get_row($query);
 
@@ -879,7 +881,7 @@ if ($_POST['action'] == 'view_chart_thong_ke_don_hang') {
         // Thống kê 7 ngày gần đây
         for ($i = 6; $i >= 0; $i--) {
             $date = date("Y-m-d", strtotime("-$i days"));
-            $query = "SELECT SUM(pay) AS total_pay, SUM(cost) AS total_cost FROM product_order WHERE `refund` = 0 AND DATE(create_gettime) = '$date'";
+            $query = "SELECT SUM(pay) AS total_pay, SUM(cost) AS total_cost FROM product_order WHERE `refund` = 0 AND NOT EXISTS (SELECT 1 FROM `users` stats_user WHERE stats_user.`id` = product_order.`buyer` AND LOWER(stats_user.`username`) = '$excludedUsername') AND DATE(create_gettime) = '$date'";
             $result = $CMSNT->get_row($query);
 
             $labels[] = date("d/m", strtotime("-$i days"));
@@ -894,7 +896,7 @@ if ($_POST['action'] == 'view_chart_thong_ke_don_hang') {
 
         for ($day = 1; $day <= $numOfDays; $day++) {
             $date = "$year-$month-$day";
-            $query = "SELECT SUM(pay) AS total_pay, SUM(cost) AS total_cost FROM product_order WHERE `refund` = 0 AND DATE(create_gettime) = '$date'";
+            $query = "SELECT SUM(pay) AS total_pay, SUM(cost) AS total_cost FROM product_order WHERE `refund` = 0 AND NOT EXISTS (SELECT 1 FROM `users` stats_user WHERE stats_user.`id` = product_order.`buyer` AND LOWER(stats_user.`username`) = '$excludedUsername') AND DATE(create_gettime) = '$date'";
             $result = $CMSNT->get_row($query);
 
             $labels[] = "$day/$month";
@@ -909,7 +911,7 @@ if ($_POST['action'] == 'view_chart_thong_ke_don_hang') {
 
         for ($day = 1; $day <= $numOfDays; $day++) {
             $date = sprintf("%s-%02d-%02d", $lastMonthYear, $lastMonth, $day);
-            $query = "SELECT SUM(pay) AS total_pay, SUM(cost) AS total_cost FROM product_order WHERE `refund` = 0 AND DATE(create_gettime) = '$date'";
+            $query = "SELECT SUM(pay) AS total_pay, SUM(cost) AS total_cost FROM product_order WHERE `refund` = 0 AND NOT EXISTS (SELECT 1 FROM `users` stats_user WHERE stats_user.`id` = product_order.`buyer` AND LOWER(stats_user.`username`) = '$excludedUsername') AND DATE(create_gettime) = '$date'";
             $result = $CMSNT->get_row($query);
 
             $labels[] = "$day/$lastMonth";
@@ -923,7 +925,7 @@ if ($_POST['action'] == 'view_chart_thong_ke_don_hang') {
         for ($month = 1; $month <= 12; $month++) {
             $month_name = date('m', mktime(0, 0, 0, $month, 1));
             $query = "SELECT SUM(pay) AS total_pay, SUM(cost) AS total_cost FROM product_order 
-                      WHERE `refund` = 0 AND MONTH(create_gettime) = '$month' AND YEAR(create_gettime) = '$year'";
+                      WHERE `refund` = 0 AND NOT EXISTS (SELECT 1 FROM `users` stats_user WHERE stats_user.`id` = product_order.`buyer` AND LOWER(stats_user.`username`) = '$excludedUsername') AND MONTH(create_gettime) = '$month' AND YEAR(create_gettime) = '$year'";
             $result = $CMSNT->get_row($query);
 
             $labels[] = "Tháng $month_name";
@@ -1152,10 +1154,11 @@ if ($_POST['action'] == 'view_chart_thong_ke_don_hang_thang') {
     $labels = [];
     $revenues = [];
     $profits = [];
+    $excludedUsername = caffemmo_telegram_stats_excluded_username();
 
     for ($day = 1; $day <= $numOfDays; $day++) {
         $date = "$year-$month-$day";
-        $query = "SELECT SUM(pay) AS total_pay, SUM(cost) AS total_cost FROM product_order WHERE `refund` = 0 AND DATE(create_gettime) = '$date'";
+        $query = "SELECT SUM(pay) AS total_pay, SUM(cost) AS total_cost FROM product_order WHERE `refund` = 0 AND NOT EXISTS (SELECT 1 FROM `users` stats_user WHERE stats_user.`id` = product_order.`buyer` AND LOWER(stats_user.`username`) = '$excludedUsername') AND DATE(create_gettime) = '$date'";
         $result = $CMSNT->get_row($query);
 
         $labels[] = "$day/$month/$year";
@@ -1185,6 +1188,7 @@ if ($_POST['action'] == 'show_thong_ke_dashboard') {
     $currentDate = date("Y-m-d");
     $currentYear = date('Y');
     $currentMonth = date('m');
+    $excludedUsername = caffemmo_telegram_stats_excluded_username();
 
     // Xác định ngày bắt đầu và kết thúc của tuần hiện tại (Thứ Hai đến Chủ Nhật)
     $startOfWeek = date("Y-m-d", strtotime("last Monday", strtotime($currentDate)));
@@ -1200,12 +1204,14 @@ if ($_POST['action'] == 'show_thong_ke_dashboard') {
 
     // Dữ liệu hôm nay
     $query1 = "SELECT 
-                COUNT(id) AS total_orders_today, 
-                SUM(pay) AS total_pay_today, 
-                SUM(cost) AS total_cost_today 
-              FROM `product_order` 
-              WHERE `refund` = 0 
-              AND `create_gettime` LIKE '%$currentDate%'";
+                COUNT(po.`id`) AS total_orders_today,
+                SUM(po.`pay`) AS total_pay_today,
+                SUM(po.`cost`) AS total_cost_today
+              FROM `product_order` po
+              LEFT JOIN `users` stats_user ON stats_user.`id` = po.`buyer`
+              WHERE po.`refund` = 0
+              AND (stats_user.`id` IS NULL OR LOWER(stats_user.`username`) <> '$excludedUsername')
+              AND po.`create_gettime` LIKE '%$currentDate%'";
     $result1 = $CMSNT->get_row($query1);
 
     $total_orders_today = $result1['total_orders_today'];
@@ -1217,12 +1223,14 @@ if ($_POST['action'] == 'show_thong_ke_dashboard') {
 
     // Dữ liệu tuần này
     $query_week = "SELECT 
-                    COUNT(id) AS total_orders_week, 
-                    SUM(pay) AS total_pay_week, 
-                    SUM(cost) AS total_cost_week 
-                  FROM `product_order` 
-                  WHERE `refund` = 0 
-                  AND DATE(`create_gettime`) BETWEEN '$startOfWeek' AND '$endOfWeek'";
+                    COUNT(po.`id`) AS total_orders_week,
+                    SUM(po.`pay`) AS total_pay_week,
+                    SUM(po.`cost`) AS total_cost_week
+                  FROM `product_order` po
+                  LEFT JOIN `users` stats_user ON stats_user.`id` = po.`buyer`
+                  WHERE po.`refund` = 0
+                  AND (stats_user.`id` IS NULL OR LOWER(stats_user.`username`) <> '$excludedUsername')
+                  AND DATE(po.`create_gettime`) BETWEEN '$startOfWeek' AND '$endOfWeek'";
     $result_week = $CMSNT->get_row($query_week);
 
     $total_orders_week = $result_week['total_orders_week'];
@@ -1234,13 +1242,15 @@ if ($_POST['action'] == 'show_thong_ke_dashboard') {
 
     // Dữ liệu tháng này
     $query2 = "SELECT 
-                COUNT(id) AS total_orders_month, 
-                SUM(pay) AS total_pay_month, 
-                SUM(cost) AS total_cost_month 
-              FROM `product_order` 
-              WHERE `refund` = 0 
-              AND YEAR(create_gettime) = $currentYear 
-              AND MONTH(create_gettime) = $currentMonth";
+                COUNT(po.`id`) AS total_orders_month,
+                SUM(po.`pay`) AS total_pay_month,
+                SUM(po.`cost`) AS total_cost_month
+              FROM `product_order` po
+              LEFT JOIN `users` stats_user ON stats_user.`id` = po.`buyer`
+              WHERE po.`refund` = 0
+              AND (stats_user.`id` IS NULL OR LOWER(stats_user.`username`) <> '$excludedUsername')
+              AND YEAR(po.`create_gettime`) = $currentYear
+              AND MONTH(po.`create_gettime`) = $currentMonth";
     $result2 = $CMSNT->get_row($query2);
 
     $total_orders_month = $result2['total_orders_month'];
@@ -1252,11 +1262,13 @@ if ($_POST['action'] == 'show_thong_ke_dashboard') {
 
     // Dữ liệu toàn thời gian
     $query3 = "SELECT 
-                COUNT(id) AS total_orders_all, 
-                SUM(pay) AS total_pay_all, 
-                SUM(cost) AS total_cost_all 
-              FROM `product_order` 
-              WHERE `refund` = 0";
+                COUNT(po.`id`) AS total_orders_all,
+                SUM(po.`pay`) AS total_pay_all,
+                SUM(po.`cost`) AS total_cost_all
+              FROM `product_order` po
+              LEFT JOIN `users` stats_user ON stats_user.`id` = po.`buyer`
+              WHERE po.`refund` = 0
+              AND (stats_user.`id` IS NULL OR LOWER(stats_user.`username`) <> '$excludedUsername')";
     $result3 = $CMSNT->get_row($query3);
 
     $total_orders_all = $result3['total_orders_all'];

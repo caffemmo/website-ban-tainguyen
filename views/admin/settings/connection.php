@@ -237,6 +237,18 @@ if (isset($_POST['SaveSettings'])) {
                             </div>
                         </div>
 
+                        <div class="mb-3">
+                            <label class="form-label fw-medium d-flex align-items-center">
+                                <i class="fas fa-users me-2 text-primary"></i>
+                                Thong bao khach vao / roi website
+                            </label>
+                            <select class="form-select" name="telegram_visitor_notifications">
+                                <option <?= $CMSNT->site('telegram_visitor_notifications') == 1 ? 'selected' : ''; ?> value="1">Bat (ON)</option>
+                                <option <?= $CMSNT->site('telegram_visitor_notifications') == 0 ? 'selected' : ''; ?> value="0">Tat (OFF)</option>
+                            </select>
+                            <div class="form-text">Bat de gui Telegram khi co phien truy cap moi va khi khach khong con hoat dong trong 5 phut.</div>
+                        </div>
+
                         <div class="alert alert-info border-info mb-3">
                             <div class="fw-semibold mb-1"><i class="fas fa-chart-line me-2"></i>Thống kê Telegram tự code</div>
                             <div class="small mb-2">Dùng cùng Bot Token và Chat ID ở trên, không cần mua Addon Bot Quản Lý Telegram.</div>

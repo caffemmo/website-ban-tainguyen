@@ -81,7 +81,7 @@ function proxy_accounting_fetch_orders()
 {
     global $CMSNT;
     return $CMSNT->get_list_safe(
-        'SELECT o.`id`, o.`proxy_type`, o.`provider_order_id`, o.`provider_price`, o.`provider_cost_vnd`, o.`provider_currency`, o.`wallet_amount`,
+        'SELECT o.`id`, o.`user_id`, o.`proxy_type`, o.`provider_order_id`, o.`provider_price`, o.`provider_cost_vnd`, o.`provider_currency`, o.`wallet_amount`,
                 o.`quantity`, o.`status`, o.`created_at`,
                 i.`id` AS `inventory_id`, i.`batch_id`,
                 i.`acquisition_unit_cost_vnd`, b.`provider_price` AS `batch_provider_price`,

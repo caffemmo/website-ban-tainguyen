@@ -651,6 +651,34 @@ $loadLegacyClientPlugins = isset($loadLegacyClientPlugins)
 <?php endif; ?>
 <script src="<?= BASE_URL('public/client/'); ?>js/main.js?v=5"></script>
 
+<script>
+    (function() {
+        var presenceEndpoint = <?= json_encode(base_url('api/visitor-presence.php')); ?>;
+        var sendPresence = function() {
+            if (document.visibilityState !== 'visible') {
+                return;
+            }
+            fetch(presenceEndpoint, {
+                method: 'POST',
+                credentials: 'same-origin',
+                keepalive: true
+            }).catch(function() {});
+        };
+
+        window.setInterval(sendPresence, 60000);
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'visible') {
+                sendPresence();
+            }
+        });
+        window.addEventListener('pagehide', function() {
+            if (navigator.sendBeacon) {
+                navigator.sendBeacon(presenceEndpoint, new Blob(['heartbeat=1'], {type: 'text/plain'}));
+            }
+        });
+    })();
+</script>
+
 <?= $body['footer']; ?>
 <?= $CMSNT->site('javascript_footer'); ?>
 </body>
