@@ -8,16 +8,13 @@ $getUser = client_optional_user($CMSNT);
 $proxyGuides = caffemmo_client_guides_get();
 $proxyIsAuthenticated = is_array($getUser);
 $proxyUserToken = $proxyIsAuthenticated ? (string) ($getUser['token'] ?? '') : '';
-$proxyWalletBalance = $proxyIsAuthenticated ? format_currency($getUser['money']) : __('Đăng nhập để mua');
-$proxyWalletUrl = $proxyIsAuthenticated ? base_url('recharge-bank') : base_url('client/login');
-$proxyWalletAction = $proxyIsAuthenticated ? __('Nạp tiền') : __('Đăng nhập');
 
 $body = [
     'title' => __('Mua Proxy') . ' | ' . $CMSNT->site('title'),
     'desc' => __('Mua proxy chính hãng với cấu hình rõ ràng và quản lý tập trung.'),
     'keyword' => 'proxy, mua proxy, proxy premium'
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=31') . '">';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=32') . '">';
 $body['footer'] = '<script src="' . BASE_URL('mod/js/proxy.js?v=9') . '"></script>';
 
 require_once __DIR__ . '/header.php';
@@ -30,32 +27,6 @@ require_once __DIR__ . '/nav.php';
     data-authenticated="<?= $proxyIsAuthenticated ? '1' : '0'; ?>"
     data-login-url="<?= htmlspecialchars(base_url('client/login'), ENT_QUOTES, 'UTF-8'); ?>"
     data-configured="<?= youproxy_is_configured() ? '1' : '0'; ?>">
-    <section class="proxy-page-heading proxy-page-heading--version-a">
-        <div class="proxy-heading-identity">
-            <span class="proxy-heading-icon"><i class="fa-solid fa-layer-group" aria-hidden="true"></i></span>
-            <div class="proxy-heading-copy">
-                <span class="proxy-eyebrow"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Proxy workspace</span>
-                <h1><?= __('Mua Proxy'); ?></h1>
-                <p><?= __('Proxy chất lượng cao, tốc độ ổn định, hỗ trợ 24/7.'); ?></p>
-                <div class="proxy-heading-tags" aria-label="<?= __('Ưu điểm dịch vụ proxy'); ?>">
-                    <span><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('IP sạch 99%'); ?></span>
-                    <span><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Tốc độ cao'); ?></span>
-                    <span><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Hoàn tiền 100%'); ?></span>
-                </div>
-            </div>
-        </div>
-        <div class="proxy-wallet-card">
-            <span><?= __('Số dư ví'); ?></span>
-            <strong data-wallet-balance><?= $proxyWalletBalance; ?></strong>
-            <a class="proxy-wallet-primary" href="<?= htmlspecialchars($proxyWalletUrl, ENT_QUOTES, 'UTF-8'); ?>"><i class="fa-solid fa-wallet" aria-hidden="true"></i><?= $proxyIsAuthenticated ? $proxyWalletAction : __('Đăng nhập để mua'); ?><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
-            <?php if (!$proxyIsAuthenticated): ?>
-                <a class="proxy-wallet-secondary" href="<?= htmlspecialchars(base_url('client/login'), ENT_QUOTES, 'UTF-8'); ?>"><?= __('Đã có tài khoản?'); ?> <strong><?= __('Đăng nhập'); ?></strong><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
-            <?php else: ?>
-                <span class="proxy-wallet-secondary"><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Ví đã sẵn sàng để mua'); ?></span>
-            <?php endif; ?>
-        </div>
-    </section>
-
     <?php if (!empty($proxyGuides)): ?>
         <section class="proxy-guides">
             <button class="proxy-guides-toggle" type="button" data-proxy-guides-toggle aria-expanded="false" aria-controls="proxy-guides-panel">
