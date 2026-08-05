@@ -17,7 +17,7 @@ $body = [
     'desc' => __('Mua proxy chính hãng với cấu hình rõ ràng và quản lý tập trung.'),
     'keyword' => 'proxy, mua proxy, proxy premium'
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=27') . '">';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=28') . '">';
 $body['footer'] = '<script src="' . BASE_URL('mod/js/proxy.js?v=9') . '"></script>';
 
 require_once __DIR__ . '/header.php';
