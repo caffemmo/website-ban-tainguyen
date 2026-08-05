@@ -10,9 +10,6 @@ require_once __DIR__ . '/../../libs/service-catalog.php';
 $getUser = client_optional_user($CMSNT);
 $upIsAuthenticated = is_array($getUser);
 $upUserToken = $upIsAuthenticated ? (string) ($getUser['token'] ?? '') : '';
-$upWalletBalance = $upIsAuthenticated ? format_currency($getUser['money']) : __('Đăng nhập để sử dụng');
-$upWalletUrl = $upIsAuthenticated ? base_url('recharge-bank') : base_url('client/login');
-$upWalletAction = $upIsAuthenticated ? __('Nạp tiền') : __('Đăng nhập');
 
 $serviceCatalog = caffemmo_service_catalog();
 $services = [];
@@ -48,19 +45,6 @@ require_once __DIR__ . '/nav.php';
     data-configured="<?= $upConfigured ? '1' : '0'; ?>"
     data-history-url="<?= htmlspecialchars(base_url('client/up-tich-xanh-history'), ENT_QUOTES, 'UTF-8'); ?>"
 >
-    <section class="up-hero" aria-labelledby="up-page-title">
-        <div class="up-hero-copy">
-            <span class="up-eyebrow"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Caffemmo Social</span>
-            <h1 id="up-page-title"><?= __('Up tích xanh'); ?></h1>
-            <p><?= __('Chọn dịch vụ phù hợp và chuẩn bị thông tin xác minh theo từng bước rõ ràng.'); ?></p>
-        </div>
-        <div class="up-wallet-card">
-            <span><?= __('Số dư ví'); ?></span>
-            <strong><?= $upWalletBalance; ?></strong>
-            <a href="<?= htmlspecialchars($upWalletUrl, ENT_QUOTES, 'UTF-8'); ?>"><?= $upWalletAction; ?> <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
-        </div>
-    </section>
-
     <section class="up-service-tabs" aria-label="<?= __('Chọn dịch vụ nhanh'); ?>">
         <?php foreach ($services as $key => $item): ?>
             <a class="up-service-tab up-service-tab--<?= htmlspecialchars($item['tone'], ENT_QUOTES, 'UTF-8'); ?> <?= $service === $key ? 'is-active' : ''; ?>" href="<?= htmlspecialchars($item['url'], ENT_QUOTES, 'UTF-8'); ?>" <?= $service === $key ? 'aria-current="page"' : ''; ?>>

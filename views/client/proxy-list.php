@@ -26,14 +26,6 @@ require_once __DIR__ . '/nav.php';
     data-authenticated="<?= $proxyIsAuthenticated ? '1' : '0'; ?>"
     data-login-url="<?= htmlspecialchars(base_url('client/login'), ENT_QUOTES, 'UTF-8'); ?>"
     data-configured="<?= youproxy_is_configured() ? '1' : '0'; ?>">
-    <section class="proxy-page-heading">
-        <div>
-            <span class="proxy-eyebrow"><i class="fa-solid fa-server" aria-hidden="true"></i> Proxy workspace</span>
-            <h1><?= __('Proxy của tôi'); ?></h1>
-            <p><?= __('Theo dõi thời hạn, sao chép thông tin kết nối và gia hạn theo nhóm.'); ?></p>
-        </div>
-        <div class="proxy-heading-actions"><a class="proxy-secondary-button" href="<?= base_url('client/proxy-buy'); ?>"><i class="fa-solid fa-plus" aria-hidden="true"></i> <?= __('Mua proxy'); ?></a><button class="proxy-icon-button" type="button" data-refresh-list aria-label="<?= __('Làm mới danh sách'); ?>" title="<?= __('Làm mới danh sách'); ?>"><i class="fa-solid fa-rotate" aria-hidden="true"></i></button></div>
-    </section>
     <div class="proxy-status" data-proxy-status role="status" aria-live="polite" hidden></div>
     <?php if (!youproxy_is_configured()): ?>
         <section class="proxy-setup-banner"><div class="proxy-setup-icon"><i class="fa-solid fa-plug-circle-xmark" aria-hidden="true"></i></div><div><strong><?= __('Dịch vụ proxy đang chờ cấu hình'); ?></strong><p><?= __('Dịch vụ đang được chuẩn bị. Vui lòng thử lại sau ít phút hoặc liên hệ hỗ trợ.'); ?></p></div></section>
