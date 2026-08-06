@@ -174,10 +174,10 @@ body {
 .proxy-guides-toggle {
     display: flex;
     width: 100%;
-    min-height: 60px;
+    min-height: 50px;
     align-items: center;
-    gap: 12px;
-    padding: 10px 18px 10px 20px;
+    gap: 9px;
+    padding: 7px 14px 7px 16px;
     border: 0;
     border-radius: 999px;
     color: var(--proxy-ink);
@@ -201,15 +201,15 @@ body {
 
 .proxy-guides-toggle-icon {
     display: inline-flex;
-    flex: 0 0 34px;
-    width: 34px;
-    height: 34px;
+    flex: 0 0 28px;
+    width: 28px;
+    height: 28px;
     align-items: center;
     justify-content: center;
-    border-radius: 7px;
+    border-radius: 6px;
     color: #fff;
     background: #168a9a;
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .proxy-guides-toggle-copy {
@@ -222,17 +222,16 @@ body {
 
 .proxy-guides-toggle-copy strong {
     color: var(--proxy-ink);
-    font-size: 15px;
-    font-weight: 800;
-    letter-spacing: .02em;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0;
     line-height: 1.25;
-    text-transform: uppercase;
 }
 
 .proxy-guides-toggle-arrow {
     flex: 0 0 auto;
     color: #f07f45;
-    font-size: 22px;
+    font-size: 18px;
     transition: transform .2s ease;
 }
 
@@ -2004,9 +2003,9 @@ body {
     .proxy-page[data-proxy-page="buy"] .proxy-page-heading p { max-width: none; margin-top: 5px; font-size: 12px; }
     .proxy-page[data-proxy-page="buy"] .proxy-wallet-card { width: 100%; min-width: 0; align-items: flex-start; padding: 14px 0 0; border-top: 1px solid #d7e8ed; border-left: 0; }
 
-    .proxy-guides-toggle { min-height: 56px; gap: 10px; padding: 10px 14px 10px 16px; }
+    .proxy-guides-toggle { min-height: 48px; gap: 8px; padding: 7px 12px 7px 13px; }
     .proxy-guides-toggle-copy strong { font-size: 12px; }
-    .proxy-guides-toggle-arrow { font-size: 20px; }
+    .proxy-guides-toggle-arrow { font-size: 17px; }
     .proxy-guides-content { padding: 13px; }
     .proxy-guides-grid { grid-template-columns: 1fr; }
 
