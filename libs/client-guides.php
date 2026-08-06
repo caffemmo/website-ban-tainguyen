@@ -103,3 +103,102 @@ function caffemmo_client_guides_save($guides)
 
     return $CMSNT->insert('settings', ['name' => 'client_guides', 'value' => $value]);
 }
+
+function caffemmo_client_faqs_defaults()
+{
+    return [
+        [
+            'question' => 'Sau khi mua proxy, tôi nhận thông tin ở đâu?',
+            'answer' => 'Sau khi đơn hàng hoàn tất, thông tin proxy sẽ được hiển thị trong mục Proxy của tôi và lịch sử đơn hàng của tài khoản.',
+            'enabled' => 1,
+        ],
+        [
+            'question' => 'Proxy hỗ trợ những định dạng kết nối nào?',
+            'answer' => 'Tùy loại proxy, bạn có thể sử dụng Login / Password hoặc IP whitelist theo cấu hình hiển thị trên trang mua proxy.',
+            'enabled' => 1,
+        ],
+        [
+            'question' => 'Tôi có thể gia hạn proxy đã mua không?',
+            'answer' => 'Có. Vào mục Proxy của tôi, chọn proxy cần gia hạn và thực hiện theo phần Thiết lập gia hạn.',
+            'enabled' => 1,
+        ],
+        [
+            'question' => 'Nếu gặp lỗi khi mua proxy thì phải làm gì?',
+            'answer' => 'Bạn hãy kiểm tra số dư và cấu hình đã chọn. Nếu lỗi vẫn còn, vui lòng liên hệ hỗ trợ để được kiểm tra đơn hàng.',
+            'enabled' => 1,
+        ],
+    ];
+}
+
+function caffemmo_client_faqs_normalize($faqs, $includeDisabled = false)
+{
+    if (!is_array($faqs)) {
+        return [];
+    }
+
+    $normalized = [];
+    foreach ($faqs as $faq) {
+        if (!is_array($faq)) {
+            continue;
+        }
+
+        $question = trim((string) ($faq['question'] ?? ''));
+        $answer = trim((string) ($faq['answer'] ?? ''));
+        $enabled = (int) ($faq['enabled'] ?? 1) === 1;
+        if ($question === '' || $answer === '' || mb_strlen($question, 'UTF-8') > 180 || mb_strlen($answer, 'UTF-8') > 4000) {
+            continue;
+        }
+        if (!$includeDisabled && !$enabled) {
+            continue;
+        }
+
+        $normalized[] = [
+            'question' => $question,
+            'answer' => $answer,
+            'enabled' => $enabled ? 1 : 0,
+        ];
+    }
+
+    return $normalized;
+}
+
+function caffemmo_client_faqs_ensure_setting()
+{
+    global $CMSNT;
+
+    if (!$CMSNT->get_row_safe('SELECT `name` FROM `settings` WHERE `name` = ? LIMIT 1', ['client_faqs'])) {
+        $CMSNT->insert('settings', [
+            'name' => 'client_faqs',
+            'value' => json_encode(caffemmo_client_faqs_defaults(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+        ]);
+    }
+}
+
+function caffemmo_client_faqs_get($includeDisabled = false)
+{
+    global $CMSNT;
+
+    $decoded = json_decode((string) $CMSNT->site('client_faqs'), true);
+    if (!is_array($decoded)) {
+        $decoded = caffemmo_client_faqs_defaults();
+    }
+
+    return caffemmo_client_faqs_normalize($decoded, $includeDisabled);
+}
+
+function caffemmo_client_faqs_save($faqs)
+{
+    global $CMSNT;
+
+    $value = json_encode(array_values($faqs), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    if ($value === false) {
+        return false;
+    }
+
+    $exists = $CMSNT->get_row_safe('SELECT `name` FROM `settings` WHERE `name` = ? LIMIT 1', ['client_faqs']);
+    if ($exists) {
+        return $CMSNT->update('settings', ['value' => $value], ' `name` = ? ', ['client_faqs']);
+    }
+
+    return $CMSNT->insert('settings', ['name' => 'client_faqs', 'value' => $value]);
+}

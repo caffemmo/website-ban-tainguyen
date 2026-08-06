@@ -6,6 +6,7 @@ require_once __DIR__ . '/../../libs/youproxy.php';
 
 $getUser = client_optional_user($CMSNT);
 $proxyGuides = caffemmo_client_guides_get();
+$proxyFaqs = caffemmo_client_faqs_get();
 $proxyIsAuthenticated = is_array($getUser);
 $proxyUserToken = $proxyIsAuthenticated ? (string) ($getUser['token'] ?? '') : '';
 
@@ -14,7 +15,7 @@ $body = [
     'desc' => __('Mua proxy chính hãng với cấu hình rõ ràng và quản lý tập trung.'),
     'keyword' => 'proxy, mua proxy, proxy premium'
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=33') . '">';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=34') . '">';
 $body['footer'] = '<script src="' . BASE_URL('mod/js/proxy.js?v=9') . '"></script>';
 
 require_once __DIR__ . '/header.php';
@@ -27,41 +28,65 @@ require_once __DIR__ . '/nav.php';
     data-authenticated="<?= $proxyIsAuthenticated ? '1' : '0'; ?>"
     data-login-url="<?= htmlspecialchars(base_url('client/login'), ENT_QUOTES, 'UTF-8'); ?>"
     data-configured="<?= youproxy_is_configured() ? '1' : '0'; ?>">
-    <?php if (!empty($proxyGuides)): ?>
-        <section class="proxy-guides">
-            <button class="proxy-guides-toggle" type="button" data-proxy-guides-toggle aria-expanded="false" aria-controls="proxy-guides-panel">
-                <span class="proxy-guides-toggle-icon"><i class="fa-solid fa-book-open" aria-hidden="true"></i></span>
-                <span class="proxy-guides-toggle-copy">
-                    <strong><?= __('Hướng dẫn sử dụng Proxy'); ?></strong>
-                </span>
-                <i class="fa-solid fa-arrow-circle-down proxy-guides-toggle-arrow" aria-hidden="true"></i>
-            </button>
-            <div class="proxy-guides-content" id="proxy-guides-panel" data-proxy-guides-panel hidden>
-                <p class="proxy-guides-description"><?= __('Chọn tài liệu phù hợp để xem hướng dẫn cài đặt và sử dụng.'); ?></p>
-                <div class="proxy-guides-grid">
-                    <?php foreach ($proxyGuides as $guide): ?>
-                        <a class="proxy-guide-link" href="<?= htmlspecialchars($guide['url'], ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener noreferrer">
-                            <span class="proxy-guide-icon"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></span>
-                            <span class="proxy-guide-copy">
-                                <strong><?= htmlspecialchars($guide['title'], ENT_QUOTES, 'UTF-8'); ?></strong>
-                                <small><?= __('Mở tài liệu'); ?></small>
-                            </span>
-                            <i class="fa-solid fa-chevron-right proxy-guide-arrow" aria-hidden="true"></i>
-                        </a>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-        </section>
+    <?php if (!empty($proxyGuides) || !empty($proxyFaqs)): ?>
+        <div class="proxy-resource-grid">
+            <?php if (!empty($proxyGuides)): ?>
+                <section class="proxy-guides proxy-resource-card">
+                    <button class="proxy-guides-toggle" type="button" data-proxy-resource-toggle aria-expanded="false" aria-controls="proxy-guides-panel">
+                        <span class="proxy-guides-toggle-icon"><i class="fa-solid fa-book-open" aria-hidden="true"></i></span>
+                        <span class="proxy-guides-toggle-copy"><strong><?= __('Hướng dẫn sử dụng Proxy'); ?></strong></span>
+                        <i class="fa-solid fa-arrow-circle-down proxy-guides-toggle-arrow" aria-hidden="true"></i>
+                    </button>
+                    <div class="proxy-guides-content" id="proxy-guides-panel" data-proxy-guides-panel hidden>
+                        <p class="proxy-guides-description"><?= __('Chọn tài liệu phù hợp để xem hướng dẫn cài đặt và sử dụng.'); ?></p>
+                        <div class="proxy-guides-grid">
+                            <?php foreach ($proxyGuides as $guide): ?>
+                                <a class="proxy-guide-link" href="<?= htmlspecialchars($guide['url'], ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener noreferrer">
+                                    <span class="proxy-guide-icon"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></span>
+                                    <span class="proxy-guide-copy">
+                                        <strong><?= htmlspecialchars($guide['title'], ENT_QUOTES, 'UTF-8'); ?></strong>
+                                        <small><?= __('Mở tài liệu'); ?></small>
+                                    </span>
+                                    <i class="fa-solid fa-chevron-right proxy-guide-arrow" aria-hidden="true"></i>
+                                </a>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                </section>
+            <?php endif; ?>
+
+            <?php if (!empty($proxyFaqs)): ?>
+                <section class="proxy-faqs proxy-resource-card">
+                    <button class="proxy-guides-toggle" type="button" data-proxy-resource-toggle aria-expanded="false" aria-controls="proxy-faqs-panel">
+                        <span class="proxy-guides-toggle-icon"><i class="fa-solid fa-book-open" aria-hidden="true"></i></span>
+                        <span class="proxy-guides-toggle-copy"><strong><?= __('Các câu hỏi thường gặp'); ?></strong></span>
+                        <i class="fa-solid fa-arrow-circle-down proxy-guides-toggle-arrow" aria-hidden="true"></i>
+                    </button>
+                    <div class="proxy-guides-content proxy-faqs-content" id="proxy-faqs-panel" data-proxy-faqs-panel hidden>
+                        <div class="proxy-faq-list">
+                            <?php foreach ($proxyFaqs as $faq): ?>
+                                <article class="proxy-faq-item">
+                                    <h3><?= htmlspecialchars($faq['question'], ENT_QUOTES, 'UTF-8'); ?></h3>
+                                    <p><?= nl2br(htmlspecialchars($faq['answer'], ENT_QUOTES, 'UTF-8'), false); ?></p>
+                                </article>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                </section>
+            <?php endif; ?>
+        </div>
         <script>
             (function() {
-                var toggle = document.querySelector('[data-proxy-guides-toggle]');
-                var panel = document.querySelector('[data-proxy-guides-panel]');
-                if (!toggle || !panel) return;
-                toggle.addEventListener('click', function() {
-                    var isOpen = toggle.getAttribute('aria-expanded') === 'true';
-                    toggle.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
-                    panel.hidden = isOpen;
-                    toggle.closest('.proxy-guides').classList.toggle('is-open', !isOpen);
+                document.querySelectorAll('[data-proxy-resource-toggle]').forEach(function(toggle) {
+                    var panel = document.getElementById(toggle.getAttribute('aria-controls'));
+                    var card = toggle.closest('.proxy-resource-card');
+                    if (!panel || !card) return;
+                    toggle.addEventListener('click', function() {
+                        var isOpen = toggle.getAttribute('aria-expanded') === 'true';
+                        toggle.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+                        panel.hidden = isOpen;
+                        card.classList.toggle('is-open', !isOpen);
+                    });
                 });
             }());
         </script>
