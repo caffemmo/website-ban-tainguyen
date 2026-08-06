@@ -9,6 +9,49 @@ function caffemmo_client_guides_default_url()
     return 'https://docs.google.com/document/d/1EIRDWUNvtDDFF8zPSpBXxP8fVPDDkfrAn5QP61PODhc/edit?hl=vi&tab=t.0';
 }
 
+function caffemmo_client_resource_services()
+{
+    return [
+        'proxy-buy' => 'Mua Proxy',
+        'get-link' => 'Get Link Facebook',
+        'up-fb' => 'Up tích Facebook',
+        'up-ig' => 'Up tích Instagram',
+        'netflix' => 'Xem Netflix',
+        'locket-gold' => 'Locket Gold Vĩnh Viễn',
+    ];
+}
+
+function caffemmo_client_resource_service_key($service)
+{
+    $service = trim((string) $service);
+    $services = caffemmo_client_resource_services();
+
+    return array_key_exists($service, $services) ? $service : 'proxy-buy';
+}
+
+function caffemmo_client_resource_service_label($service)
+{
+    $service = caffemmo_client_resource_service_key($service);
+    $services = caffemmo_client_resource_services();
+
+    return $services[$service];
+}
+
+function caffemmo_client_resource_decode_config($value, $legacyDefaults)
+{
+    $decoded = json_decode((string) $value, true);
+    if (!is_array($decoded)) {
+        return ['proxy-buy' => $legacyDefaults];
+    }
+
+    $keys = array_keys($decoded);
+    if (empty($keys) || $keys === range(0, count($keys) - 1)) {
+        return ['proxy-buy' => $decoded];
+    }
+
+    return $decoded;
+}
+
 function caffemmo_client_guides_defaults()
 {
     $url = caffemmo_client_guides_default_url();
@@ -70,28 +113,30 @@ function caffemmo_client_guides_ensure_setting()
     if (!$CMSNT->get_row_safe('SELECT `name` FROM `settings` WHERE `name` = ? LIMIT 1', ['client_guides'])) {
         $CMSNT->insert('settings', [
             'name' => 'client_guides',
-            'value' => json_encode(caffemmo_client_guides_defaults(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+            'value' => json_encode(['proxy-buy' => caffemmo_client_guides_defaults()], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
         ]);
     }
 }
 
-function caffemmo_client_guides_get($includeDisabled = false)
+function caffemmo_client_guides_get($includeDisabled = false, $service = 'proxy-buy')
 {
     global $CMSNT;
 
-    $decoded = json_decode((string) $CMSNT->site('client_guides'), true);
-    if (!is_array($decoded)) {
-        $decoded = caffemmo_client_guides_defaults();
-    }
+    $service = caffemmo_client_resource_service_key($service);
+    $config = caffemmo_client_resource_decode_config($CMSNT->site('client_guides'), caffemmo_client_guides_defaults());
+    $guides = $config[$service] ?? [];
 
-    return caffemmo_client_guides_normalize($decoded, $includeDisabled);
+    return caffemmo_client_guides_normalize($guides, $includeDisabled);
 }
 
-function caffemmo_client_guides_save($guides)
+function caffemmo_client_guides_save($guides, $service = 'proxy-buy')
 {
     global $CMSNT;
 
-    $value = json_encode(array_values($guides), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    $service = caffemmo_client_resource_service_key($service);
+    $config = caffemmo_client_resource_decode_config($CMSNT->site('client_guides'), caffemmo_client_guides_defaults());
+    $config[$service] = caffemmo_client_guides_normalize($guides, true);
+    $value = json_encode($config, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     if ($value === false) {
         return false;
     }
@@ -169,28 +214,30 @@ function caffemmo_client_faqs_ensure_setting()
     if (!$CMSNT->get_row_safe('SELECT `name` FROM `settings` WHERE `name` = ? LIMIT 1', ['client_faqs'])) {
         $CMSNT->insert('settings', [
             'name' => 'client_faqs',
-            'value' => json_encode(caffemmo_client_faqs_defaults(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+            'value' => json_encode(['proxy-buy' => caffemmo_client_faqs_defaults()], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
         ]);
     }
 }
 
-function caffemmo_client_faqs_get($includeDisabled = false)
+function caffemmo_client_faqs_get($includeDisabled = false, $service = 'proxy-buy')
 {
     global $CMSNT;
 
-    $decoded = json_decode((string) $CMSNT->site('client_faqs'), true);
-    if (!is_array($decoded)) {
-        $decoded = caffemmo_client_faqs_defaults();
-    }
+    $service = caffemmo_client_resource_service_key($service);
+    $config = caffemmo_client_resource_decode_config($CMSNT->site('client_faqs'), caffemmo_client_faqs_defaults());
+    $faqs = $config[$service] ?? [];
 
-    return caffemmo_client_faqs_normalize($decoded, $includeDisabled);
+    return caffemmo_client_faqs_normalize($faqs, $includeDisabled);
 }
 
-function caffemmo_client_faqs_save($faqs)
+function caffemmo_client_faqs_save($faqs, $service = 'proxy-buy')
 {
     global $CMSNT;
 
-    $value = json_encode(array_values($faqs), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    $service = caffemmo_client_resource_service_key($service);
+    $config = caffemmo_client_resource_decode_config($CMSNT->site('client_faqs'), caffemmo_client_faqs_defaults());
+    $config[$service] = caffemmo_client_faqs_normalize($faqs, true);
+    $value = json_encode($config, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     if ($value === false) {
         return false;
     }

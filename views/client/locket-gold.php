@@ -18,14 +18,15 @@ foreach ($locketGoldPackages as $package) {
         'price' => (float) $package['price']
     ];
 }
+$clientResourceService = 'locket-gold';
 
 $body = [
     'title' => __('Locket Gold Vĩnh Viễn') . ' | ' . $CMSNT->site('title'),
     'desc' => __('Nâng cấp tài khoản Locket Gold Vĩnh Viễn nhanh chóng từ Caffemmo.'),
     'keyword' => 'locket gold vĩnh viễn, nâng cấp locket'
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/locket-gold.css?v=1') . '">';
-$body['footer'] = '<script src="' . BASE_URL('mod/js/locket-gold.js?v=1') . '"></script>';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/locket-gold.css?v=1') . '"><link rel="stylesheet" href="' . BASE_URL('mod/css/client-resources.css?v=1') . '">';
+$body['footer'] = '<script src="' . BASE_URL('mod/js/client-resources.js?v=1') . '"></script><script src="' . BASE_URL('mod/js/locket-gold.js?v=1') . '"></script>';
 
 require_once __DIR__ . '/header.php';
 require_once __DIR__ . '/nav.php';
@@ -49,6 +50,8 @@ require_once __DIR__ . '/nav.php';
         </div>
         <span class="locket-status <?= $locketGoldEnabled ? 'is-ready' : 'is-closed'; ?>" role="status"><i class="fa-solid fa-circle" aria-hidden="true"></i><?= $locketGoldEnabled ? __('Đang nhận đơn') : __('Tạm đóng'); ?></span>
     </section>
+
+    <?php require __DIR__ . '/client-resources.php'; ?>
 
     <div class="locket-content-grid">
         <section class="locket-panel" aria-labelledby="locket-package-title">

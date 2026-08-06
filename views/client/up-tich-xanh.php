@@ -19,6 +19,7 @@ foreach ($serviceCatalog['up-tich-xanh']['items'] as $catalogItem) {
 
 $service = isset($_GET['service']) && isset($services[$_GET['service']]) ? $_GET['service'] : 'get-link';
 $currentService = $services[$service];
+$clientResourceService = $service;
 $upConfigured = uptichxanh_is_configured();
 $servicePrice = uptichxanh_service_price($service);
 
@@ -27,8 +28,8 @@ $body = [
     'desc' => __('Dịch vụ Get Link Facebook, Up tích Facebook và Up tích Instagram.'),
     'keyword' => 'get link facebook, up tích xanh, up tích facebook, up tích instagram'
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/up-tich-xanh.css?v=16') . '">';
-$body['footer'] = '<script src="' . BASE_URL('mod/js/up-tich-xanh.js?v=5') . '"></script>';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/up-tich-xanh.css?v=16') . '"><link rel="stylesheet" href="' . BASE_URL('mod/css/client-resources.css?v=1') . '">';
+$body['footer'] = '<script src="' . BASE_URL('mod/js/client-resources.js?v=1') . '"></script><script src="' . BASE_URL('mod/js/up-tich-xanh.js?v=5') . '"></script>';
 
 require_once __DIR__ . '/header.php';
 require_once __DIR__ . '/nav.php';
@@ -54,6 +55,8 @@ require_once __DIR__ . '/nav.php';
             </a>
         <?php endforeach; ?>
     </section>
+
+    <?php require __DIR__ . '/client-resources.php'; ?>
 
     <div class="up-history-link-row">
         <span><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i> <?= __('Các yêu cầu đã gửi được lưu trong lịch sử riêng của bạn.'); ?></span>

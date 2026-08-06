@@ -4,9 +4,12 @@ if (!defined('IN_SITE')) {
     die('The Request Not Found');
 }
 
+$clientGuideService = caffemmo_client_resource_service_key($_POST['client_guide_service'] ?? $_GET['service'] ?? 'proxy-buy');
+$clientGuideRedirectUrl = base_url_admin('settings&tab=client-guides&service=' . rawurlencode($clientGuideService));
+
 if (isset($_POST['SaveClientGuides'])) {
     if (empty($_POST['csrf_token']) || !hash_equals((string) ($_SESSION['csrf_token'] ?? ''), (string) $_POST['csrf_token'])) {
-        admin_msg_error('Phiên bảo mật đã hết hạn, vui lòng tải lại trang.', base_url_admin('settings&tab=client-guides'), 1200);
+        admin_msg_error('Phiên bảo mật đã hết hạn, vui lòng tải lại trang.', $clientGuideRedirectUrl, 1200);
     }
     if (checkPermission($getUser['admin'], 'edit_setting') != true) {
         die('<script type="text/javascript">if(!alert("Bạn không có quyền sử dụng tính năng này")){window.history.back();}</script>');
@@ -26,10 +29,10 @@ if (isset($_POST['SaveClientGuides'])) {
             continue;
         }
         if ($title === '' || mb_strlen($title, 'UTF-8') > 120) {
-            admin_msg_error('Tên hướng dẫn không được để trống và tối đa 120 ký tự.', base_url_admin('settings&tab=client-guides'), 1400);
+            admin_msg_error('Tên hướng dẫn không được để trống và tối đa 120 ký tự.', $clientGuideRedirectUrl, 1400);
         }
         if (mb_strlen($url, 'UTF-8') > 2048 || !caffemmo_client_guides_is_safe_url($url)) {
-            admin_msg_error('Link tài liệu phải là URL http hoặc https hợp lệ.', base_url_admin('settings&tab=client-guides'), 1400);
+            admin_msg_error('Link tài liệu phải là URL http hoặc https hợp lệ.', $clientGuideRedirectUrl, 1400);
         }
 
         $guides[] = [
@@ -39,8 +42,8 @@ if (isset($_POST['SaveClientGuides'])) {
         ];
     }
 
-    if (!caffemmo_client_guides_save($guides)) {
-        admin_msg_error('Không thể lưu danh sách hướng dẫn. Vui lòng thử lại.', base_url_admin('settings&tab=client-guides'), 1400);
+    if (!caffemmo_client_guides_save($guides, $clientGuideService)) {
+        admin_msg_error('Không thể lưu danh sách hướng dẫn. Vui lòng thử lại.', $clientGuideRedirectUrl, 1400);
     }
 
     $CMSNT->insert('logs', [
@@ -48,14 +51,14 @@ if (isset($_POST['SaveClientGuides'])) {
         'ip' => myip(),
         'device' => getUserAgent(),
         'createdate' => gettime(),
-        'action' => __('Cập nhật danh sách hướng dẫn khách'),
+        'action' => __('Cập nhật danh sách hướng dẫn khách') . ': ' . caffemmo_client_resource_service_label($clientGuideService),
     ]);
-    admin_msg_success('Đã lưu danh sách hướng dẫn.', base_url_admin('settings&tab=client-guides'), 900);
+    admin_msg_success('Đã lưu danh sách hướng dẫn.', $clientGuideRedirectUrl, 900);
 }
 
 if (isset($_POST['SaveClientFaqs'])) {
     if (empty($_POST['csrf_token']) || !hash_equals((string) ($_SESSION['csrf_token'] ?? ''), (string) $_POST['csrf_token'])) {
-        admin_msg_error('Phiên bảo mật đã hết hạn, vui lòng tải lại trang.', base_url_admin('settings&tab=client-guides'), 1200);
+        admin_msg_error('Phiên bảo mật đã hết hạn, vui lòng tải lại trang.', $clientGuideRedirectUrl, 1200);
     }
     if (checkPermission($getUser['admin'], 'edit_setting') != true) {
         die('<script type="text/javascript">if(!alert("Bạn không có quyền sử dụng tính năng này")){window.history.back();}</script>');
@@ -75,10 +78,10 @@ if (isset($_POST['SaveClientFaqs'])) {
             continue;
         }
         if ($question === '' || mb_strlen($question, 'UTF-8') > 180) {
-            admin_msg_error('Câu hỏi không được để trống và tối đa 180 ký tự.', base_url_admin('settings&tab=client-guides'), 1400);
+            admin_msg_error('Câu hỏi không được để trống và tối đa 180 ký tự.', $clientGuideRedirectUrl, 1400);
         }
         if ($answer === '' || mb_strlen($answer, 'UTF-8') > 4000) {
-            admin_msg_error('Câu trả lời không được để trống và tối đa 4000 ký tự.', base_url_admin('settings&tab=client-guides'), 1400);
+            admin_msg_error('Câu trả lời không được để trống và tối đa 4000 ký tự.', $clientGuideRedirectUrl, 1400);
         }
 
         $faqs[] = [
@@ -88,8 +91,8 @@ if (isset($_POST['SaveClientFaqs'])) {
         ];
     }
 
-    if (!caffemmo_client_faqs_save($faqs)) {
-        admin_msg_error('Không thể lưu danh sách câu hỏi thường gặp. Vui lòng thử lại.', base_url_admin('settings&tab=client-guides'), 1400);
+    if (!caffemmo_client_faqs_save($faqs, $clientGuideService)) {
+        admin_msg_error('Không thể lưu danh sách câu hỏi thường gặp. Vui lòng thử lại.', $clientGuideRedirectUrl, 1400);
     }
 
     $CMSNT->insert('logs', [
@@ -97,19 +100,22 @@ if (isset($_POST['SaveClientFaqs'])) {
         'ip' => myip(),
         'device' => getUserAgent(),
         'createdate' => gettime(),
-        'action' => __('Cập nhật danh sách câu hỏi thường gặp'),
+        'action' => __('Cập nhật danh sách câu hỏi thường gặp') . ': ' . caffemmo_client_resource_service_label($clientGuideService),
     ]);
-    admin_msg_success('Đã lưu danh sách câu hỏi thường gặp.', base_url_admin('settings&tab=client-guides'), 900);
+    admin_msg_success('Đã lưu danh sách câu hỏi thường gặp.', $clientGuideRedirectUrl, 900);
 }
 
-$clientGuides = caffemmo_client_guides_get(true);
-$clientFaqs = caffemmo_client_faqs_get(true);
+$clientGuides = caffemmo_client_guides_get(true, $clientGuideService);
+$clientFaqs = caffemmo_client_faqs_get(true, $clientGuideService);
+$clientResourceServices = caffemmo_client_resource_services();
 ?>
 
 <style>
     .client-guides-intro { display:flex; align-items:center; justify-content:space-between; gap:20px; padding:22px 24px; margin-bottom:20px; color:#172033; background:#f3fbfd; border:1px solid #cbe8ed; border-left:4px solid #08aebe; border-radius:10px; }
     .client-guides-intro h4 { margin:0 0 5px; font-weight:700; }
     .client-guides-intro p { margin:0; color:#64748b; }
+    .client-guides-service-picker { display:grid; min-width:240px; gap:5px; }
+    .client-guides-service-picker label { margin:0; color:#36566b; font-size:11px; font-weight:700; }
     .client-guides-note { display:flex; gap:10px; padding:12px 14px; border:1px solid #dbe7ed; border-radius:8px; color:#36566b; background:#f8fcfd; font-size:12px; line-height:1.55; }
     .client-guides-note i { margin-top:2px; color:#0b95a0; }
     .client-guide-row { display:grid; grid-template-columns:minmax(0, 1fr) minmax(0, 1.3fr) 130px 42px; gap:12px; align-items:end; padding:16px; margin-bottom:12px; border:1px solid #e3ebf0; border-radius:9px; background:#fff; }
@@ -133,13 +139,21 @@ $clientFaqs = caffemmo_client_faqs_get(true);
     <div class="client-guides-intro">
         <div>
             <h4><i class="fa-solid fa-book-open me-2" aria-hidden="true"></i><?= __('Hướng dẫn khách'); ?></h4>
-            <p><?= __('Quản lý hướng dẫn và câu hỏi thường gặp hiển thị trên trang Mua Proxy.'); ?></p>
+            <p><?= __('Quản lý hướng dẫn và câu hỏi thường gặp riêng cho từng trang dịch vụ.'); ?></p>
         </div>
-        <span class="badge bg-info-transparent text-info"><i class="fa-solid fa-display me-1" aria-hidden="true"></i><?= __('Hiển thị trực tiếp cho khách'); ?></span>
+        <div class="client-guides-service-picker">
+            <label for="client-guide-service"><?= __('Dịch vụ đang chỉnh sửa'); ?></label>
+            <select class="form-select" id="client-guide-service" aria-label="<?= __('Chọn dịch vụ'); ?>">
+                <?php foreach ($clientResourceServices as $serviceKey => $serviceLabel): ?>
+                    <option value="<?= htmlspecialchars(base_url_admin('settings&tab=client-guides&service=' . rawurlencode($serviceKey)), ENT_QUOTES, 'UTF-8'); ?>" <?= $clientGuideService === $serviceKey ? 'selected' : ''; ?>><?= __($serviceLabel); ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
     </div>
 
     <form action="" method="POST" autocomplete="off">
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(generate_csrf_token(), ENT_QUOTES, 'UTF-8'); ?>">
+        <input type="hidden" name="client_guide_service" value="<?= htmlspecialchars($clientGuideService, ENT_QUOTES, 'UTF-8'); ?>">
         <div class="client-guides-note mb-3">
             <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
             <span><?= __('Thêm tên hướng dẫn và link Google Docs hoặc tài liệu HTTPS. Có thể tắt tạm từng nút; để xóa một nút, bấm Xóa dòng rồi lưu.'); ?></span>
@@ -188,6 +202,7 @@ $clientFaqs = caffemmo_client_faqs_get(true);
 
     <form action="" method="POST" autocomplete="off">
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(generate_csrf_token(), ENT_QUOTES, 'UTF-8'); ?>">
+        <input type="hidden" name="client_guide_service" value="<?= htmlspecialchars($clientGuideService, ENT_QUOTES, 'UTF-8'); ?>">
         <div class="client-guides-note mb-3">
             <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
             <span><?= __('Mỗi câu hỏi có thể bật hoặc tắt; để xóa, bấm Xóa dòng rồi lưu danh sách FAQ.'); ?></span>
@@ -251,6 +266,13 @@ $clientFaqs = caffemmo_client_faqs_get(true);
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        const servicePicker = document.getElementById('client-guide-service');
+        if (servicePicker) {
+            servicePicker.addEventListener('change', function() {
+                if (servicePicker.value) window.location.href = servicePicker.value;
+            });
+        }
+
         const list = document.getElementById('client-guides-list');
         const empty = document.getElementById('client-guides-empty');
         const template = document.getElementById('client-guide-template');

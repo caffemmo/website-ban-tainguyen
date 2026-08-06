@@ -1,0 +1,235 @@
+.client-resource-grid,
+.client-resource-grid * {
+    box-sizing: border-box;
+}
+
+.client-resource-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin: 20px 0;
+}
+
+.client-resource-card {
+    min-width: 0;
+}
+
+.client-resource-toggle {
+    display: flex;
+    width: 100%;
+    min-height: 42px;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 11px 5px 13px;
+    border: 0;
+    border-radius: 999px;
+    color: #122b46;
+    background: #fff;
+    box-shadow: 0 5px 14px rgba(31, 66, 91, .06);
+    cursor: pointer;
+    font: inherit;
+    text-align: left;
+    transition: box-shadow .2s ease, transform .2s ease;
+}
+
+.client-resource-toggle:hover {
+    box-shadow: 0 7px 18px rgba(31, 66, 91, .1);
+    transform: translateY(-1px);
+}
+
+.client-resource-toggle:focus-visible {
+    outline: 3px solid rgba(22, 138, 154, .2);
+    outline-offset: 2px;
+}
+
+.client-resource-toggle-icon {
+    display: inline-flex;
+    width: 24px;
+    height: 24px;
+    flex: 0 0 24px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    color: #fff;
+    background: #168a9a;
+    font-size: 11px;
+}
+
+.client-resource-toggle-copy {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    align-items: center;
+}
+
+.client-resource-toggle-copy strong {
+    overflow: hidden;
+    color: #122b46;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.25;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.client-resource-toggle-arrow {
+    flex: 0 0 auto;
+    color: #f07f45;
+    font-size: 16px;
+    transition: transform .2s ease;
+}
+
+.client-resource-card.is-open .client-resource-toggle-arrow {
+    transform: rotate(180deg);
+}
+
+.client-resource-content {
+    padding: 14px 16px 16px;
+    margin-top: 10px;
+    border: 1px solid #d7e8ed;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 5px 14px rgba(31, 66, 91, .04);
+}
+
+.client-resource-content[hidden] {
+    display: none !important;
+}
+
+.client-resource-description {
+    margin: 0 0 12px;
+    color: #617b8f;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.client-resource-link-grid,
+.client-resource-faq-list {
+    display: grid;
+    gap: 10px;
+}
+
+.client-resource-link-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.client-resource-link {
+    display: flex;
+    min-width: 0;
+    min-height: 42px;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 9px;
+    border: 1px solid #dce8ed;
+    border-radius: 6px;
+    color: #122b46;
+    background: #fbfdfe;
+    text-decoration: none;
+    transition: border-color .2s ease, background-color .2s ease, transform .2s ease;
+}
+
+.client-resource-link:hover {
+    border-color: #55c4d0;
+    color: #122b46;
+    background: #f3fbfc;
+    transform: translateY(-1px);
+}
+
+.client-resource-link-icon {
+    display: inline-flex;
+    width: 24px;
+    height: 24px;
+    flex: 0 0 24px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    color: #fff;
+    background: #168a9a;
+    font-size: 11px;
+}
+
+.client-resource-link-copy {
+    display: grid;
+    min-width: 0;
+    flex: 1;
+    gap: 2px;
+}
+
+.client-resource-link-copy strong {
+    overflow-wrap: anywhere;
+    color: #122b46;
+    font-size: 11px;
+    line-height: 1.35;
+}
+
+.client-resource-link-copy small {
+    color: #168a9a;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.client-resource-link-arrow {
+    flex: 0 0 auto;
+    color: #6d96a9;
+    font-size: 11px;
+}
+
+.client-resource-faq-item {
+    padding: 13px 14px;
+    border: 1px solid #dce8ed;
+    border-radius: 7px;
+    background: #fbfdfe;
+}
+
+.client-resource-faq-item h3 {
+    margin: 0 0 6px;
+    color: #122b46;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.client-resource-faq-item p {
+    margin: 0;
+    color: #617b8f;
+    font-size: 12px;
+    line-height: 1.55;
+}
+
+.client-resource-empty {
+    margin: 0;
+    color: #617b8f;
+    font-size: 12px;
+    line-height: 1.5;
+    text-align: center;
+}
+
+@media (max-width: 767.98px) {
+    .client-resource-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin: 16px 0;
+    }
+
+    .client-resource-toggle {
+        min-height: 40px;
+        gap: 7px;
+        padding: 6px 10px 6px 11px;
+    }
+
+    .client-resource-toggle-copy strong {
+        font-size: 11px;
+    }
+
+    .client-resource-toggle-arrow {
+        font-size: 15px;
+    }
+
+    .client-resource-content {
+        padding: 13px;
+    }
+
+    .client-resource-link-grid {
+        grid-template-columns: 1fr;
+    }
+}

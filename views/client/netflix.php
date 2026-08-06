@@ -9,13 +9,14 @@ require_once __DIR__ . '/../../libs/netflix.php';
 $getUser = client_optional_user($CMSNT);
 $netflixAuthenticated = is_array($getUser);
 $netflixPrice = netflix_service_price();
+$clientResourceService = 'netflix';
 $body = [
     'title' => __('Xem Netflix') . ' | ' . $CMSNT->site('title'),
     'desc' => __('Lấy link xem Netflix nhanh chóng.'),
     'keyword' => 'xem netflix, netflix'
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/netflix.css?v=5') . '">';
-$body['footer'] = '<script src="' . BASE_URL('mod/js/netflix.js?v=2') . '"></script>';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/netflix.css?v=5') . '"><link rel="stylesheet" href="' . BASE_URL('mod/css/client-resources.css?v=1') . '">';
+$body['footer'] = '<script src="' . BASE_URL('mod/js/client-resources.js?v=1') . '"></script><script src="' . BASE_URL('mod/js/netflix.js?v=2') . '"></script>';
 
 require_once __DIR__ . '/header.php';
 require_once __DIR__ . '/nav.php';
@@ -40,6 +41,8 @@ require_once __DIR__ . '/nav.php';
             <i aria-hidden="true"></i> <?= netflix_api_is_configured() ? __('Sẵn sàng') : __('Đang cấu hình'); ?>
         </span>
     </section>
+
+    <?php require __DIR__ . '/client-resources.php'; ?>
 
     <div class="netflix-content-grid">
         <section class="netflix-panel" aria-labelledby="netflix-service-title">

@@ -5,8 +5,8 @@ require_once __DIR__ . '/../../libs/client-session.php';
 require_once __DIR__ . '/../../libs/youproxy.php';
 
 $getUser = client_optional_user($CMSNT);
-$proxyGuides = caffemmo_client_guides_get();
-$proxyFaqs = caffemmo_client_faqs_get();
+$proxyGuides = caffemmo_client_guides_get(false, 'proxy-buy');
+$proxyFaqs = caffemmo_client_faqs_get(false, 'proxy-buy');
 $proxyIsAuthenticated = is_array($getUser);
 $proxyUserToken = $proxyIsAuthenticated ? (string) ($getUser['token'] ?? '') : '';
 
