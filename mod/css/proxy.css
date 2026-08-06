@@ -261,18 +261,19 @@ body {
 
 .proxy-guides-grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
 }
 
 .proxy-guide-link {
     display: flex;
     min-width: 0;
+    min-height: 42px;
     align-items: center;
-    gap: 10px;
-    padding: 12px;
+    gap: 8px;
+    padding: 6px 9px;
     border: 1px solid #dce8ed;
-    border-radius: 7px;
+    border-radius: 6px;
     color: var(--proxy-ink);
     background: #fbfdfe;
     text-decoration: none;
@@ -288,15 +289,15 @@ body {
 
 .proxy-guide-icon {
     display: inline-flex;
-    flex: 0 0 32px;
-    width: 32px;
-    height: 32px;
+    flex: 0 0 24px;
+    width: 24px;
+    height: 24px;
     align-items: center;
     justify-content: center;
-    border-radius: 6px;
+    border-radius: 5px;
     color: #fff;
     background: #168a9a;
-    font-size: 13px;
+    font-size: 11px;
 }
 
 .proxy-guide-copy {
@@ -304,26 +305,29 @@ body {
     min-width: 0;
     flex: 1;
     flex-direction: column;
-    gap: 3px;
+    gap: 1px;
 }
 
 .proxy-guide-copy strong {
-    overflow-wrap: anywhere;
+    overflow: hidden;
     color: var(--proxy-ink);
-    font-size: 12px;
-    line-height: 1.35;
+    font-size: 11px;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .proxy-guide-copy small {
     color: #168a9a;
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 700;
+    line-height: 1.2;
 }
 
 .proxy-guide-arrow {
     flex: 0 0 auto;
-    color: #7b9aaa;
-    font-size: 11px;
+    color: #f07f45;
+    font-size: 15px;
 }
 
 .proxy-faq-list {

@@ -15,7 +15,7 @@ $body = [
     'desc' => __('Mua proxy chính hãng với cấu hình rõ ràng và quản lý tập trung.'),
     'keyword' => 'proxy, mua proxy, proxy premium'
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=36') . '">';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=37') . '">';
 $body['footer'] = '<script src="' . BASE_URL('mod/js/proxy.js?v=9') . '"></script>';
 
 require_once __DIR__ . '/header.php';
@@ -42,12 +42,12 @@ require_once __DIR__ . '/nav.php';
                         <div class="proxy-guides-grid">
                             <?php foreach ($proxyGuides as $guide): ?>
                                 <a class="proxy-guide-link" href="<?= htmlspecialchars($guide['url'], ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener noreferrer">
-                                    <span class="proxy-guide-icon"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></span>
+                                    <span class="proxy-guide-icon"><i class="fa-solid fa-book-open" aria-hidden="true"></i></span>
                                     <span class="proxy-guide-copy">
                                         <strong><?= htmlspecialchars($guide['title'], ENT_QUOTES, 'UTF-8'); ?></strong>
                                         <small><?= __('Mở tài liệu'); ?></small>
                                     </span>
-                                    <i class="fa-solid fa-chevron-right proxy-guide-arrow" aria-hidden="true"></i>
+                                    <i class="fa-solid fa-arrow-circle-up proxy-guide-arrow" aria-hidden="true"></i>
                                 </a>
                             <?php endforeach; ?>
                         </div>
