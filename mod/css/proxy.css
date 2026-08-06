@@ -168,7 +168,8 @@ body {
 }
 
 .proxy-resource-grid > :only-child {
-    grid-column: 1 / -1;
+    grid-column: auto;
+    width: min(100%, 360px);
 }
 
 .proxy-guides-toggle {
@@ -1967,6 +1968,10 @@ body {
 
     .proxy-resource-grid {
         grid-template-columns: 1fr;
+    }
+
+    .proxy-resource-grid > :only-child {
+        width: 100%;
     }
 
     .proxy-guides-grid {
