@@ -3238,7 +3238,7 @@ body {
 .header-select .select {
     min-width: 0;
     max-width: 116px;
-    padding: 2px 0;
+    padding: 2px 18px 2px 0;
     border: 0;
     border-radius: 0;
     color: #ffffff !important;
@@ -3246,9 +3246,9 @@ body {
     font-weight: 600;
     line-height: 20px;
     cursor: pointer;
-    appearance: auto;
-    -webkit-appearance: menulist;
-    -moz-appearance: menulist;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
 }
 
 .header-select .select:focus-visible {
@@ -3259,6 +3259,22 @@ body {
 .header-select .select option {
     color: #15374d;
     background: #ffffff;
+}
+
+.header-select-arrow {
+    display: grid;
+    flex: 0 0 12px;
+    width: 12px;
+    height: 20px;
+    margin-left: -18px;
+    place-items: center;
+    pointer-events: none;
+}
+
+.header-select .header-select-arrow i {
+    margin: 0;
+    color: #ffffff;
+    font-size: 9px;
 }
 
 .home-telegram-actions {
