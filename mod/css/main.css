@@ -3243,12 +3243,13 @@ body {
     border-radius: 0;
     color: #ffffff !important;
     background: transparent !important;
+    background-image: none !important;
     font-weight: 600;
     line-height: 20px;
     cursor: pointer;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
 }
 
 .header-select .select:focus-visible {
