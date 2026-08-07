@@ -4,12 +4,13 @@ if (!defined('IN_SITE')) {
 }
 
 $clientResourceService = caffemmo_client_resource_service_key($clientResourceService ?? 'proxy-buy');
+$clientResourceContainerClass = trim((string) ($clientResourceContainerClass ?? ''));
 $clientResourceGuides = caffemmo_client_guides_get(false, $clientResourceService);
 $clientResourceFaqs = caffemmo_client_faqs_get(false, $clientResourceService);
 $clientResourceId = preg_replace('/[^a-z0-9-]+/i', '-', $clientResourceService);
 ?>
 
-<div class="client-resource-grid" data-client-resources="<?= htmlspecialchars($clientResourceService, ENT_QUOTES, 'UTF-8'); ?>">
+<div class="client-resource-grid<?= $clientResourceContainerClass !== '' ? ' ' . htmlspecialchars($clientResourceContainerClass, ENT_QUOTES, 'UTF-8') : ''; ?>" data-client-resources="<?= htmlspecialchars($clientResourceService, ENT_QUOTES, 'UTF-8'); ?>">
     <section class="client-resource-card">
         <button class="client-resource-toggle" type="button" data-client-resource-toggle aria-expanded="false" aria-controls="client-guides-panel-<?= htmlspecialchars($clientResourceId, ENT_QUOTES, 'UTF-8'); ?>">
             <span class="client-resource-toggle-icon"><i class="fa-solid fa-book-open" aria-hidden="true"></i></span>

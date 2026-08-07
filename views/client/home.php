@@ -9,9 +9,10 @@ $body = [
 ];
 $body['header'] = '
 <link rel="stylesheet" href="'.BASE_URL('public/client/').'css/wallet.css">
+<link rel="stylesheet" href="'.BASE_URL('mod/css/client-resources.css?v=1').'">
 ';
 $body['footer'] = '
- 
+<script src="'.BASE_URL('mod/js/client-resources.js?v=1').'" defer></script>
 ';
 
 if (!$isProductsPage) {
@@ -157,6 +158,28 @@ require_once(__DIR__.'/nav.php');
                             <?php endforeach; ?>
                         <?php endforeach; ?>
                     </div>
+                </section>
+            </div>
+
+            <div class="col-12">
+                <section class="home-service-catalog home-resource-catalog" aria-labelledby="home-resource-title">
+                    <div class="home-service-head">
+                        <div>
+                            <span><?= __('Hỗ trợ sử dụng'); ?></span>
+                            <h2 id="home-resource-title"><?= __('Hướng dẫn và câu hỏi thường gặp'); ?></h2>
+                        </div>
+                        <span class="home-service-count">
+                            <span class="home-service-count-icon" aria-hidden="true"><i class="fa-solid fa-book-open"></i></span>
+                            <span class="home-service-count-label"><?= __('Trung tâm hỗ trợ'); ?></span>
+                            <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <?php
+                    $clientResourceService = 'home';
+                    $clientResourceContainerClass = 'home-resource-grid';
+                    require __DIR__ . '/client-resources.php';
+                    unset($clientResourceContainerClass);
+                    ?>
                 </section>
             </div>
             <?php endif; ?>

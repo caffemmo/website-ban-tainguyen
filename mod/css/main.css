@@ -2750,6 +2750,89 @@ ul.custom-button-list li {
     transform: translateY(-2px) scale(.99);
 }
 
+.home-resource-grid {
+    margin: 0;
+    gap: 14px;
+}
+
+.home-resource-grid .client-resource-card {
+    min-width: 0;
+}
+
+.home-resource-grid .client-resource-toggle {
+    min-height: 86px;
+    padding: 14px;
+    border: 1px solid rgba(163, 199, 211, 0.58);
+    border-radius: 14px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, .98), rgba(242, 249, 251, .94));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .95);
+}
+
+.home-resource-grid .client-resource-toggle:hover,
+.home-resource-grid .client-resource-toggle:focus-visible {
+    border-color: rgba(0, 184, 190, .5);
+    background: #f3fbfc;
+    box-shadow: 0 14px 30px rgba(3, 49, 68, .12), 0 0 0 4px rgba(0, 184, 190, .08);
+}
+
+.home-resource-grid .client-resource-toggle-icon {
+    width: 42px;
+    height: 42px;
+    flex-basis: 42px;
+    border-radius: 11px;
+    background: #e1f6f7;
+    color: #078b98;
+    font-size: 16px;
+}
+
+.home-resource-grid .client-resource-toggle-copy {
+    gap: 5px;
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+.home-resource-grid .client-resource-toggle-copy strong {
+    overflow: visible;
+    font-size: 15px;
+    white-space: normal;
+}
+
+.home-resource-grid .client-resource-toggle-copy::after {
+    color: #4f6979;
+    content: 'Xem nội dung';
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.home-resource-grid .client-resource-toggle-arrow {
+    font-size: 17px;
+}
+
+.home-resource-grid .client-resource-content {
+    margin-top: 12px;
+    border-color: rgba(163, 199, 211, .58);
+    box-shadow: 0 12px 28px rgba(24, 53, 76, .07);
+}
+
+.home-resource-grid .client-resource-link-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 575px) {
+    .home-resource-grid .client-resource-toggle {
+        min-height: 76px;
+        padding: 12px;
+    }
+
+    .home-resource-grid .client-resource-toggle-copy strong {
+        font-size: 13px;
+    }
+
+    .home-resource-grid .client-resource-link-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 .home-service-card--blue { --service-accent: #2875e8; }
 .home-service-card--green { --service-accent: #10a875; }
 .home-service-card--pink { --service-accent: #df4d92; }

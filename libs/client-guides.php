@@ -12,6 +12,7 @@ function caffemmo_client_guides_default_url()
 function caffemmo_client_resource_services()
 {
     return [
+        'home' => 'Trang chủ',
         'proxy-buy' => 'Mua Proxy',
         'get-link' => 'Get Link Facebook',
         'up-fb' => 'Up tích Facebook',
