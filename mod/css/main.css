@@ -3301,42 +3301,42 @@ body {
 
 /* Homepage quick actions: retain the light surface while restoring hierarchy. */
 .home-telegram-actions {
-    gap: 14px;
-    margin-top: 26px;
-    margin-bottom: 22px;
+    gap: 10px;
+    margin-top: 20px;
+    margin-bottom: 18px;
 }
 
 .home-telegram-action {
-    min-height: 82px;
-    gap: 13px;
-    padding: 14px 16px;
+    min-height: 64px;
+    gap: 10px;
+    padding: 10px 12px;
     color: #123a54;
     border-color: #c3e2e9;
-    box-shadow: 0 5px 16px rgba(17, 74, 97, .08);
+    box-shadow: 0 4px 12px rgba(17, 74, 97, .07);
 }
 
 .home-telegram-action-icon {
-    width: 38px;
-    height: 38px;
-    flex-basis: 38px;
+    width: 30px;
+    height: 30px;
+    flex-basis: 30px;
     color: #087f95;
     background: #dff6f8;
-    font-size: 18px;
+    font-size: 15px;
 }
 
 .home-telegram-action-copy {
-    gap: 4px;
+    gap: 2px;
 }
 
 .home-telegram-action-copy strong {
     color: #123a54;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 800;
 }
 
 .home-telegram-action-copy small {
     color: #4a6c80;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 500;
 }
 
@@ -3661,30 +3661,30 @@ body {
 
 @media (max-width: 575px) {
     .home-telegram-actions {
-        gap: 10px;
-        margin-top: 18px;
-        margin-bottom: 16px;
+        gap: 8px;
+        margin-top: 14px;
+        margin-bottom: 14px;
     }
 
     .home-telegram-action {
-        min-height: 70px;
-        gap: 10px;
-        padding: 11px 12px;
+        min-height: 58px;
+        gap: 8px;
+        padding: 8px 10px;
     }
 
     .home-telegram-action-icon {
-        width: 32px;
-        height: 32px;
-        flex-basis: 32px;
-        font-size: 15px;
+        width: 28px;
+        height: 28px;
+        flex-basis: 28px;
+        font-size: 14px;
     }
 
     .home-telegram-action-copy strong {
-        font-size: 12px;
+        font-size: 11px;
     }
 
     .home-telegram-action-copy small {
-        font-size: 10px;
+        font-size: 9px;
     }
 
     .home-service-catalog {
