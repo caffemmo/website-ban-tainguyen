@@ -124,6 +124,7 @@ $serviceCatalog = caffemmo_service_catalog();
                     <div class="header-top-select">
                         <div class="header-select"><i class="icofont-world"></i>
                             <?php if ($CMSNT->site('language_type') == 'manual'): ?>
+                                <span class="header-select-label"><?= getLanguage(); ?></span>
                                 <select class="select" id="changeLanguage" onchange="changeLanguage()">
                                     <?php foreach (get_languages_cached() as $lang): ?>
                                         <option value="<?= $lang['id']; ?>"
@@ -135,11 +136,23 @@ $serviceCatalog = caffemmo_service_catalog();
                                 <?= $CMSNT->site('gtranslate_script'); ?>
                             <?php endif ?>
                         </div>
+                        <?php
+                        $currencies = get_currencies_cached();
+                        $currentCurrency = getCurrency();
+                        $currentCurrencyCode = '';
+                        foreach ($currencies as $currency) {
+                            if ($currentCurrency == $currency['id']) {
+                                $currentCurrencyCode = $currency['code'];
+                                break;
+                            }
+                        }
+                        ?>
                         <div class="header-select"><i class="icofont-money"></i>
+                            <span class="header-select-label"><?= $currentCurrencyCode; ?></span>
                             <select class="select" id="changeCurrency" onchange="changeCurrency()">
-                                <?php foreach (get_currencies_cached() as $currency): ?>
+                                <?php foreach ($currencies as $currency): ?>
                                     <option value="<?= $currency['id']; ?>"
-                                        <?= getCurrency() == $currency['id'] ? 'selected' : ''; ?>><?= $currency['code']; ?>
+                                        <?= $currentCurrency == $currency['id'] ? 'selected' : ''; ?>><?= $currency['code']; ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
