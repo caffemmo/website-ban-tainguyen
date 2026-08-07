@@ -3349,6 +3349,26 @@ body {
     transform: translateY(-2px);
 }
 
+.home-telegram-action--guide {
+    border-color: #d8d2ef;
+}
+
+.home-telegram-action--guide .home-telegram-action-icon {
+    color: #6e59b7;
+    background: #f0edff;
+}
+
+.home-telegram-action--guide .home-telegram-action-arrow {
+    color: #765fc1;
+}
+
+.home-telegram-action--guide:hover,
+.home-telegram-action--guide:focus-visible {
+    border-color: #b8a9e5;
+    background: #fbfaff;
+    box-shadow: 0 10px 24px rgba(92, 74, 157, .13);
+}
+
 .home-service-catalog {
     padding: 25px;
     color: #143b53;

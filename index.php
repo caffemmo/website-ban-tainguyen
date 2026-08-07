@@ -10,6 +10,7 @@ require_once(__DIR__ . '/libs/telegram-statistics.php');
 $CMSNT = new DB();
 caffemmo_client_guides_ensure_setting();
 caffemmo_client_faqs_ensure_setting();
+caffemmo_home_featured_links_ensure_setting();
 caffemmo_telegram_stats_ensure_settings();
 
 

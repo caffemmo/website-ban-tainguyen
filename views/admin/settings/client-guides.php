@@ -6,6 +6,67 @@ if (!defined('IN_SITE')) {
 
 $clientGuideService = caffemmo_client_resource_service_key($_POST['client_guide_service'] ?? $_GET['service'] ?? 'proxy-buy');
 $clientGuideRedirectUrl = base_url_admin('settings&tab=client-guides&service=' . rawurlencode($clientGuideService));
+$homeLinksRedirectUrl = base_url_admin('settings&tab=client-guides');
+
+if (isset($_POST['SaveHomeFeaturedLinks'])) {
+    if (empty($_POST['csrf_token']) || !hash_equals((string) ($_SESSION['csrf_token'] ?? ''), (string) $_POST['csrf_token'])) {
+        admin_msg_error('Phiên bảo mật đã hết hạn, vui lòng tải lại trang.', $homeLinksRedirectUrl, 1200);
+    }
+    if (checkPermission($getUser['admin'], 'edit_setting') != true) {
+        die('<script type="text/javascript">if(!alert("Bạn không có quyền sử dụng tính năng này")){window.history.back();}</script>');
+    }
+    if ($CMSNT->site('status_demo') != 0) {
+        die('<script type="text/javascript">if(!alert("This function cannot be used because this is a demo site")){window.history.back().location.reload();}</script>');
+    }
+
+    $titles = is_array($_POST['home_link_title'] ?? null) ? $_POST['home_link_title'] : [];
+    $descriptions = is_array($_POST['home_link_description'] ?? null) ? $_POST['home_link_description'] : [];
+    $urls = is_array($_POST['home_link_url'] ?? null) ? $_POST['home_link_url'] : [];
+    $tones = is_array($_POST['home_link_tone'] ?? null) ? $_POST['home_link_tone'] : [];
+    $enabled = is_array($_POST['home_link_enabled'] ?? null) ? $_POST['home_link_enabled'] : [];
+    $links = [];
+    foreach ($titles as $index => $rawTitle) {
+        $title = trim((string) $rawTitle);
+        $description = trim((string) ($descriptions[$index] ?? ''));
+        $url = trim((string) ($urls[$index] ?? ''));
+        if ($title === '' && $description === '' && $url === '') {
+            continue;
+        }
+        if ($title === '' || mb_strlen($title, 'UTF-8') > 120) {
+            admin_msg_error('Tên nút trang chủ không được để trống và tối đa 120 ký tự.', $homeLinksRedirectUrl, 1400);
+        }
+        if (mb_strlen($description, 'UTF-8') > 180) {
+            admin_msg_error('Mô tả nút trang chủ tối đa 180 ký tự.', $homeLinksRedirectUrl, 1400);
+        }
+        if (mb_strlen($url, 'UTF-8') > 2048 || !caffemmo_client_guides_is_safe_url($url)) {
+            admin_msg_error('Link nút trang chủ phải là URL http hoặc https hợp lệ.', $homeLinksRedirectUrl, 1400);
+        }
+        if (count($links) >= 12) {
+            admin_msg_error('Trang chủ chỉ được tối đa 12 nút nổi bật.', $homeLinksRedirectUrl, 1400);
+        }
+
+        $links[] = [
+            'title' => $title,
+            'description' => $description,
+            'url' => $url,
+            'tone' => in_array(($tones[$index] ?? ''), ['bot', 'channel', 'guide'], true) ? $tones[$index] : 'guide',
+            'enabled' => (int) ($enabled[$index] ?? 1) === 1 ? 1 : 0,
+        ];
+    }
+
+    if (!caffemmo_home_featured_links_save($links)) {
+        admin_msg_error('Không thể lưu danh sách nút trang chủ. Vui lòng thử lại.', $homeLinksRedirectUrl, 1400);
+    }
+
+    $CMSNT->insert('logs', [
+        'user_id' => $getUser['id'],
+        'ip' => myip(),
+        'device' => getUserAgent(),
+        'createdate' => gettime(),
+        'action' => __('Cập nhật nút nổi bật trang chủ'),
+    ]);
+    admin_msg_success('Đã lưu danh sách nút trang chủ.', $homeLinksRedirectUrl, 900);
+}
 
 if (isset($_POST['SaveClientGuides'])) {
     if (empty($_POST['csrf_token']) || !hash_equals((string) ($_SESSION['csrf_token'] ?? ''), (string) $_POST['csrf_token'])) {
@@ -108,6 +169,7 @@ if (isset($_POST['SaveClientFaqs'])) {
 $clientGuides = caffemmo_client_guides_get(true, $clientGuideService);
 $clientFaqs = caffemmo_client_faqs_get(true, $clientGuideService);
 $clientResourceServices = caffemmo_client_resource_services();
+$homeFeaturedLinks = caffemmo_home_featured_links_get(true);
 ?>
 
 <style>
@@ -116,6 +178,15 @@ $clientResourceServices = caffemmo_client_resource_services();
     .client-guides-intro p { margin:0; color:#64748b; }
     .client-guides-service-picker { display:grid; min-width:240px; gap:5px; }
     .client-guides-service-picker label { margin:0; color:#36566b; font-size:11px; font-weight:700; }
+    .client-home-links-section { padding:20px 0 24px; margin-bottom:24px; border-bottom:1px solid #e3ebf0; }
+    .client-home-links-heading { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:14px; }
+    .client-home-links-heading h5 { margin:0 0 5px; color:#172033; font-weight:700; }
+    .client-home-links-heading p { margin:0; color:#64748b; font-size:12px; }
+    .client-home-link-row { display:grid; grid-template-columns:minmax(0, 1fr) minmax(0, 1.1fr) minmax(0, 1.35fr) 110px 42px; gap:12px; align-items:end; padding:14px; margin-bottom:12px; border:1px solid #e3ebf0; border-radius:9px; background:#fff; }
+    .client-home-link-row:last-child { margin-bottom:0; }
+    .client-home-link-row .form-label { font-size:12px; font-weight:700; color:#334155; }
+    .client-home-link-remove { width:38px; height:38px; padding:0; }
+    .client-home-links-empty { padding:24px 16px; border:1px dashed #cbd5e1; border-radius:9px; color:#64748b; text-align:center; }
     .client-guides-note { display:flex; gap:10px; padding:12px 14px; border:1px solid #dbe7ed; border-radius:8px; color:#36566b; background:#f8fcfd; font-size:12px; line-height:1.55; }
     .client-guides-note i { margin-top:2px; color:#0b95a0; }
     .client-guide-row { display:grid; grid-template-columns:minmax(0, 1fr) minmax(0, 1.3fr) 130px 42px; gap:12px; align-items:end; padding:16px; margin-bottom:12px; border:1px solid #e3ebf0; border-radius:9px; background:#fff; }
@@ -132,7 +203,7 @@ $clientResourceServices = caffemmo_client_resource_services();
     .client-faq-row .form-label { font-size:12px; font-weight:700; color:#334155; }
     .client-faq-remove { width:38px; height:38px; padding:0; }
     .client-faq-empty { padding:28px 16px; border:1px dashed #cbd5e1; border-radius:9px; color:#64748b; text-align:center; }
-    @media (max-width:767.98px) { .client-guides-intro { align-items:flex-start; flex-direction:column; padding:18px; } .client-guide-row, .client-faq-row { grid-template-columns:1fr; } .client-guide-remove, .client-faq-remove { width:100%; } }
+    @media (max-width:767.98px) { .client-guides-intro { align-items:flex-start; flex-direction:column; padding:18px; } .client-guide-row, .client-faq-row, .client-home-link-row { grid-template-columns:1fr; } .client-guide-remove, .client-faq-remove, .client-home-link-remove { width:100%; } }
 </style>
 
 <div class="tab-pane text-muted show active" id="client-guides-settings" role="tabpanel">
@@ -150,6 +221,62 @@ $clientResourceServices = caffemmo_client_resource_services();
             </select>
         </div>
     </div>
+
+    <section class="client-home-links-section">
+        <div class="client-home-links-heading">
+            <div>
+                <h5><i class="fa-solid fa-house me-2" aria-hidden="true"></i><?= __('Nút nổi bật trang chủ'); ?></h5>
+                <p><?= __('Các nút nằm cùng hàng Bot Telegram và Kênh thông báo trên trang chủ.'); ?></p>
+            </div>
+            <span class="badge bg-info-transparent text-info"><i class="fa-solid fa-up-right-from-square me-1" aria-hidden="true"></i><?= __('Link ngoài'); ?></span>
+        </div>
+
+        <form action="" method="POST" autocomplete="off">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(generate_csrf_token(), ENT_QUOTES, 'UTF-8'); ?>">
+            <div class="client-guides-note mb-3">
+                <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                <span><?= __('Có thể thêm, sửa, xóa hoặc tắt từng nút. Link phải bắt đầu bằng http:// hoặc https://.'); ?></span>
+            </div>
+
+            <div id="client-home-links-list">
+                <?php foreach ($homeFeaturedLinks as $index => $homeLink): ?>
+                    <div class="client-home-link-row" data-home-link-row>
+                        <div>
+                            <label class="form-label" for="home-link-title-<?= (int) $index; ?>"><?= __('Tên nút'); ?></label>
+                            <input class="form-control" id="home-link-title-<?= (int) $index; ?>" type="text" name="home_link_title[]" value="<?= htmlspecialchars($homeLink['title'], ENT_QUOTES, 'UTF-8'); ?>" maxlength="120" required>
+                        </div>
+                        <div>
+                            <label class="form-label" for="home-link-description-<?= (int) $index; ?>"><?= __('Mô tả ngắn'); ?></label>
+                            <input class="form-control" id="home-link-description-<?= (int) $index; ?>" type="text" name="home_link_description[]" value="<?= htmlspecialchars($homeLink['description'], ENT_QUOTES, 'UTF-8'); ?>" maxlength="180">
+                        </div>
+                        <div>
+                            <label class="form-label" for="home-link-url-<?= (int) $index; ?>"><?= __('Link'); ?></label>
+                            <input class="form-control" id="home-link-url-<?= (int) $index; ?>" type="url" name="home_link_url[]" value="<?= htmlspecialchars($homeLink['url'], ENT_QUOTES, 'UTF-8'); ?>" maxlength="2048" placeholder="https://..." required>
+                        </div>
+                        <div>
+                            <label class="form-label"><?= __('Trạng thái'); ?></label>
+                            <select class="form-select" name="home_link_enabled[]">
+                                <option value="1" <?= (int) $homeLink['enabled'] === 1 ? 'selected' : ''; ?>><?= __('Đang bật'); ?></option>
+                                <option value="0" <?= (int) $homeLink['enabled'] !== 1 ? 'selected' : ''; ?>><?= __('Đang tắt'); ?></option>
+                            </select>
+                        </div>
+                        <input type="hidden" name="home_link_tone[]" value="<?= htmlspecialchars($homeLink['tone'], ENT_QUOTES, 'UTF-8'); ?>">
+                        <button type="button" class="btn btn-outline-danger client-home-link-remove" data-remove-home-link aria-label="<?= __('Xóa dòng'); ?>" title="<?= __('Xóa dòng'); ?>"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+
+            <div id="client-home-links-empty" class="client-home-links-empty" <?= !empty($homeFeaturedLinks) ? 'hidden' : ''; ?>>
+                <i class="fa-solid fa-house fa-2x mb-2"></i>
+                <div><?= __('Chưa có nút nổi bật nào trên trang chủ.'); ?></div>
+            </div>
+
+            <div class="d-flex flex-wrap justify-content-between gap-2 mt-3">
+                <button type="button" class="btn btn-outline-primary" id="add-client-home-link"><i class="fa-solid fa-plus me-1" aria-hidden="true"></i><?= __('Thêm nút'); ?></button>
+                <button type="submit" name="SaveHomeFeaturedLinks" class="btn btn-primary"><i class="fa-solid fa-floppy-disk me-1" aria-hidden="true"></i><?= __('Lưu nút trang chủ'); ?></button>
+            </div>
+        </form>
+    </section>
 
     <form action="" method="POST" autocomplete="off">
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(generate_csrf_token(), ENT_QUOTES, 'UTF-8'); ?>">
@@ -242,6 +369,61 @@ $clientResourceServices = caffemmo_client_resource_services();
         </div>
     </form>
 </section>
+
+<template id="client-home-link-template">
+    <div class="client-home-link-row" data-home-link-row>
+        <div>
+            <label class="form-label"><?= __('Tên nút'); ?></label>
+            <input class="form-control" type="text" name="home_link_title[]" maxlength="120" required>
+        </div>
+        <div>
+            <label class="form-label"><?= __('Mô tả ngắn'); ?></label>
+            <input class="form-control" type="text" name="home_link_description[]" maxlength="180">
+        </div>
+        <div>
+            <label class="form-label"><?= __('Link'); ?></label>
+            <input class="form-control" type="url" name="home_link_url[]" maxlength="2048" placeholder="https://..." required>
+        </div>
+        <div>
+            <label class="form-label"><?= __('Trạng thái'); ?></label>
+            <select class="form-select" name="home_link_enabled[]">
+                <option value="1" selected><?= __('Đang bật'); ?></option>
+                <option value="0"><?= __('Đang tắt'); ?></option>
+            </select>
+        </div>
+        <input type="hidden" name="home_link_tone[]" value="guide">
+        <button type="button" class="btn btn-outline-danger client-home-link-remove" data-remove-home-link aria-label="<?= __('Xóa dòng'); ?>" title="<?= __('Xóa dòng'); ?>"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>
+    </div>
+</template>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const homeLinksList = document.getElementById('client-home-links-list');
+        const homeLinksEmpty = document.getElementById('client-home-links-empty');
+        const homeLinksTemplate = document.getElementById('client-home-link-template');
+        const addHomeLinkButton = document.getElementById('add-client-home-link');
+        if (!homeLinksList || !homeLinksEmpty || !homeLinksTemplate || !addHomeLinkButton) return;
+
+        const updateHomeLinksEmptyState = function() {
+            homeLinksEmpty.hidden = homeLinksList.querySelector('[data-home-link-row]') !== null;
+        };
+
+        homeLinksList.addEventListener('click', function(event) {
+            const button = event.target.closest('[data-remove-home-link]');
+            if (!button) return;
+            const row = button.closest('[data-home-link-row]');
+            if (row) row.remove();
+            updateHomeLinksEmptyState();
+        });
+
+        addHomeLinkButton.addEventListener('click', function() {
+            homeLinksList.appendChild(homeLinksTemplate.content.cloneNode(true));
+            updateHomeLinksEmptyState();
+            const newestInput = homeLinksList.querySelector('[data-home-link-row]:last-child input[name="home_link_title[]"]');
+            if (newestInput) newestInput.focus();
+        });
+    });
+</script>
 
 <template id="client-guide-template">
     <div class="client-guide-row" data-guide-row>

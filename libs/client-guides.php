@@ -9,6 +9,119 @@ function caffemmo_client_guides_default_url()
     return 'https://docs.google.com/document/d/1EIRDWUNvtDDFF8zPSpBXxP8fVPDDkfrAn5QP61PODhc/edit?hl=vi&tab=t.0';
 }
 
+function caffemmo_home_featured_links_defaults()
+{
+    $guideUrl = caffemmo_client_guides_default_url();
+
+    return [
+        [
+            'title' => 'Bot Telegram',
+            'description' => 'Tham gia bot Telegram tự động',
+            'url' => 'https://t.me/mmo_hub_bot',
+            'tone' => 'bot',
+            'enabled' => 1,
+        ],
+        [
+            'title' => 'Kênh thông báo',
+            'description' => 'Tham gia nhận tut miễn phí mỗi ngày',
+            'url' => 'https://t.me/honghotphobo',
+            'tone' => 'channel',
+            'enabled' => 1,
+        ],
+        [
+            'title' => 'Hướng dẫn lên Tích Xanh Facebook',
+            'description' => 'Xem hướng dẫn thực hiện chi tiết',
+            'url' => $guideUrl,
+            'tone' => 'guide',
+            'enabled' => 1,
+        ],
+        [
+            'title' => 'Hướng dẫn ngâm Tích Xanh Chính Chủ',
+            'description' => 'Xem quy trình và cách sử dụng',
+            'url' => $guideUrl,
+            'tone' => 'guide',
+            'enabled' => 1,
+        ],
+    ];
+}
+
+function caffemmo_home_featured_links_normalize($links, $includeDisabled = false)
+{
+    if (!is_array($links)) {
+        return [];
+    }
+
+    $normalized = [];
+    foreach ($links as $link) {
+        if (!is_array($link)) {
+            continue;
+        }
+
+        $title = trim((string) ($link['title'] ?? ''));
+        $description = trim((string) ($link['description'] ?? ''));
+        $url = trim((string) ($link['url'] ?? ''));
+        $tone = in_array(($link['tone'] ?? ''), ['bot', 'channel', 'guide'], true) ? $link['tone'] : 'guide';
+        $enabled = (int) ($link['enabled'] ?? 1) === 1;
+        if ($title === '' || mb_strlen($title, 'UTF-8') > 120 || mb_strlen($description, 'UTF-8') > 180 || !caffemmo_client_guides_is_safe_url($url)) {
+            continue;
+        }
+        if (!$includeDisabled && !$enabled) {
+            continue;
+        }
+
+        $normalized[] = [
+            'title' => $title,
+            'description' => $description,
+            'url' => $url,
+            'tone' => $tone,
+            'enabled' => $enabled ? 1 : 0,
+        ];
+    }
+
+    return array_slice($normalized, 0, 12);
+}
+
+function caffemmo_home_featured_links_ensure_setting()
+{
+    global $CMSNT;
+
+    if (!$CMSNT->get_row_safe('SELECT `name` FROM `settings` WHERE `name` = ? LIMIT 1', ['home_featured_links'])) {
+        $CMSNT->insert('settings', [
+            'name' => 'home_featured_links',
+            'value' => json_encode(caffemmo_home_featured_links_defaults(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+        ]);
+    }
+}
+
+function caffemmo_home_featured_links_get($includeDisabled = false)
+{
+    global $CMSNT;
+
+    $links = json_decode((string) $CMSNT->site('home_featured_links'), true);
+    if (!is_array($links)) {
+        $links = caffemmo_home_featured_links_defaults();
+    }
+
+    return caffemmo_home_featured_links_normalize($links, $includeDisabled);
+}
+
+function caffemmo_home_featured_links_save($links)
+{
+    global $CMSNT;
+
+    $value = json_encode(caffemmo_home_featured_links_normalize($links, true), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    if ($value === false) {
+        return false;
+    }
+
+    $exists = $CMSNT->get_row_safe('SELECT `name` FROM `settings` WHERE `name` = ? LIMIT 1', ['home_featured_links']);
+    if ($exists) {
+        return $CMSNT->update('settings', ['value' => $value], ' `name` = ? ', ['home_featured_links']);
+    }
+
+    return $CMSNT->insert('settings', ['name' => 'home_featured_links', 'value' => $value]);
+}
+
 function caffemmo_client_resource_services()
 {
     return [

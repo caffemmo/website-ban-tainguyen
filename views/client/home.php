@@ -23,6 +23,7 @@ require_once(__DIR__ . '/../../libs/client-session.php');
 require_once(__DIR__ . '/../../libs/service-catalog.php');
 $getUser = client_optional_user($CMSNT);
 $homeServiceGroups = $isProductsPage ? [] : caffemmo_service_catalog();
+$homeFeaturedLinks = $isProductsPage ? [] : caffemmo_home_featured_links_get();
 
 if ($isProductsPage) {
     $body['title'] = __('Tất cả sản phẩm') . ' | ' . $CMSNT->site('title');
@@ -99,23 +100,21 @@ require_once(__DIR__.'/nav.php');
         <div class="row mb-5">
             <?php if (!$isProductsPage): ?>
             <div class="col-12">
-                <section class="home-telegram-actions" aria-label="<?= __('Kênh Telegram Caffemmo'); ?>">
-                    <a class="home-telegram-action home-telegram-action--bot" href="https://t.me/mmo_hub_bot" target="_blank" rel="noopener noreferrer">
-                        <span class="home-telegram-action-icon"><i class="fa-brands fa-telegram" aria-hidden="true"></i></span>
-                        <span class="home-telegram-action-copy">
-                            <strong><?= __('Bot Telegram'); ?></strong>
-                            <small><?= __('Tham gia bot Telegram tự động'); ?></small>
-                        </span>
-                        <i class="fa-solid fa-arrow-up-right-from-square home-telegram-action-arrow" aria-hidden="true"></i>
-                    </a>
-                    <a class="home-telegram-action home-telegram-action--channel" href="https://t.me/honghotphobo" target="_blank" rel="noopener noreferrer">
-                        <span class="home-telegram-action-icon"><i class="fa-solid fa-bullhorn" aria-hidden="true"></i></span>
-                        <span class="home-telegram-action-copy">
-                            <strong><?= __('Kênh thông báo'); ?></strong>
-                            <small><?= __('Tham gia nhận tut miễn phí mỗi ngày'); ?></small>
-                        </span>
-                        <i class="fa-solid fa-arrow-up-right-from-square home-telegram-action-arrow" aria-hidden="true"></i>
-                    </a>
+                <section class="home-telegram-actions" aria-label="<?= __('Liên kết nhanh Caffemmo'); ?>">
+                    <?php foreach ($homeFeaturedLinks as $homeFeaturedLink): ?>
+                        <?php
+                        $homeFeaturedTone = $homeFeaturedLink['tone'] ?? 'guide';
+                        $homeFeaturedIcon = $homeFeaturedTone === 'bot' ? 'fa-brands fa-telegram' : ($homeFeaturedTone === 'channel' ? 'fa-solid fa-bullhorn' : 'fa-solid fa-book-open');
+                        ?>
+                        <a class="home-telegram-action home-telegram-action--<?= htmlspecialchars($homeFeaturedTone, ENT_QUOTES, 'UTF-8'); ?>" href="<?= htmlspecialchars($homeFeaturedLink['url'], ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener noreferrer">
+                            <span class="home-telegram-action-icon"><i class="<?= $homeFeaturedIcon; ?>" aria-hidden="true"></i></span>
+                            <span class="home-telegram-action-copy">
+                                <strong><?= htmlspecialchars($homeFeaturedLink['title'], ENT_QUOTES, 'UTF-8'); ?></strong>
+                                <?php if ($homeFeaturedLink['description'] !== ''): ?><small><?= htmlspecialchars($homeFeaturedLink['description'], ENT_QUOTES, 'UTF-8'); ?></small><?php endif; ?>
+                            </span>
+                            <i class="fa-solid fa-arrow-up-right-from-square home-telegram-action-arrow" aria-hidden="true"></i>
+                        </a>
+                    <?php endforeach; ?>
                 </section>
             </div>
             <?php require_once(__DIR__.'/widget_tools.php');?>
