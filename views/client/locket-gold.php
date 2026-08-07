@@ -25,7 +25,7 @@ $body = [
     'desc' => __('Nâng cấp tài khoản Locket Gold Vĩnh Viễn nhanh chóng từ Caffemmo.'),
     'keyword' => 'locket gold vĩnh viễn, nâng cấp locket'
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/locket-gold.css?v=1') . '"><link rel="stylesheet" href="' . BASE_URL('mod/css/client-resources.css?v=1') . '">';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/locket-gold.css?v=2') . '"><link rel="stylesheet" href="' . BASE_URL('mod/css/client-resources.css?v=1') . '">';
 $body['footer'] = '<script src="' . BASE_URL('mod/js/client-resources.js?v=1') . '"></script><script src="' . BASE_URL('mod/js/locket-gold.js?v=1') . '"></script>';
 
 require_once __DIR__ . '/header.php';

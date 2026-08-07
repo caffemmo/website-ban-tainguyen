@@ -66,9 +66,18 @@
     border-radius: 999px;
     font-size: 11px;
     font-weight: 700;
+    line-height: 1;
 }
 
-.locket-status i { width: 7px; height: 7px; border-radius: 50%; }
+.locket-status i {
+    display: block;
+    width: 7px;
+    height: 7px;
+    flex: 0 0 7px;
+    border-radius: 50%;
+    font-size: 0;
+    line-height: 0;
+}
 .locket-status.is-ready { border-color: #a9dfc8; color: #087655; background: #effbf5; }
 .locket-status.is-ready i { background: #11a878; }
 .locket-status.is-closed { border-color: #e2c6c6; color: #9a4b4b; background: #fff7f7; }
