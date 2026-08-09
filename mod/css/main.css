@@ -3775,3 +3775,39 @@ body {
         animation: none;
     }
 }
+
+.product-guide-action {
+    width: 100%;
+    margin-top: 8px;
+}
+
+.product-guide-action a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    width: 100%;
+    min-height: 34px;
+    padding: 7px 12px;
+    border: 1px solid #b9dbe7;
+    border-radius: 6px;
+    color: #12657b;
+    background: #edfafd;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: color .2s ease, background-color .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+
+.product-guide-action a:hover,
+.product-guide-action a:focus-visible {
+    color: #08495e;
+    border-color: #0aa6bc;
+    background: #e2f7fb;
+    box-shadow: 0 2px 8px rgb(10 166 188 / 18%);
+}
+
+.product-guide-action a > i:last-child {
+    margin-left: auto;
+    font-size: 11px;
+}

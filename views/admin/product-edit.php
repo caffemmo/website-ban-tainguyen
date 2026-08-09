@@ -24,6 +24,7 @@ $(function () {
 <script src="' . base_url('public/theme/') . 'assets/js/select2.js"></script>
 ';
 require_once(__DIR__ . '/../../models/is_admin.php');
+require_once(__DIR__ . '/../../libs/product-guides.php');
 if (isset($_GET['id'])) {
     $id = check_string($_GET['id']);
     if (!$product = $CMSNT->get_row("SELECT * FROM `products` WHERE `id` = '$id' ")) {
@@ -32,6 +33,7 @@ if (isset($_GET['id'])) {
 } else {
     redirect(base_url_admin('products'));
 }
+$productGuide = caffemmo_product_guide_get($product['id']);
 require_once(__DIR__ . '/header.php');
 require_once(__DIR__ . '/sidebar.php');
 require_once(__DIR__ . '/nav.php');
@@ -54,6 +56,12 @@ if (isset($_POST['save'])) {
         if ($CMSNT->get_row("SELECT * FROM `products` WHERE `slug` = '" . check_string($_POST['slug']) . "' ")) {
             die('<script type="text/javascript">if(!alert("Slug này đã tồn tại trong hệ thống.")){window.history.back().location.reload();}</script>');
         }
+    }
+
+    $guideUrl = trim((string) ($_POST['guide_url'] ?? ''));
+    $guideEnabled = (int) ($_POST['guide_enabled'] ?? 0) === 1 ? 1 : 0;
+    if ($guideUrl !== '' && !caffemmo_product_guides_is_safe_url($guideUrl)) {
+        die('<script type="text/javascript">if(!alert("URL hướng dẫn sản phẩm không hợp lệ.")){window.history.back().location.reload();}</script>');
     }
 
     $images = $product['images'];
@@ -100,6 +108,7 @@ if (isset($_POST['save'])) {
     ], " `id` = '" . $product['id'] . "' ");
 
     if ($isInsert) {
+        caffemmo_product_guide_save($product['id'], $guideUrl, $guideEnabled);
         $CMSNT->insert("logs", [
             'user_id'       => $getUser['id'],
             'ip'            => myip(),
@@ -647,6 +656,17 @@ if (isset($_POST['AddDiscount'])) {
                                     <div class="form-text">
                                         <?= __('Khi chọn ON sản phẩm sẽ không hiển thị trên cửa hàng và API danh sách sản phẩm, nhưng vẫn có thể mua được thông qua API.'); ?>
                                     </div>
+                                </div>
+                                <div class="col-sm-12 mb-2">
+                                    <label class="form-label" for="guide_url"><?= __('Link hướng dẫn sử dụng'); ?></label>
+                                    <input type="url" class="form-control" name="guide_url" id="guide_url"
+                                        value="<?= htmlspecialchars($productGuide['url'], ENT_QUOTES, 'UTF-8'); ?>"
+                                        placeholder="https://...">
+                                    <select class="form-control mt-2" name="guide_enabled">
+                                        <option value="0" <?= (int) $productGuide['enabled'] !== 1 ? 'selected' : ''; ?>><?= __('Tắt nút hướng dẫn'); ?></option>
+                                        <option value="1" <?= (int) $productGuide['enabled'] === 1 ? 'selected' : ''; ?>><?= __('Bật nút hướng dẫn'); ?></option>
+                                    </select>
+                                    <div class="form-text"><?= __('Để trống URL để xóa nút hướng dẫn.'); ?></div>
                                 </div>
                                 <?php if ($checkPreviewUid['status'] == true && $product['supplier_id'] == 0): ?>
                                     <div class="col-sm-12 mb-2">

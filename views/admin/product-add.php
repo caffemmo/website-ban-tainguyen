@@ -24,6 +24,7 @@ $(function () {
 <script src="' . base_url('public/theme/') . 'assets/js/select2.js"></script>
 ';
 require_once(__DIR__ . '/../../models/is_admin.php');
+require_once(__DIR__ . '/../../libs/product-guides.php');
 require_once(__DIR__ . '/header.php');
 require_once(__DIR__ . '/sidebar.php');
 require_once(__DIR__ . '/nav.php');
@@ -44,6 +45,12 @@ if (isset($_POST['submit'])) {
     if ($CMSNT->get_row("SELECT * FROM `products` WHERE `slug` = '" . check_string($_POST['slug']) . "' ")) {
         die('<script type="text/javascript">if(!alert("Slug này đã tồn tại trong hệ thống.")){window.history.back().location.reload();}</script>');
     }
+    $guideUrl = trim((string) ($_POST['guide_url'] ?? ''));
+    $guideEnabled = (int) ($_POST['guide_enabled'] ?? 0) === 1 ? 1 : 0;
+    if ($guideUrl !== '' && !caffemmo_product_guides_is_safe_url($guideUrl)) {
+        die('<script type="text/javascript">if(!alert("URL hướng dẫn sản phẩm không hợp lệ.")){window.history.back().location.reload();}</script>');
+    }
+
     $images = '';
     if (isset($_FILES['images']['name']) && !empty($_FILES['images']['name'])) {
         foreach ($_FILES['images']['name'] as $name => $value) {
@@ -88,6 +95,7 @@ if (isset($_POST['submit'])) {
         'update_gettime'    => gettime()
     ]);
     if ($isInsert) {
+        caffemmo_product_guide_save($isInsert, $guideUrl, $guideEnabled);
         $CMSNT->insert("logs", [
             'user_id'       => $getUser['id'],
             'ip'            => myip(),
@@ -462,6 +470,15 @@ if (isset($_POST['submit'])) {
                                     <div class="form-text">
                                         <?= __('Khi chọn ON sản phẩm sẽ không hiển thị trên cửa hàng và API danh sách sản phẩm, nhưng vẫn có thể mua được thông qua API.'); ?>
                                     </div>
+                                </div>
+                                <div class="col-sm-12 mb-2">
+                                    <label class="form-label" for="guide_url"><?= __('Link hướng dẫn sử dụng'); ?></label>
+                                    <input type="url" class="form-control" name="guide_url" id="guide_url" placeholder="https://...">
+                                    <select class="form-control mt-2" name="guide_enabled">
+                                        <option value="0"><?= __('Tắt nút hướng dẫn'); ?></option>
+                                        <option value="1"><?= __('Bật nút hướng dẫn'); ?></option>
+                                    </select>
+                                    <div class="form-text"><?= __('Để trống URL để xóa nút hướng dẫn.'); ?></div>
                                 </div>
                                 <?php if ($checkPreviewUid['status'] == true): ?>
                                     <div class="col-sm-12 mb-2">

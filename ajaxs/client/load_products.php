@@ -13,6 +13,7 @@ define('IN_SITE', true);
 require_once(__DIR__ . '/../../libs/db.php');
 require_once(__DIR__ . "/../../libs/lang.php");
 require_once(__DIR__ . '/../../libs/helper.php');
+require_once(__DIR__ . '/../../libs/product-guides.php');
 require_once(__DIR__ . '/../../config.php');
 
 // Kiểm tra xem user có đăng nhập không
@@ -36,6 +37,7 @@ $keyword = isset($_GET['keyword']) ? validate_string($_GET['keyword'], 255, 2) :
 $limit = validate_int($_GET['limit'] ?? 20, 10, 100) ?: 20;
 $page = validate_int($_GET['page'] ?? 1, 1, 10000) ?: 1;
 $from = ($page - 1) * $limit;
+$productGuides = caffemmo_product_guides_get_all();
 
 // Nếu tìm kiếm theo keyword
 if ($action == 'search' && !empty($keyword)) {
@@ -125,6 +127,7 @@ if ($action == 'search' && !empty($keyword)) {
                                     class="btn-buy" data-id="<?= $product['id']; ?>"><?= __('MUA NGAY'); ?></button>
                             </div>
                         </div>
+                        <?= caffemmo_product_guide_button($product['id'], $productGuides); ?>
                     </div>
                 </div>
             </div>
@@ -267,6 +270,7 @@ foreach ($categories_list as $category):
                                             data-id="<?= $product['id']; ?>"><?= __('MUA NGAY'); ?></button>
                                     </div>
                                 </div>
+                                <?= caffemmo_product_guide_button($product['id'], $productGuides); ?>
                             </div>
                         </div>
                     </div>
@@ -344,6 +348,7 @@ foreach ($categories_list as $category):
                                             data-id="<?= $product['id']; ?>"><?= __('XEM NGAY'); ?></button>
                                     </div>
                                 </div>
+                                <?= caffemmo_product_guide_button($product['id'], $productGuides); ?>
                             </div>
                         </div>
                     </div>
@@ -421,6 +426,7 @@ foreach ($categories_list as $category):
                                             data-id="<?= $product['id']; ?>"><?= __('XEM NGAY'); ?></button>
                                     </div>
                                 </div>
+                                <?= caffemmo_product_guide_button($product['id'], $productGuides); ?>
                             </div>
                         </div>
                     </div>
@@ -501,6 +507,7 @@ foreach ($categories_list as $category):
 
                                     </div>
                                 </div>
+                                <?= caffemmo_product_guide_button($product['id'], $productGuides); ?>
                             </div>
                         </div>
                     </div>
@@ -594,6 +601,7 @@ foreach ($categories_list as $category):
                                     <?php endif ?>
                                 </button>
                             </div>
+                            <?= caffemmo_product_guide_button($product['id'], $productGuides); ?>
                         </div>
                     </div>
                 <?php endforeach ?>
