@@ -215,11 +215,24 @@ function uptichxanh_request($method, $endpoint, $query = [], $payload = null)
     curl_setopt_array($curl, $options);
     $raw = curl_exec($curl);
     $curlError = curl_error($curl);
+    $curlErrno = curl_errno($curl);
     $httpCode = (int) curl_getinfo($curl, CURLINFO_HTTP_CODE);
     curl_close($curl);
 
     if ($raw === false || $curlError !== '') {
-        return ['ok' => false, 'http_code' => $httpCode, 'body' => null, 'error' => 'Không thể kết nối đến dịch vụ.', 'transport_error' => true];
+        $transportMessage = 'Không thể kết nối đến dịch vụ.';
+        if (defined('CURLE_COULDNT_RESOLVE_HOST') && $curlErrno === CURLE_COULDNT_RESOLVE_HOST) {
+            $transportMessage = 'Không phân giải được tên miền dịch vụ.';
+        } elseif ((defined('CURLE_OPERATION_TIMEOUTED') && $curlErrno === CURLE_OPERATION_TIMEOUTED)
+            || (defined('CURLE_OPERATION_TIMEDOUT') && $curlErrno === CURLE_OPERATION_TIMEDOUT)) {
+            $transportMessage = 'Dịch vụ phản hồi quá lâu, vui lòng thử lại sau.';
+        } elseif (defined('CURLE_SSL_CONNECT_ERROR') && $curlErrno === CURLE_SSL_CONNECT_ERROR) {
+            $transportMessage = 'Không thể thiết lập kết nối TLS đến dịch vụ.';
+        } elseif (defined('CURLE_PEER_FAILED_VERIFICATION') && $curlErrno === CURLE_PEER_FAILED_VERIFICATION) {
+            $transportMessage = 'Chứng chỉ TLS của dịch vụ không hợp lệ.';
+        }
+        error_log('[UPTICHXANH] transport error endpoint=' . $endpoint . ' http=' . $httpCode . ' errno=' . $curlErrno);
+        return ['ok' => false, 'http_code' => $httpCode, 'body' => null, 'error' => $transportMessage, 'transport_error' => true, '_curl_errno' => $curlErrno];
     }
 
     $body = json_decode($raw, true);
