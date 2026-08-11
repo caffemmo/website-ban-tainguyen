@@ -104,6 +104,16 @@ function uptichxanh_service_endpoint($service)
     return isset($map[$service]) ? $map[$service] : false;
 }
 
+function uptichxanh_service_endpoint_candidates($service)
+{
+    $map = [
+        'get-link' => ['getlink'],
+        'up-fb' => ['upfb', 'fb'],
+        'up-ig' => ['upig', 'ig']
+    ];
+    return $map[$service] ?? [];
+}
+
 function uptichxanh_service_label($service)
 {
     $map = [
@@ -217,7 +227,11 @@ function uptichxanh_request($method, $endpoint, $query = [], $payload = null)
         return ['ok' => false, 'http_code' => $httpCode, 'body' => null, 'error' => 'Dịch vụ trả về dữ liệu không hợp lệ.', 'transport_error' => false];
     }
 
-    $providerSuccess = isset($body['status']) && strtolower((string) $body['status']) === 'success';
+    $providerStatus = strtolower(trim((string) ($body['status'] ?? '')));
+    $acceptedStatuses = ['success', 'completed', 'pending', 'processing', 'queued', 'accepted'];
+    $providerSuccess = $httpCode >= 200 && $httpCode < 300
+        && (in_array($providerStatus, $acceptedStatuses, true)
+            || (isset($body['success']) && filter_var($body['success'], FILTER_VALIDATE_BOOLEAN)));
     return [
         'ok' => $httpCode >= 200 && $httpCode < 300 && $providerSuccess,
         'http_code' => $httpCode,
@@ -438,7 +452,7 @@ function uptichxanh_error_text($response, $fallback = 'Không thể hoàn tất 
     $providerMessage = isset($response['message']) && is_scalar($response['message'])
         ? trim((string) $response['message'])
         : '';
-    if (($response['_provider'] ?? '') === 'api2' && $providerMessage !== '') {
+    if ($providerMessage !== '') {
         return function_exists('mb_substr') ? mb_substr($providerMessage, 0, 300) : substr($providerMessage, 0, 300);
     }
     $map = [

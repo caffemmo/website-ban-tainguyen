@@ -130,8 +130,8 @@ if ($action !== 'submit') {
 }
 
 $service = uptichxanh_value($input, 'service');
-$endpoint = uptichxanh_service_endpoint($service);
-if ($endpoint === false) {
+$endpointCandidates = uptichxanh_service_endpoint_candidates($service);
+if (empty($endpointCandidates)) {
     uptichxanh_json(['success' => false, 'message' => 'Dịch vụ không hợp lệ.'], 422);
 }
 
@@ -178,7 +178,13 @@ if (!$isRepeatUid && !$userModel->RemoveCredits($getUser['id'], $salePrice, 'S�
     uptichxanh_json(['success' => false, 'message' => 'Không thể trừ tiền trong ví, vui lòng thử lại.'], 500);
 }
 
-$providerResponse = uptichxanh_api_call('POST', $endpoint, [], $payload);
+$providerResponse = uptichxanh_api_call('POST', $endpointCandidates[0], [], $payload);
+$providerEndpoint = $endpointCandidates[0];
+if (!$providerResponse['success'] && count($endpointCandidates) > 1
+    && in_array((int) ($providerResponse['_http_code'] ?? 0), [404, 405], true)) {
+    $providerEndpoint = $endpointCandidates[1];
+    $providerResponse = uptichxanh_api_call('POST', $providerEndpoint, [], $payload);
+}
 $providerName = 'api1';
 if (!$providerResponse['success'] && $service === 'up-fb' && uptichxanh_should_use_api2($providerResponse)) {
     $providerResponse = uptichxanh_api2_up_fb_call($cookie, $uploadedPath);
@@ -235,7 +241,7 @@ queueServiceOrderNotification(
     $historyOrderId ? (string) $historyOrderId : $transactionId,
     1,
     $isRepeatUid ? 'UID đã xử lý trước đó, miễn phí 0đ' : 'Yêu cầu đã được tiếp nhận',
-    ['source' => 'up_tich_xanh', 'service_code' => $service, 'provider' => $providerName]
+    ['source' => 'up_tich_xanh', 'service_code' => $service, 'provider' => $providerName, 'endpoint' => $providerEndpoint]
 );
 
 $safeData = [
