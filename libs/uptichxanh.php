@@ -150,12 +150,40 @@ function uptichxanh_find_successful_uid_order($userId, $service, $uid)
     }
 
     return $CMSNT->get_row_safe(
-        "SELECT `id`, `provider_uid`, `provider_status` FROM `up_tich_xanh_orders`
+        "SELECT `id`, `provider_uid`, `result_link`, `provider_status` FROM `up_tich_xanh_orders`
          WHERE `user_id` = ? AND `service` = ? AND `provider_uid` = ?
-         AND `provider_status` IN ('success', 'completed')
+         AND `provider_status` IN ('success', 'completed', 'pending', 'processing', 'queued', 'accepted')
          ORDER BY `id` DESC LIMIT 1",
         [(int) $userId, $service, $uid]
     );
+}
+
+function uptichxanh_is_already_submitted_response($response)
+{
+    if (!is_array($response) || !empty($response['_transport_error'])) {
+        return false;
+    }
+
+    $message = isset($response['message']) && is_scalar($response['message'])
+        ? trim((string) $response['message'])
+        : '';
+    if ($message === '') {
+        return false;
+    }
+
+    $message = function_exists('mb_strtolower') ? mb_strtolower($message, 'UTF-8') : strtolower($message);
+    foreach ([
+        'đã được gửi xác minh trước đó',
+        'đang chờ duyệt',
+        'already submitted',
+        'pending review'
+    ] as $phrase) {
+        if (strpos($message, $phrase) !== false) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 function uptichxanh_order_status($status)

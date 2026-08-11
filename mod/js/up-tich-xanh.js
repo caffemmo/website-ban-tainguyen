@@ -65,7 +65,8 @@
 
     function showResult(data) {
         if (!result) return;
-        var html = '<strong>Yêu cầu đã hoàn tất</strong>'
+        var title = data.reconciled ? 'Đã đối soát yêu cầu trước đó' : 'Yêu cầu đã hoàn tất';
+        var html = '<strong>' + title + '</strong>'
             + '<span>Chi phí dịch vụ: ' + String(data.charged_label || '') + '</span>';
         if (data.uid) {
             html += '<span>UID \u0111\u00e3 x\u1eed l\u00fd: ' + escapeHtml(data.uid) + '</span>';
