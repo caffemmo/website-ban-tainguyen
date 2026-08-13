@@ -128,12 +128,12 @@
 
   <div class="modal-backdrop" id="modalBackdrop" hidden>
     <section class="modal" id="requestModal" aria-modal="true" role="dialog" aria-labelledby="modalTitle">
-      <div class="modal-header"><div><p class="eyebrow">YÊU CẦU MỚI</p><h2 id="modalTitle">Bạn cần hỗ trợ gì?</h2></div><button class="icon-button close-modal" aria-label="Đóng"><i data-lucide="x"></i></button></div>
+      <div class="modal-header"><div><p class="eyebrow">CASE MỞ KHÓA MỚI</p><h2 id="modalTitle">Tạo case trước, chọn dịch vụ sau</h2></div><button class="icon-button close-modal" aria-label="Đóng"><i data-lucide="x"></i></button></div>
       <form id="requestForm">
-        <label for="serviceType">Loại yêu cầu<select id="serviceType" required><option value="Không thể truy cập tài khoản">Không thể truy cập tài khoản</option><option value="Xác minh danh tính tài khoản">Xác minh danh tính tài khoản</option><option value="Rà soát hồ sơ khôi phục">Rà soát hồ sơ khôi phục</option></select></label>
-        <label for="requestDetails">Mô tả tình trạng<textarea id="requestDetails" rows="4" required placeholder="Ví dụ: Tôi không thể truy cập tài khoản và cần hỗ trợ chuẩn bị hồ sơ qua quy trình chính thức."></textarea></label>
-        <div class="notice"><i data-lucide="shield-alert"></i><p>Không nhập mật khẩu, mã xác thực, cookie, token hoặc ảnh chứa thông tin nhạy cảm.</p></div>
-        <div class="modal-actions"><button class="secondary-button close-modal" type="button">Huỷ</button><button class="primary-button" type="submit"><i data-lucide="send"></i> Gửi yêu cầu</button></div>
+        <label for="serviceType">Mục tiêu hỗ trợ<select id="serviceType"><option value="Mở khóa tài khoản">Mở khóa tài khoản</option><option value="Xác minh danh tính tài khoản">Xác minh danh tính tài khoản</option><option value="Rà soát hồ sơ khôi phục">Rà soát hồ sơ khôi phục</option></select></label>
+        <label for="requestDetails">Ghi chú ban đầu <span class="optional-label">(tuỳ chọn, có thể bổ sung sau)</span><textarea id="requestDetails" rows="4" placeholder="Bạn có thể để trống và chọn đối tác trước. Khi sẵn sàng, hãy bổ sung tình trạng trong ticket."></textarea></label>
+        <div class="notice"><i data-lucide="shield-alert"></i><p>Không nhập mật khẩu, mã xác thực, cookie, token hoặc ảnh chứa thông tin nhạy cảm. Case chỉ lưu thông tin điều phối.</p></div>
+        <div class="modal-actions"><button class="secondary-button close-modal" type="button">Để sau</button><button class="primary-button" type="submit"><i data-lucide="plus"></i> Tạo case</button></div>
       </form>
     </section>
     <section class="modal modal-small" id="safetyModal" aria-modal="true" role="dialog" aria-labelledby="safetyTitle" hidden>

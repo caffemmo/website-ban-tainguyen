@@ -44,14 +44,14 @@
     const type = $('#serviceType').value;
     const row = document.createElement('button');
     row.className = 'request-row';
-    row.dataset.status = 'quote';
+    row.dataset.status = 'case';
     row.dataset.request = 'FB-4838';
-    row.innerHTML = `<span class="request-symbol blue"><i data-lucide="file-search"></i></span><span class="request-info"><strong>${type}</strong><small>#FB-4838 · Vừa tạo</small></span><span class="request-status quote"><i></i> Đang tìm đối tác</span><i class="row-arrow" data-lucide="chevron-right"></i>`;
+    row.innerHTML = `<span class="request-symbol blue"><i data-lucide="file-search"></i></span><span class="request-info"><strong>${type}</strong><small>#FB-4838 · Vừa tạo</small></span><span class="request-status quote"><i></i> Chưa chọn dịch vụ</span><i class="row-arrow" data-lucide="chevron-right"></i>`;
     $('#requestList').prepend(row);
     window.lucide?.createIcons({ attrs: { 'stroke-width': 1.8 } });
     closeModal();
     event.target.reset();
-    showToast('Yêu cầu đã được tạo. Đối tác phù hợp sẽ gửi báo giá trong ticket.');
+    showToast('Case đã được tạo. Bạn có thể chọn dịch vụ hoặc bổ sung thông tin sau.');
   });
 
   $('#disputeForm').addEventListener('submit', (event) => {
