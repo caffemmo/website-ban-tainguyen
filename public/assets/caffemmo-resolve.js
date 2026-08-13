@@ -129,7 +129,7 @@
       $('#profileService').textContent = card?.dataset.service || $('.provider-card p', card)?.textContent || '';
       $('#profileRate').textContent = card?.dataset.rate || $('.provider-footer strong', card)?.textContent || '';
       $('#profileBio').textContent = card?.dataset.bio || 'Hỗ trợ khách chuẩn bị hồ sơ qua các quy trình chính thức, theo dõi tiến độ trong ticket và bảo vệ giao dịch bằng ký quỹ.';
-      $('#connectProfile').dataset.provider = name;
+      $('#createUnlockCaseFromProfile').dataset.provider = name;
       openModal($('#profileModal'));
     }
     const favourite = event.target.closest('.favourite');
@@ -142,10 +142,10 @@
     }
   });
 
-  $('#connectProfile').addEventListener('click', (event) => {
+  $('#createUnlockCaseFromProfile').addEventListener('click', (event) => {
     closeModal();
     openModal($('#requestModal'));
-    showToast(`Tạo yêu cầu để kết nối với ${event.currentTarget.dataset.provider}.`);
+    showToast(`Bạn đang tạo case mở khóa để kết nối với ${event.currentTarget.dataset.provider}.`);
   });
 
   $('#sidebarToggle').addEventListener('click', () => $('#sidebar').classList.toggle('open'));
