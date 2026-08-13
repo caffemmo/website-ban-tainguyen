@@ -6,6 +6,10 @@
   let activeModal = null;
   let toastTimer;
 
+  const escapeHtml = (value) => value.replace(/[&<>'"]/g, (character) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;',
+  }[character]));
+
   window.lucide?.createIcons({ attrs: { 'stroke-width': 1.8 } });
 
   function showToast(message) {
@@ -28,6 +32,7 @@
   }
 
   $('#openRequest').addEventListener('click', () => openModal($('#requestModal')));
+  $$('[data-open-provider-registration]').forEach((button) => button.addEventListener('click', () => openModal($('#providerModal'))));
   $$('[data-open-safety]').forEach((button) => button.addEventListener('click', () => openModal($('#safetyModal'))));
   $('#openDispute').addEventListener('click', () => openModal($('#disputeModal')));
   $$('.close-modal').forEach((button) => button.addEventListener('click', closeModal));
@@ -53,6 +58,31 @@
     event.preventDefault();
     closeModal();
     showToast('Đã ghi nhận sự cố. Ký quỹ được tạm giữ để đội ngũ xem xét.');
+  });
+
+  $('#providerForm').addEventListener('submit', (event) => {
+    event.preventDefault();
+    const name = $('#providerName').value.trim();
+    const service = $('#providerService').value.trim();
+    const bio = $('#providerBio').value.trim();
+    const rate = Number($('#providerRate').value.replace(/\D/g, ''));
+    const initials = name.split(/\s+/).slice(-2).map((part) => part[0]).join('').toUpperCase();
+    const safeName = escapeHtml(name);
+    const safeService = escapeHtml(service);
+    const safeInitials = escapeHtml(initials);
+    const card = document.createElement('article');
+    card.className = 'provider-card';
+    card.dataset.rating = '0';
+    card.dataset.bio = bio;
+    card.dataset.service = service;
+    card.dataset.rate = `Từ ${rate.toLocaleString('vi-VN')} đ`;
+    card.dataset.initials = initials;
+    card.innerHTML = `<div class="provider-card-head"><span class="avatar avatar-purple">${safeInitials}</span><span class="verified"><i data-lucide="clock-3"></i> Chờ xác minh</span><button class="icon-button favourite" aria-label="Lưu đối tác"><i data-lucide="heart"></i></button></div><h3>${safeName}</h3><p>${safeService}</p><div class="profile-tags"><span>Hồ sơ mới</span><span>Đang chờ duyệt</span></div><div class="provider-stats"><span><i data-lucide="file-text"></i> Chờ phản hồi đầu tiên</span></div><div class="provider-footer"><strong>Từ ${rate.toLocaleString('vi-VN')} đ</strong><button class="outline-button" data-quote="${safeName}">Xem hồ sơ</button></div>`;
+    $('#providerList').prepend(card);
+    window.lucide?.createIcons({ attrs: { 'stroke-width': 1.8 } });
+    event.target.reset();
+    closeModal();
+    showToast('Hồ sơ đã gửi. Hồ sơ sẽ hiển thị công khai sau khi được xác minh.');
   });
 
   $('#completeTask').addEventListener('click', () => {
@@ -92,9 +122,15 @@
     }
     const quote = event.target.closest('[data-quote]');
     if (quote) {
-      $('#serviceType').value = 'Không thể truy cập tài khoản';
-      openModal($('#requestModal'));
-      showToast(`Bạn đang tạo yêu cầu báo giá cho ${quote.dataset.quote}.`);
+      const card = quote.closest('.provider-card');
+      const name = quote.dataset.quote;
+      $('#profileTitle').textContent = name;
+      $('#profileInitials').textContent = card?.dataset.initials || name.split(/\s+/).slice(-2).map((part) => part[0]).join('').toUpperCase();
+      $('#profileService').textContent = card?.dataset.service || $('.provider-card p', card)?.textContent || '';
+      $('#profileRate').textContent = card?.dataset.rate || $('.provider-footer strong', card)?.textContent || '';
+      $('#profileBio').textContent = card?.dataset.bio || 'Hỗ trợ khách chuẩn bị hồ sơ qua các quy trình chính thức, theo dõi tiến độ trong ticket và bảo vệ giao dịch bằng ký quỹ.';
+      $('#connectProfile').dataset.provider = name;
+      openModal($('#profileModal'));
     }
     const favourite = event.target.closest('.favourite');
     if (favourite) {
@@ -104,6 +140,12 @@
       icon.style.color = favourite.classList.contains('saved') ? '#d65352' : '';
       showToast(favourite.classList.contains('saved') ? 'Đã lưu đối tác.' : 'Đã bỏ lưu đối tác.');
     }
+  });
+
+  $('#connectProfile').addEventListener('click', (event) => {
+    closeModal();
+    openModal($('#requestModal'));
+    showToast(`Tạo yêu cầu để kết nối với ${event.currentTarget.dataset.provider}.`);
   });
 
   $('#sidebarToggle').addEventListener('click', () => $('#sidebar').classList.toggle('open'));
