@@ -459,7 +459,9 @@ $serviceCatalog = caffemmo_service_catalog();
                                 <li class="navbar-item"><a class="navbar-link"
                                         href="<?= base_url_ctv(); ?>"><?= __('CTV Panel'); ?></a></li>
                             <?php endif ?>
-                            <?php if (isset($getUser) && $getUser['admin'] != 0): ?>
+                            <?php if (isset($getUser) && (int) $getUser['admin'] > 0): ?>
+                                <li class="navbar-item"><a class="navbar-link"
+                                        href="<?= base_url('client/intermediary'); ?>"><i class="fa-solid fa-shield-halved"></i><?= __('Khu trung gian'); ?></a></li>
                                 <li class="navbar-item"><a class="navbar-link"
                                         href="<?= base_url_admin(); ?>"><?= __('Admin Panel'); ?></a></li>
                             <?php endif ?>
@@ -919,7 +921,9 @@ $serviceCatalog = caffemmo_service_catalog();
                     <li><a class="nav-link" href="<?= base_url('document-api'); ?>"><i
                                 class="fa-regular fa-file-code"></i><?= __('Tài liệu API'); ?></a></li>
                 <?php endif ?>
-                <?php if (isset($getUser) && $getUser['admin'] != 0): ?>
+                <?php if (isset($getUser) && (int) $getUser['admin'] > 0): ?>
+                    <li><a class="nav-link" href="<?= base_url('client/intermediary'); ?>"><i
+                                class="fa-solid fa-shield-halved"></i><?= __('Khu trung gian'); ?></a></li>
                     <li><a class="nav-link" href="<?= base_url_admin(); ?>"><i
                                 class="fa-solid fa-gear"></i><?= __('Admin Panel'); ?></a></li>
                 <?php endif ?>

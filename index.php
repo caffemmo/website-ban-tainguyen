@@ -49,6 +49,7 @@ $allowed_actions = [
     'favorites',
     'forgot-password',
     'home',
+    'intermediary',
     'login',
     'locket-gold',
     'locket-gold-history',

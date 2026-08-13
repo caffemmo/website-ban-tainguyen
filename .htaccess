@@ -57,6 +57,8 @@ RewriteRule ^tool/random-face index.php?module=client&action=tool-random-face [L
 RewriteRule ^tool/icon-facebook index.php?module=client&action=tool-icon-facebook [L]
 RewriteRule ^tool/get-2fa index.php?module=client&action=tool-2fa [L]
 RewriteRule ^tool/check-live-facebook index.php?module=client&action=tool-checklive-fb [L]
+RewriteRule ^public/caffemmo-resolve\.html$ index.php?module=client&action=intermediary [L]
+RewriteRule ^client/intermediary index.php?module=client&action=intermediary [L]
 RewriteRule ^client/up-tich-xanh/([A-Za-z0-9-]+)$ index.php?module=client&action=up-tich-xanh&service=$1 [L]
 RewriteRule ^client/up-tich-xanh-history index.php?module=client&action=up-tich-xanh-history [L]
 RewriteRule ^category/([A-Za-z0-9-]+) index.php?module=client&action=products&slug=$1 [L]
