@@ -55,8 +55,8 @@ if (isset($_POST['SaveUpTichXanhSettings'])) {
     if ($api2BaseUrl === '' || filter_var($api2BaseUrl, FILTER_VALIDATE_URL) === false || strtolower((string) parse_url($api2BaseUrl, PHP_URL_SCHEME)) !== 'https') {
         admin_msg_error('URL API 2 phải là một địa chỉ HTTPS hợp lệ.', base_url_admin('settings&tab=up-tich-xanh'), 1200);
     }
-    if ($timeout === false || $timeout < 5 || $timeout > 120) {
-        admin_msg_error('Timeout phải nằm trong khoảng 5 đến 120 giây.', base_url_admin('settings&tab=up-tich-xanh'), 1200);
+    if ($timeout === false || $timeout < 60 || $timeout > 120) {
+        admin_msg_error('Timeout phải nằm trong khoảng 60 đến 120 giây.', base_url_admin('settings&tab=up-tich-xanh'), 1200);
     }
     if ($getLinkPrice === false || $upFbPrice === false || $upIgPrice === false) {
         admin_msg_error('Giá bán mỗi lượt phải lớn hơn 0 và hợp lệ.', base_url_admin('settings&tab=up-tich-xanh'), 1200);
@@ -155,7 +155,7 @@ $hasStoredApi2Key = uptichxanh_db_setting('uptichxanh_api2_key') !== '' || $upCo
                             <div class="col-md-6"><label class="form-label upx-admin-label" for="uptichxanh_price_get_link"><i class="fa-solid fa-link" aria-hidden="true"></i>Get Link Facebook</label><div class="input-group"><input type="number" class="form-control" id="uptichxanh_price_get_link" name="uptichxanh_price_get_link" value="<?= htmlspecialchars((string) $upConfig['prices']['get-link'], ENT_QUOTES, 'UTF-8'); ?>" min="1" step="1" required><span class="input-group-text">VND</span></div></div>
                             <div class="col-md-6"><label class="form-label upx-admin-label" for="uptichxanh_price_up_fb"><i class="fa-brands fa-facebook" aria-hidden="true"></i>Up tích Facebook</label><div class="input-group"><input type="number" class="form-control" id="uptichxanh_price_up_fb" name="uptichxanh_price_up_fb" value="<?= htmlspecialchars((string) $upConfig['prices']['up-fb'], ENT_QUOTES, 'UTF-8'); ?>" min="1" step="1" required><span class="input-group-text">VND</span></div></div>
                             <div class="col-md-6"><label class="form-label upx-admin-label" for="uptichxanh_price_up_ig"><i class="fa-brands fa-instagram" aria-hidden="true"></i>Up tích Instagram</label><div class="input-group"><input type="number" class="form-control" id="uptichxanh_price_up_ig" name="uptichxanh_price_up_ig" value="<?= htmlspecialchars((string) $upConfig['prices']['up-ig'], ENT_QUOTES, 'UTF-8'); ?>" min="1" step="1" required><span class="input-group-text">VND</span></div></div>
-                            <div class="col-md-6"><label class="form-label upx-admin-label" for="uptichxanh_timeout"><i class="fa-solid fa-stopwatch" aria-hidden="true"></i><?= __('Timeout kết nối'); ?></label><div class="input-group"><input type="number" class="form-control" id="uptichxanh_timeout" name="uptichxanh_timeout" value="<?= htmlspecialchars((string) $upConfig['timeout'], ENT_QUOTES, 'UTF-8'); ?>" min="5" max="120" step="1" required><span class="input-group-text"><?= __('giây'); ?></span></div></div>
+                            <div class="col-md-6"><label class="form-label upx-admin-label" for="uptichxanh_timeout"><i class="fa-solid fa-stopwatch" aria-hidden="true"></i><?= __('Timeout kết nối'); ?></label><div class="input-group"><input type="number" class="form-control" id="uptichxanh_timeout" name="uptichxanh_timeout" value="<?= htmlspecialchars((string) $upConfig['timeout'], ENT_QUOTES, 'UTF-8'); ?>" min="60" max="120" step="1" required><span class="input-group-text"><?= __('giây'); ?></span></div></div>
                         </div>
                         <div class="upx-admin-help mt-3"><?= __('Giá bán được kiểm tra trước khi trừ tiền; nếu yêu cầu không thành công, hệ thống tự hoàn tiền cho khách.'); ?></div>
                     </div>

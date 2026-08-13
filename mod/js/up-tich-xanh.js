@@ -65,7 +65,7 @@
 
     function showResult(data) {
         if (!result) return;
-        var title = data.reconciled ? 'Đã đối soát yêu cầu trước đó' : 'Yêu cầu đã hoàn tất';
+        var title = data.pending ? 'Yêu cầu đã gửi thành công' : (data.reconciled ? 'Đã đối soát yêu cầu trước đó' : 'Yêu cầu đã hoàn tất');
         var html = '<strong>' + title + '</strong>'
             + '<span>Chi phí dịch vụ: ' + String(data.charged_label || '') + '</span>';
         if (data.uid) {

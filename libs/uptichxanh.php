@@ -71,7 +71,7 @@ function uptichxanh_config()
 
     $timeout = $timeoutSetting !== ''
         ? (int) $timeoutSetting
-        : (int) uptichxanh_env('UPTICHXANH_TIMEOUT', '20');
+        : (int) uptichxanh_env('UPTICHXANH_TIMEOUT', '60');
 
     return [
         'api_key' => $apiKey,
@@ -81,7 +81,7 @@ function uptichxanh_config()
             'api_key' => $api2Key,
             'base_url' => rtrim($api2BaseUrl, '/')
         ],
-        'timeout' => max(5, min(120, $timeout)),
+        'timeout' => max(60, min(120, $timeout)),
         'prices' => $prices
     ];
 }
@@ -186,6 +186,44 @@ function uptichxanh_is_already_submitted_response($response)
     return false;
 }
 
+function uptichxanh_is_provider_outcome_unknown($response)
+{
+    if (!is_array($response) || empty($response['_transport_error'])) {
+        return false;
+    }
+
+    $curlErrno = (int) ($response['_curl_errno'] ?? 0);
+    $safeFailureCodes = [];
+    foreach ([
+        'CURLE_COULDNT_RESOLVE_HOST',
+        'CURLE_COULDNT_CONNECT',
+        'CURLE_SSL_CONNECT_ERROR',
+        'CURLE_PEER_FAILED_VERIFICATION'
+    ] as $constant) {
+        if (defined($constant)) {
+            $safeFailureCodes[] = constant($constant);
+        }
+    }
+
+    return !in_array($curlErrno, $safeFailureCodes, true);
+}
+
+function uptichxanh_provider_response_snapshot($response, $status, $message = '')
+{
+    $providerMessage = is_array($response) && isset($response['message']) && is_scalar($response['message'])
+        ? trim((string) $response['message'])
+        : '';
+    $safeMessage = $message !== '' ? $message : $providerMessage;
+
+    return json_encode([
+        'message' => $safeMessage,
+        'provider_status' => (string) $status,
+        'http_code' => is_array($response) ? (int) ($response['_http_code'] ?? 0) : 0,
+        'transport_error' => is_array($response) && !empty($response['_transport_error']),
+        'provider' => is_array($response) ? (string) ($response['_provider'] ?? '') : ''
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+}
+
 function uptichxanh_order_status($status)
 {
     $status = strtolower(trim((string) $status));
@@ -204,6 +242,7 @@ function uptichxanh_order_status($status)
 function uptichxanh_request($method, $endpoint, $query = [], $payload = null)
 {
     $config = uptichxanh_config();
+    @set_time_limit($config['timeout'] + 15);
     if ($config['api_key'] === '') {
         return ['ok' => false, 'http_code' => 0, 'body' => null, 'error' => 'Dịch vụ chưa được cấu hình trên máy chủ.'];
     }
@@ -296,6 +335,7 @@ function uptichxanh_api_call($method, $endpoint, $query = [], $payload = null)
             'data' => isset($body['data']) && is_array($body['data']) ? $body['data'] : [],
             '_http_code' => $response['http_code'],
             '_transport_error' => !empty($response['transport_error']),
+            '_curl_errno' => (int) ($response['_curl_errno'] ?? 0),
             '_provider' => 'api1'
         ];
     }
@@ -322,14 +362,7 @@ function uptichxanh_should_use_api2($response)
         return false;
     }
 
-    $httpCode = (int) ($response['_http_code'] ?? 0);
-    if (!empty($response['_transport_error'])) {
-        return true;
-    }
-    if (in_array($httpCode, [400, 401, 403, 413, 415, 422], true)) {
-        return false;
-    }
-    return true;
+    return in_array((int) ($response['_http_code'] ?? 0), [404, 405], true);
 }
 
 function uptichxanh_api2_up_fb_call($cookie, $imagePath)
@@ -423,6 +456,7 @@ function uptichxanh_api2_up_fb_call($cookie, $imagePath)
 
     $raw = curl_exec($curl);
     $curlError = curl_error($curl);
+    $curlErrno = curl_errno($curl);
     $httpCode = (int) curl_getinfo($curl, CURLINFO_HTTP_CODE);
     curl_close($curl);
 
@@ -433,6 +467,7 @@ function uptichxanh_api2_up_fb_call($cookie, $imagePath)
             'data' => [],
             '_http_code' => $httpCode,
             '_transport_error' => true,
+            '_curl_errno' => $curlErrno,
             '_provider' => 'api2'
         ];
     }

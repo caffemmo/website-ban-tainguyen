@@ -198,6 +198,25 @@ if (!$isRepeatUid && !$userModel->RemoveCredits($getUser['id'], $salePrice, 'S�
     uptichxanh_json(['success' => false, 'message' => 'Không thể trừ tiền trong ví, vui lòng thử lại.'], 500);
 }
 
+$historyOrderId = $CMSNT->insert('up_tich_xanh_orders', [
+    'user_id' => (int) $getUser['id'],
+    'service' => $service,
+    'provider_uid' => $uidFromCookie !== '' ? $uidFromCookie : null,
+    'provider_cost' => 0,
+    'charged_amount' => $salePrice,
+    'provider_status' => 'processing',
+    'provider_response' => uptichxanh_provider_response_snapshot([], 'processing', 'Đang gửi yêu cầu đến dịch vụ.'),
+    'created_at' => date('Y-m-d H:i:s')
+]);
+if (!$historyOrderId) {
+    $userModel->RefundCredits($getUser['id'], $salePrice, 'Hoàn tiền dịch vụ ' . uptichxanh_service_label($service) . ' do không lưu được yêu cầu', $transactionId . '_refund');
+    if ($uploadedPath !== '') {
+        @unlink($uploadedPath);
+    }
+    uptichxanh_json(['success' => false, 'message' => 'Không thể lưu yêu cầu, số tiền đã được hoàn lại.'], 503);
+}
+ignore_user_abort(true);
+
 $providerResponse = uptichxanh_api_call('POST', $endpointCandidates[0], [], $payload);
 $providerEndpoint = $endpointCandidates[0];
 if (!$providerResponse['success'] && count($endpointCandidates) > 1
@@ -224,10 +243,35 @@ if ($alreadySubmitted) {
 if ($uploadedPath !== '') {
     @unlink($uploadedPath);
 }
-if (!$providerResponse['success']) {
-    if (!$isRepeatUid) {
-        $userModel->RefundCredits($getUser['id'], $salePrice, 'Hoàn tiền dịch vụ ' . uptichxanh_service_label($service) . ' do giao dịch lỗi', $transactionId . '_refund');
+$outcomeUnknown = !$providerResponse['success'] && uptichxanh_is_provider_outcome_unknown($providerResponse);
+if ($outcomeUnknown) {
+    $pendingMessage = 'Yêu cầu Up tích đã gửi thành công. Hệ thống đang xác nhận kết quả, vui lòng không gửi lại UID này.';
+    $pendingSaved = $CMSNT->update('up_tich_xanh_orders', [
+        'provider_status' => 'pending',
+        'provider_response' => uptichxanh_provider_response_snapshot($providerResponse, 'pending', $pendingMessage)
+    ], ' `id` = ? ', [(int) $historyOrderId]);
+    if (!$pendingSaved) {
+        error_log('Unable to mark Up Tich Xanh order as pending for user ' . (int) $getUser['id']);
     }
+    uptichxanh_json([
+        'success' => true,
+        'message' => $pendingMessage,
+        'data' => [
+            'uid' => $uidFromCookie,
+            'pending' => true,
+            'charged_amount' => $salePrice,
+            'charged_label' => format_currency($salePrice),
+            'wallet_balance' => (float) getUser($getUser['id'], 'money')
+        ]
+    ]);
+}
+if (!$providerResponse['success']) {
+    $CMSNT->update('up_tich_xanh_orders', [
+        'provider_status' => 'failed',
+        'charged_amount' => 0,
+        'provider_response' => uptichxanh_provider_response_snapshot($providerResponse, 'failed')
+    ], ' `id` = ? ', [(int) $historyOrderId]);
+    $userModel->RefundCredits($getUser['id'], $salePrice, 'Hoàn tiền dịch vụ ' . uptichxanh_service_label($service) . ' do giao dịch lỗi', $transactionId . '_refund');
     uptichxanh_json(['success' => false, 'message' => uptichxanh_error_text($providerResponse)], 502);
 }
 
@@ -246,9 +290,7 @@ if ($link !== '' && (filter_var($link, FILTER_VALIDATE_URL) === false || strtolo
     $link = '';
 }
 
-$historyOrderId = $CMSNT->insert('up_tich_xanh_orders', [
-    'user_id' => (int) $getUser['id'],
-    'service' => $service,
+$historyUpdated = $CMSNT->update('up_tich_xanh_orders', [
     'provider_uid' => $uid !== '' ? $uid : null,
     'result_link' => $link !== '' ? $link : null,
     'provider_cost' => $providerCost,
@@ -261,9 +303,8 @@ $historyOrderId = $CMSNT->insert('up_tich_xanh_orders', [
         'provider_status' => $providerStatus,
         'reconciled' => $alreadySubmitted
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
-    'created_at' => date('Y-m-d H:i:s')
-]);
-if (!$historyOrderId) {
+], ' `id` = ? ', [(int) $historyOrderId]);
+if (!$historyUpdated) {
     error_log('Unable to record Up Tich Xanh order for user ' . (int) $getUser['id']);
 }
 queueServiceOrderNotification(
