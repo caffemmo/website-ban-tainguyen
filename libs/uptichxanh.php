@@ -188,24 +188,54 @@ function uptichxanh_is_already_submitted_response($response)
 
 function uptichxanh_is_provider_outcome_unknown($response)
 {
-    if (!is_array($response) || empty($response['_transport_error'])) {
+    if (!is_array($response)) {
         return false;
     }
 
-    $curlErrno = (int) ($response['_curl_errno'] ?? 0);
-    $safeFailureCodes = [];
+    if (!empty($response['_transport_error'])) {
+        $curlErrno = (int) ($response['_curl_errno'] ?? 0);
+        $safeFailureCodes = [];
+        foreach ([
+            'CURLE_COULDNT_RESOLVE_HOST',
+            'CURLE_COULDNT_CONNECT',
+            'CURLE_SSL_CONNECT_ERROR',
+            'CURLE_PEER_FAILED_VERIFICATION'
+        ] as $constant) {
+            if (defined($constant)) {
+                $safeFailureCodes[] = constant($constant);
+            }
+        }
+
+        return !in_array($curlErrno, $safeFailureCodes, true);
+    }
+
+    $httpCode = (int) ($response['_http_code'] ?? 0);
+    $status = strtolower(trim((string) ($response['status'] ?? '')));
+    if (in_array($httpCode, [408, 504], true) || in_array($status, ['timeout', 'timed_out'], true)) {
+        return true;
+    }
+
+    $message = isset($response['message']) && is_scalar($response['message'])
+        ? trim((string) $response['message'])
+        : '';
+    if ($message === '') {
+        return false;
+    }
+
+    $message = function_exists('mb_strtolower') ? mb_strtolower($message, 'UTF-8') : strtolower($message);
     foreach ([
-        'CURLE_COULDNT_RESOLVE_HOST',
-        'CURLE_COULDNT_CONNECT',
-        'CURLE_SSL_CONNECT_ERROR',
-        'CURLE_PEER_FAILED_VERIFICATION'
-    ] as $constant) {
-        if (defined($constant)) {
-            $safeFailureCodes[] = constant($constant);
+        'phản hồi quá lâu',
+        'response timeout',
+        'request timeout',
+        'gateway timeout',
+        'timed out'
+    ] as $phrase) {
+        if (strpos($message, $phrase) !== false) {
+            return true;
         }
     }
 
-    return !in_array($curlErrno, $safeFailureCodes, true);
+    return false;
 }
 
 function uptichxanh_provider_response_snapshot($response, $status, $message = '')
@@ -292,7 +322,7 @@ function uptichxanh_request($method, $endpoint, $query = [], $payload = null)
             $transportMessage = 'Không phân giải được tên miền dịch vụ.';
         } elseif ((defined('CURLE_OPERATION_TIMEOUTED') && $curlErrno === CURLE_OPERATION_TIMEOUTED)
             || (defined('CURLE_OPERATION_TIMEDOUT') && $curlErrno === CURLE_OPERATION_TIMEDOUT)) {
-            $transportMessage = 'Dịch vụ phản hồi quá lâu, vui lòng thử lại sau.';
+            $transportMessage = 'Yêu cầu đang được xác nhận, vui lòng không gửi lại UID này.';
         } elseif (defined('CURLE_SSL_CONNECT_ERROR') && $curlErrno === CURLE_SSL_CONNECT_ERROR) {
             $transportMessage = 'Không thể thiết lập kết nối TLS đến dịch vụ.';
         } elseif (defined('CURLE_PEER_FAILED_VERIFICATION') && $curlErrno === CURLE_PEER_FAILED_VERIFICATION) {
