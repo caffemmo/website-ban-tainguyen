@@ -97,7 +97,6 @@
 
   $('#openEscrow').addEventListener('click', () => showToast('650.000 đ đang được giữ an toàn cho ticket #FB-4829.'));
   $('#showAllRequests').addEventListener('click', () => showToast('Đang hiển thị các yêu cầu trong workspace này.'));
-  $('#browseProviders').addEventListener('click', () => showToast('Danh sách đối tác đầy đủ sẽ được mở khi kết nối backend.'));
   $('#filterProviders').addEventListener('click', () => {
     const cards = $$('.provider-card');
     const isFiltered = cards.some((card) => card.hidden);
