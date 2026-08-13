@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Caffemmo Resolve - workspace điều phối dịch vụ hỗ trợ khôi phục tài khoản.">
+  <title>Caffemmo Resolve | Workspace</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/caffemmo-resolve.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar" aria-label="Điều hướng chính">
+      <a class="brand" href="#workspace" aria-label="Caffemmo Resolve, trang chủ">
+        <span class="brand-mark"><i data-lucide="shield-check"></i></span>
+        <span><strong>caffemmo</strong><small>RESOLVE</small></span>
+      </a>
+      <div class="sidebar-account">
+        <span class="avatar avatar-green">MK</span>
+        <div><strong>Minh Khôi</strong><small>Khách hàng</small></div>
+        <i data-lucide="chevrons-up-down"></i>
+      </div>
+      <nav class="side-nav">
+        <a class="active" href="#workspace"><i data-lucide="layout-dashboard"></i> Tổng quan</a>
+        <a href="#requests"><i data-lucide="file-plus-2"></i> Yêu cầu của tôi <span>3</span></a>
+        <a href="#providers"><i data-lucide="badge-check"></i> Đối tác đã xác minh</a>
+        <a href="#wallet"><i data-lucide="wallet-cards"></i> Ví ký quỹ</a>
+        <a href="#messages"><i data-lucide="messages-square"></i> Tin nhắn <span>2</span></a>
+      </nav>
+      <div class="sidebar-bottom">
+        <a href="#safety"><i data-lucide="shield-alert"></i> Trung tâm an toàn</a>
+        <a href="#support"><i data-lucide="circle-help"></i> Hỗ trợ</a>
+      </div>
+    </aside>
+
+    <main class="main-content" id="workspace">
+      <header class="topbar">
+        <button class="icon-button mobile-only" id="sidebarToggle" aria-label="Mở điều hướng"><i data-lucide="menu"></i></button>
+        <div class="breadcrumb"><span>Workspace</span><i data-lucide="chevron-right"></i><strong>Tổng quan</strong></div>
+        <div class="top-actions">
+          <button class="icon-button" aria-label="Thông báo"><i data-lucide="bell"></i><b></b></button>
+          <button class="help-button" type="button" data-open-safety><i data-lucide="shield-check"></i> Quy tắc an toàn</button>
+        </div>
+      </header>
+
+      <section class="welcome-row">
+        <div>
+          <p class="eyebrow">WORKSPACE KHÁCH HÀNG</p>
+          <h1>Chào Minh Khôi, bạn cần hỗ trợ việc gì?</h1>
+          <p class="welcome-copy">Tạo yêu cầu, so sánh báo giá và quản lý một quy trình rõ ràng từ đầu đến khi hoàn tất.</p>
+        </div>
+        <button class="primary-button" id="openRequest"><i data-lucide="plus"></i> Tạo yêu cầu mới</button>
+      </section>
+
+      <section class="safety-banner" id="safety">
+        <span class="safety-icon"><i data-lucide="shield-check"></i></span>
+        <div><strong>Bảo mật là điều kiện bắt buộc.</strong><p>Không ai trên Caffemmo được phép yêu cầu mật khẩu, cookie, mã 2FA hoặc token của bạn.</p></div>
+        <button class="text-button" type="button" data-open-safety>Tìm hiểu quy tắc <i data-lucide="arrow-up-right"></i></button>
+      </section>
+
+      <section class="summary-grid" aria-label="Tóm tắt công việc">
+        <article class="metric"><div class="metric-icon amber"><i data-lucide="clock-3"></i></div><div><span>Đang chờ báo giá</span><strong id="quoteCount">2</strong><small>Yêu cầu mới tạo</small></div></article>
+        <article class="metric"><div class="metric-icon blue"><i data-lucide="briefcase-business"></i></div><div><span>Đang xử lý</span><strong id="processCount">1</strong><small>Có một ticket cần theo dõi</small></div></article>
+        <article class="metric"><div class="metric-icon green"><i data-lucide="circle-check-big"></i></div><div><span>Đã hoàn thành</span><strong>12</strong><small>Đánh giá trung bình 4.9/5</small></div></article>
+        <article class="metric wallet-metric"><div class="metric-icon ink"><i data-lucide="landmark"></i></div><div><span>Số dư ký quỹ</span><strong>1.450.000 đ</strong><small>Được giữ tách biệt</small></div></article>
+      </section>
+
+      <section class="content-grid" id="requests">
+        <div class="requests-panel">
+          <div class="section-heading">
+            <div><p class="eyebrow">CÔNG VIỆC GẦN ĐÂY</p><h2>Yêu cầu của bạn</h2></div>
+            <button class="text-button" type="button" id="showAllRequests">Xem tất cả <i data-lucide="arrow-right"></i></button>
+          </div>
+          <div class="request-tabs" role="tablist" aria-label="Lọc yêu cầu">
+            <button class="selected" data-filter="all" role="tab" aria-selected="true">Tất cả <span>3</span></button>
+            <button data-filter="quote" role="tab" aria-selected="false">Chờ báo giá <span>2</span></button>
+            <button data-filter="processing" role="tab" aria-selected="false">Đang xử lý <span>1</span></button>
+          </div>
+          <div class="request-list" id="requestList">
+            <button class="request-row selected" data-status="processing" data-request="FB-4829">
+              <span class="request-symbol green"><i data-lucide="key-round"></i></span>
+              <span class="request-info"><strong>Không thể truy cập tài khoản</strong><small>#FB-4829 · Tạo 12 Th08, 14:32</small></span>
+              <span class="request-status progress"><i></i> Đang xử lý</span><i class="row-arrow" data-lucide="chevron-right"></i>
+            </button>
+            <button class="request-row" data-status="quote" data-request="FB-4834">
+              <span class="request-symbol amber"><i data-lucide="user-round-check"></i></span>
+              <span class="request-info"><strong>Xác minh danh tính tài khoản</strong><small>#FB-4834 · Tạo 13 Th08, 09:15</small></span>
+              <span class="request-status quote"><i></i> 3 báo giá mới</span><i class="row-arrow" data-lucide="chevron-right"></i>
+            </button>
+            <button class="request-row" data-status="quote" data-request="FB-4821">
+              <span class="request-symbol blue"><i data-lucide="file-search"></i></span>
+              <span class="request-info"><strong>Rà soát hồ sơ khôi phục</strong><small>#FB-4821 · Tạo 10 Th08, 18:40</small></span>
+              <span class="request-status quote"><i></i> 1 báo giá mới</span><i class="row-arrow" data-lucide="chevron-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <aside class="task-card" id="ticket">
+          <div class="task-top"><span class="request-status progress"><i></i> Đang xử lý</span><button class="icon-button" aria-label="Thêm tuỳ chọn"><i data-lucide="more-horizontal"></i></button></div>
+          <p class="ticket-code">#FB-4829</p>
+          <h2>Không thể truy cập tài khoản</h2>
+          <div class="provider-line"><span class="avatar avatar-purple">TT</span><span><small>Đối tác xử lý</small><strong>Trí Trần <i data-lucide="badge-check"></i></strong></span><button class="message-small" aria-label="Nhắn tin cho đối tác"><i data-lucide="message-circle"></i></button></div>
+          <div class="timeline">
+            <div class="done"><span><i data-lucide="check"></i></span><div><strong>Đã chọn đối tác</strong><small>12 Th08, 15:10</small></div></div>
+            <div class="done"><span><i data-lucide="check"></i></span><div><strong>Ký quỹ đã được giữ</strong><small>12 Th08, 15:16</small></div></div>
+            <div class="current"><span></span><div><strong>Đang hỗ trợ hồ sơ</strong><small>Đối tác sẽ cập nhật tại ticket</small></div></div>
+            <div><span></span><div><strong>Khách xác nhận hoàn tất</strong><small>Chưa đến bước này</small></div></div>
+          </div>
+          <div class="escrow-box"><span><i data-lucide="lock-keyhole"></i></span><div><small>Ký quỹ đang được bảo vệ</small><strong>650.000 đ</strong></div><button class="text-button" id="openEscrow">Chi tiết</button></div>
+          <div class="ticket-actions"><button class="secondary-button" id="openDispute"><i data-lucide="scale"></i> Báo sự cố</button><button class="primary-button" id="completeTask"><i data-lucide="circle-check"></i> Xác nhận hoàn tất</button></div>
+        </aside>
+      </section>
+
+      <section class="provider-section" id="providers">
+        <div class="section-heading"><div><p class="eyebrow">ĐỐI TÁC ĐÃ XÁC MINH</p><h2>Chọn người phù hợp với yêu cầu</h2></div><div class="provider-controls"><button class="filter-button" id="filterProviders"><i data-lucide="sliders-horizontal"></i> Bộ lọc</button><button class="text-button" type="button" id="browseProviders">Xem danh sách <i data-lucide="arrow-right"></i></button></div></div>
+        <div class="provider-list" id="providerList">
+          <article class="provider-card" data-rating="4.9"><div class="provider-card-head"><span class="avatar avatar-purple">TT</span><span class="verified"><i data-lucide="badge-check"></i> Đã xác minh</span><button class="icon-button favourite" aria-label="Lưu đối tác"><i data-lucide="heart"></i></button></div><h3>Trí Trần</h3><p>Chuyên viên hồ sơ &amp; khôi phục</p><div class="provider-stats"><span><i data-lucide="star"></i> 4.98 <small>(218)</small></span><span>Đã hoàn tất 426</span></div><div class="provider-footer"><strong>Từ 450.000 đ</strong><button class="outline-button" data-quote="Trí Trần">Yêu cầu báo giá</button></div></article>
+          <article class="provider-card" data-rating="4.8"><div class="provider-card-head"><span class="avatar avatar-blue">LA</span><span class="verified"><i data-lucide="badge-check"></i> Đã xác minh</span><button class="icon-button favourite" aria-label="Lưu đối tác"><i data-lucide="heart"></i></button></div><h3>Linh Anh</h3><p>Hỗ trợ tài khoản doanh nghiệp</p><div class="provider-stats"><span><i data-lucide="star"></i> 4.92 <small>(164)</small></span><span>Đã hoàn tất 309</span></div><div class="provider-footer"><strong>Từ 600.000 đ</strong><button class="outline-button" data-quote="Linh Anh">Yêu cầu báo giá</button></div></article>
+          <article class="provider-card" data-rating="4.7"><div class="provider-card-head"><span class="avatar avatar-orange">QN</span><span class="verified"><i data-lucide="badge-check"></i> Đã xác minh</span><button class="icon-button favourite" aria-label="Lưu đối tác"><i data-lucide="heart"></i></button></div><h3>Quân Nguyễn</h3><p>Rà soát &amp; chuẩn bị hồ sơ</p><div class="provider-stats"><span><i data-lucide="star"></i> 4.87 <small>(91)</small></span><span>Đã hoàn tất 148</span></div><div class="provider-footer"><strong>Từ 350.000 đ</strong><button class="outline-button" data-quote="Quân Nguyễn">Yêu cầu báo giá</button></div></article>
+        </div>
+      </section>
+
+      <section class="safety-grid"><div><p class="eyebrow">QUY TRÌNH MINH BẠCH</p><h2>Mỗi khoản tiền được giữ đến khi bạn xác nhận.</h2><p>Caffemmo chỉ đóng vai trò điều phối và bảo vệ giao dịch. Đối tác không thể nhận tiền trước khi công việc được bạn xác nhận hoàn tất.</p><a href="#ticket" class="inline-link">Xem điều khoản ký quỹ <i data-lucide="arrow-up-right"></i></a></div><ol><li><span>01</span><div><strong>Tạo yêu cầu rõ ràng</strong><p>Mô tả tình trạng, không đưa thông tin đăng nhập.</p></div></li><li><span>02</span><div><strong>Chọn báo giá phù hợp</strong><p>So sánh thời gian, chi phí và đánh giá đối tác.</p></div></li><li><span>03</span><div><strong>Ký quỹ, theo dõi và xác nhận</strong><p>Toàn bộ trao đổi được lưu trong ticket.</p></div></li></ol></section>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="modalBackdrop" hidden>
+    <section class="modal" id="requestModal" aria-modal="true" role="dialog" aria-labelledby="modalTitle">
+      <div class="modal-header"><div><p class="eyebrow">YÊU CẦU MỚI</p><h2 id="modalTitle">Bạn cần hỗ trợ gì?</h2></div><button class="icon-button close-modal" aria-label="Đóng"><i data-lucide="x"></i></button></div>
+      <form id="requestForm">
+        <label for="serviceType">Loại yêu cầu<select id="serviceType" required><option value="Không thể truy cập tài khoản">Không thể truy cập tài khoản</option><option value="Xác minh danh tính tài khoản">Xác minh danh tính tài khoản</option><option value="Rà soát hồ sơ khôi phục">Rà soát hồ sơ khôi phục</option></select></label>
+        <label for="requestDetails">Mô tả tình trạng<textarea id="requestDetails" rows="4" required placeholder="Ví dụ: Tôi không thể truy cập tài khoản và cần hỗ trợ chuẩn bị hồ sơ qua quy trình chính thức."></textarea></label>
+        <div class="notice"><i data-lucide="shield-alert"></i><p>Không nhập mật khẩu, mã xác thực, cookie, token hoặc ảnh chứa thông tin nhạy cảm.</p></div>
+        <div class="modal-actions"><button class="secondary-button close-modal" type="button">Huỷ</button><button class="primary-button" type="submit"><i data-lucide="send"></i> Gửi yêu cầu</button></div>
+      </form>
+    </section>
+    <section class="modal modal-small" id="safetyModal" aria-modal="true" role="dialog" aria-labelledby="safetyTitle" hidden>
+      <div class="modal-header"><div><p class="eyebrow">QUY TẮC AN TOÀN</p><h2 id="safetyTitle">Bảo vệ tài khoản của bạn</h2></div><button class="icon-button close-modal" aria-label="Đóng"><i data-lucide="x"></i></button></div>
+      <ul class="safety-list"><li><i data-lucide="ban"></i><span>Không chia sẻ mật khẩu, cookie, token hoặc mã xác thực.</span></li><li><i data-lucide="file-check-2"></i><span>Đối tác chỉ hỗ trợ bạn chuẩn bị và thực hiện quy trình khôi phục chính thức của Meta.</span></li><li><i data-lucide="message-square-warning"></i><span>Giữ trao đổi và tệp đính kèm trong ticket để có căn cứ khi cần hỗ trợ.</span></li></ul>
+      <button class="primary-button close-modal" type="button">Tôi đã hiểu</button>
+    </section>
+    <section class="modal modal-small" id="disputeModal" aria-modal="true" role="dialog" aria-labelledby="disputeTitle" hidden>
+      <div class="modal-header"><div><p class="eyebrow">BÁO SỰ CỐ</p><h2 id="disputeTitle">Chúng tôi sẽ tạm giữ ký quỹ</h2></div><button class="icon-button close-modal" aria-label="Đóng"><i data-lucide="x"></i></button></div>
+      <form id="disputeForm"><label for="disputeReason">Lý do<select id="disputeReason"><option>Đối tác không phản hồi</option><option>Tiến độ không đúng cam kết</option><option>Cần đội ngũ hỗ trợ xem xét</option></select></label><label for="disputeDetails">Thông tin thêm<textarea id="disputeDetails" rows="3" placeholder="Mô tả ngắn sự việc để đội ngũ xem xét."></textarea></label><div class="modal-actions"><button class="secondary-button close-modal" type="button">Huỷ</button><button class="danger-button" type="submit"><i data-lucide="flag"></i> Gửi báo sự cố</button></div></form>
+    </section>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"><i data-lucide="circle-check"></i><span></span></div>
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+  <script src="assets/caffemmo-resolve.js"></script>
+</body>
+</html>
