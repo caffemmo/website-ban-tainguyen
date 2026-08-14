@@ -83,6 +83,57 @@
 .locket-status.is-closed { border-color: #e2c6c6; color: #9a4b4b; background: #fff7f7; }
 .locket-status.is-closed i { background: #c95d5d; }
 
+.locket-maintenance-banner {
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr);
+    gap: 16px;
+    align-items: center;
+    margin-top: 20px;
+    padding: 20px 22px;
+    border: 1px solid #f2b6ad;
+    border-left: 5px solid #d94c3d;
+    border-radius: 8px;
+    color: #6f302a;
+    background: #fff4f2;
+    box-shadow: 0 8px 18px rgba(151, 55, 43, .08);
+}
+
+.locket-maintenance-icon {
+    display: grid;
+    width: 48px;
+    height: 48px;
+    place-items: center;
+    border-radius: 8px;
+    color: #fff;
+    background: #d94c3d;
+    font-size: 20px;
+}
+
+.locket-maintenance-kicker {
+    display: block;
+    margin-bottom: 4px;
+    color: #b23f33;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.locket-maintenance-banner h2 {
+    margin: 0;
+    color: #922f27;
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.locket-maintenance-banner p {
+    margin: 6px 0 0;
+    color: #7b4640;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
 .locket-content-grid {
     display: grid;
     grid-template-columns: minmax(0, 1.25fr) minmax(360px, .75fr);
@@ -235,6 +286,10 @@
     .locket-history-hero { align-items: flex-start; flex-direction: column; padding: 18px; }
     .locket-hero h1,
     .locket-history-hero h1 { font-size: 25px; }
+    .locket-maintenance-banner { grid-template-columns: 40px minmax(0, 1fr); gap: 12px; padding: 16px; }
+    .locket-maintenance-icon { width: 40px; height: 40px; font-size: 17px; }
+    .locket-maintenance-banner h2 { font-size: 21px; }
+    .locket-maintenance-banner p { font-size: 12px; }
     .locket-panel { padding: 18px; }
     .locket-package-grid { grid-template-columns: 1fr; }
     .locket-package-price { font-size: 21px; }

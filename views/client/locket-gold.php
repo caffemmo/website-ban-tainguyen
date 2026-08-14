@@ -25,7 +25,7 @@ $body = [
     'desc' => __('Nâng cấp tài khoản Locket Gold Vĩnh Viễn nhanh chóng từ Caffemmo.'),
     'keyword' => 'locket gold vĩnh viễn, nâng cấp locket'
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/locket-gold.css?v=2') . '"><link rel="stylesheet" href="' . BASE_URL('mod/css/client-resources.css?v=1') . '">';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/locket-gold.css?v=3') . '"><link rel="stylesheet" href="' . BASE_URL('mod/css/client-resources.css?v=1') . '">';
 $body['footer'] = '<script src="' . BASE_URL('mod/js/client-resources.js?v=1') . '"></script><script src="' . BASE_URL('mod/js/locket-gold.js?v=2') . '"></script>';
 
 require_once __DIR__ . '/header.php';
@@ -50,6 +50,17 @@ require_once __DIR__ . '/nav.php';
         </div>
         <span class="locket-status <?= $locketGoldEnabled ? 'is-ready' : 'is-closed'; ?>" role="status"><i class="fa-solid fa-circle" aria-hidden="true"></i><?= $locketGoldEnabled ? __('Đang nhận đơn') : __('Đang bảo trì'); ?></span>
     </section>
+
+    <?php if (!$locketGoldEnabled): ?>
+    <section class="locket-maintenance-banner" role="alert" aria-labelledby="locket-maintenance-title">
+        <span class="locket-maintenance-icon"><i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i></span>
+        <div>
+            <span class="locket-maintenance-kicker"><?= __('Thông báo dịch vụ'); ?></span>
+            <h2 id="locket-maintenance-title"><?= __('Locket Gold đang bảo trì'); ?></h2>
+            <p><?= __('Tạm thời không nhận đơn mới. Vui lòng quay lại sau; các đơn đã gửi vẫn được lưu và theo dõi bình thường.'); ?></p>
+        </div>
+    </section>
+    <?php endif; ?>
 
     <?php require __DIR__ . '/client-resources.php'; ?>
 
