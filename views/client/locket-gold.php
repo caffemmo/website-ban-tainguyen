@@ -26,7 +26,7 @@ $body = [
     'keyword' => 'locket gold vĩnh viễn, nâng cấp locket'
 ];
 $body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/locket-gold.css?v=2') . '"><link rel="stylesheet" href="' . BASE_URL('mod/css/client-resources.css?v=1') . '">';
-$body['footer'] = '<script src="' . BASE_URL('mod/js/client-resources.js?v=1') . '"></script><script src="' . BASE_URL('mod/js/locket-gold.js?v=1') . '"></script>';
+$body['footer'] = '<script src="' . BASE_URL('mod/js/client-resources.js?v=1') . '"></script><script src="' . BASE_URL('mod/js/locket-gold.js?v=2') . '"></script>';
 
 require_once __DIR__ . '/header.php';
 require_once __DIR__ . '/nav.php';
@@ -48,7 +48,7 @@ require_once __DIR__ . '/nav.php';
             <h1 id="locket-page-title"><?= __('Locket Gold Vĩnh Viễn'); ?></h1>
             <p><?= __('Chọn gói phù hợp, nhập username và theo dõi đơn ngay trên Caffemmo.'); ?></p>
         </div>
-        <span class="locket-status <?= $locketGoldEnabled ? 'is-ready' : 'is-closed'; ?>" role="status"><i class="fa-solid fa-circle" aria-hidden="true"></i><?= $locketGoldEnabled ? __('Đang nhận đơn') : __('Tạm đóng'); ?></span>
+        <span class="locket-status <?= $locketGoldEnabled ? 'is-ready' : 'is-closed'; ?>" role="status"><i class="fa-solid fa-circle" aria-hidden="true"></i><?= $locketGoldEnabled ? __('Đang nhận đơn') : __('Đang bảo trì'); ?></span>
     </section>
 
     <?php require __DIR__ . '/client-resources.php'; ?>

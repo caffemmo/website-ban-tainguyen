@@ -32,7 +32,7 @@ if ($action !== 'create_order') {
     locket_gold_json(['success' => false, 'message' => 'Thao tác không hợp lệ.'], 400);
 }
 if (!locket_gold_enabled()) {
-    locket_gold_json(['success' => false, 'message' => 'Dịch vụ đang tạm đóng, vui lòng quay lại sau.'], 503);
+    locket_gold_json(['success' => false, 'message' => 'Dịch vụ Locket Gold đang bảo trì, vui lòng quay lại sau.'], 503);
 }
 
 $packageKey = isset($_POST['package_key']) && is_scalar($_POST['package_key']) ? trim((string) $_POST['package_key']) : '';

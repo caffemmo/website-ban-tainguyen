@@ -50,7 +50,8 @@ if (isset($_POST['SaveLocketGoldSettings'])) {
         admin_msg_error('Thời hạn bảo hành phải từ 1 đến 3650 ngày.', base_url_admin('settings&tab=locket-gold'), 1200);
     }
 
-    locket_gold_admin_save_setting('locket_gold_enabled', isset($_POST['locket_gold_enabled']) ? '1' : '0');
+    $locketGoldMaintenance = isset($_POST['locket_gold_maintenance']);
+    locket_gold_admin_save_setting('locket_gold_enabled', $locketGoldMaintenance ? '0' : '1');
     locket_gold_admin_save_setting('locket_gold_warranty_days', (string) $warrantyDays);
     foreach ($prices as $setting => $price) {
         locket_gold_admin_save_setting($setting, $price);
@@ -61,12 +62,13 @@ if (isset($_POST['SaveLocketGoldSettings'])) {
         'ip' => myip(),
         'device' => getUserAgent(),
         'createdate' => gettime(),
-        'action' => __('Cập nhật cấu hình Locket Gold Vĩnh Viễn')
+        'action' => __('Cập nhật cấu hình Locket Gold Vĩnh Viễn: ') . ($locketGoldMaintenance ? __('bật bảo trì') : __('mở nhận đơn'))
     ]);
     admin_msg_success('Đã lưu cấu hình Locket Gold Vĩnh Viễn.', base_url_admin('settings&tab=locket-gold'), 900);
 }
 
 $locketGoldEnabled = locket_gold_enabled();
+$locketGoldMaintenance = !$locketGoldEnabled;
 $locketGoldWarrantyDays = locket_gold_warranty_days();
 $locketGoldPackages = locket_gold_packages();
 ?>
@@ -77,7 +79,9 @@ $locketGoldPackages = locket_gold_packages();
     .locket-admin-intro p { margin:0; color:#6b7280; }
     .locket-admin-status { display:inline-flex; min-height:30px; align-items:center; gap:7px; padding:6px 10px; border:1px solid #d1d5db; border-radius:999px; color:#6b7280; background:#fff; white-space:nowrap; font-size:12px; font-weight:700; }
     .locket-admin-status.is-ready { border-color:#b8e2ca; color:#16734a; background:#f0fbf4; }
+    .locket-admin-status.is-maintenance { border-color:#f4c9a3; color:#a24c12; background:#fff7ed; }
     .locket-admin-status i { font-size:8px; }
+    .locket-admin-status.is-maintenance i { font-size:12px; }
     .locket-admin-card { height:100%; border:1px solid #e5e7eb; border-radius:10px; box-shadow:0 7px 20px rgba(31,55,82,.05); }
     .locket-admin-card .card-header { padding:18px 20px 0; border:0; background:transparent; }
     .locket-admin-card .card-body { padding:18px 20px 20px; }
@@ -98,7 +102,7 @@ $locketGoldPackages = locket_gold_packages();
             <h4><i class="fa-solid fa-crown me-2" aria-hidden="true"></i><?= __('Cấu hình Locket Gold Vĩnh Viễn'); ?></h4>
             <p><?= __('Quản lý giá bán, thời hạn bảo hành và trạng thái nhận đơn thủ công.'); ?></p>
         </div>
-        <span class="locket-admin-status <?= $locketGoldEnabled ? 'is-ready' : ''; ?>"><i class="fa-solid fa-circle" aria-hidden="true"></i><?= $locketGoldEnabled ? __('Đang mở bán') : __('Đang tắt'); ?></span>
+        <span class="locket-admin-status <?= $locketGoldMaintenance ? 'is-maintenance' : 'is-ready'; ?>"><i class="fa-solid <?= $locketGoldMaintenance ? 'fa-screwdriver-wrench' : 'fa-circle'; ?>" aria-hidden="true"></i><?= $locketGoldMaintenance ? __('Đang bảo trì') : __('Đang nhận đơn'); ?></span>
     </div>
 
     <form action="" method="POST" autocomplete="off">
@@ -126,9 +130,10 @@ $locketGoldPackages = locket_gold_packages();
                     <div class="card-header"><div class="card-title mb-0"><i class="fa-solid fa-sliders me-2 text-warning" aria-hidden="true"></i><?= __('Trạng thái dịch vụ'); ?></div></div>
                     <div class="card-body">
                         <div class="form-check form-switch form-check-lg mb-4">
-                            <input class="form-check-input" type="checkbox" role="switch" id="locket_gold_enabled" name="locket_gold_enabled" value="1" <?= $locketGoldEnabled ? 'checked' : ''; ?>>
-                            <label class="form-check-label fw-semibold" for="locket_gold_enabled"><?= __('Cho phép khách tạo đơn Locket Gold Vĩnh Viễn'); ?></label>
+                            <input class="form-check-input" type="checkbox" role="switch" id="locket_gold_maintenance" name="locket_gold_maintenance" value="1" <?= $locketGoldMaintenance ? 'checked' : ''; ?>>
+                            <label class="form-check-label fw-semibold" for="locket_gold_maintenance"><?= __('Bật bảo trì Locket Gold Vĩnh Viễn'); ?></label>
                         </div>
+                        <div class="locket-admin-note mb-4"><i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i><span><?= __('Khi bật bảo trì, khách vẫn xem được trang dịch vụ nhưng không thể tạo đơn mới. Các đơn đã tạo và lịch sử đơn không bị thay đổi.'); ?></span></div>
                         <div class="mb-4">
                             <label class="form-label locket-admin-label" for="locket_gold_warranty_days"><i class="fa-solid fa-shield-heart" aria-hidden="true"></i><?= __('Thời hạn bảo hành'); ?></label>
                             <div class="input-group">
@@ -142,6 +147,6 @@ $locketGoldPackages = locket_gold_packages();
                 </div>
             </div>
         </div>
-        <div class="d-flex justify-content-end mt-4"><button type="submit" name="SaveLocketGoldSettings" class="btn locket-admin-save"><i class="fa-solid fa-floppy-disk me-2" aria-hidden="true"></i><?= __('Lưu cấu hình'); ?></button></div>
+        <div class="d-flex justify-content-end mt-4"><button type="submit" name="SaveLocketGoldSettings" class="btn locket-admin-save"><i class="fa-solid fa-floppy-disk me-2" aria-hidden="true"></i><?= __('Lưu và áp dụng'); ?></button></div>
     </form>
 </div>

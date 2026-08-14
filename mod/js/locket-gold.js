@@ -76,7 +76,7 @@
             return;
         }
         if (!enabled) {
-            showResult('Dịch vụ đang tạm đóng', 'Vui lòng quay lại sau.', true);
+            showResult('Dịch vụ đang bảo trì', 'Vui lòng quay lại sau.', true);
             return;
         }
 
