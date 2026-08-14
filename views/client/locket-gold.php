@@ -25,7 +25,7 @@ $body = [
     'desc' => __('Nâng cấp tài khoản Locket Gold Vĩnh Viễn nhanh chóng từ Caffemmo.'),
     'keyword' => 'locket gold vĩnh viễn, nâng cấp locket'
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/locket-gold.css?v=3') . '"><link rel="stylesheet" href="' . BASE_URL('mod/css/client-resources.css?v=1') . '">';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/locket-gold.css?v=4') . '"><link rel="stylesheet" href="' . BASE_URL('mod/css/client-resources.css?v=1') . '">';
 $body['footer'] = '<script src="' . BASE_URL('mod/js/client-resources.js?v=1') . '"></script><script src="' . BASE_URL('mod/js/locket-gold.js?v=2') . '"></script>';
 
 require_once __DIR__ . '/header.php';
@@ -33,7 +33,7 @@ require_once __DIR__ . '/nav.php';
 ?>
 
 <main
-    class="locket-page"
+    class="locket-page<?= !$locketGoldEnabled ? ' is-maintenance-active' : ''; ?>"
     data-locket-app
     data-endpoint="<?= htmlspecialchars(BASE_URL('ajaxs/client/locket-gold.php'), ENT_QUOTES, 'UTF-8'); ?>"
     data-token="<?= htmlspecialchars($getUser ? (string) ($getUser['token'] ?? '') : '', ENT_QUOTES, 'UTF-8'); ?>"
