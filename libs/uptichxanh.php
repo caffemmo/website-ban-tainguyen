@@ -142,22 +142,6 @@ function uptichxanh_extract_uid($service, $cookie)
     return preg_match('/^\d{1,100}$/', $uid) ? $uid : '';
 }
 
-function uptichxanh_find_successful_uid_order($userId, $service, $uid)
-{
-    global $CMSNT;
-    if (!isset($CMSNT) || !is_object($CMSNT) || $uid === '' || !in_array($service, ['get-link', 'up-fb', 'up-ig'], true)) {
-        return null;
-    }
-
-    return $CMSNT->get_row_safe(
-        "SELECT `id`, `provider_uid`, `result_link`, `provider_status` FROM `up_tich_xanh_orders`
-         WHERE `user_id` = ? AND `service` = ? AND `provider_uid` = ?
-         AND `provider_status` IN ('success', 'completed', 'pending', 'processing', 'queued', 'accepted')
-         ORDER BY `id` DESC LIMIT 1",
-        [(int) $userId, $service, $uid]
-    );
-}
-
 function uptichxanh_is_already_submitted_response($response)
 {
     if (!is_array($response) || !empty($response['_transport_error'])) {
