@@ -141,6 +141,8 @@ if ($cookie === '' || mb_strlen($cookie) > 100000) {
 }
 
 $uidFromCookie = uptichxanh_extract_uid($service, $cookie);
+$previousUidOrder = uptichxanh_find_successful_uid_order($getUser['id'], $service, $uidFromCookie);
+$isRepeatUid = is_array($previousUidOrder);
 
 $payload = ['cookie' => $cookie];
 $uploadedPath = '';
@@ -160,7 +162,8 @@ if ($salePrice <= 0) {
     }
     uptichxanh_json(['success' => false, 'message' => 'Dịch vụ chưa được thiết lập giá bán.'], 503);
 }
-if ((float) $getUser['money'] < $salePrice) {
+$requestCharge = $isRepeatUid ? 0 : $salePrice;
+if (!$isRepeatUid && (float) $getUser['money'] < $salePrice) {
     if ($uploadedPath !== '') {
         @unlink($uploadedPath);
     }
@@ -169,7 +172,7 @@ if ((float) $getUser['money'] < $salePrice) {
 
 $transactionId = 'up_tich_xanh_' . bin2hex(random_bytes(8));
 $userModel = new users();
-if (!$userModel->RemoveCredits($getUser['id'], $salePrice, 'Sử dụng ' . uptichxanh_service_label($service), $transactionId)) {
+if (!$isRepeatUid && !$userModel->RemoveCredits($getUser['id'], $salePrice, 'Sử dụng ' . uptichxanh_service_label($service), $transactionId)) {
     if ($uploadedPath !== '') {
         @unlink($uploadedPath);
     }
@@ -181,13 +184,15 @@ $historyOrderId = $CMSNT->insert('up_tich_xanh_orders', [
     'service' => $service,
     'provider_uid' => $uidFromCookie !== '' ? $uidFromCookie : null,
     'provider_cost' => 0,
-    'charged_amount' => $salePrice,
+    'charged_amount' => $requestCharge,
     'provider_status' => 'processing',
     'provider_response' => uptichxanh_provider_response_snapshot([], 'processing', 'Đang gửi yêu cầu đến dịch vụ.'),
     'created_at' => date('Y-m-d H:i:s')
 ]);
 if (!$historyOrderId) {
-    $userModel->RefundCredits($getUser['id'], $salePrice, 'Hoàn tiền dịch vụ ' . uptichxanh_service_label($service) . ' do không lưu được yêu cầu', $transactionId . '_refund');
+    if (!$isRepeatUid) {
+        $userModel->RefundCredits($getUser['id'], $salePrice, 'Hoàn tiền dịch vụ ' . uptichxanh_service_label($service) . ' do không lưu được yêu cầu', $transactionId . '_refund');
+    }
     if ($uploadedPath !== '') {
         @unlink($uploadedPath);
     }
@@ -210,7 +215,9 @@ if (!$providerResponse['success'] && !$alreadySubmitted && $service === 'up-fb' 
 }
 $alreadySubmitted = $alreadySubmitted || uptichxanh_is_already_submitted_response($providerResponse);
 if ($alreadySubmitted) {
-    $userModel->RefundCredits($getUser['id'], $salePrice, 'Hoàn tiền dịch vụ ' . uptichxanh_service_label($service) . ' do UID đã được gửi trước đó', $transactionId . '_refund');
+    if (!$isRepeatUid) {
+        $userModel->RefundCredits($getUser['id'], $salePrice, 'Hoàn tiền dịch vụ ' . uptichxanh_service_label($service) . ' do UID đã được gửi trước đó', $transactionId . '_refund');
+    }
     $providerResponse['success'] = true;
     $providerResponse['status'] = 'pending';
     $providerResponse['message'] = 'UID này đã được gửi xác minh trước đó hoặc đang chờ duyệt. Website không thu thêm phí lần này.';
@@ -221,7 +228,9 @@ if ($uploadedPath !== '') {
 }
 $outcomeUnknown = !$providerResponse['success'] && uptichxanh_is_provider_outcome_unknown($providerResponse);
 if ($outcomeUnknown) {
-    $pendingMessage = 'Yêu cầu Up tích đã gửi thành công. Hệ thống đang xác nhận kết quả, vui lòng không gửi lại UID này.';
+    $pendingMessage = $isRepeatUid
+        ? 'UID cũ đã được gọi lại API miễn phí 0đ. Hệ thống đang xác nhận kết quả.'
+        : 'Yêu cầu Up tích đã gửi thành công. Hệ thống đang xác nhận kết quả, vui lòng không gửi lại UID này.';
     $pendingSaved = $CMSNT->update('up_tich_xanh_orders', [
         'provider_status' => 'pending',
         'provider_response' => uptichxanh_provider_response_snapshot($providerResponse, 'pending', $pendingMessage)
@@ -235,8 +244,9 @@ if ($outcomeUnknown) {
         'data' => [
             'uid' => $uidFromCookie,
             'pending' => true,
-            'charged_amount' => $salePrice,
-            'charged_label' => format_currency($salePrice),
+            'charged_amount' => $requestCharge,
+            'charged_label' => format_currency($requestCharge),
+            'repeated_uid' => $isRepeatUid,
             'wallet_balance' => (float) getUser($getUser['id'], 'money')
         ]
     ]);
@@ -247,7 +257,9 @@ if (!$providerResponse['success']) {
         'charged_amount' => 0,
         'provider_response' => uptichxanh_provider_response_snapshot($providerResponse, 'failed')
     ], ' `id` = ? ', [(int) $historyOrderId]);
-    $userModel->RefundCredits($getUser['id'], $salePrice, 'Hoàn tiền dịch vụ ' . uptichxanh_service_label($service) . ' do giao dịch lỗi', $transactionId . '_refund');
+    if (!$isRepeatUid) {
+        $userModel->RefundCredits($getUser['id'], $salePrice, 'Hoàn tiền dịch vụ ' . uptichxanh_service_label($service) . ' do giao dịch lỗi', $transactionId . '_refund');
+    }
     uptichxanh_json(['success' => false, 'message' => uptichxanh_error_text($providerResponse)], 502);
 }
 
@@ -256,7 +268,7 @@ $providerCost = isset($data['cost']) && is_numeric($data['cost']) ? (float) $dat
 $providerBalance = isset($data['new_balance']) && is_numeric($data['new_balance']) ? (float) $data['new_balance'] : null;
 $uid = isset($data['uid']) && is_scalar($data['uid']) ? trim((string) $data['uid']) : '';
 $uid = $uid !== '' ? $uid : $uidFromCookie;
-$chargedAmount = $alreadySubmitted ? 0 : $salePrice;
+$chargedAmount = $alreadySubmitted ? 0 : $requestCharge;
 $providerStatus = (string) ($providerResponse['status'] ?? 'success');
 if ($providerName === 'api2' && !$alreadySubmitted) {
     $providerStatus = 'success';
@@ -289,7 +301,9 @@ queueServiceOrderNotification(
     $chargedAmount,
     $historyOrderId ? (string) $historyOrderId : $transactionId,
     1,
-    $alreadySubmitted ? 'UID đã xử lý trước đó, đã hoàn tiền lần gửi này' : 'Yêu cầu đã được tiếp nhận',
+    $alreadySubmitted
+        ? 'UID đã xử lý trước đó, miễn phí 0đ lần gửi này'
+        : ($isRepeatUid ? 'UID cũ đã được gọi lại API, miễn phí 0đ' : 'Yêu cầu đã được tiếp nhận'),
     ['source' => 'up_tich_xanh', 'service_code' => $service, 'provider' => $providerName, 'endpoint' => $providerEndpoint]
 );
 
@@ -299,12 +313,15 @@ $safeData = [
     'charged_amount' => $chargedAmount,
     'charged_label' => format_currency($chargedAmount),
     'reconciled' => $alreadySubmitted,
+    'repeated_uid' => $isRepeatUid,
     'wallet_balance' => (float) getUser($getUser['id'], 'money')
 ];
 uptichxanh_json([
     'success' => true,
     'message' => $alreadySubmitted
         ? (string) $providerResponse['message']
-        : ($service === 'get-link' ? 'Đã tạo link xác minh.' : 'Yêu cầu xác minh đã được tiếp nhận.'),
+        : ($service === 'get-link'
+            ? 'Đã tạo link xác minh.'
+            : ($isRepeatUid ? 'UID cũ đã được gọi lại API, miễn phí 0đ.' : 'Yêu cầu xác minh đã được tiếp nhận.')),
     'data' => $safeData
 ]);
