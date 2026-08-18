@@ -7,34 +7,63 @@ require_once(__DIR__ . "/../libs/helper.php");
 require_once(__DIR__ . "/../libs/database/users.php");
 $CMSNT = new DB();
 
-if (empty($_REQUEST['api_key'])) {
+header('Content-Type: application/json; charset=utf-8');
+
+function import_account_request_value($key)
+{
+    if (isset($_POST[$key])) {
+        return $_POST[$key];
+    }
+    if (isset($_GET[$key])) {
+        return $_GET[$key];
+    }
+    return null;
+}
+
+function import_account_api_key()
+{
+    $authorization = $_SERVER['HTTP_AUTHORIZATION'] ?? ($_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '');
+    if (is_string($authorization) && preg_match('/^\s*Bearer\s+(.+?)\s*$/i', $authorization, $matches)) {
+        return trim((string) $matches[1]);
+    }
+
+    $apiKey = $_SERVER['HTTP_X_API_KEY'] ?? '';
+    return is_scalar($apiKey) ? trim((string) $apiKey) : '';
+}
+
+$api_key = import_account_api_key();
+if ($api_key === '') {
+    $api_key = import_account_request_value('api_key');
+}
+$code = import_account_request_value('code');
+$account = import_account_request_value('account');
+$filterInput = import_account_request_value('filter');
+
+if (!is_scalar($api_key) || trim((string) $api_key) === '') {
     die(json_encode(['status' => 'error', 'msg' => __('Vui lòng nhập API KEY')]));
 }
-if (empty($_REQUEST['code'])) {
+if (!is_scalar($code) || trim((string) $code) === '') {
     die(json_encode(['status' => 'error', 'msg' => __('Vui lòng nhập Mã Kho Hàng')]));
 }
-if (empty($_REQUEST['account'])) {
+if (!is_scalar($account) || trim((string) $account) === '') {
     die(json_encode(['status' => 'error', 'msg' => __('Vui lòng nhập Tài khoản cần thêm')]));
 }
 // Validate input parameters
-$api_key = validate_alphanumeric($_REQUEST['api_key']);
+$api_key = validate_alphanumeric((string) $api_key);
 if ($api_key === false) {
     die(json_encode(['status' => 'error', 'msg' => __('API Key không hợp lệ')]));
 }
 
-$code = validate_string($_REQUEST['code']);
+$code = validate_string((string) $code);
 if ($code === false) {
     die(json_encode(['status' => 'error', 'msg' => __('Mã kho hàng không hợp lệ')]));
 }
 
-$account = $_REQUEST['account'];
-if ($account === false) {
-    die(json_encode(['status' => 'error', 'msg' => __('Tài khoản không hợp lệ')]));
-}
+$account = (string) $account;
 $value_add = 0;
 $value_update = 0;
 $accountLines = preg_split("/\r\n|\r|\n/", $account);
-$filter = isset($_REQUEST['filter']) ? validate_int($_REQUEST['filter'], 0, 1) : 1;
+$filter = $filterInput !== null ? validate_int($filterInput, 0, 1) : 1;
 if ($filter === false) {
     $filter = 1; // Default value if invalid
 }
