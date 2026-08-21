@@ -10,6 +10,7 @@
     var unavailableMessage = app.getAttribute('data-unavailable-message') || 'Dịch vụ đang được cập nhật.';
     var loginUrl = app.getAttribute('data-login-url');
     var servicesRoot = app.querySelector('[data-social-buff-services]');
+    var serviceCount = app.querySelector('[data-social-buff-count]');
     var historyRoot = app.querySelector('[data-social-buff-history]');
     var feedback = app.querySelector('[data-social-buff-feedback]');
     var form = app.querySelector('[data-social-buff-form]');
@@ -20,6 +21,10 @@
     var total = app.querySelector('[data-social-buff-total]');
     var unit = app.querySelector('[data-social-buff-unit]');
     var selectedRoot = app.querySelector('[data-social-buff-selected]');
+    var detailPlatform = app.querySelector('[data-social-buff-detail-platform]');
+    var detailRate = app.querySelector('[data-social-buff-detail-rate]');
+    var detailMin = app.querySelector('[data-social-buff-detail-min]');
+    var detailMax = app.querySelector('[data-social-buff-detail-max]');
     var submit = app.querySelector('[data-social-buff-submit]');
     var search = app.querySelector('[data-social-buff-search]');
     var filters = app.querySelector('[data-social-buff-filters]');
@@ -96,6 +101,7 @@
     function renderServices() {
         if (!servicesRoot) return;
         var filtered = visibleServices();
+        if (serviceCount) serviceCount.textContent = filtered.length + ' dịch vụ';
         if (!filtered.length) {
             servicesRoot.innerHTML = '<div class="social-buff-history-empty"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><span>Không tìm thấy dịch vụ phù hợp.</span></div>';
             return;
@@ -103,12 +109,9 @@
 
         servicesRoot.innerHTML = filtered.map(function (service) {
             var selected = selectedService && selectedService.id === service.id;
-            var description = 'Đơn được xử lý tự động.';
             return '<button type="button" class="social-buff-service-card' + (selected ? ' is-selected' : '') + '" data-social-service="' + escapeHtml(service.id) + '" aria-pressed="' + (selected ? 'true' : 'false') + '">' +
-                '<span class="social-buff-service-icon"><i class="' + platformIcon(service.platform) + '" aria-hidden="true"></i></span>' +
-                '<h3>' + escapeHtml(service.name) + '</h3>' +
-                '<p>' + escapeHtml(description) + '</p>' +
-                '<span class="social-buff-service-meta"><span class="social-buff-service-price"><strong>' + formatMoney(service.rate) + '</strong><small>/ 1.000 lượt</small></span><span class="social-buff-service-limit">' + escapeHtml(service.platform) + '<br>Từ ' + Number(service.min).toLocaleString('vi-VN') + ' - ' + Number(service.max).toLocaleString('vi-VN') + '</span></span>' +
+                '<span class="social-buff-service-card-top"><span class="social-buff-service-selector" aria-hidden="true"></span><span class="social-buff-service-icon"><i class="' + platformIcon(service.platform) + '" aria-hidden="true"></i></span><span class="social-buff-service-heading"><strong>' + escapeHtml(service.name) + '</strong><small>' + escapeHtml(service.platform) + '</small></span><span class="social-buff-service-price"><strong>' + formatMoney(service.rate) + '</strong><small>/ 1.000 lượt</small></span></span>' +
+                '<span class="social-buff-service-card-detail"><span><i class="fa-solid fa-arrow-down-1-9" aria-hidden="true"></i> Tối thiểu ' + Number(service.min).toLocaleString('vi-VN') + '</span><span><i class="fa-solid fa-arrow-up-9-1" aria-hidden="true"></i> Tối đa ' + Number(service.max).toLocaleString('vi-VN') + '</span><span class="social-buff-service-status"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Sẵn sàng đặt</span></span>' +
                 '</button>';
         }).join('');
     }
@@ -122,10 +125,18 @@
             unit.textContent = 'Giá được tính theo 1.000 lượt.';
             quantityInput.disabled = true;
             submit.disabled = true;
+            if (detailPlatform) detailPlatform.textContent = '--';
+            if (detailRate) detailRate.textContent = '--';
+            if (detailMin) detailMin.textContent = '--';
+            if (detailMax) detailMax.textContent = '--';
             return;
         }
 
-        selectedRoot.innerHTML = '<span class="social-buff-selected-icon"><i class="' + platformIcon(selectedService.platform) + '" aria-hidden="true"></i></span><div><strong>' + escapeHtml(selectedService.name) + '</strong><small>' + escapeHtml(selectedService.platform) + ' · ' + formatMoney(selectedService.rate) + ' / 1.000 lượt</small></div>';
+        selectedRoot.innerHTML = '<span class="social-buff-selected-icon"><i class="' + platformIcon(selectedService.platform) + '" aria-hidden="true"></i></span><div><strong>' + escapeHtml(selectedService.name) + '</strong><small>' + escapeHtml(selectedService.platform) + ' · ' + formatMoney(selectedService.rate) + ' / 1.000 lượt</small></div><span class="social-buff-selection-badge">Đã chọn</span>';
+        if (detailPlatform) detailPlatform.textContent = selectedService.platform;
+        if (detailRate) detailRate.textContent = formatMoney(selectedService.rate) + ' / 1.000';
+        if (detailMin) detailMin.textContent = Number(selectedService.min).toLocaleString('vi-VN');
+        if (detailMax) detailMax.textContent = Number(selectedService.max).toLocaleString('vi-VN');
         rangeLabel.textContent = 'Từ ' + Number(selectedService.min).toLocaleString('vi-VN') + ' đến ' + Number(selectedService.max).toLocaleString('vi-VN') + '.';
         quantityInput.min = String(selectedService.min);
         quantityInput.max = String(selectedService.max);
@@ -187,6 +198,7 @@
 
     function loadServices() {
         if (!isAuthenticated || !isConfigured) {
+            if (serviceCount) serviceCount.textContent = isAuthenticated ? 'Tạm thời không khả dụng' : 'Đăng nhập để xem';
             if (servicesRoot) servicesRoot.innerHTML = '<div class="social-buff-history-empty"><i class="fa-solid fa-bolt" aria-hidden="true"></i><span>' + (isAuthenticated ? escapeHtml(unavailableMessage) : 'Đăng nhập để xem danh sách dịch vụ.') + '</span></div>';
             return;
         }

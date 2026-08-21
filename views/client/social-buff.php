@@ -22,8 +22,8 @@ $body = [
     'keyword' => 'buff mạng xã hội, tăng view, tăng like, tăng follow, video',
     'legacy_client_plugins' => false
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/social-buff.css?v=1') . '">';
-$body['footer'] = '<script src="' . BASE_URL('mod/js/social-buff.js?v=1') . '"></script>';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/social-buff.css?v=2') . '">';
+$body['footer'] = '<script src="' . BASE_URL('mod/js/social-buff.js?v=2') . '"></script>';
 
 require_once __DIR__ . '/header.php';
 require_once __DIR__ . '/nav.php';
@@ -79,6 +79,7 @@ require_once __DIR__ . '/nav.php';
                 <div>
                     <span class="social-buff-kicker">Bước 1</span>
                     <h2 id="social-buff-catalog-title">Chọn dịch vụ</h2>
+                    <p class="social-buff-section-note">Chọn một dòng để xem chi tiết và bắt đầu đặt đơn.</p>
                 </div>
                 <label class="social-buff-search" for="social-buff-search">
                     <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
@@ -97,6 +98,10 @@ require_once __DIR__ . '/nav.php';
                 <button type="button" data-social-filter="X / Twitter">X / Twitter</button>
             </div>
 
+            <div class="social-buff-catalog-toolbar">
+                <span><i class="fa-solid fa-list-check" aria-hidden="true"></i> Danh sách dịch vụ</span>
+                <strong data-social-buff-count>Đang tải...</strong>
+            </div>
             <div class="social-buff-feedback" data-social-buff-feedback role="status" aria-live="polite" hidden></div>
             <div class="social-buff-service-grid" data-social-buff-services aria-live="polite">
                 <?php for ($i = 0; $i < 6; $i++): ?>
@@ -114,6 +119,14 @@ require_once __DIR__ . '/nav.php';
             <div class="social-buff-selected" data-social-buff-selected>
                 <span class="social-buff-selected-icon"><i class="fa-solid fa-bolt" aria-hidden="true"></i></span>
                 <div><strong>Chưa chọn dịch vụ</strong><small>Chọn một dịch vụ ở danh sách bên trái.</small></div>
+                <span class="social-buff-selection-badge">Chưa chọn</span>
+            </div>
+
+            <div class="social-buff-service-details" data-social-buff-details aria-label="Thông tin dịch vụ">
+                <div><span>Nền tảng</span><strong data-social-buff-detail-platform>--</strong></div>
+                <div><span>Đơn giá</span><strong data-social-buff-detail-rate>--</strong></div>
+                <div><span>Tối thiểu</span><strong data-social-buff-detail-min>--</strong></div>
+                <div><span>Tối đa</span><strong data-social-buff-detail-max>--</strong></div>
             </div>
 
             <form data-social-buff-form autocomplete="off">
@@ -134,6 +147,15 @@ require_once __DIR__ . '/nav.php';
                 </button>
             </form>
             <p class="social-buff-security"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Thông tin đơn được bảo vệ trong quá trình xử lý.</p>
+
+            <div class="social-buff-guidance">
+                <div class="social-buff-guidance-title"><i class="fa-solid fa-book-open" aria-hidden="true"></i><strong>Lưu ý khi đặt đơn</strong></div>
+                <ul>
+                    <li>Dùng liên kết công khai, đúng với nền tảng đã chọn.</li>
+                    <li>Kiểm tra số lượng trong giới hạn trước khi đặt.</li>
+                    <li>Không bấm đặt lại cùng một yêu cầu khi đơn đang xử lý.</li>
+                </ul>
+            </div>
         </aside>
     </section>
 
