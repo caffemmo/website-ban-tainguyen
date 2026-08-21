@@ -292,13 +292,22 @@
             var response = await request('metadata');
             state.metadata = response.data;
             var types = state.metadata.types || {};
+            var typeStates = state.metadata.type_states || {};
             var available = Object.keys(types).filter(function (type) {
-                return isUsableType(types[type]);
+                return isUsableType(types[type]) && (!typeStates[type] || typeStates[type].enabled !== false);
             });
             $$('[data-proxy-type]').forEach(function (card) {
                 var type = card.getAttribute('data-proxy-type');
-                card.disabled = available.indexOf(type) === -1;
-                card.hidden = available.indexOf(type) === -1;
+                var enabled = !typeStates[type] || typeStates[type].enabled !== false;
+                var usable = enabled && available.indexOf(type) !== -1;
+                var status = card.querySelector('[data-proxy-type-status]');
+                card.disabled = !usable;
+                card.hidden = false;
+                card.classList.toggle('is-unavailable', !usable);
+                card.setAttribute('aria-disabled', usable ? 'false' : 'true');
+                if (status) {
+                    status.textContent = !enabled ? 'Tạm ngưng' : (usable ? 'Đang mở bán' : 'Chưa sẵn sàng');
+                }
             });
             if (!available.length) {
                 throw new Error('Dịch vụ proxy chưa trả về loại proxy khả dụng.');

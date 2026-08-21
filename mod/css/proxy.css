@@ -567,7 +567,7 @@ body {
     min-height: 172px;
     align-items: flex-start;
     gap: 10px;
-    padding: 12px;
+    padding: 12px 12px 42px;
     border: 1px solid var(--proxy-line);
     border-radius: 8px;
     color: var(--proxy-ink);
@@ -597,6 +597,49 @@ body {
     border-color: var(--proxy-cyan);
     background: #ecfcfd;
     box-shadow: inset 3px 0 0 var(--proxy-cyan);
+}
+
+.proxy-type-card.is-unavailable {
+    border-color: #e1e7ec;
+    background: #f7f9fb;
+    cursor: not-allowed;
+    opacity: .72;
+}
+
+.proxy-type-card.is-unavailable:hover,
+.proxy-type-card.is-unavailable:focus-visible {
+    border-color: #e1e7ec;
+    background: #f7f9fb;
+    transform: none;
+}
+
+.proxy-type-card.is-unavailable .proxy-type-check {
+    display: none;
+}
+
+.proxy-type-availability {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    display: inline-flex;
+    min-height: 22px;
+    align-items: center;
+    padding: 3px 7px;
+    border: 1px solid #bfe9d5;
+    border-radius: 999px;
+    color: #16774a;
+    background: #e8f8ee;
+    font-size: 9px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: 1.1;
+    white-space: nowrap;
+}
+
+.proxy-type-card.is-unavailable .proxy-type-availability {
+    border-color: #f2cdd2;
+    color: #9b4c56;
+    background: #fff0f2;
 }
 
 .proxy-type-icon {
@@ -2059,7 +2102,7 @@ body {
 
     .proxy-type-card {
         min-height: 166px;
-        padding: 9px;
+        padding: 9px 9px 38px;
     }
 
     .proxy-type-card.proxy-type-card--isp {

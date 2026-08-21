@@ -127,6 +127,7 @@ require_once __DIR__ . '/nav.php';
                             <small class="proxy-type-description"><?= __('Proxy Dân Cư Tĩnh (ISP) hỗ trợ tăng tiến độ ngâm tích xanh, duy trì uy tín IP và kết nối ổn định trong thời gian dài. Giảm nguy cơ bị đánh dấu và đảm bảo hiệu suất hoạt động liên tục.'); ?></small>
                             <span class="proxy-type-tags"><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('IP dân cư tĩnh (ISP)'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('ASN cao cấp'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Hỗ trợ băng thông lớn'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Tùy chọn theo quốc gia'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Hỗ trợ ngâm tích xanh'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Duy trì IP ổn định'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Hạn chế CAPTCHA'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Phiên kết nối không giới hạn thời gian'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Hỗ trợ HTTP(S) & SOCKS5'); ?></em></span>
                         </span>
+                        <span class="proxy-type-availability" data-proxy-type-status><?= __('Đang mở bán'); ?></span>
                         <i class="fa-solid fa-check proxy-type-check" aria-hidden="true"></i>
                     </button>
                     <button type="button" class="proxy-type-card proxy-type-card--datacenter is-selected" data-proxy-type="IPV4">
@@ -136,6 +137,7 @@ require_once __DIR__ . '/nav.php';
                             <small class="proxy-type-description"><?= __('Proxy IPv4 Datacenter là giải pháp phù hợp cho hầu hết nhu cầu sử dụng phổ biến. Hỗ trợ ngâm tích xanh, duy trì IP ổn định và kết nối lâu dài, hạn chế gián đoạn, tốc độ quốc tế và băng thông lớn.'); ?></small>
                             <span class="proxy-type-tags"><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('IP riêng'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i>HTTP/SOCKS5</em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Hỗ trợ ngâm tích xanh'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Duy trì tích xanh'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Băng thông tốc độ cao'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Tốc độ quốc tế'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Nuôi tài khoản'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Ổn định'); ?></em></span>
                         </span>
+                        <span class="proxy-type-availability" data-proxy-type-status><?= __('Đang mở bán'); ?></span>
                         <i class="fa-solid fa-check proxy-type-check" aria-hidden="true"></i>
                     </button>
                     <button type="button" class="proxy-type-card" data-proxy-type="IPV6">
@@ -145,6 +147,7 @@ require_once __DIR__ . '/nav.php';
                             <small><?= __('IP riêng, tiết kiệm chi phí, phù hợp nhu cầu cơ bản.'); ?></small>
                             <span class="proxy-type-tags"><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('IP riêng'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i>HTTP/SOCKS5</em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Hỗ trợ ngâm tích xanh'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Tốc độ quốc tế'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Tiết kiệm chi phí'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Phù hợp nhu cầu cơ bản'); ?></em></span>
                         </span>
+                        <span class="proxy-type-availability" data-proxy-type-status><?= __('Đang mở bán'); ?></span>
                         <i class="fa-solid fa-check proxy-type-check" aria-hidden="true"></i>
                     </button>
                     <button type="button" class="proxy-type-card" data-proxy-type="MOBILE">
@@ -154,6 +157,7 @@ require_once __DIR__ . '/nav.php';
                             <small><?= __('Rotation linh hoạt cho tác vụ cần thay đổi IP.'); ?></small>
                             <span class="proxy-type-tags"><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Rotation linh hoạt'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Phủ sóng toàn cầu'); ?></em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i>HTTP/SOCKS5</em><em><i class="fa-solid fa-circle-check" aria-hidden="true"></i><?= __('Hỗ trợ 24/7'); ?></em></span>
                         </span>
+                        <span class="proxy-type-availability" data-proxy-type-status><?= __('Đang mở bán'); ?></span>
                         <i class="fa-solid fa-check proxy-type-check" aria-hidden="true"></i>
                     </button>
                 </div>

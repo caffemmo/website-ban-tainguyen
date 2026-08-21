@@ -74,6 +74,45 @@ function youproxy_config()
     ];
 }
 
+function youproxy_proxy_type_definitions()
+{
+    return [
+        'ISP' => ['value' => 'ISP', 'label' => 'Proxy Dân Cư Tĩnh (ISP)'],
+        'IPV4' => ['value' => 'IPV4', 'label' => 'Proxy IPv4'],
+        'IPV6' => ['value' => 'IPV6', 'label' => 'Proxy IPv6'],
+        'MOBILE' => ['value' => 'MOBILE', 'label' => 'Proxy Mobile']
+    ];
+}
+
+function youproxy_proxy_type_code($value)
+{
+    $value = strtoupper(trim((string) $value));
+    $definitions = youproxy_proxy_type_definitions();
+    return isset($definitions[$value]) ? $value : '';
+}
+
+function youproxy_proxy_type_enabled($type)
+{
+    $code = youproxy_proxy_type_code($type);
+    if ($code === '') {
+        return false;
+    }
+    return youproxy_db_setting('youproxy_type_enabled_' . $code, '1') !== '0';
+}
+
+function youproxy_proxy_type_states()
+{
+    $states = [];
+    foreach (youproxy_proxy_type_definitions() as $code => $definition) {
+        $states[$code] = [
+            'value' => $definition['value'],
+            'label' => $definition['label'],
+            'enabled' => youproxy_proxy_type_enabled($code)
+        ];
+    }
+    return $states;
+}
+
 function youproxy_is_configured()
 {
     $config = youproxy_config();

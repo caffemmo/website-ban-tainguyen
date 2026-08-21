@@ -29,7 +29,7 @@ function proxy_metadata_cache_path()
 function proxy_metadata_cache_key()
 {
     $config = youproxy_config();
-    return hash('sha256', $config['base_url'] . '|' . $config['api_key']);
+    return hash('sha256', $config['base_url'] . '|' . $config['api_key'] . '|' . json_encode(youproxy_proxy_type_states()));
 }
 
 function proxy_metadata_cache_read()
@@ -119,6 +119,7 @@ function proxy_metadata_fetch()
     }
 
     $types = youproxy_response_options($typeResponse, ['proxyTypes', 'types', 'items'], ['proxyType', 'code'], ['name', 'title']);
+    $typeStates = youproxy_proxy_type_states();
     $availableTypes = [];
     $requests = ['mobile_operators' => ['endpoint' => 'mobileOperator', 'query' => []]];
     foreach ($types as $type) {
@@ -130,13 +131,16 @@ function proxy_metadata_fetch()
         if ($providerType === false) {
             continue;
         }
+        if (isset($typeStates[$typeCode]) && !$typeStates[$typeCode]['enabled']) {
+            continue;
+        }
         $availableTypes[$typeCode] = ['value' => $typeCode, 'label' => $type['label'], 'provider_type' => $providerType];
         $requests['countries_' . $typeCode] = ['endpoint' => 'country', 'query' => ['proxyType' => $providerType]];
         $requests['periods_' . $typeCode] = ['endpoint' => 'rentPeriod', 'query' => ['proxyType' => $providerType]];
     }
 
     $responses = youproxy_multi_get($requests);
-    $result = ['types' => [], 'mobile_operators' => [], 'settings' => []];
+    $result = ['types' => [], 'mobile_operators' => [], 'settings' => [], 'type_states' => $typeStates];
     foreach ($availableTypes as $typeCode => $type) {
         $countryResponse = $responses['countries_' . $typeCode] ?? ['success' => false];
         $rentResponse = $responses['periods_' . $typeCode] ?? ['success' => false];
@@ -740,6 +744,9 @@ if ($action === 'quote') {
     if (isset($validated['error'])) {
         proxy_json(['success' => false, 'message' => $validated['error']], 422);
     }
+    if (!youproxy_proxy_type_enabled($validated['payload']['proxyType'])) {
+        proxy_json(['success' => false, 'message' => 'Loại proxy này đang tạm ngưng mở bán.'], 503);
+    }
     if ($validated['payload']['proxyType'] === 'IPv6') {
         $retailQuote = proxy_ipv6_retail_quote($validated['payload']);
         if (empty($retailQuote['success'])) {
@@ -758,6 +765,9 @@ if ($action === 'buy') {
     $validated = proxy_request_payload($input);
     if (isset($validated['error'])) {
         proxy_json(['success' => false, 'message' => $validated['error']], 422);
+    }
+    if (!youproxy_proxy_type_enabled($validated['payload']['proxyType'])) {
+        proxy_json(['success' => false, 'message' => 'Loại proxy này đang tạm ngưng mở bán.'], 503);
     }
     if ($validated['payload']['proxyType'] === 'IPv6') {
         proxy_ipv6_retail_purchase($validated['payload'], $input, $getUser);

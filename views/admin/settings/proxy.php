@@ -178,6 +178,9 @@ if (isset($_POST['SaveProxySettings'])) {
     proxy_admin_save_setting('youproxy_markup_percent', number_format((float) $markup, 2, '.', ''));
     proxy_admin_save_setting('youproxy_ipv6_retail_unit_price', $ipv6RetailUnitPrice === '' ? '0' : number_format((float) $ipv6RetailUnitPrice, 2, '.', ''));
     proxy_admin_save_setting('youproxy_timeout', (string) $timeout);
+    foreach (youproxy_proxy_type_definitions() as $typeCode => $typeDefinition) {
+        proxy_admin_save_setting('youproxy_type_enabled_' . $typeCode, isset($_POST['youproxy_type_enabled_' . $typeCode]) ? '1' : '0');
+    }
 
     if ((float) $ipv6RetailUnitPrice > 0) {
         $normalizedIpv6RetailPrice = number_format((float) $ipv6RetailUnitPrice, 2, '.', '');
@@ -203,6 +206,7 @@ if (isset($_POST['SaveProxySettings'])) {
 }
 
 $proxyConfig = youproxy_config();
+$proxyTypeStates = youproxy_proxy_type_states();
 $ipv6RetailUnitPrice = youproxy_ipv6_retail_unit_price();
 $proxyConfigured = youproxy_is_configured();
 $hasStoredKey = youproxy_db_setting('youproxy_api_key') !== '';
@@ -273,6 +277,16 @@ $ipv6RetailBatches = $CMSNT->get_list_safe(
     }
     .proxy-admin-note i { margin-top: 2px; color: #3a82c4; }
     .proxy-admin-save { min-width: 170px; }
+    .proxy-availability-card { height: 100%; border: 1px solid #e1eaf3; border-radius: 12px; background: #fbfdff; transition: border-color 160ms ease, background-color 160ms ease; }
+    .proxy-availability-card:focus-within { border-color: #62c8d2; background: #f5fdfe; }
+    .proxy-availability-card.is-disabled { background: #fffafb; }
+    .proxy-availability-icon { display: grid; width: 38px; height: 38px; flex: 0 0 38px; place-items: center; border-radius: 10px; color: #087e99; background: #d7f3f4; }
+    .proxy-availability-title { color: #173b63; font-size: 14px; font-weight: 700; }
+    .proxy-availability-help { color: #75869a; font-size: 11px; line-height: 1.45; }
+    .proxy-availability-status { display: inline-flex; align-items: center; min-height: 24px; padding: 3px 8px; border-radius: 999px; color: #16774a; background: #e8f8ee; font-size: 11px; font-weight: 700; white-space: nowrap; }
+    .proxy-availability-card.is-disabled .proxy-availability-status { color: #9b4c56; background: #fff0f2; }
+    .proxy-availability-switch { min-width: 46px; min-height: 24px; margin: 0; cursor: pointer; }
+    .proxy-availability-switch:focus { box-shadow: 0 0 0 3px rgba(58, 130, 196, .2); }
     .proxy-retail-kicker { color: #75869a; font-size: 12px; line-height: 1.55; }
     .proxy-retail-stat-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
     .proxy-retail-stat { padding: 13px; border: 1px solid #e1eaf3; border-radius: 10px; background: #fbfdff; }
@@ -380,6 +394,45 @@ $ipv6RetailBatches = $CMSNT->get_list_safe(
                 </div>
             </div>
         </div>
+
+        <section class="card proxy-admin-card mt-4" aria-labelledby="proxy-availability-title">
+            <div class="card-header">
+                <div class="d-flex flex-wrap align-items-start justify-content-between gap-2">
+                    <div>
+                        <div class="card-title mb-1" id="proxy-availability-title"><i class="fa-solid fa-toggle-on me-2 text-primary" aria-hidden="true"></i><?= __('Trạng thái mở bán'); ?></div>
+                        <p class="proxy-admin-help mb-0"><?= __('Tắt một loại proxy sẽ ngưng đặt mua mới. Proxy khách đã mua vẫn xem, quản lý và gia hạn bình thường.'); ?></p>
+                    </div>
+                    <span class="badge text-bg-light border"><i class="fa-solid fa-shield-halved me-1" aria-hidden="true"></i><?= __('Áp dụng phía máy chủ'); ?></span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <?php foreach ($proxyTypeStates as $typeCode => $typeState): ?>
+                        <?php $typeEnabled = !empty($typeState['enabled']); ?>
+                        <div class="col-md-6">
+                            <div class="proxy-availability-card <?= $typeEnabled ? '' : 'is-disabled'; ?> p-3">
+                                <div class="d-flex align-items-start gap-3">
+                                    <span class="proxy-availability-icon" aria-hidden="true">
+                                        <i class="fa-solid <?= $typeCode === 'ISP' ? 'fa-building-shield' : ($typeCode === 'IPV4' ? 'fa-globe' : ($typeCode === 'IPV6' ? 'fa-network-wired' : 'fa-mobile-screen-button')); ?>"></i>
+                                    </span>
+                                    <div class="min-w-0 flex-grow-1">
+                                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+                                            <div class="proxy-availability-title"><?= htmlspecialchars((string) $typeState['label'], ENT_QUOTES, 'UTF-8'); ?></div>
+                                            <span class="proxy-availability-status" data-proxy-admin-status><?= $typeEnabled ? __('Đang mở bán') : __('Tạm ngưng'); ?></span>
+                                        </div>
+                                        <div class="proxy-availability-help mt-1" id="proxy-availability-help-<?= htmlspecialchars($typeCode, ENT_QUOTES, 'UTF-8'); ?>"><?= __('Khách hàng chỉ có thể tạo đơn mới khi công tắc này đang bật.'); ?></div>
+                                        <div class="form-check form-switch d-flex align-items-center gap-2 mt-3 mb-0 p-0">
+                                            <input class="form-check-input proxy-availability-switch" type="checkbox" role="switch" data-proxy-admin-toggle id="youproxy_type_enabled_<?= htmlspecialchars($typeCode, ENT_QUOTES, 'UTF-8'); ?>" name="youproxy_type_enabled_<?= htmlspecialchars($typeCode, ENT_QUOTES, 'UTF-8'); ?>" value="1" <?= $typeEnabled ? 'checked' : ''; ?> aria-describedby="proxy-availability-help-<?= htmlspecialchars($typeCode, ENT_QUOTES, 'UTF-8'); ?>">
+                                            <label class="form-check-label small fw-semibold" data-proxy-admin-label for="youproxy_type_enabled_<?= htmlspecialchars($typeCode, ENT_QUOTES, 'UTF-8'); ?>"><?= $typeEnabled ? __('Đang bật') : __('Đang tắt'); ?></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </section>
 
         <div class="d-flex justify-content-end mt-4">
             <button type="submit" name="SaveProxySettings" class="btn btn-primary proxy-admin-save">
@@ -509,11 +562,25 @@ $ipv6RetailBatches = $CMSNT->get_list_safe(
     (function () {
         var input = document.getElementById('youproxy_api_key');
         var button = document.getElementById('proxy_api_key_toggle');
-        if (!input || !button) return;
-        button.addEventListener('click', function () {
-            var visible = input.type === 'text';
-            input.type = visible ? 'password' : 'text';
-            button.querySelector('i').className = visible ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye';
+        if (input && button) {
+            button.addEventListener('click', function () {
+                var visible = input.type === 'text';
+                input.type = visible ? 'password' : 'text';
+                button.querySelector('i').className = visible ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye';
+            });
+        }
+
+        document.querySelectorAll('[data-proxy-admin-status]').forEach(function (status) {
+            var card = status.closest('.proxy-availability-card');
+            var toggle = card ? card.querySelector('[data-proxy-admin-toggle]') : null;
+            var label = card ? card.querySelector('[data-proxy-admin-label]') : null;
+            if (!toggle) return;
+            toggle.addEventListener('change', function () {
+                var enabled = toggle.checked;
+                card.classList.toggle('is-disabled', !enabled);
+                status.textContent = enabled ? 'Đang mở bán' : 'Tạm ngưng';
+                if (label) label.textContent = enabled ? 'Đang bật' : 'Đang tắt';
+            });
         });
     }());
 
