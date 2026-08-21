@@ -10,11 +10,47 @@ function social_buff_admin_save_setting($name, $value)
 {
     global $CMSNT;
 
-    $existing = $CMSNT->get_row_safe('SELECT `id` FROM `settings` WHERE `name` = ? LIMIT 1', [$name]);
+    $existing = $CMSNT->get_row_safe('SELECT `id`, `value` FROM `settings` WHERE `name` = ? LIMIT 1', [$name]);
     if ($existing) {
+        if (hash_equals((string) ($existing['value'] ?? ''), (string) $value)) {
+            return true;
+        }
         return $CMSNT->update('settings', ['value' => $value], ' `name` = ? ', [$name]);
     }
     return $CMSNT->insert('settings', ['name' => $name, 'value' => $value]);
+}
+
+function social_buff_admin_api_url($value)
+{
+    $value = rtrim(trim((string) $value), '/');
+    $scheme = strtolower((string) parse_url($value, PHP_URL_SCHEME));
+    if ($value === '' || strlen($value) > 500 || filter_var($value, FILTER_VALIDATE_URL) === false || $scheme !== 'https') {
+        return null;
+    }
+    return $value;
+}
+
+function social_buff_admin_markup($value)
+{
+    $value = trim((string) $value);
+    if ($value === '' || !is_numeric($value) || !is_finite((float) $value)) {
+        return null;
+    }
+    $markup = (float) $value;
+    if ($markup < 0 || $markup > 500) {
+        return null;
+    }
+    return number_format($markup, 4, '.', '');
+}
+
+function social_buff_admin_timeout($value)
+{
+    $value = trim((string) $value);
+    if (!preg_match('/^\d{1,3}$/', $value)) {
+        return null;
+    }
+    $timeout = (int) $value;
+    return $timeout >= 10 && $timeout <= 60 ? (string) $timeout : null;
 }
 
 if (isset($_POST['SaveSocialBuffSettings'])) {
@@ -28,9 +64,31 @@ if (isset($_POST['SaveSocialBuffSettings'])) {
         admin_msg_error(__('This feature cannot be used in demo mode.'), base_url_admin('settings&tab=social-buff'));
     }
 
+    $apiUrl = social_buff_admin_api_url($_POST['social_buff_api_url'] ?? '');
+    $markup = social_buff_admin_markup($_POST['social_buff_markup_percent'] ?? '');
+    $timeout = social_buff_admin_timeout($_POST['social_buff_timeout'] ?? '');
+    $apiKey = trim((string) ($_POST['social_buff_api_key'] ?? ''));
+    if ($apiUrl === null || $markup === null || $timeout === null) {
+        admin_msg_error('Vui lòng kiểm tra lại địa chỉ API, phần trăm lợi nhuận và thời gian chờ.', base_url_admin('settings&tab=social-buff'));
+    }
+    if ($apiKey !== '' && (strlen($apiKey) > 255 || preg_match('/[\r\n]/', $apiKey))) {
+        admin_msg_error('Khóa API không hợp lệ.', base_url_admin('settings&tab=social-buff'));
+    }
+
     $maintenance = isset($_POST['social_buff_maintenance']) ? '1' : '0';
-    if (!social_buff_admin_save_setting('social_buff_maintenance', $maintenance)) {
-        admin_msg_error(__('Unable to save settings. Please try again.'), base_url_admin('settings&tab=social-buff'));
+    $settings = [
+        'social_buff_api_url' => $apiUrl,
+        'social_buff_markup_percent' => $markup,
+        'social_buff_timeout' => $timeout,
+        'social_buff_maintenance' => $maintenance
+    ];
+    if ($apiKey !== '') {
+        $settings['social_buff_api_key'] = $apiKey;
+    }
+    foreach ($settings as $name => $value) {
+        if (!social_buff_admin_save_setting($name, $value)) {
+            admin_msg_error(__('Unable to save settings. Please try again.'), base_url_admin('settings&tab=social-buff'));
+        }
     }
 
     $CMSNT->insert('logs', [
@@ -38,14 +96,18 @@ if (isset($_POST['SaveSocialBuffSettings'])) {
         'ip' => myip(),
         'device' => getUserAgent(),
         'createdate' => gettime(),
-        'action' => $maintenance === '1'
-            ? 'Bật bảo trì Buff mạng xã hội'
-            : 'Tắt bảo trì Buff mạng xã hội'
+        'action' => 'Cập nhật cấu hình Buff mạng xã hội'
     ]);
     admin_msg_success(__('Saved successfully'), base_url_admin('settings&tab=social-buff'));
 }
 
 $socialBuffMaintenance = social_buff_maintenance_enabled();
+$socialBuffConfig = social_buff_config();
+$socialBuffSavedApiKey = social_buff_setting('social_buff_api_key', '');
+$socialBuffApiKeyStatus = $socialBuffSavedApiKey !== ''
+    ? 'Khóa API đã được lưu.'
+    : (social_buff_env('HACKLIKE17_API_KEY') !== '' ? 'Đang dùng khóa từ cấu hình máy chủ.' : 'Chưa có khóa API.');
+$socialBuffConfigured = social_buff_is_configured();
 ?>
 
 <style>
@@ -54,6 +116,16 @@ $socialBuffMaintenance = social_buff_maintenance_enabled();
         align-items: flex-start;
         justify-content: space-between;
         gap: 1rem;
+    }
+
+    .social-buff-admin-header {
+        align-items: flex-start;
+        gap: .75rem;
+    }
+
+    .social-buff-admin-status {
+        flex-wrap: wrap;
+        justify-content: flex-end;
     }
 
     .social-buff-maintenance-switch .form-check-input {
@@ -68,7 +140,28 @@ $socialBuffMaintenance = social_buff_maintenance_enabled();
         font-weight: 600;
     }
 
+    .social-buff-api-key-status {
+        color: #475569;
+        display: block;
+        font-size: .8125rem;
+        line-height: 1.5;
+        margin-top: .45rem;
+    }
+
+    .social-buff-admin-save {
+        min-height: 44px;
+    }
+
     @media (max-width: 575.98px) {
+        .social-buff-admin-header {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .social-buff-admin-status {
+            justify-content: flex-start;
+        }
+
         .social-buff-maintenance-summary {
             align-items: stretch;
             flex-direction: column;
@@ -80,13 +173,41 @@ $socialBuffMaintenance = social_buff_maintenance_enabled();
     <form method="post">
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(generate_csrf_token(), ENT_QUOTES, 'UTF-8'); ?>">
         <div class="card custom-card">
-            <div class="card-header justify-content-between">
+            <div class="card-header justify-content-between social-buff-admin-header">
                 <div class="card-title mb-0"><i class="fa-solid fa-bolt me-2 text-primary"></i>Buff mạng xã hội</div>
-                <span class="badge <?= $socialBuffMaintenance ? 'bg-warning-transparent text-warning' : 'bg-success-transparent text-success'; ?>">
-                    <?= $socialBuffMaintenance ? 'Đang bảo trì' : 'Đang nhận đơn'; ?>
-                </span>
+                <div class="d-flex align-items-center gap-2 social-buff-admin-status">
+                    <span class="badge <?= $socialBuffConfigured ? 'bg-success-transparent text-success' : 'bg-warning-transparent text-warning'; ?>">
+                        <?= $socialBuffConfigured ? 'Đã sẵn sàng' : 'Cần cấu hình API'; ?>
+                    </span>
+                    <span class="badge <?= $socialBuffMaintenance ? 'bg-warning-transparent text-warning' : 'bg-success-transparent text-success'; ?>">
+                        <?= $socialBuffMaintenance ? 'Đang bảo trì' : 'Đang nhận đơn'; ?>
+                    </span>
+                </div>
             </div>
             <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <label class="form-label" for="social_buff_api_url">Địa chỉ API</label>
+                        <input class="form-control" id="social_buff_api_url" name="social_buff_api_url" type="url" inputmode="url" maxlength="500" placeholder="https://..." value="<?= htmlspecialchars($socialBuffConfig['base_url'], ENT_QUOTES, 'UTF-8'); ?>" required>
+                        <div class="form-text">Chỉ chấp nhận địa chỉ HTTPS.</div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="social_buff_timeout">Thời gian chờ (giây)</label>
+                        <input class="form-control" id="social_buff_timeout" name="social_buff_timeout" type="number" min="10" max="60" step="1" inputmode="numeric" value="<?= (int) $socialBuffConfig['timeout']; ?>" required>
+                        <div class="form-text">Từ 10 đến 60 giây.</div>
+                    </div>
+                    <div class="col-md-8">
+                        <label class="form-label" for="social_buff_api_key">Khóa API</label>
+                        <input class="form-control" id="social_buff_api_key" name="social_buff_api_key" type="password" maxlength="255" autocomplete="new-password" placeholder="Nhập khóa mới để thay thế">
+                        <span class="social-buff-api-key-status"><i class="fa-solid fa-shield-halved me-1" aria-hidden="true"></i><?= htmlspecialchars($socialBuffApiKeyStatus, ENT_QUOTES, 'UTF-8'); ?> Để trống trường này để giữ nguyên khóa hiện tại.</span>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="social_buff_markup_percent">Lợi nhuận (%)</label>
+                        <input class="form-control" id="social_buff_markup_percent" name="social_buff_markup_percent" type="number" min="0" max="500" step="0.01" inputmode="decimal" value="<?= htmlspecialchars((string) $socialBuffConfig['markup_percent'], ENT_QUOTES, 'UTF-8'); ?>" required>
+                        <div class="form-text">Từ 0% đến 500%.</div>
+                    </div>
+                </div>
+                <hr class="my-4">
                 <div class="social-buff-maintenance-summary">
                     <div>
                         <h6 class="mb-1">Bảo trì dịch vụ</h6>
@@ -103,8 +224,8 @@ $socialBuffMaintenance = social_buff_maintenance_enabled();
                 </div>
             </div>
             <div class="card-footer text-end">
-                <button type="submit" name="SaveSocialBuffSettings" class="btn btn-primary">
-                    <i class="fa-solid fa-floppy-disk me-1" aria-hidden="true"></i>Lưu và áp dụng
+                <button type="submit" name="SaveSocialBuffSettings" class="btn btn-primary social-buff-admin-save">
+                    <i class="fa-solid fa-floppy-disk me-1" aria-hidden="true"></i>Lưu cấu hình
                 </button>
             </div>
         </div>

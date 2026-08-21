@@ -17,12 +17,16 @@ function social_buff_env($key, $fallback = '')
 
 function social_buff_config()
 {
-    $baseUrl = social_buff_env('HACKLIKE17_API_URL', 'https://hacklike17.com/api/v3');
-    $markup = (float) social_buff_env('SOCIAL_BUFF_MARKUP_PERCENT', '0');
-    $timeout = (int) social_buff_env('HACKLIKE17_TIMEOUT', '30');
+    $storedBaseUrl = social_buff_setting('social_buff_api_url', '');
+    $storedApiKey = social_buff_setting('social_buff_api_key', '');
+    $storedMarkup = social_buff_setting('social_buff_markup_percent', '');
+    $storedTimeout = social_buff_setting('social_buff_timeout', '');
+    $baseUrl = $storedBaseUrl !== '' ? $storedBaseUrl : social_buff_env('HACKLIKE17_API_URL', 'https://hacklike17.com/api/v3');
+    $markup = (float) ($storedMarkup !== '' ? $storedMarkup : social_buff_env('SOCIAL_BUFF_MARKUP_PERCENT', '0'));
+    $timeout = (int) ($storedTimeout !== '' ? $storedTimeout : social_buff_env('HACKLIKE17_TIMEOUT', '30'));
 
     return [
-        'api_key' => social_buff_env('HACKLIKE17_API_KEY'),
+        'api_key' => $storedApiKey !== '' ? $storedApiKey : social_buff_env('HACKLIKE17_API_KEY'),
         'base_url' => rtrim($baseUrl, '/'),
         'markup_percent' => max(0, min(500, $markup)),
         'timeout' => max(10, min(60, $timeout))
