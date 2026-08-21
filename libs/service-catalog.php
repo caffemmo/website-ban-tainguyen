@@ -86,6 +86,22 @@ if (!function_exists('caffemmo_service_catalog')) {
                     ]
                 ]
             ],
+            'social-buff' => [
+                'title' => 'Buff mạng xã hội',
+                'items' => [
+                    [
+                        'key' => 'social-buff',
+                        'label' => 'Buff mạng xã hội',
+                        'short' => 'Video, view, like, follow',
+                        'description' => 'Chọn dịch vụ video, lượt xem và tương tác; theo dõi trạng thái đơn ngay tại Caffemmo.',
+                        'url' => base_url('client/social-buff'),
+                        'action' => 'social-buff',
+                        'icon' => 'fa-solid fa-bolt',
+                        'tone' => 'blue',
+                        'requires_login' => true
+                    ]
+                ]
+            ],
             'streaming' => [
                 'title' => 'Dịch vụ Streaming',
                 'items' => [

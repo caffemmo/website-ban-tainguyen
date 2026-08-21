@@ -41,6 +41,7 @@
                                                                         'check_time_cron_sending_email',
                                                                         'check_time_cron_email_queue',
                                                                         'check_time_cron_telegram_queue',
+                                                                        'check_time_cron_social_buff',
                                                                         'time_cron_checklive_gmail',
                                                                         'time_cron_checklive_hotmail',
                                                                         'time_cron_checklive_clone',
@@ -123,6 +124,13 @@
                                                                                     'path' => 'cron/process_telegram_queue.php',
                                                                                     'recommended_time' => __('1 phút'),
                                                                                     'setting_name' => 'check_time_cron_telegram_queue'
+                                                                                ],
+                                                                                [
+                                                                                    'name' => __('Buff mạng xã hội'),
+                                                                                    'description' => __('Đồng bộ trạng thái đơn dịch vụ Buff từ nhà cung cấp'),
+                                                                                    'path' => 'cron/social-buff.php',
+                                                                                    'recommended_time' => __('1-5 phút'),
+                                                                                    'setting_name' => 'check_time_cron_social_buff'
                                                                                 ]
                                                                             ]
                                                                         ],

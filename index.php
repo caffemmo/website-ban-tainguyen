@@ -93,6 +93,7 @@ $allowed_actions = [
     'register',
     'reset-password',
     'security',
+    'social-buff',
     'set-language',
     'tool-2fa',
     'tool-checklive-fb',

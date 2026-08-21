@@ -746,6 +746,9 @@ insert_options('time_cron_suppliers_api51', 0);
 insert_options('time_cron_suppliers_api52', 0);
 insert_options('time_cron_suppliers_api53', 0);
 insert_options('time_cron_suppliers_api54', 0);
+insert_options('check_time_cron_social_buff', 0);
+require_once __DIR__ . '/libs/social-buff.php';
+social_buff_ensure_tables();
 
 //
 if (!column_exists('suppliers', 'notes')) {
