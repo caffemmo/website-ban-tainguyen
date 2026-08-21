@@ -7,6 +7,7 @@
     var endpoint = app.getAttribute('data-endpoint');
     var isAuthenticated = app.getAttribute('data-authenticated') === '1';
     var isConfigured = app.getAttribute('data-configured') === '1';
+    var unavailableMessage = app.getAttribute('data-unavailable-message') || 'Dịch vụ đang được cập nhật.';
     var loginUrl = app.getAttribute('data-login-url');
     var servicesRoot = app.querySelector('[data-social-buff-services]');
     var historyRoot = app.querySelector('[data-social-buff-history]');
@@ -87,7 +88,7 @@
             var matchesFilter = activeFilter === 'all'
                 || (activeFilter === 'video' && service.is_video)
                 || service.platform === activeFilter;
-            var haystack = [service.name, service.category, service.platform, service.description].join(' ').toLowerCase();
+            var haystack = [service.name, service.platform].join(' ').toLowerCase();
             return matchesFilter && (!keyword || haystack.indexOf(keyword) !== -1);
         });
     }
@@ -102,7 +103,7 @@
 
         servicesRoot.innerHTML = filtered.map(function (service) {
             var selected = selectedService && selectedService.id === service.id;
-            var description = service.description || service.category || 'Dịch vụ tự động qua kết nối máy chủ.';
+            var description = 'Đơn được xử lý tự động.';
             return '<button type="button" class="social-buff-service-card' + (selected ? ' is-selected' : '') + '" data-social-service="' + escapeHtml(service.id) + '" aria-pressed="' + (selected ? 'true' : 'false') + '">' +
                 '<span class="social-buff-service-icon"><i class="' + platformIcon(service.platform) + '" aria-hidden="true"></i></span>' +
                 '<h3>' + escapeHtml(service.name) + '</h3>' +
@@ -160,10 +161,10 @@
         }
 
         historyRoot.innerHTML = orders.map(function (order) {
-            var providerDetail = order.provider_order_id ? 'Mã NCC: ' + escapeHtml(order.provider_order_id) : 'Mã đơn: ' + escapeHtml(order.code);
+            var orderDetail = 'Mã đơn: ' + escapeHtml(order.code);
             var progress = order.remains ? 'Còn lại: ' + escapeHtml(order.remains) : 'Số lượng: ' + Number(order.quantity).toLocaleString('vi-VN');
             return '<article class="social-buff-order-row" data-social-order="' + escapeHtml(order.code) + '">' +
-                '<div class="social-buff-order-service"><strong>' + escapeHtml(order.service_name) + '</strong><small>' + providerDetail + '</small></div>' +
+                '<div class="social-buff-order-service"><strong>' + escapeHtml(order.service_name) + '</strong><small>' + orderDetail + '</small></div>' +
                 '<div class="social-buff-order-metric"><span>' + formatMoney(order.charged_amount) + '</span><small>' + escapeHtml(order.platform) + '</small></div>' +
                 '<div class="social-buff-order-metric"><span>' + progress + '</span><small>' + escapeHtml(order.created_at) + '</small></div>' +
                 '<span class="social-buff-order-status ' + escapeHtml(order.status_class) + '">' + escapeHtml(order.status_label) + '</span>' +
@@ -186,7 +187,7 @@
 
     function loadServices() {
         if (!isAuthenticated || !isConfigured) {
-            if (servicesRoot) servicesRoot.innerHTML = '<div class="social-buff-history-empty"><i class="fa-solid fa-bolt" aria-hidden="true"></i><span>' + (isAuthenticated ? 'Dịch vụ đang được cấu hình.' : 'Đăng nhập để xem danh sách dịch vụ.') + '</span></div>';
+            if (servicesRoot) servicesRoot.innerHTML = '<div class="social-buff-history-empty"><i class="fa-solid fa-bolt" aria-hidden="true"></i><span>' + (isAuthenticated ? escapeHtml(unavailableMessage) : 'Đăng nhập để xem danh sách dịch vụ.') + '</span></div>';
             return;
         }
         request('services').then(function (payload) {

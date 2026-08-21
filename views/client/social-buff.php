@@ -9,6 +9,12 @@ require_once __DIR__ . '/../../libs/social-buff.php';
 $getUser = client_optional_user($CMSNT);
 $isAuthenticated = is_array($getUser);
 $isConfigured = social_buff_is_configured();
+$socialBuffMaintenance = social_buff_maintenance_enabled();
+$socialBuffAdmin = social_buff_is_admin_user($getUser);
+$socialBuffAvailable = $isConfigured && social_buff_can_place_order($getUser);
+$socialBuffUnavailableMessage = $socialBuffMaintenance && !$socialBuffAdmin
+    ? 'Dịch vụ đang bảo trì. Vui lòng quay lại sau.'
+    : 'Dịch vụ đang được cập nhật.';
 
 $body = [
     'title' => 'Buff mạng xã hội | ' . $CMSNT->site('title'),
@@ -28,7 +34,8 @@ require_once __DIR__ . '/nav.php';
     data-social-buff
     data-endpoint="<?= htmlspecialchars(BASE_URL('ajaxs/client/social-buff.php'), ENT_QUOTES, 'UTF-8'); ?>"
     data-authenticated="<?= $isAuthenticated ? '1' : '0'; ?>"
-    data-configured="<?= $isConfigured ? '1' : '0'; ?>"
+    data-configured="<?= $socialBuffAvailable ? '1' : '0'; ?>"
+    data-unavailable-message="<?= htmlspecialchars($socialBuffUnavailableMessage, ENT_QUOTES, 'UTF-8'); ?>"
     data-login-url="<?= htmlspecialchars(base_url('client/login'), ENT_QUOTES, 'UTF-8'); ?>"
 >
     <section class="social-buff-intro" aria-labelledby="social-buff-title">
@@ -38,8 +45,8 @@ require_once __DIR__ . '/nav.php';
             <p>Chọn dịch vụ, dán liên kết và theo dõi trạng thái đơn ngay tại Caffemmo.</p>
         </div>
         <div class="social-buff-intro-status" role="status">
-            <span class="social-buff-status-dot <?= $isConfigured ? 'is-ready' : ''; ?>" aria-hidden="true"></span>
-            <span><?= $isConfigured ? 'Sẵn sàng nhận đơn' : 'Đang cấu hình dịch vụ'; ?></span>
+            <span class="social-buff-status-dot <?= $socialBuffAvailable ? 'is-ready' : ''; ?>" aria-hidden="true"></span>
+            <span><?= $socialBuffMaintenance && !$socialBuffAdmin ? 'Đang bảo trì' : ($isConfigured ? 'Sẵn sàng nhận đơn' : 'Đang cập nhật dịch vụ'); ?></span>
         </div>
     </section>
 
@@ -49,10 +56,20 @@ require_once __DIR__ . '/nav.php';
             <div><strong>Đăng nhập để đặt dịch vụ</strong><span>Danh sách dịch vụ và lịch sử đơn chỉ hiển thị cho tài khoản thành viên.</span></div>
             <a href="<?= htmlspecialchars(base_url('client/login'), ENT_QUOTES, 'UTF-8'); ?>">Đăng nhập <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
         </section>
+    <?php elseif ($socialBuffMaintenance && !$socialBuffAdmin): ?>
+        <section class="social-buff-login-notice social-buff-login-notice--warning" role="status">
+            <i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i>
+            <div><strong>Dịch vụ đang bảo trì</strong><span>Vui lòng quay lại sau khi việc cập nhật hoàn tất.</span></div>
+        </section>
     <?php elseif (!$isConfigured): ?>
         <section class="social-buff-login-notice social-buff-login-notice--warning" role="status">
             <i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i>
-            <div><strong>Dịch vụ đang được cấu hình</strong><span>Vui lòng quay lại sau khi quản trị viên hoàn tất kết nối nhà cung cấp.</span></div>
+            <div><strong>Dịch vụ đang được cập nhật</strong><span>Vui lòng quay lại sau khi quản trị viên hoàn tất cập nhật dịch vụ.</span></div>
+        </section>
+    <?php elseif ($socialBuffMaintenance && $socialBuffAdmin): ?>
+        <section class="social-buff-login-notice social-buff-login-notice--warning" role="status">
+            <i class="fa-solid fa-user-shield" aria-hidden="true"></i>
+            <div><strong>Chế độ bảo trì đang bật</strong><span>Khách hàng tạm thời không thể tạo đơn; tài khoản quản trị vẫn sử dụng bình thường.</span></div>
         </section>
     <?php endif; ?>
 
@@ -65,7 +82,7 @@ require_once __DIR__ . '/nav.php';
                 </div>
                 <label class="social-buff-search" for="social-buff-search">
                     <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-                    <input id="social-buff-search" type="search" placeholder="Tìm video, view, like, follow..." autocomplete="off" data-social-buff-search <?= !$isAuthenticated || !$isConfigured ? 'disabled' : ''; ?>>
+                    <input id="social-buff-search" type="search" placeholder="Tìm video, view, like, follow..." autocomplete="off" data-social-buff-search <?= !$isAuthenticated || !$socialBuffAvailable ? 'disabled' : ''; ?>>
                 </label>
             </div>
 
@@ -103,7 +120,7 @@ require_once __DIR__ . '/nav.php';
                 <input type="hidden" name="service_id" data-social-buff-service-id>
                 <label class="social-buff-field" for="social-buff-link">
                     <span>Liên kết bài viết, video hoặc tài khoản</span>
-                    <div class="social-buff-input-wrap"><i class="fa-solid fa-link" aria-hidden="true"></i><input id="social-buff-link" name="target_url" type="url" inputmode="url" placeholder="https://..." required <?= !$isAuthenticated || !$isConfigured ? 'disabled' : ''; ?>></div>
+                    <div class="social-buff-input-wrap"><i class="fa-solid fa-link" aria-hidden="true"></i><input id="social-buff-link" name="target_url" type="url" inputmode="url" placeholder="https://..." required <?= !$isAuthenticated || !$socialBuffAvailable ? 'disabled' : ''; ?>></div>
                 </label>
                 <label class="social-buff-field" for="social-buff-quantity">
                     <span>Số lượng <small data-social-buff-range>Chọn dịch vụ để xem giới hạn.</small></span>
@@ -116,7 +133,7 @@ require_once __DIR__ . '/nav.php';
                     <i class="fa-solid fa-paper-plane" aria-hidden="true"></i><span>Đặt dịch vụ</span>
                 </button>
             </form>
-            <p class="social-buff-security"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Thông tin đơn được xử lý qua kết nối bảo mật của máy chủ.</p>
+            <p class="social-buff-security"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Thông tin đơn được bảo vệ trong quá trình xử lý.</p>
         </aside>
     </section>
 

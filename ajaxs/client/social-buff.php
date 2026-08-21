@@ -69,7 +69,6 @@ function social_buff_order_payload($order)
         'platform' => (string) ($order['platform'] ?? 'Khac'),
         'quantity' => (int) ($order['quantity'] ?? 0),
         'charged_amount' => (float) ($order['charged_amount'] ?? 0),
-        'provider_order_id' => (string) ($order['provider_order_id'] ?? ''),
         'status' => (string) ($order['provider_status'] ?? 'pending'),
         'status_label' => $status['label'],
         'status_class' => $status['class'],
@@ -90,7 +89,7 @@ function social_buff_public_services($services)
 {
     $public = [];
     foreach ($services as $service) {
-        unset($service['provider_rate']);
+        unset($service['provider_rate'], $service['description'], $service['category'], $service['type'], $service['refill'], $service['cancel']);
         $public[] = $service;
     }
     return $public;
@@ -108,6 +107,14 @@ $input = social_buff_input();
 $action = strtolower(social_buff_input_value($input, 'action', (string) ($_GET['action'] ?? 'services')));
 
 if ($action === 'services') {
+    if (!social_buff_can_place_order($getUser)) {
+        social_buff_json([
+            'success' => true,
+            'configured' => false,
+            'services' => [],
+            'message' => 'Dịch vụ đang bảo trì. Vui lòng quay lại sau.'
+        ]);
+    }
     if (!social_buff_is_configured()) {
         social_buff_json([
             'success' => true,
@@ -151,6 +158,10 @@ if (!social_buff_same_origin_post()) {
     social_buff_json(['success' => false, 'message' => 'Yêu cầu không được xác thực.'], 403);
 }
 
+if ($action === 'place_order' && !social_buff_can_place_order($getUser)) {
+    social_buff_json(['success' => false, 'message' => 'Dịch vụ đang bảo trì. Vui lòng quay lại sau.'], 503);
+}
+
 if (!social_buff_is_configured()) {
     social_buff_json(['success' => false, 'message' => 'Dịch vụ hiện chưa sẵn sàng.'], 503);
 }
@@ -168,7 +179,7 @@ if ($action === 'refresh') {
         social_buff_json(['success' => true, 'order' => social_buff_order_payload($order)]);
     }
     if (!social_buff_sync_order($order)) {
-        social_buff_json(['success' => false, 'message' => 'Chưa thể cập nhật trạng thái từ nhà cung cấp.'], 502);
+        social_buff_json(['success' => false, 'message' => 'Hệ thống chưa thể cập nhật trạng thái đơn. Vui lòng thử lại sau.'], 502);
     }
     $order = $CMSNT->get_row_safe('SELECT * FROM `social_buff_orders` WHERE `id` = ? LIMIT 1', [(int) $order['id']]);
     social_buff_json(['success' => true, 'order' => social_buff_order_payload($order)]);
@@ -278,7 +289,7 @@ if (!empty($providerResponse['ok']) || !empty($providerResponse['transport_error
     $order = $CMSNT->get_row_safe('SELECT * FROM `social_buff_orders` WHERE `id` = ? LIMIT 1', [(int) $orderId]);
     social_buff_json([
         'success' => true,
-        'message' => 'Yêu cầu đang cần xác minh với nhà cung cấp. Vui lòng không gửi lại đơn này.',
+        'message' => 'Đơn đang được hệ thống xác minh. Vui lòng không gửi lại yêu cầu này.',
         'order' => social_buff_order_payload($order)
     ]);
 }
@@ -293,6 +304,6 @@ social_buff_save_order($orderId, [
 social_buff_json([
     'success' => false,
     'message' => $refunded
-        ? 'Nhà cung cấp không tiếp nhận đơn. Số dư đã được hoàn lại.'
-        : 'Nhà cung cấp không tiếp nhận đơn. Vui lòng liên hệ hỗ trợ với mã đơn ' . $orderCode . '.'
+        ? 'Đơn chưa thể xử lý. Số dư đã được hoàn lại.'
+        : 'Đơn chưa thể xử lý. Vui lòng liên hệ hỗ trợ với mã đơn ' . $orderCode . '.'
 ], 422);

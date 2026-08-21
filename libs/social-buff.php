@@ -29,6 +29,38 @@ function social_buff_config()
     ];
 }
 
+function social_buff_setting($name, $fallback = '')
+{
+    global $CMSNT;
+    static $settings = [];
+
+    if (array_key_exists($name, $settings)) {
+        return $settings[$name];
+    }
+    if (!isset($CMSNT) || !is_object($CMSNT)) {
+        return $fallback;
+    }
+
+    $setting = $CMSNT->get_row_safe('SELECT `value` FROM `settings` WHERE `name` = ? LIMIT 1', [$name]);
+    $settings[$name] = $setting && isset($setting['value']) ? trim((string) $setting['value']) : $fallback;
+    return $settings[$name];
+}
+
+function social_buff_maintenance_enabled()
+{
+    return social_buff_setting('social_buff_maintenance', '0') === '1';
+}
+
+function social_buff_is_admin_user($user)
+{
+    return is_array($user) && (int) ($user['admin'] ?? 0) !== 0;
+}
+
+function social_buff_can_place_order($user)
+{
+    return !social_buff_maintenance_enabled() || social_buff_is_admin_user($user);
+}
+
 function social_buff_is_list($array)
 {
     if (!is_array($array)) {
@@ -270,6 +302,7 @@ function social_buff_normalize_service($item)
     }
     $serviceId = trim((string) ($item['service'] ?? $item['id'] ?? ''));
     $name = trim((string) ($item['name'] ?? $item['service_name'] ?? ''));
+    $name = trim((string) preg_replace('/\b(?:hacklike17|hacklike)\b/i', '', $name));
     $category = trim((string) ($item['category'] ?? $item['platform'] ?? 'Khac'));
     $min = (int) ($item['min'] ?? $item['minimum'] ?? 0);
     $max = (int) ($item['max'] ?? $item['maximum'] ?? 0);
