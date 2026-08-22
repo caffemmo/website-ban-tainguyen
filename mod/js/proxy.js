@@ -302,7 +302,7 @@
                 var usable = enabled && available.indexOf(type) !== -1;
                 var status = card.querySelector('[data-proxy-type-status]');
                 card.disabled = !usable;
-                card.hidden = false;
+                card.hidden = !usable;
                 card.classList.toggle('is-unavailable', !usable);
                 card.setAttribute('aria-disabled', usable ? 'false' : 'true');
                 if (status) {

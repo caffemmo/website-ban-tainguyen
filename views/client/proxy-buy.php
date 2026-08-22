@@ -10,6 +10,7 @@ $proxyGuides = caffemmo_client_guides_get(false, 'proxy-buy');
 $proxyFaqs = caffemmo_client_faqs_get(false, 'proxy-buy');
 $proxyIsAuthenticated = is_array($getUser);
 $proxyUserToken = $proxyIsAuthenticated ? (string) ($getUser['token'] ?? '') : '';
+$proxyTypeStates = youproxy_proxy_type_states();
 
 $body = [
     'title' => __('Mua Proxy') . ' | ' . $CMSNT->site('title'),
@@ -17,7 +18,7 @@ $body = [
     'keyword' => 'proxy, mua proxy, proxy premium'
 ];
 $body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/proxy.css?v=38') . '">';
-$body['footer'] = '<script src="' . BASE_URL('mod/js/proxy.js?v=9') . '"></script>';
+$body['footer'] = '<script src="' . BASE_URL('mod/js/proxy.js?v=10') . '"></script>';
 
 require_once __DIR__ . '/header.php';
 require_once __DIR__ . '/nav.php';
@@ -121,7 +122,7 @@ require_once __DIR__ . '/nav.php';
             <fieldset class="proxy-fieldset">
                 <legend><?= __('Loại proxy'); ?></legend>
                 <div class="proxy-type-grid" data-proxy-types>
-                    <button type="button" class="proxy-type-card proxy-type-card--isp" data-proxy-type="ISP">
+                    <button type="button" class="proxy-type-card proxy-type-card--isp" data-proxy-type="ISP"<?= empty($proxyTypeStates['ISP']['enabled']) ? ' hidden' : ''; ?>>
                         <span class="proxy-type-icon"><i class="fa-solid fa-building-shield" aria-hidden="true"></i></span>
                         <span class="proxy-type-content">
                             <span class="proxy-type-title-row"><span class="proxy-type-title"><strong><?= __('Proxy Dân Cư Tĩnh (ISP)'); ?></strong><img class="proxy-type-gif" src="<?= BASE_URL('mod/img/proxy-green-badge.gif'); ?>" alt="<?= __('Ngâm tích xanh'); ?>"></span><span class="proxy-type-badges"><em class="proxy-type-badge">Ngâm tích xanh</em><em class="proxy-type-badge proxy-type-badge--private">Private</em></span></span>
@@ -130,7 +131,7 @@ require_once __DIR__ . '/nav.php';
                         </span>
                         <i class="fa-solid fa-check proxy-type-check" aria-hidden="true"></i>
                     </button>
-                    <button type="button" class="proxy-type-card proxy-type-card--datacenter is-selected" data-proxy-type="IPV4">
+                    <button type="button" class="proxy-type-card proxy-type-card--datacenter is-selected" data-proxy-type="IPV4"<?= empty($proxyTypeStates['IPV4']['enabled']) ? ' hidden' : ''; ?>>
                         <span class="proxy-type-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
                         <span class="proxy-type-content">
                             <span class="proxy-type-title-row"><strong><?= __('Proxy IPv4 Datacenter'); ?></strong><span class="proxy-type-badges"><em class="proxy-type-badge">Ngâm tích xanh</em><em class="proxy-type-badge proxy-type-badge--private">Private</em></span></span>
@@ -139,7 +140,7 @@ require_once __DIR__ . '/nav.php';
                         </span>
                         <i class="fa-solid fa-check proxy-type-check" aria-hidden="true"></i>
                     </button>
-                    <button type="button" class="proxy-type-card" data-proxy-type="IPV6">
+                    <button type="button" class="proxy-type-card" data-proxy-type="IPV6"<?= empty($proxyTypeStates['IPV6']['enabled']) ? ' hidden' : ''; ?>>
                         <span class="proxy-type-icon"><i class="fa-solid fa-network-wired" aria-hidden="true"></i></span>
                         <span class="proxy-type-content">
                             <span class="proxy-type-title-row"><strong><?= __('Proxy IPv6 thường'); ?></strong><span class="proxy-type-badges"><em class="proxy-type-badge">Ngâm tích xanh</em><em class="proxy-type-badge proxy-type-badge--private">Private</em></span></span>
@@ -148,7 +149,7 @@ require_once __DIR__ . '/nav.php';
                         </span>
                         <i class="fa-solid fa-check proxy-type-check" aria-hidden="true"></i>
                     </button>
-                    <button type="button" class="proxy-type-card" data-proxy-type="MOBILE">
+                    <button type="button" class="proxy-type-card" data-proxy-type="MOBILE"<?= empty($proxyTypeStates['MOBILE']['enabled']) ? ' hidden' : ''; ?>>
                         <span class="proxy-type-icon"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i></span>
                         <span class="proxy-type-content">
                             <span class="proxy-type-title-row"><strong><?= __('Proxy Mobile'); ?></strong><span class="proxy-type-badges"><em class="proxy-type-badge proxy-type-badge--private">Private</em></span></span>
