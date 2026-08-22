@@ -1181,7 +1181,6 @@ function youproxy_ensure_tables()
         `country` VARCHAR(12) NULL,
         `quantity` INT UNSIGNED NOT NULL DEFAULT 1,
         `rent_period_days` INT UNSIGNED NOT NULL DEFAULT 0,
-        `lease_date_end` DATETIME NULL,
         `provider_price` DECIMAL(14,6) NOT NULL DEFAULT 0,
         `provider_cost_vnd` DECIMAL(18,2) NOT NULL DEFAULT 0,
         `wallet_amount` DECIMAL(18,2) NOT NULL DEFAULT 0,
@@ -1257,28 +1256,8 @@ function youproxy_ensure_tables()
         return false;
     }
 
-    $proxylinePoolSql = "CREATE TABLE IF NOT EXISTS `proxyline_ipv4_pool` (
-        `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-        `provider_ip_id` VARCHAR(100) NOT NULL,
-        `provider_order_id` VARCHAR(100) NULL,
-        `country` VARCHAR(12) NULL,
-        `provider_date_end` DATETIME NULL,
-        `provider_payload` LONGTEXT NULL,
-        `active_slots` TINYINT UNSIGNED NOT NULL DEFAULT 0,
-        `created_at` DATETIME NOT NULL,
-        `updated_at` DATETIME NOT NULL,
-        PRIMARY KEY (`id`),
-        UNIQUE KEY `proxyline_ipv4_pool_provider_ip_id` (`provider_ip_id`),
-        KEY `proxyline_ipv4_pool_country` (`country`),
-        KEY `proxyline_ipv4_pool_date_end` (`provider_date_end`)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
-    if ($CMSNT->query($proxylinePoolSql) === false) {
-        return false;
-    }
-
     foreach ([
         ['proxy_orders', 'provider_code', "VARCHAR(20) NOT NULL DEFAULT 'youproxy' AFTER `provider_order_id`"],
-        ['proxy_orders', 'lease_date_end', 'DATETIME NULL AFTER `rent_period_days`'],
         ['proxy_orders', 'provider_cost_vnd', 'DECIMAL(18,2) NOT NULL DEFAULT 0 AFTER `provider_price`'],
         ['proxy_ipv6_batches', 'provider_cost_vnd', 'DECIMAL(18,2) NOT NULL DEFAULT 0 AFTER `provider_price`'],
         ['proxy_ipv6_inventory', 'acquisition_unit_cost_vnd', 'DECIMAL(18,2) NOT NULL DEFAULT 0 AFTER `retail_price`']

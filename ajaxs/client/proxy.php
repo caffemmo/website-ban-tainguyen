@@ -585,12 +585,11 @@ function proxy_owned_access($userId)
 {
     global $CMSNT;
     youproxy_ensure_tables();
-    $rows = $CMSNT->get_list_safe('SELECT `provider_code`, `provider_order_id`, `ip_address_ids`, `provider_payload`, `lease_date_end` FROM `proxy_orders` WHERE `user_id` = ? AND `status` = ?', [(int) $userId, 'active']);
+    $rows = $CMSNT->get_list_safe('SELECT `provider_code`, `provider_order_id`, `ip_address_ids`, `provider_payload` FROM `proxy_orders` WHERE `user_id` = ? AND `status` <> ?', [(int) $userId, 'refunded']);
     $ids = [];
     $orders = [];
     $providerIds = [];
     $providerOrders = [];
-    $leaseEnds = [];
     $records = [];
     foreach ($rows as $row) {
         $provider = proxy_row_provider($row);
@@ -606,23 +605,12 @@ function proxy_owned_access($userId)
                     $id = (string) $id;
                     $ids[] = $id;
                     $providerIds[] = proxy_provider_key($provider, $id);
-                    $leaseEnd = trim((string) ($row['lease_date_end'] ?? ''));
-                    if ($leaseEnd !== '') {
-                        $leaseKey = proxy_provider_key($provider, $id);
-                        if (!isset($leaseEnds[$leaseKey]) || strtotime($leaseEnd) > strtotime($leaseEnds[$leaseKey])) {
-                            $leaseEnds[$leaseKey] = $leaseEnd;
-                        }
-                    }
                 }
             }
         }
         $storedPayload = json_decode((string) ($row['provider_payload'] ?? ''), true);
         if (is_array($storedPayload)) {
-            $storedRecords = proxy_mark_records_provider(proxy_normalize_provider_records($storedPayload, $provider), $provider);
-            foreach ($storedRecords as $record) {
-                if ($provider === 'proxyline' && trim((string) ($row['lease_date_end'] ?? '')) !== '') {
-                    $record['dateEnd'] = (string) $row['lease_date_end'];
-                }
+            foreach (proxy_mark_records_provider(proxy_normalize_provider_records($storedPayload, $provider), $provider) as $record) {
                 $records[] = $record;
             }
         }
@@ -632,7 +620,6 @@ function proxy_owned_access($userId)
         'orders' => array_values(array_unique($orders)),
         'provider_ids' => array_values(array_unique($providerIds)),
         'provider_orders' => array_values(array_unique($providerOrders)),
-        'lease_ends' => $leaseEnds,
         'records' => $records
     ];
 }
@@ -645,7 +632,6 @@ function proxy_filter_owned_records($records, $userId)
     $ownedOrders = array_fill_keys($access['orders'], true);
     $ownedProviderIds = array_fill_keys($access['provider_ids'], true);
     $ownedProviderOrders = array_fill_keys($access['provider_orders'], true);
-    $leaseEnds = $access['lease_ends'] ?? [];
     $matchesOwnership = function ($record) use ($ownedIds, $ownedOrders, $ownedProviderIds, $ownedProviderOrders) {
         $id = (string) (youproxy_find_first_value($record, ['ipAddressId', 'id']) ?: '');
         $orderId = (string) (youproxy_find_first_value($record, ['orderId', 'orderID', 'orderNumber']) ?: '');
@@ -654,38 +640,15 @@ function proxy_filter_owned_records($records, $userId)
             || ($orderId !== '' && isset($ownedProviderOrders[proxy_provider_key($provider, $orderId)]))
             || ($provider === 'youproxy' && (($id !== '' && isset($ownedIds[$id])) || ($orderId !== '' && isset($ownedOrders[$orderId]))));
     };
-    $applyLeaseEnd = function ($record) use ($leaseEnds) {
-        $id = (string) (youproxy_find_first_value($record, ['ipAddressId', 'id']) ?: '');
-        $provider = proxy_record_provider($record);
-        $leaseKey = $id !== '' ? proxy_provider_key($provider, $id) : '';
-        if ($leaseKey !== '' && isset($leaseEnds[$leaseKey])) {
-            $record['dateEnd'] = $leaseEnds[$leaseKey];
-        }
-        return $record;
-    };
+    $ownedRecords = array_values(array_filter($records, $matchesOwnership));
     $fallbackRecords = array_values(array_filter($access['records'], $matchesOwnership));
-    $fallbackKeys = [];
-    foreach ($fallbackRecords as $record) {
-        $id = (string) (youproxy_find_first_value($record, ['ipAddressId', 'id']) ?: '');
-        $provider = proxy_record_provider($record);
-        if ($id !== '' && $provider === 'proxyline') {
-            $fallbackKeys[proxy_provider_key($provider, $id)] = true;
-        }
-    }
-    $ownedRecords = array_map($applyLeaseEnd, array_values(array_filter($records, function ($record) use ($matchesOwnership, $fallbackKeys) {
-        $provider = proxy_record_provider($record);
-        $id = (string) (youproxy_find_first_value($record, ['ipAddressId', 'id']) ?: '');
-        return !($provider === 'proxyline' && $id !== '' && isset($fallbackKeys[proxy_provider_key($provider, $id)]))
-            && $matchesOwnership($record);
-    })));
     $seen = [];
     $merged = [];
-    foreach (array_merge($fallbackRecords, $ownedRecords) as $record) {
+    foreach (array_merge($ownedRecords, $fallbackRecords) as $record) {
         $id = (string) (youproxy_find_first_value($record, ['ipAddressId', 'id']) ?: '');
         $orderId = (string) (youproxy_find_first_value($record, ['orderId', 'orderID', 'orderNumber']) ?: '');
         $provider = proxy_record_provider($record);
-        $dateEnd = (string) (youproxy_find_first_value($record, ['dateEnd', 'endDate']) ?: '');
-        $key = $id !== '' ? 'id:' . proxy_provider_key($provider, $id) . ($provider === 'proxyline' ? ':lease:' . $dateEnd : '') : ($orderId !== '' ? 'order:' . proxy_provider_key($provider, $orderId) : 'record:' . count($merged));
+        $key = $id !== '' ? 'id:' . proxy_provider_key($provider, $id) : ($orderId !== '' ? 'order:' . proxy_provider_key($provider, $orderId) : 'record:' . count($merged));
         if (!isset($seen[$key])) {
             $seen[$key] = true;
             $merged[] = $record;
@@ -701,309 +664,6 @@ function proxy_price_response($providerResponse)
         'wallet_amount' => $price['wallet_amount'],
         'wallet_label' => $price['wallet_label']
     ];
-}
-
-function proxyline_orders_for_ip($providerIpId)
-{
-    global $CMSNT;
-    $rows = $CMSNT->get_list_safe(
-        'SELECT `id`, `user_id`, `provider_order_id`, `ip_address_ids`, `lease_date_end`, `rent_period_days`, `created_at`, `status`
-         FROM `proxy_orders`
-         WHERE `provider_code` = ? AND `status` IN (?, ?)',
-        ['proxyline', 'active', 'provisioning']
-    ) ?: [];
-    $matches = [];
-    foreach ($rows as $row) {
-        $ids = proxy_row_stored_ids($row);
-        if (in_array((string) $providerIpId, $ids, true)) {
-            $matches[] = $row;
-        }
-    }
-    return $matches;
-}
-
-function proxyline_active_slots_for_ip($providerIpId, $providerDateEnd = null)
-{
-    $now = time();
-    $active = 0;
-    foreach (proxyline_orders_for_ip($providerIpId) as $row) {
-        $leaseEnd = trim((string) ($row['lease_date_end'] ?? ''));
-        $leaseTimestamp = $leaseEnd !== '' ? strtotime($leaseEnd) : false;
-        if ($leaseTimestamp === false) {
-            $createdAt = strtotime((string) ($row['created_at'] ?? ''));
-            $days = max(1, (int) ($row['rent_period_days'] ?? 0));
-            $leaseTimestamp = $createdAt !== false ? $createdAt + ($days * 86400) : false;
-        }
-        if ($leaseTimestamp !== false && $leaseTimestamp >= $now) {
-            $active++;
-        }
-    }
-    return min(3, $active);
-}
-
-function proxyline_pool_sync_record($record)
-{
-    global $CMSNT;
-    if (!is_array($record) || !youproxy_ensure_tables()) {
-        return false;
-    }
-    $providerIpId = proxy_record_id($record);
-    if ($providerIpId === '') {
-        return false;
-    }
-    $providerDateEnd = proxy_record_timestamp($record, ['dateEnd', 'endDate']);
-    $providerDateEndValue = $providerDateEnd !== null ? date('Y-m-d H:i:s', $providerDateEnd) : null;
-    $payload = json_encode($record, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-    $existing = $CMSNT->get_row_safe(
-        'SELECT `id` FROM `proxyline_ipv4_pool` WHERE `provider_ip_id` = ? LIMIT 1',
-        [$providerIpId]
-    );
-    $data = [
-        'provider_order_id' => proxy_record_order_id($record) ?: null,
-        'country' => strtolower(proxy_record_country_code($record)),
-        'provider_date_end' => $providerDateEndValue,
-        'provider_payload' => $payload,
-        'updated_at' => date('Y-m-d H:i:s')
-    ];
-    if ($existing) {
-        $CMSNT->update('proxyline_ipv4_pool', $data, '`id` = ?', [(int) $existing['id']]);
-        return true;
-    }
-    $data['provider_ip_id'] = $providerIpId;
-    $data['active_slots'] = proxyline_active_slots_for_ip($providerIpId, $providerDateEndValue);
-    $data['created_at'] = date('Y-m-d H:i:s');
-    return (bool) $CMSNT->insert('proxyline_ipv4_pool', $data);
-}
-
-function proxyline_pool_refresh_slots($providerIpId)
-{
-    global $CMSNT;
-    $pool = $CMSNT->get_row_safe(
-        'SELECT `id`, `provider_date_end` FROM `proxyline_ipv4_pool` WHERE `provider_ip_id` = ? LIMIT 1',
-        [(string) $providerIpId]
-    );
-    if (!$pool) {
-        return false;
-    }
-    return $CMSNT->update('proxyline_ipv4_pool', [
-        'active_slots' => proxyline_active_slots_for_ip($providerIpId, $pool['provider_date_end'] ?? null),
-        'updated_at' => date('Y-m-d H:i:s')
-    ], '`id` = ?', [(int) $pool['id']]);
-}
-
-function proxyline_pool_reserve_order($record, $orderData)
-{
-    global $CMSNT;
-    $providerIpId = proxy_record_id($record);
-    if ($providerIpId === '' || !proxyline_pool_sync_record($record)) {
-        return false;
-    }
-
-    $CMSNT->query('START TRANSACTION');
-    $pool = $CMSNT->get_row_safe(
-        'SELECT * FROM `proxyline_ipv4_pool` WHERE `provider_ip_id` = ? LIMIT 1 FOR UPDATE',
-        [$providerIpId]
-    );
-    if (!$pool) {
-        $CMSNT->query('ROLLBACK');
-        return false;
-    }
-    $activeSlots = proxyline_active_slots_for_ip($providerIpId, $pool['provider_date_end'] ?? null);
-    if ($activeSlots >= 3) {
-        $CMSNT->query('ROLLBACK');
-        return false;
-    }
-    $updated = $CMSNT->update('proxyline_ipv4_pool', [
-        'active_slots' => $activeSlots + 1,
-        'updated_at' => date('Y-m-d H:i:s')
-    ], '`id` = ?', [(int) $pool['id']]);
-    $orderId = $updated !== false ? $CMSNT->insert('proxy_orders', $orderData) : false;
-    if (!$orderId) {
-        $CMSNT->query('ROLLBACK');
-        return false;
-    }
-    $CMSNT->query('COMMIT');
-    return ['order_id' => (int) $orderId, 'pool_id' => (int) $pool['id']];
-}
-
-function proxyline_pool_release_order($customerOrderId, $providerIpId)
-{
-    global $CMSNT;
-    $CMSNT->update('proxy_orders', [
-        'status' => 'refunded',
-        'updated_at' => date('Y-m-d H:i:s')
-    ], '`id` = ? AND `status` = ?', [(int) $customerOrderId, 'provisioning']);
-    proxyline_pool_refresh_slots($providerIpId);
-}
-
-function proxyline_pool_activate_order($customerOrderId, $providerIpId, $providerOrderId, $record, $leaseEnd)
-{
-    global $CMSNT;
-    $updated = $CMSNT->update('proxy_orders', [
-        'provider_order_id' => $providerOrderId !== '' ? $providerOrderId : null,
-        'ip_address_ids' => json_encode([proxy_record_id($record)], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
-        'lease_date_end' => $leaseEnd,
-        'provider_payload' => json_encode($record, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
-        'status' => 'active',
-        'updated_at' => date('Y-m-d H:i:s')
-    ], '`id` = ? AND `status` = ?', [(int) $customerOrderId, 'provisioning']);
-    if ($updated === false) {
-        return false;
-    }
-    proxyline_pool_refresh_slots($providerIpId);
-    return true;
-}
-
-function proxyline_calendar_days_between($fromTimestamp, $toTimestamp)
-{
-    $from = DateTimeImmutable::createFromFormat('!Y-m-d', date('Y-m-d', (int) $fromTimestamp));
-    $to = DateTimeImmutable::createFromFormat('!Y-m-d', date('Y-m-d', (int) $toTimestamp));
-    if (!$from || !$to) {
-        return 0;
-    }
-    return max(0, (int) $from->diff($to)->format('%r%a'));
-}
-
-function proxyline_record_by_id($records, $providerIpId)
-{
-    foreach ((array) $records as $record) {
-        if (proxy_record_id($record) === (string) $providerIpId) {
-            return $record;
-        }
-    }
-    return null;
-}
-
-function proxyline_reuse_candidate($payload)
-{
-    $country = strtolower((string) ($payload['country'] ?? ''));
-    $response = proxyline_proxies($country);
-    if (empty($response['success'])) {
-        return null;
-    }
-    $records = proxyline_normalize_records($response);
-    $candidates = [];
-    $now = time();
-    foreach ($records as $record) {
-        $providerIpId = proxy_record_id($record);
-        $dateEnd = proxy_record_timestamp($record, ['dateEnd', 'endDate']);
-        if ($providerIpId === '' || $dateEnd === null || $dateEnd < $now) {
-            continue;
-        }
-        if ($country !== '' && strtoupper(proxy_record_country_code($record)) !== strtoupper($country)) {
-            continue;
-        }
-        if (empty(proxyline_orders_for_ip($providerIpId))) {
-            continue;
-        }
-        if (proxyline_active_slots_for_ip($providerIpId, date('Y-m-d H:i:s', $dateEnd)) >= 3) {
-            continue;
-        }
-        $candidates[] = $record;
-    }
-    usort($candidates, function ($left, $right) {
-        return (proxy_record_timestamp($left, ['dateEnd', 'endDate']) ?: PHP_INT_MAX)
-            <=> (proxy_record_timestamp($right, ['dateEnd', 'endDate']) ?: PHP_INT_MAX);
-    });
-    return $candidates[0] ?? null;
-}
-
-function proxyline_try_reuse_purchase($payload, $input, $getUser, $price, $quoteData, $transactionId, $userModel)
-{
-    global $CMSNT;
-    if (max(1, (int) ($payload['quantity'] ?? 1)) !== 1) {
-        return false;
-    }
-    $candidate = proxyline_reuse_candidate($payload);
-    if (!$candidate) {
-        return false;
-    }
-    $providerIpId = proxy_record_id($candidate);
-    $providerOrderId = proxy_record_order_id($candidate);
-    $leaseEnd = date('Y-m-d H:i:s', time() + (max(1, (int) $payload['rentPeriodDays']) * 86400));
-    $orderData = [
-        'user_id' => (int) $getUser['id'],
-        'provider_order_id' => $providerOrderId !== '' ? $providerOrderId : null,
-        'provider_code' => 'proxyline',
-        'proxy_type' => 'IPv4',
-        'country' => $payload['country'],
-        'quantity' => 1,
-        'rent_period_days' => (int) $payload['rentPeriodDays'],
-        'lease_date_end' => $leaseEnd,
-        'provider_price' => $price['provider_price'],
-        'provider_cost_vnd' => 0,
-        'wallet_amount' => $price['wallet_amount'],
-        'provider_currency' => $price['provider_currency'],
-        'auto_extend' => 0,
-        'status' => 'provisioning',
-        'ip_address_ids' => json_encode([$providerIpId], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
-        'provider_payload' => json_encode($candidate, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
-        'created_at' => date('Y-m-d H:i:s'),
-        'updated_at' => date('Y-m-d H:i:s')
-    ];
-    $reservation = proxyline_pool_reserve_order($candidate, $orderData);
-    if (!$reservation) {
-        return false;
-    }
-
-    $providerDateEnd = proxy_record_timestamp($candidate, ['dateEnd', 'endDate']);
-    $targetDateEnd = strtotime($leaseEnd);
-    $missingDays = $providerDateEnd !== null && $targetDateEnd > $providerDateEnd
-        ? proxyline_calendar_days_between($providerDateEnd, $targetDateEnd)
-        : 0;
-    if ($missingDays > 0) {
-        $renewPeriod = proxyline_renew_period_for_days($missingDays);
-        $renewResponse = $renewPeriod === false ? ['success' => false] : proxyline_renew([$providerIpId], $renewPeriod);
-        if (empty($renewResponse['success'])) {
-            proxyline_pool_release_order($reservation['order_id'], $providerIpId);
-            return false;
-        }
-        $verifiedResponse = proxyline_proxies($payload['country']);
-        $verifiedRecord = !empty($verifiedResponse['success'])
-            ? proxyline_record_by_id(proxyline_normalize_records($verifiedResponse), $providerIpId)
-            : null;
-        $verifiedDateEnd = $verifiedRecord ? proxy_record_timestamp($verifiedRecord, ['dateEnd', 'endDate']) : null;
-        if ($verifiedDateEnd === null || date('Y-m-d', $verifiedDateEnd) < date('Y-m-d', $targetDateEnd)) {
-            proxyline_pool_release_order($reservation['order_id'], $providerIpId);
-            return false;
-        }
-        $providerDateEnd = $verifiedDateEnd;
-        $candidate = array_merge($candidate, $verifiedRecord);
-    }
-    $candidate['dateStart'] = date('Y-m-d H:i:s');
-    $candidate['dateEnd'] = $leaseEnd;
-    $poolUpdate = $CMSNT->update('proxyline_ipv4_pool', [
-        'provider_date_end' => $providerDateEnd !== null ? date('Y-m-d H:i:s', $providerDateEnd) : null,
-        'provider_payload' => json_encode($candidate, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
-        'updated_at' => date('Y-m-d H:i:s')
-    ], '`id` = ?', [$reservation['pool_id']]);
-    if ($poolUpdate === false || !proxyline_pool_activate_order($reservation['order_id'], $providerIpId, $providerOrderId, $candidate, $leaseEnd)) {
-        proxyline_pool_release_order($reservation['order_id'], $providerIpId);
-        $userModel->RefundCredits($getUser['id'], $price['wallet_amount'], 'Hoàn tiền cấp proxy do lỗi xử lý lại kho', $transactionId . '_refund');
-        proxy_json(['success' => false, 'message' => 'Không thể cấp proxy. Hệ thống đã hoàn tiền vào ví.'], 502);
-    }
-
-    $autoWarning = !empty($input['auto_extend']) ? ' Đơn đã tạo nhưng chưa bật tự động gia hạn.' : '';
-    queueServiceOrderNotification(
-        $getUser,
-        'Mua Proxy IPv4',
-        $price['wallet_amount'],
-        $providerOrderId !== '' ? $providerOrderId : $transactionId,
-        1,
-        $payload['country'] . ' | ' . $payload['rentPeriodDays'] . ' ngày',
-        ['source' => 'proxy_purchase_reuse', 'customer_order_id' => $reservation['order_id']]
-    );
-    proxy_json([
-        'success' => true,
-        'message' => 'Mua proxy thành công.' . $autoWarning,
-        'data' => [
-            'order_id' => $providerOrderId,
-            'records' => [proxy_sanitized_record($candidate)],
-            'price' => $quoteData,
-            'wallet_balance' => (float) getUser($getUser['id'], 'money')
-        ]
-    ]);
-    return true;
 }
 
 function proxy_ipv6_retail_price_response($items)
@@ -1252,18 +912,6 @@ if ($action === 'buy') {
         proxy_json(['success' => false, 'message' => 'Không thể trừ tiền trong ví, vui lòng thử lại.'], 500);
     }
 
-    if ($providerCode === 'proxyline' && proxyline_try_reuse_purchase(
-        $validated['payload'],
-        $input,
-        $getUser,
-        $price,
-        $quote['data'],
-        $transactionId,
-        $userModel
-    )) {
-        return;
-    }
-
     $providerOrder = $providerCode === 'proxyline'
         ? proxyline_new_order($validated['payload'])
         : youproxy_create_order($validated['payload']);
@@ -1313,9 +961,6 @@ if ($action === 'buy') {
         'country' => $validated['payload']['country'],
         'quantity' => $validated['payload']['quantity'],
         'rent_period_days' => $validated['payload']['rentPeriodDays'],
-        'lease_date_end' => $providerCode === 'proxyline'
-            ? date('Y-m-d H:i:s', time() + ((int) $validated['payload']['rentPeriodDays'] * 86400))
-            : null,
         'provider_price' => $price['provider_price'],
         'provider_cost_vnd' => $providerCode === 'proxyline' ? 0 : youproxy_provider_cost_vnd($price),
         'wallet_amount' => $price['wallet_amount'],
@@ -1327,18 +972,6 @@ if ($action === 'buy') {
         'created_at' => date('Y-m-d H:i:s'),
         'updated_at' => date('Y-m-d H:i:s')
     ]);
-    if (!$customerOrderId) {
-        $userModel->RefundCredits($getUser['id'], $price['wallet_amount'], 'Hoàn tiền mua proxy do không thể lưu đơn', $transactionId . '_refund');
-        proxy_json(['success' => false, 'message' => 'Không thể lưu đơn proxy. Hệ thống đã hoàn tiền vào ví.'], 500);
-    }
-    if ($providerCode === 'proxyline' && $customerOrderId) {
-        foreach ($records as $record) {
-            if (proxy_record_id($record) !== '') {
-                proxyline_pool_sync_record($record);
-                proxyline_pool_refresh_slots(proxy_record_id($record));
-            }
-        }
-    }
     queueServiceOrderNotification(
         $getUser,
         'Mua Proxy ' . $validated['payload']['proxyType'],
