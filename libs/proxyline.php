@@ -66,7 +66,7 @@ function proxyline_request($method, $endpoint, $query = [], $payload = [])
     if ($method === 'POST') {
         $options[CURLOPT_POST] = true;
         $options[CURLOPT_HTTPHEADER][] = 'Content-Type: application/x-www-form-urlencoded';
-        $options[CURLOPT_POSTFIELDS] = http_build_query($payload ?: [], '', '&', PHP_QUERY_RFC3986);
+        $options[CURLOPT_POSTFIELDS] = proxyline_form_query($payload ?: []);
     }
 
     $curl = curl_init();
@@ -141,6 +141,23 @@ function proxyline_api_call($method, $endpoint, $query = [], $payload = [])
     return proxyline_request($method, $endpoint, $query, $payload);
 }
 
+function proxyline_form_query($payload)
+{
+    $pairs = [];
+    foreach ((array) $payload as $key => $value) {
+        if (is_array($value)) {
+            foreach ($value as $item) {
+                $pairs[] = rawurlencode((string) $key) . '=' . rawurlencode((string) $item);
+            }
+            continue;
+        }
+        if ($value !== null) {
+            $pairs[] = rawurlencode((string) $key) . '=' . rawurlencode((string) $value);
+        }
+    }
+    return implode('&', $pairs);
+}
+
 function proxyline_countries()
 {
     return proxyline_api_call('GET', 'countries/');
@@ -206,10 +223,49 @@ function proxyline_ips($country = '')
     return proxyline_api_call('GET', 'ips/', $query);
 }
 
+function proxyline_proxies($country = '')
+{
+    $query = [
+        'status' => 'active',
+        'type' => 'dedicated',
+        'ip_version' => 4
+    ];
+    if ($country !== '') {
+        $query['country'] = strtolower($country);
+    }
+    return proxyline_api_call('GET', 'proxies/', $query);
+}
+
+function proxyline_renew($proxyIds, $period, $coupon = '')
+{
+    $proxyIds = array_values(array_unique(array_filter(array_map('strval', (array) $proxyIds))));
+    $period = (int) $period;
+    if (empty($proxyIds) || !in_array($period, proxyline_periods(), true)) {
+        return ['success' => false, 'message' => 'Thời hạn gia hạn không hợp lệ.'];
+    }
+    $payload = ['proxies' => $proxyIds, 'period' => $period];
+    if (trim((string) $coupon) !== '') {
+        $payload['coupon'] = trim((string) $coupon);
+    }
+    return proxyline_api_call('POST', 'renew/', [], $payload);
+}
+
+function proxyline_renew_period_for_days($days)
+{
+    $days = max(1, (int) $days);
+    foreach (proxyline_periods() as $period) {
+        if ($period >= $days) {
+            return $period;
+        }
+    }
+    return false;
+}
+
 function proxyline_new_order($payload)
 {
     $request = [
-        'type' => 'dedicated_ipv4',
+        'type' => 'dedicated',
+        'ip_version' => 4,
         'country' => strtolower((string) ($payload['country'] ?? '')),
         'period' => (int) ($payload['rentPeriodDays'] ?? 0),
         'quantity' => (int) ($payload['quantity'] ?? 1)
