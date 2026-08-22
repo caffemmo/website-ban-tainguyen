@@ -151,6 +151,21 @@ function proxyline_periods()
     return [5, 10, 20, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 360];
 }
 
+function proxyline_ipv4_sale_periods()
+{
+    return [30, 60, 90, 180];
+}
+
+function proxyline_ipv4_sale_period_options()
+{
+    return [
+        ['value' => '30', 'label' => '1 tháng'],
+        ['value' => '60', 'label' => '2 tháng'],
+        ['value' => '90', 'label' => '3 tháng'],
+        ['value' => '180', 'label' => '6 tháng']
+    ];
+}
+
 function proxyline_country_options($response)
 {
     $payload = proxyline_payload($response);
@@ -192,9 +207,7 @@ function proxyline_country_options($response)
 
 function proxyline_rent_period_options()
 {
-    return array_map(function ($days) {
-        return ['value' => (string) $days, 'label' => (string) $days];
-    }, proxyline_periods());
+    return proxyline_ipv4_sale_period_options();
 }
 
 function proxyline_ips($country = '')
@@ -221,11 +234,15 @@ function proxyline_proxies($country = '')
 
 function proxyline_new_order($payload)
 {
+    $period = (int) ($payload['rentPeriodDays'] ?? 0);
+    if (!in_array($period, proxyline_ipv4_sale_periods(), true)) {
+        return ['success' => false, 'message' => 'Thời hạn IPv4 không được hỗ trợ.'];
+    }
     $request = [
         'type' => 'dedicated',
         'ip_version' => 4,
         'country' => strtolower((string) ($payload['country'] ?? '')),
-        'period' => (int) ($payload['rentPeriodDays'] ?? 0),
+        'period' => $period,
         'quantity' => (int) ($payload['quantity'] ?? 1)
     ];
     if (!empty($payload['promoCode'])) {
@@ -311,8 +328,8 @@ function proxyline_ipv4_quote($payload)
     $unitPrice = proxyline_ipv4_price_per_ip_day();
     $quantity = max(1, (int) ($payload['quantity'] ?? 1));
     $days = max(1, (int) ($payload['rentPeriodDays'] ?? 0));
-    if (!in_array($days, proxyline_periods(), true)) {
-        return ['success' => false, 'message' => 'Thời hạn IPv4 không được nhà cung cấp hỗ trợ.'];
+    if (!in_array($days, proxyline_ipv4_sale_periods(), true)) {
+        return ['success' => false, 'message' => 'Thời hạn IPv4 chỉ hỗ trợ 1, 2, 3 hoặc 6 tháng.'];
     }
     $amount = round($unitPrice * $quantity * $days, 2);
     if ($amount <= 0) {
