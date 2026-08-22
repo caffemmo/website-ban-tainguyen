@@ -3,6 +3,7 @@
 }
 require_once __DIR__ . '/../../libs/client-session.php';
 require_once __DIR__ . '/../../libs/youproxy.php';
+require_once __DIR__ . '/../../libs/proxyline.php';
 
 $getUser = client_optional_user($CMSNT);
 $proxyIsAuthenticated = is_array($getUser);
@@ -25,9 +26,9 @@ require_once __DIR__ . '/nav.php';
     data-token="<?= htmlspecialchars($proxyUserToken, ENT_QUOTES, 'UTF-8'); ?>"
     data-authenticated="<?= $proxyIsAuthenticated ? '1' : '0'; ?>"
     data-login-url="<?= htmlspecialchars(base_url('client/login'), ENT_QUOTES, 'UTF-8'); ?>"
-    data-configured="<?= youproxy_is_configured() ? '1' : '0'; ?>">
+    data-configured="<?= (youproxy_is_configured() || proxyline_is_configured()) ? '1' : '0'; ?>">
     <div class="proxy-status" data-proxy-status role="status" aria-live="polite" hidden></div>
-    <?php if (!youproxy_is_configured()): ?>
+    <?php if (!youproxy_is_configured() && !proxyline_is_configured()): ?>
         <section class="proxy-setup-banner"><div class="proxy-setup-icon"><i class="fa-solid fa-plug-circle-xmark" aria-hidden="true"></i></div><div><strong><?= __('Dịch vụ proxy đang chờ cấu hình'); ?></strong><p><?= __('Dịch vụ đang được chuẩn bị. Vui lòng thử lại sau ít phút hoặc liên hệ hỗ trợ.'); ?></p></div></section>
     <?php endif; ?>
 

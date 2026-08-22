@@ -769,9 +769,10 @@
         var rent = $('[data-renew-rent]');
         if (count) count.textContent = selected.length + ' proxy được chọn';
         var sameType = selected.length && selected.every(function (record) { return recordProxyType(record) === recordProxyType(selected[0]); });
+        var renewalSupported = selected.length && selected.every(function (record) { return record.renewal_supported !== false; });
         if (sameType && !state.renewType) setRenewType(recordProxyType(selected[0]));
-        if (quote) quote.disabled = !sameType || !rent || !rent.value;
-        if (submit) submit.disabled = !state.quote || !sameType;
+        if (quote) quote.disabled = !sameType || !renewalSupported || !rent || !rent.value;
+        if (submit) submit.disabled = !state.quote || !sameType || !renewalSupported;
     }
 
     async function renewQuote() {
@@ -779,6 +780,10 @@
         var rent = $('[data-renew-rent]');
         if (!selected.length || !rent || !rent.value) {
             setStatus('Chọn ít nhất một proxy và thời hạn gia hạn.', 'error');
+            return;
+        }
+        if (selected.some(function (record) { return record.renewal_supported === false; })) {
+            setStatus('Chức năng gia hạn proxy đang được cập nhật, vui lòng liên hệ hỗ trợ.', 'info');
             return;
         }
         var button = $('[data-renew-quote]');

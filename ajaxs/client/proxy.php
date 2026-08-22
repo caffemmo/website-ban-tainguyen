@@ -8,6 +8,7 @@ require_once dirname(__DIR__, 2) . '/libs/helper.php';
 require_once dirname(__DIR__, 2) . '/libs/database/users.php';
 require_once dirname(__DIR__, 2) . '/libs/client-session.php';
 require_once dirname(__DIR__, 2) . '/libs/youproxy.php';
+require_once dirname(__DIR__, 2) . '/libs/proxyline.php';
 $CMSNT = new DB();
 $getUser = client_optional_user($CMSNT);
 
@@ -29,7 +30,8 @@ function proxy_metadata_cache_path()
 function proxy_metadata_cache_key()
 {
     $config = youproxy_config();
-    return hash('sha256', $config['base_url'] . '|' . $config['api_key'] . '|' . json_encode(youproxy_proxy_type_states()));
+    $proxyline = proxyline_config();
+    return hash('sha256', $config['base_url'] . '|' . $config['api_key'] . '|' . json_encode(youproxy_proxy_type_states()) . '|' . $proxyline['base_url'] . '|' . $proxyline['api_key'] . '|' . proxyline_ipv4_price_per_ip_day());
 }
 
 function proxy_metadata_cache_read()
@@ -113,15 +115,16 @@ function proxy_metadata_filter_ipv6_inventory($data)
 
 function proxy_metadata_fetch()
 {
-    $typeResponse = youproxy_proxy_types();
-    if (!$typeResponse['success']) {
+    $youproxyConfigured = youproxy_is_configured();
+    $typeResponse = $youproxyConfigured ? youproxy_proxy_types() : ['success' => true, 'body' => []];
+    if ($youproxyConfigured && !$typeResponse['success'] && !proxyline_is_configured()) {
         return ['success' => false, 'message' => youproxy_error_text($typeResponse)];
     }
 
-    $types = youproxy_response_options($typeResponse, ['proxyTypes', 'types', 'items'], ['proxyType', 'code'], ['name', 'title']);
+    $types = $youproxyConfigured ? youproxy_response_options($typeResponse, ['proxyTypes', 'types', 'items'], ['proxyType', 'code'], ['name', 'title']) : [];
     $typeStates = youproxy_proxy_type_states();
     $availableTypes = [];
-    $requests = ['mobile_operators' => ['endpoint' => 'mobileOperator', 'query' => []]];
+    $requests = $youproxyConfigured ? ['mobile_operators' => ['endpoint' => 'mobileOperator', 'query' => []]] : [];
     foreach ($types as $type) {
         $typeCode = strtoupper((string) $type['value']);
         if (!in_array($typeCode, ['IPV4', 'IPV6', 'MOBILE', 'ISP'], true)) {
@@ -139,7 +142,7 @@ function proxy_metadata_fetch()
         $requests['periods_' . $typeCode] = ['endpoint' => 'rentPeriod', 'query' => ['proxyType' => $providerType]];
     }
 
-    $responses = youproxy_multi_get($requests);
+    $responses = !empty($requests) ? youproxy_multi_get($requests) : [];
     $result = ['types' => [], 'mobile_operators' => [], 'settings' => [], 'type_states' => $typeStates];
     foreach ($availableTypes as $typeCode => $type) {
         $countryResponse = $responses['countries_' . $typeCode] ?? ['success' => false];
@@ -154,6 +157,16 @@ function proxy_metadata_fetch()
     $mobileResponse = $responses['mobile_operators'] ?? ['success' => false];
     if (!empty($mobileResponse['success'])) {
         $result['mobile_operators'] = youproxy_response_options($mobileResponse, ['mobileOperators', 'operators', 'items'], ['code', 'id', 'operator'], ['name', 'title', 'operator']);
+    }
+
+    if (proxyline_is_configured() && !empty($typeStates['IPV4']['enabled'])) {
+        $countryResponse = proxyline_countries();
+        $result['types']['IPV4'] = [
+            'value' => 'IPV4',
+            'label' => 'Proxy IPv4 Datacenter',
+            'countries' => !empty($countryResponse['success']) ? proxyline_country_options($countryResponse) : [],
+            'rent_periods' => proxyline_rent_period_options()
+        ];
     }
 
     return ['success' => true, 'data' => $result];
@@ -279,6 +292,74 @@ function proxy_request_payload($input, $includeQuantity = true)
     return ['payload' => $payload];
 }
 
+function proxy_provider_for_type($type)
+{
+    return $type === 'IPv4' && proxyline_is_configured() ? 'proxyline' : 'youproxy';
+}
+
+function proxy_record_provider($record)
+{
+    $provider = strtolower(trim((string) (youproxy_find_first_value($record, ['provider_code', 'provider']) ?: 'youproxy')));
+    return in_array($provider, ['youproxy', 'proxyline'], true) ? $provider : 'youproxy';
+}
+
+function proxy_mark_records_provider($records, $provider)
+{
+    $provider = in_array($provider, ['youproxy', 'proxyline'], true) ? $provider : 'youproxy';
+    foreach ($records as &$record) {
+        if (!is_array($record)) {
+            continue;
+        }
+        if (trim((string) ($record['provider_code'] ?? '')) === '') {
+            $record['provider_code'] = $provider;
+        }
+    }
+    unset($record);
+    return $records;
+}
+
+function proxy_row_provider($row)
+{
+    $provider = strtolower(trim((string) ($row['provider_code'] ?? 'youproxy')));
+    return in_array($provider, ['youproxy', 'proxyline'], true) ? $provider : 'youproxy';
+}
+
+function proxy_provider_key($provider, $value)
+{
+    $value = trim((string) $value);
+    return $value === '' ? '' : proxy_row_provider(['provider_code' => $provider]) . ':' . $value;
+}
+
+function proxy_normalize_provider_records($payload, $provider)
+{
+    return $provider === 'proxyline'
+        ? proxyline_normalize_records($payload)
+        : youproxy_normalize_ip_records($payload);
+}
+
+function proxy_owned_provider_for_ids($userId, $ids)
+{
+    global $CMSNT;
+    $ids = array_values(array_unique(array_filter(array_map('strval', (array) $ids))));
+    if (empty($ids)) {
+        return 'youproxy';
+    }
+    youproxy_ensure_tables();
+    $rows = $CMSNT->get_list_safe('SELECT `provider_code`, `ip_address_ids` FROM `proxy_orders` WHERE `user_id` = ? AND `status` <> ?', [(int) $userId, 'refunded']);
+    $providers = [];
+    foreach ($rows as $row) {
+        $storedIds = proxy_row_stored_ids($row);
+        if (empty(array_intersect($ids, $storedIds))) {
+            continue;
+        }
+        $providers[proxy_row_provider($row)] = true;
+    }
+    if (count($providers) === 1) {
+        return (string) array_key_first($providers);
+    }
+    return count($providers) > 1 ? 'mixed' : 'youproxy';
+}
+
 function proxy_sanitized_record($record)
 {
     $auth = isset($record['authInfo']) && is_array($record['authInfo']) ? $record['authInfo'] : [];
@@ -299,7 +380,8 @@ function proxy_sanitized_record($record)
         'login' => (string) (youproxy_find_first_value($auth, ['login', 'username']) ?: ''),
         'password' => (string) (youproxy_find_first_value($auth, ['password']) ?: ''),
         'auto_extend' => (bool) (youproxy_find_first_value($extend, ['autoExtend']) ?: false),
-        'extend_days' => (int) (youproxy_find_first_value($extend, ['extendDays']) ?: 0)
+        'extend_days' => (int) (youproxy_find_first_value($extend, ['extendDays']) ?: 0),
+        'renewal_supported' => proxy_record_provider($record) !== 'proxyline'
     ];
 }
 
@@ -365,7 +447,7 @@ function proxy_match_pending_orders($records)
         return;
     }
     youproxy_ensure_tables();
-    $rows = $CMSNT->get_list_safe('SELECT `id`, `user_id`, `proxy_type`, `country`, `quantity`, `rent_period_days`, `created_at`, `ip_address_ids` FROM `proxy_orders` WHERE `status` <> ? ORDER BY `created_at` ASC, `id` ASC', ['refunded']);
+    $rows = $CMSNT->get_list_safe('SELECT `id`, `user_id`, `provider_code`, `proxy_type`, `country`, `quantity`, `rent_period_days`, `created_at`, `ip_address_ids` FROM `proxy_orders` WHERE `status` <> ? ORDER BY `created_at` ASC, `id` ASC', ['refunded']);
     if (empty($rows)) {
         return;
     }
@@ -374,9 +456,10 @@ function proxy_match_pending_orders($records)
     $pending = [];
     foreach ($rows as $row) {
         $rowId = (int) ($row['id'] ?? 0);
+        $provider = proxy_row_provider($row);
         $storedIds = proxy_row_stored_ids($row);
         foreach ($storedIds as $id) {
-            $claimedBy[$id] = $rowId;
+            $claimedBy[proxy_provider_key($provider, $id)] = $rowId;
         }
         if ($rowId > 0 && count($storedIds) < max(1, (int) ($row['quantity'] ?? 1))) {
             $pending[] = ['row' => $row, 'stored_ids' => $storedIds];
@@ -393,10 +476,11 @@ function proxy_match_pending_orders($records)
         if ($recordId === '' || $orderId === '') {
             continue;
         }
-        if (!isset($groups[$orderId])) {
-            $groups[$orderId] = [];
+        $groupKey = proxy_record_provider($record) . ':' . $orderId;
+        if (!isset($groups[$groupKey])) {
+            $groups[$groupKey] = [];
         }
-        $groups[$orderId][] = $record;
+        $groups[$groupKey][] = $record;
     }
     if (empty($groups)) {
         return;
@@ -406,6 +490,7 @@ function proxy_match_pending_orders($records)
         $row = $pendingOrder['row'];
         $rowId = (int) $row['id'];
         $quantity = max(1, (int) ($row['quantity'] ?? 1));
+        $expectedProvider = proxy_row_provider($row);
         $expectedType = strtoupper(trim((string) ($row['proxy_type'] ?? '')));
         $expectedCountry = strtoupper(trim((string) ($row['country'] ?? '')));
         $expectedDays = max(1, (int) ($row['rent_period_days'] ?? 0));
@@ -424,7 +509,11 @@ function proxy_match_pending_orders($records)
             $validGroup = true;
             foreach ($group as $record) {
                 $recordId = proxy_record_id($record);
-                if (isset($claimedBy[$recordId]) && $claimedBy[$recordId] !== $rowId) {
+                if (proxy_record_provider($record) !== $expectedProvider) {
+                    $validGroup = false;
+                    break;
+                }
+                if (isset($claimedBy[proxy_provider_key($expectedProvider, $recordId)]) && $claimedBy[proxy_provider_key($expectedProvider, $recordId)] !== $rowId) {
                     $validGroup = false;
                     break;
                 }
@@ -486,7 +575,7 @@ function proxy_match_pending_orders($records)
         ], '`id` = ?', [$rowId]);
         if ($updated !== false) {
             foreach ($mergedIds as $id) {
-                $claimedBy[$id] = $rowId;
+                $claimedBy[proxy_provider_key($expectedProvider, $id)] = $rowId;
             }
         }
     }
@@ -496,25 +585,32 @@ function proxy_owned_access($userId)
 {
     global $CMSNT;
     youproxy_ensure_tables();
-    $rows = $CMSNT->get_list_safe('SELECT `provider_order_id`, `ip_address_ids`, `provider_payload` FROM `proxy_orders` WHERE `user_id` = ? AND `status` <> ?', [(int) $userId, 'refunded']);
+    $rows = $CMSNT->get_list_safe('SELECT `provider_code`, `provider_order_id`, `ip_address_ids`, `provider_payload` FROM `proxy_orders` WHERE `user_id` = ? AND `status` <> ?', [(int) $userId, 'refunded']);
     $ids = [];
     $orders = [];
+    $providerIds = [];
+    $providerOrders = [];
     $records = [];
     foreach ($rows as $row) {
+        $provider = proxy_row_provider($row);
         if (!empty($row['provider_order_id'])) {
-            $orders[] = (string) $row['provider_order_id'];
+            $orderId = (string) $row['provider_order_id'];
+            $orders[] = $orderId;
+            $providerOrders[] = proxy_provider_key($provider, $orderId);
         }
         $storedIds = json_decode((string) ($row['ip_address_ids'] ?? ''), true);
         if (is_array($storedIds)) {
             foreach ($storedIds as $id) {
                 if (is_scalar($id) && trim((string) $id) !== '') {
-                    $ids[] = (string) $id;
+                    $id = (string) $id;
+                    $ids[] = $id;
+                    $providerIds[] = proxy_provider_key($provider, $id);
                 }
             }
         }
         $storedPayload = json_decode((string) ($row['provider_payload'] ?? ''), true);
         if (is_array($storedPayload)) {
-            foreach (youproxy_normalize_ip_records($storedPayload) as $record) {
+            foreach (proxy_mark_records_provider(proxy_normalize_provider_records($storedPayload, $provider), $provider) as $record) {
                 $records[] = $record;
             }
         }
@@ -522,6 +618,8 @@ function proxy_owned_access($userId)
     return [
         'ids' => array_values(array_unique($ids)),
         'orders' => array_values(array_unique($orders)),
+        'provider_ids' => array_values(array_unique($providerIds)),
+        'provider_orders' => array_values(array_unique($providerOrders)),
         'records' => $records
     ];
 }
@@ -532,10 +630,15 @@ function proxy_filter_owned_records($records, $userId)
     $access = proxy_owned_access($userId);
     $ownedIds = array_fill_keys($access['ids'], true);
     $ownedOrders = array_fill_keys($access['orders'], true);
-    $matchesOwnership = function ($record) use ($ownedIds, $ownedOrders) {
+    $ownedProviderIds = array_fill_keys($access['provider_ids'], true);
+    $ownedProviderOrders = array_fill_keys($access['provider_orders'], true);
+    $matchesOwnership = function ($record) use ($ownedIds, $ownedOrders, $ownedProviderIds, $ownedProviderOrders) {
         $id = (string) (youproxy_find_first_value($record, ['ipAddressId', 'id']) ?: '');
         $orderId = (string) (youproxy_find_first_value($record, ['orderId', 'orderID', 'orderNumber']) ?: '');
-        return ($id !== '' && isset($ownedIds[$id])) || ($orderId !== '' && isset($ownedOrders[$orderId]));
+        $provider = proxy_record_provider($record);
+        return ($id !== '' && isset($ownedProviderIds[proxy_provider_key($provider, $id)]))
+            || ($orderId !== '' && isset($ownedProviderOrders[proxy_provider_key($provider, $orderId)]))
+            || ($provider === 'youproxy' && (($id !== '' && isset($ownedIds[$id])) || ($orderId !== '' && isset($ownedOrders[$orderId]))));
     };
     $ownedRecords = array_values(array_filter($records, $matchesOwnership));
     $fallbackRecords = array_values(array_filter($access['records'], $matchesOwnership));
@@ -544,7 +647,8 @@ function proxy_filter_owned_records($records, $userId)
     foreach (array_merge($ownedRecords, $fallbackRecords) as $record) {
         $id = (string) (youproxy_find_first_value($record, ['ipAddressId', 'id']) ?: '');
         $orderId = (string) (youproxy_find_first_value($record, ['orderId', 'orderID', 'orderNumber']) ?: '');
-        $key = $id !== '' ? 'id:' . $id : ($orderId !== '' ? 'order:' . $orderId : 'record:' . count($merged));
+        $provider = proxy_record_provider($record);
+        $key = $id !== '' ? 'id:' . proxy_provider_key($provider, $id) : ($orderId !== '' ? 'order:' . proxy_provider_key($provider, $orderId) : 'record:' . count($merged));
         if (!isset($seen[$key])) {
             $seen[$key] = true;
             $merged[] = $record;
@@ -721,7 +825,7 @@ $tokenMatchesSession = !empty($getUser['token'])
 if (!in_array($action, ['metadata', 'quote'], true) && !$tokenMatchesSession) {
     proxy_json(['success' => false, 'message' => 'Phiên làm việc không hợp lệ, vui lòng tải lại trang.'], 419);
 }
-if (!youproxy_is_configured()) {
+if (!youproxy_is_configured() && !proxyline_is_configured()) {
     proxy_json(['success' => false, 'message' => 'Dịch vụ proxy chưa sẵn sàng.'], 503);
 }
 
@@ -746,6 +850,13 @@ if ($action === 'quote') {
     }
     if (!youproxy_proxy_type_enabled($validated['payload']['proxyType'])) {
         proxy_json(['success' => false, 'message' => 'Loại proxy này đang tạm ngưng mở bán.'], 503);
+    }
+    if (proxy_provider_for_type($validated['payload']['proxyType']) === 'proxyline') {
+        $proxylineQuote = proxyline_ipv4_quote($validated['payload']);
+        if (empty($proxylineQuote['success'])) {
+            proxy_json(['success' => false, 'message' => $proxylineQuote['message'] ?? 'Không thể báo giá IPv4.'], 422);
+        }
+        proxy_json(['success' => true, 'data' => $proxylineQuote['data']]);
     }
     if ($validated['payload']['proxyType'] === 'IPv6') {
         $retailQuote = proxy_ipv6_retail_quote($validated['payload']);
@@ -772,12 +883,21 @@ if ($action === 'buy') {
     if ($validated['payload']['proxyType'] === 'IPv6') {
         proxy_ipv6_retail_purchase($validated['payload'], $input, $getUser);
     }
-    $quote = youproxy_calculate_order($validated['payload']);
-    if (!$quote['success']) {
-        proxy_json(['success' => false, 'message' => youproxy_error_text($quote)], 422);
+    $providerCode = proxy_provider_for_type($validated['payload']['proxyType']);
+    if ($providerCode === 'proxyline') {
+        $quote = proxyline_ipv4_quote($validated['payload']);
+        if (empty($quote['success'])) {
+            proxy_json(['success' => false, 'message' => $quote['message'] ?? 'Không thể tạo báo giá IPv4.'], 422);
+        }
+        $price = $quote['price'];
+    } else {
+        $quote = youproxy_calculate_order($validated['payload']);
+        if (!$quote['success']) {
+            proxy_json(['success' => false, 'message' => youproxy_error_text($quote)], 422);
+        }
+        $price = youproxy_price_context($quote);
     }
-    $price = youproxy_price_context($quote);
-    if ($price['provider_price'] <= 0 || $price['wallet_amount'] <= 0) {
+    if ($price['wallet_amount'] <= 0 || ($providerCode !== 'proxyline' && $price['provider_price'] <= 0)) {
         proxy_json(['success' => false, 'message' => 'Dịch vụ proxy chưa trả về giá hợp lệ cho cấu hình này.'], 502);
     }
     if ((float) $getUser['money'] < $price['wallet_amount']) {
@@ -792,14 +912,20 @@ if ($action === 'buy') {
         proxy_json(['success' => false, 'message' => 'Không thể trừ tiền trong ví, vui lòng thử lại.'], 500);
     }
 
-    $providerOrder = youproxy_create_order($validated['payload']);
+    $providerOrder = $providerCode === 'proxyline'
+        ? proxyline_new_order($validated['payload'])
+        : youproxy_create_order($validated['payload']);
     if (!$providerOrder['success']) {
+        if ($providerCode === 'proxyline') {
+            $userModel->RefundCredits($getUser['id'], $price['wallet_amount'], 'Hoàn tiền mua proxy do giao dịch lỗi', $transactionId . '_refund');
+            proxy_json(['success' => false, 'message' => 'Mua proxy thất bại, hệ thống đã hoàn tiền vào ví.'], 502);
+        }
         $userModel->RefundCredits($getUser['id'], $price['wallet_amount'], 'Hoàn tiền mua proxy do giao dịch lỗi', $transactionId . '_refund');
         proxy_json(['success' => false, 'message' => youproxy_error_text($providerOrder, 'Mua proxy thất bại, hệ thống đã hoàn tiền vào ví.')], 502);
     }
 
-    $orderId = youproxy_extract_order_id($providerOrder);
-    $records = youproxy_normalize_ip_records($providerOrder);
+    $orderId = $providerCode === 'proxyline' ? proxyline_extract_order_id($providerOrder) : youproxy_extract_order_id($providerOrder);
+    $records = proxy_mark_records_provider(proxy_normalize_provider_records($providerOrder, $providerCode), $providerCode);
     $recordIds = [];
     foreach ($records as $record) {
         $id = youproxy_find_first_value($record, ['ipAddressId', 'id']);
@@ -809,6 +935,10 @@ if ($action === 'buy') {
     }
     $autoExtend = !empty($input['auto_extend']);
     $autoExtendWarning = '';
+    if ($autoExtend && $providerCode === 'proxyline') {
+        $autoExtend = false;
+        $autoExtendWarning = 'Đơn đã tạo nhưng chưa bật được tự động gia hạn.';
+    }
     if ($autoExtend && $orderId !== '') {
         $autoResponse = youproxy_auto_extend([
             'proxyType' => $validated['payload']['proxyType'],
@@ -826,12 +956,13 @@ if ($action === 'buy') {
     $customerOrderId = $CMSNT->insert('proxy_orders', [
         'user_id' => (int) $getUser['id'],
         'provider_order_id' => $orderId !== '' ? $orderId : null,
+        'provider_code' => $providerCode,
         'proxy_type' => $validated['payload']['proxyType'],
         'country' => $validated['payload']['country'],
         'quantity' => $validated['payload']['quantity'],
         'rent_period_days' => $validated['payload']['rentPeriodDays'],
         'provider_price' => $price['provider_price'],
-        'provider_cost_vnd' => youproxy_provider_cost_vnd($price),
+        'provider_cost_vnd' => $providerCode === 'proxyline' ? 0 : youproxy_provider_cost_vnd($price),
         'wallet_amount' => $price['wallet_amount'],
         'provider_currency' => $price['provider_currency'],
         'auto_extend' => $autoExtend ? 1 : 0,
@@ -857,7 +988,7 @@ if ($action === 'buy') {
         'data' => [
             'order_id' => $orderId,
             'records' => $safeRecords,
-            'price' => proxy_price_response($quote),
+            'price' => $providerCode === 'proxyline' ? $quote['data'] : proxy_price_response($quote),
             'wallet_balance' => (float) getUser($getUser['id'], 'money')
         ]
     ]);
@@ -865,11 +996,27 @@ if ($action === 'buy') {
 
 if ($action === 'list') {
     $type = proxy_type(proxy_value($input, 'proxy_type'));
-    $response = youproxy_ip_addresses($type ?: '');
+    $records = [];
+    $providerSucceeded = false;
+    if (($type === false || $type === 'IPv4') && proxyline_is_configured()) {
+        $proxylineResponse = proxyline_ips();
+        if (!empty($proxylineResponse['success'])) {
+            $records = array_merge($records, proxy_mark_records_provider(proxyline_normalize_records($proxylineResponse), 'proxyline'));
+            $providerSucceeded = true;
+        }
+    }
+    if (youproxy_is_configured()) {
+        $youproxyResponse = youproxy_ip_addresses($type ?: '');
+        if (!empty($youproxyResponse['success'])) {
+            $records = array_merge($records, proxy_mark_records_provider(youproxy_normalize_ip_records($youproxyResponse), 'youproxy'));
+            $providerSucceeded = true;
+        }
+    }
+    $response = ['success' => $providerSucceeded, 'body' => []];
     if (!$response['success']) {
         proxy_json(['success' => false, 'message' => youproxy_error_text($response)], 502);
     }
-    $records = proxy_filter_owned_records(youproxy_normalize_ip_records($response), $getUser['id']);
+    $records = proxy_filter_owned_records($records, $getUser['id']);
     $now = time();
     $active = 0;
     $expiring = 0;
@@ -896,11 +1043,18 @@ if ($action === 'renew_quote' || $action === 'renew') {
     if ($type === false || $rent === false || empty($ids)) {
         proxy_json(['success' => false, 'message' => 'Vui lòng chọn proxy và thời hạn gia hạn hợp lệ.'], 422);
     }
+    $providerCode = proxy_owned_provider_for_ids($getUser['id'], $ids);
+    if ($providerCode === 'mixed') {
+        proxy_json(['success' => false, 'message' => 'Vui lòng chỉ chọn proxy cùng một nhóm để gia hạn.'], 422);
+    }
+    if ($providerCode === 'proxyline') {
+        proxy_json(['success' => false, 'message' => 'Chức năng gia hạn proxy đang được cập nhật, vui lòng liên hệ hỗ trợ.'], 503);
+    }
     $listResponse = youproxy_ip_addresses($type);
     if (!$listResponse['success']) {
         proxy_json(['success' => false, 'message' => youproxy_error_text($listResponse)], 502);
     }
-    $availableRecords = proxy_filter_owned_records(youproxy_normalize_ip_records($listResponse), $getUser['id']);
+    $availableRecords = proxy_filter_owned_records(proxy_mark_records_provider(youproxy_normalize_ip_records($listResponse), 'youproxy'), $getUser['id']);
     $allowedIds = proxy_records_for_ids($availableRecords, $ids);
     if (count($allowedIds) !== count($ids)) {
         proxy_json(['success' => false, 'message' => 'Một hoặc nhiều proxy không thuộc tài khoản của bạn.'], 403);
@@ -957,11 +1111,18 @@ if ($action === 'auto_extend') {
     if ($type === false || $rent === false || empty($ids)) {
         proxy_json(['success' => false, 'message' => 'Vui lòng chọn proxy hợp lệ.'], 422);
     }
+    $providerCode = proxy_owned_provider_for_ids($getUser['id'], $ids);
+    if ($providerCode === 'mixed') {
+        proxy_json(['success' => false, 'message' => 'Vui lòng chỉ chọn proxy cùng một nhóm để gia hạn.'], 422);
+    }
+    if ($providerCode === 'proxyline') {
+        proxy_json(['success' => false, 'message' => 'Chức năng gia hạn proxy đang được cập nhật, vui lòng liên hệ hỗ trợ.'], 503);
+    }
     $listResponse = youproxy_ip_addresses($type);
     if (!$listResponse['success']) {
         proxy_json(['success' => false, 'message' => youproxy_error_text($listResponse)], 502);
     }
-    $allowedIds = proxy_records_for_ids(proxy_filter_owned_records(youproxy_normalize_ip_records($listResponse), $getUser['id']), $ids);
+    $allowedIds = proxy_records_for_ids(proxy_filter_owned_records(proxy_mark_records_provider(youproxy_normalize_ip_records($listResponse), 'youproxy'), $getUser['id']), $ids);
     if (count($allowedIds) !== count($ids)) {
         proxy_json(['success' => false, 'message' => 'Một hoặc nhiều proxy không thuộc tài khoản của bạn.'], 403);
     }

@@ -3,6 +3,7 @@
 }
 require_once __DIR__ . '/../../libs/client-session.php';
 require_once __DIR__ . '/../../libs/youproxy.php';
+require_once __DIR__ . '/../../libs/proxyline.php';
 
 $getUser = client_optional_user($CMSNT);
 $proxyGuides = caffemmo_client_guides_get(false, 'proxy-buy');
@@ -27,7 +28,7 @@ require_once __DIR__ . '/nav.php';
     data-token="<?= htmlspecialchars($proxyUserToken, ENT_QUOTES, 'UTF-8'); ?>"
     data-authenticated="<?= $proxyIsAuthenticated ? '1' : '0'; ?>"
     data-login-url="<?= htmlspecialchars(base_url('client/login'), ENT_QUOTES, 'UTF-8'); ?>"
-    data-configured="<?= youproxy_is_configured() ? '1' : '0'; ?>">
+    data-configured="<?= (youproxy_is_configured() || proxyline_is_configured()) ? '1' : '0'; ?>">
     <?php if (!empty($proxyGuides) || !empty($proxyFaqs)): ?>
         <div class="proxy-resource-grid">
             <?php if (!empty($proxyGuides)): ?>

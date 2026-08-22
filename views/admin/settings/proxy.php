@@ -3,6 +3,7 @@
 }
 
 require_once __DIR__ . '/../../../libs/youproxy.php';
+require_once __DIR__ . '/../../../libs/proxyline.php';
 
 $ipv6CountryOptions = [];
 if (youproxy_is_configured()) {
@@ -150,6 +151,9 @@ if (isset($_POST['SaveProxySettings'])) {
     $markup = trim((string) ($_POST['youproxy_markup_percent'] ?? ''));
     $ipv6RetailUnitPrice = trim((string) ($_POST['youproxy_ipv6_retail_unit_price'] ?? ''));
     $timeout = filter_var($_POST['youproxy_timeout'] ?? null, FILTER_VALIDATE_INT);
+    $proxylineApiKey = trim((string) ($_POST['proxyline_api_key'] ?? ''));
+    $proxylineBaseUrl = trim((string) ($_POST['proxyline_api_base_url'] ?? ''));
+    $proxylineIpv4Price = trim((string) ($_POST['proxyline_ipv4_price_per_ip_day'] ?? ''));
 
     if ($apiKey !== '' && mb_strlen($apiKey) > 255) {
         admin_msg_error('Khóa dịch vụ proxy không hợp lệ.', base_url_admin('settings&tab=proxy'), 1200);
@@ -169,6 +173,15 @@ if (isset($_POST['SaveProxySettings'])) {
     if ($timeout === false || $timeout < 5 || $timeout > 120) {
         admin_msg_error('Timeout phải nằm trong khoảng 5 đến 120 giây.', base_url_admin('settings&tab=proxy'), 1200);
     }
+    if ($proxylineApiKey !== '' && mb_strlen($proxylineApiKey) > 255) {
+        admin_msg_error('Khóa API ProxyLine không hợp lệ.', base_url_admin('settings&tab=proxy'), 1200);
+    }
+    if ($proxylineBaseUrl === '' || filter_var($proxylineBaseUrl, FILTER_VALIDATE_URL) === false || strtolower((string) parse_url($proxylineBaseUrl, PHP_URL_SCHEME)) !== 'https') {
+        admin_msg_error('URL ProxyLine phải là một địa chỉ HTTPS hợp lệ.', base_url_admin('settings&tab=proxy'), 1200);
+    }
+    if ($proxylineIpv4Price !== '' && (!is_numeric($proxylineIpv4Price) || (float) $proxylineIpv4Price < 0 || (float) $proxylineIpv4Price > 1000000000)) {
+        admin_msg_error('Giá bán IPv4 ProxyLine không hợp lệ.', base_url_admin('settings&tab=proxy'), 1200);
+    }
 
     if ($apiKey !== '') {
         proxy_admin_save_setting('youproxy_api_key', $apiKey);
@@ -178,6 +191,11 @@ if (isset($_POST['SaveProxySettings'])) {
     proxy_admin_save_setting('youproxy_markup_percent', number_format((float) $markup, 2, '.', ''));
     proxy_admin_save_setting('youproxy_ipv6_retail_unit_price', $ipv6RetailUnitPrice === '' ? '0' : number_format((float) $ipv6RetailUnitPrice, 2, '.', ''));
     proxy_admin_save_setting('youproxy_timeout', (string) $timeout);
+    if ($proxylineApiKey !== '') {
+        proxy_admin_save_setting('proxyline_api_key', $proxylineApiKey);
+    }
+    proxy_admin_save_setting('proxyline_api_base_url', rtrim($proxylineBaseUrl, '/'));
+    proxy_admin_save_setting('proxyline_ipv4_price_per_ip_day', $proxylineIpv4Price === '' ? '0' : number_format((float) $proxylineIpv4Price, 2, '.', ''));
     foreach (youproxy_proxy_type_definitions() as $typeCode => $typeDefinition) {
         proxy_admin_save_setting('youproxy_type_enabled_' . $typeCode, isset($_POST['youproxy_type_enabled_' . $typeCode]) ? '1' : '0');
     }
@@ -206,10 +224,13 @@ if (isset($_POST['SaveProxySettings'])) {
 }
 
 $proxyConfig = youproxy_config();
+$proxylineConfig = proxyline_config();
 $proxyTypeStates = youproxy_proxy_type_states();
 $ipv6RetailUnitPrice = youproxy_ipv6_retail_unit_price();
-$proxyConfigured = youproxy_is_configured();
+$proxylineIpv4Price = proxyline_ipv4_price_per_ip_day();
+$proxyConfigured = youproxy_is_configured() || proxyline_is_configured();
 $hasStoredKey = youproxy_db_setting('youproxy_api_key') !== '';
+$proxylineHasStoredKey = youproxy_db_setting('proxyline_api_key') !== '';
 youproxy_ensure_tables();
 $ipv6RetailStats = $CMSNT->get_row_safe(
     "SELECT
@@ -277,6 +298,8 @@ $ipv6RetailBatches = $CMSNT->get_list_safe(
     }
     .proxy-admin-note i { margin-top: 2px; color: #3a82c4; }
     .proxy-admin-save { min-width: 170px; }
+    .proxyline-status { display: inline-flex; align-items: center; gap: 6px; padding: 5px 9px; border-radius: 999px; color: #16774a; background: #e8f8ee; font-size: 11px; font-weight: 700; }
+    .proxyline-status.is-pending { color: #96640a; background: #fff4d7; }
     .proxy-availability-card { height: 100%; border: 1px solid #e1eaf3; border-radius: 12px; background: #fbfdff; transition: border-color 160ms ease, background-color 160ms ease; }
     .proxy-availability-card:focus-within { border-color: #62c8d2; background: #f5fdfe; }
     .proxy-availability-card.is-disabled { background: #fffafb; }
@@ -330,7 +353,7 @@ $ipv6RetailBatches = $CMSNT->get_list_safe(
                             <label class="form-label proxy-admin-label" for="youproxy_api_key"><i class="fa-solid fa-key" aria-hidden="true"></i><?= __('Khóa API'); ?></label>
                             <div class="input-group">
                                 <input type="password" class="form-control" id="youproxy_api_key" name="youproxy_api_key" placeholder="<?= $hasStoredKey ? __('Đã lưu khóa máy chủ, để trống để giữ nguyên') : __('Nhập khóa API trên máy chủ'); ?>" autocomplete="new-password">
-                                <button type="button" class="btn btn-outline-secondary" id="proxy_api_key_toggle" title="<?= __('Hiện hoặc ẩn khóa'); ?>" aria-label="<?= __('Hiện hoặc ẩn khóa'); ?>"><i class="fa-solid fa-eye-slash" aria-hidden="true"></i></button>
+                                <button type="button" class="btn btn-outline-secondary" id="proxy_api_key_toggle" data-proxy-secret-toggle data-proxy-secret-input="youproxy_api_key" title="<?= __('Hiện hoặc ẩn khóa'); ?>" aria-label="<?= __('Hiện hoặc ẩn khóa'); ?>"><i class="fa-solid fa-eye-slash" aria-hidden="true"></i></button>
                             </div>
                             <div class="proxy-admin-help mt-2"><i class="fa-solid fa-lock me-1" aria-hidden="true"></i><?= __('Khóa được giữ ở server và không hiển thị cho khách hàng.'); ?></div>
                         </div>
@@ -394,6 +417,46 @@ $ipv6RetailBatches = $CMSNT->get_list_safe(
                 </div>
             </div>
         </div>
+
+        <section class="card proxy-admin-card mt-4" aria-labelledby="proxyline-settings-title">
+            <div class="card-header">
+                <div class="d-flex flex-wrap align-items-start justify-content-between gap-2">
+                    <div>
+                        <div class="card-title mb-1" id="proxyline-settings-title"><i class="fa-solid fa-globe me-2 text-primary" aria-hidden="true"></i><?= __('Cấu hình IPv4'); ?></div>
+                        <p class="proxy-admin-help mb-0"><?= __('Thiết lập nguồn IPv4 riêng và giá bán thủ công. ISP, IPv6 và Mobile vẫn dùng cấu hình hiện tại.'); ?></p>
+                    </div>
+                    <span class="proxyline-status <?= $proxylineConfigured ? '' : 'is-pending'; ?>">
+                        <i class="fa-solid fa-circle" aria-hidden="true"></i>
+                        <?= $proxylineConfigured ? __('ProxyLine đã sẵn sàng') : __('Chưa cấu hình IPv4'); ?>
+                    </span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-lg-5">
+                        <label class="form-label proxy-admin-label" for="proxyline_api_key"><i class="fa-solid fa-key" aria-hidden="true"></i><?= __('Khóa API IPv4'); ?></label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="proxyline_api_key" name="proxyline_api_key" placeholder="<?= $proxylineHasStoredKey ? __('Đã lưu khóa máy chủ, để trống để giữ nguyên') : __('Nhập khóa API trên máy chủ'); ?>" autocomplete="new-password">
+                            <button type="button" class="btn btn-outline-secondary" data-proxy-secret-toggle data-proxy-secret-input="proxyline_api_key" title="<?= __('Hiện hoặc ẩn khóa'); ?>" aria-label="<?= __('Hiện hoặc ẩn khóa'); ?>"><i class="fa-solid fa-eye-slash" aria-hidden="true"></i></button>
+                        </div>
+                        <div class="proxy-admin-help mt-2"><i class="fa-solid fa-lock me-1" aria-hidden="true"></i><?= __('Khóa chỉ được gửi tới server, không đưa vào frontend hoặc dữ liệu trả cho khách.'); ?></div>
+                    </div>
+                    <div class="col-lg-4">
+                        <label class="form-label proxy-admin-label" for="proxyline_api_base_url"><i class="fa-solid fa-link" aria-hidden="true"></i><?= __('URL API IPv4'); ?></label>
+                        <input type="url" class="form-control" id="proxyline_api_base_url" name="proxyline_api_base_url" value="<?= htmlspecialchars($proxylineConfig['base_url'], ENT_QUOTES, 'UTF-8'); ?>" required inputmode="url">
+                        <div class="proxy-admin-help mt-2"><?= __('Dùng HTTPS và không thêm dấu / ở cuối.'); ?></div>
+                    </div>
+                    <div class="col-lg-3">
+                        <label class="form-label proxy-admin-label" for="proxyline_ipv4_price_per_ip_day"><i class="fa-solid fa-tag" aria-hidden="true"></i><?= __('Giá bán IPv4'); ?></label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" id="proxyline_ipv4_price_per_ip_day" name="proxyline_ipv4_price_per_ip_day" value="<?= $proxylineIpv4Price > 0 ? htmlspecialchars(number_format($proxylineIpv4Price, 2, '.', ''), ENT_QUOTES, 'UTF-8') : ''; ?>" min="0" max="1000000000" step="0.01" placeholder="0">
+                            <span class="input-group-text">VND / IP / ngày</span>
+                        </div>
+                        <div class="proxy-admin-help mt-2"><?= __('Giá × số IP × số ngày. Đặt 0 để tạm ngừng bán IPv4.'); ?></div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
         <section class="card proxy-admin-card mt-4" aria-labelledby="proxy-availability-title">
             <div class="card-header">
@@ -501,7 +564,7 @@ $ipv6RetailBatches = $CMSNT->get_list_safe(
                                 <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
                                 <span><?= __('Lô chưa nhận đủ IP sẽ ở trạng thái chờ đồng bộ và không xuất hiện cho khách mua.'); ?></span>
                             </div>
-                            <button type="submit" name="RestockIpv6Retail" class="btn btn-primary w-100 mt-3" <?= !$proxyConfigured ? 'disabled' : ''; ?>>
+                            <button type="submit" name="RestockIpv6Retail" class="btn btn-primary w-100 mt-3" <?= !youproxy_is_configured() ? 'disabled' : ''; ?>>
                                 <i class="fa-solid fa-boxes-stacked me-2" aria-hidden="true"></i><?= __('Mua và nhập kho 10 IPv6'); ?>
                             </button>
                         </form>
@@ -560,15 +623,15 @@ $ipv6RetailBatches = $CMSNT->get_list_safe(
 
 <script>
     (function () {
-        var input = document.getElementById('youproxy_api_key');
-        var button = document.getElementById('proxy_api_key_toggle');
-        if (input && button) {
+        document.querySelectorAll('[data-proxy-secret-toggle]').forEach(function (button) {
+            var input = document.getElementById(button.getAttribute('data-proxy-secret-input'));
+            if (!input) return;
             button.addEventListener('click', function () {
                 var visible = input.type === 'text';
                 input.type = visible ? 'password' : 'text';
                 button.querySelector('i').className = visible ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye';
             });
-        }
+        });
 
         document.querySelectorAll('[data-proxy-admin-status]').forEach(function (status) {
             var card = status.closest('.proxy-availability-card');

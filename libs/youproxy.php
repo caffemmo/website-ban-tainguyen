@@ -1176,6 +1176,7 @@ function youproxy_ensure_tables()
         `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
         `user_id` INT UNSIGNED NOT NULL,
         `provider_order_id` VARCHAR(100) NULL,
+        `provider_code` VARCHAR(20) NOT NULL DEFAULT 'youproxy',
         `proxy_type` VARCHAR(20) NOT NULL,
         `country` VARCHAR(12) NULL,
         `quantity` INT UNSIGNED NOT NULL DEFAULT 1,
@@ -1256,6 +1257,7 @@ function youproxy_ensure_tables()
     }
 
     foreach ([
+        ['proxy_orders', 'provider_code', "VARCHAR(20) NOT NULL DEFAULT 'youproxy' AFTER `provider_order_id`"],
         ['proxy_orders', 'provider_cost_vnd', 'DECIMAL(18,2) NOT NULL DEFAULT 0 AFTER `provider_price`'],
         ['proxy_ipv6_batches', 'provider_cost_vnd', 'DECIMAL(18,2) NOT NULL DEFAULT 0 AFTER `provider_price`'],
         ['proxy_ipv6_inventory', 'acquisition_unit_cost_vnd', 'DECIMAL(18,2) NOT NULL DEFAULT 0 AFTER `retail_price`']
