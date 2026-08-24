@@ -104,7 +104,17 @@ require_once(__DIR__.'/nav.php');
                     <?php foreach ($homeFeaturedLinks as $homeFeaturedLink): ?>
                         <?php
                         $homeFeaturedTone = $homeFeaturedLink['tone'] ?? 'guide';
-                        $homeFeaturedIcon = $homeFeaturedTone === 'bot' ? 'fa-brands fa-telegram' : ($homeFeaturedTone === 'channel' ? 'fa-solid fa-bullhorn' : 'fa-solid fa-book-open');
+                        $homeFeaturedTitle = mb_strtolower((string) ($homeFeaturedLink['title'] ?? ''), 'UTF-8');
+                        $homeFeaturedIcon = 'fa-solid fa-circle-play';
+                        if ($homeFeaturedTone === 'bot') {
+                            $homeFeaturedIcon = 'fa-solid fa-cart-shopping';
+                        } elseif ($homeFeaturedTone === 'channel') {
+                            $homeFeaturedIcon = 'fa-solid fa-bell';
+                        } elseif (mb_strpos($homeFeaturedTitle, 'điện thoại', 0, 'UTF-8') !== false || mb_strpos($homeFeaturedTitle, 'phone', 0, 'UTF-8') !== false) {
+                            $homeFeaturedIcon = 'fa-solid fa-mobile-screen-button';
+                        } elseif (mb_strpos($homeFeaturedTitle, 'máy tính', 0, 'UTF-8') !== false || mb_strpos($homeFeaturedTitle, 'computer', 0, 'UTF-8') !== false || mb_strpos($homeFeaturedTitle, 'pc', 0, 'UTF-8') !== false) {
+                            $homeFeaturedIcon = 'fa-solid fa-desktop';
+                        }
                         ?>
                         <a class="home-telegram-action home-telegram-action--<?= htmlspecialchars($homeFeaturedTone, ENT_QUOTES, 'UTF-8'); ?>" href="<?= htmlspecialchars($homeFeaturedLink['url'], ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener noreferrer">
                             <span class="home-telegram-action-icon"><i class="<?= $homeFeaturedIcon; ?>" aria-hidden="true"></i></span>
