@@ -105,24 +105,24 @@ require_once(__DIR__.'/nav.php');
                         <?php
                         $homeFeaturedTone = $homeFeaturedLink['tone'] ?? 'guide';
                         $homeFeaturedTitle = mb_strtolower((string) ($homeFeaturedLink['title'] ?? ''), 'UTF-8');
-                        $homeFeaturedIcon = 'fa-solid fa-circle-play';
-                        $homeFeaturedIconVariant = 'guide';
+                        $homeFeaturedIconAsset = 'mod/img/home-links/desktop-guide.png';
+                        $homeFeaturedIconAlt = __('Hướng dẫn sử dụng');
                         if ($homeFeaturedTone === 'bot') {
-                            $homeFeaturedIcon = 'fa-solid fa-cart-shopping';
-                            $homeFeaturedIconVariant = 'bot';
+                            $homeFeaturedIconAsset = 'mod/img/home-links/shopping-cart.png';
+                            $homeFeaturedIconAlt = __('Bot Telegram mua hàng');
                         } elseif ($homeFeaturedTone === 'channel') {
-                            $homeFeaturedIcon = 'fa-solid fa-bell';
-                            $homeFeaturedIconVariant = 'channel';
+                            $homeFeaturedIconAsset = 'mod/img/home-links/notification-bell.png';
+                            $homeFeaturedIconAlt = __('Kênh thông báo');
                         } elseif (mb_strpos($homeFeaturedTitle, 'điện thoại', 0, 'UTF-8') !== false || mb_strpos($homeFeaturedTitle, 'phone', 0, 'UTF-8') !== false) {
-                            $homeFeaturedIcon = 'fa-solid fa-mobile-screen-button';
-                            $homeFeaturedIconVariant = 'phone';
+                            $homeFeaturedIconAsset = 'mod/img/home-links/phone-guide.png';
+                            $homeFeaturedIconAlt = __('Hướng dẫn trên điện thoại');
                         } elseif (mb_strpos($homeFeaturedTitle, 'máy tính', 0, 'UTF-8') !== false || mb_strpos($homeFeaturedTitle, 'computer', 0, 'UTF-8') !== false || mb_strpos($homeFeaturedTitle, 'pc', 0, 'UTF-8') !== false) {
-                            $homeFeaturedIcon = 'fa-solid fa-desktop';
-                            $homeFeaturedIconVariant = 'desktop';
+                            $homeFeaturedIconAsset = 'mod/img/home-links/desktop-guide.png';
+                            $homeFeaturedIconAlt = __('Hướng dẫn trên máy tính');
                         }
                         ?>
                         <a class="home-telegram-action home-telegram-action--<?= htmlspecialchars($homeFeaturedTone, ENT_QUOTES, 'UTF-8'); ?>" href="<?= htmlspecialchars($homeFeaturedLink['url'], ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener noreferrer">
-                            <span class="home-telegram-action-icon home-telegram-action-icon--<?= htmlspecialchars($homeFeaturedIconVariant, ENT_QUOTES, 'UTF-8'); ?>"><i class="<?= $homeFeaturedIcon; ?>" aria-hidden="true"></i></span>
+                            <span class="home-telegram-action-icon"><img src="<?= base_url($homeFeaturedIconAsset); ?>" alt="<?= htmlspecialchars($homeFeaturedIconAlt, ENT_QUOTES, 'UTF-8'); ?>"></span>
                             <span class="home-telegram-action-copy">
                                 <strong><?= htmlspecialchars($homeFeaturedLink['title'], ENT_QUOTES, 'UTF-8'); ?></strong>
                                 <?php if ($homeFeaturedLink['description'] !== ''): ?><small><?= htmlspecialchars($homeFeaturedLink['description'], ENT_QUOTES, 'UTF-8'); ?></small><?php endif; ?>

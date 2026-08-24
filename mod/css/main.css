@@ -3812,71 +3812,27 @@ body {
     font-size: 11px;
 }
 
-/* Homepage quick links use compact 3D app badges instead of flat glyph tiles. */
+/* Homepage quick links use local raster illustrations instead of icon fonts. */
 .home-telegram-action-icon {
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
-    width: 42px;
-    height: 42px;
-    flex-basis: 42px;
-    border: 2px solid rgba(255, 255, 255, .58);
-    border-radius: 50%;
-    color: #ffffff;
-    background: linear-gradient(145deg, #46d9e7 0%, #078ca8 58%, #05657f 100%);
-    box-shadow: inset 0 3px 3px rgba(255, 255, 255, .45), inset 0 -5px 6px rgba(2, 59, 79, .34), 0 5px 0 #05677f, 0 10px 16px rgba(3, 105, 131, .28);
-    font-size: 18px;
-    transform: translateY(-3px);
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.home-telegram-action-icon::before {
-    position: absolute;
-    top: 4px;
-    right: 8px;
-    left: 8px;
-    height: 38%;
-    z-index: -1;
-    border-radius: inherit;
-    background: linear-gradient(180deg, rgba(255, 255, 255, .36), rgba(255, 255, 255, 0));
-    content: '';
-}
-
-.home-telegram-action-icon i {
-    filter: drop-shadow(0 1px 1px rgba(0, 51, 67, .42));
-}
-
-.home-telegram-action-icon--bot {
-    background: linear-gradient(145deg, #58d7ff 0%, #2076db 56%, #164b9d 100%);
-    box-shadow: inset 0 2px 2px rgba(255, 255, 255, .48), inset 0 -3px 4px rgba(8, 50, 125, .3), 0 4px 0 #174d9f, 0 8px 13px rgba(29, 101, 205, .24);
-}
-
-.home-telegram-action-icon--channel {
-    background: linear-gradient(145deg, #ffc95c 0%, #ed8b27 57%, #af4d13 100%);
-    box-shadow: inset 0 2px 2px rgba(255, 255, 255, .48), inset 0 -3px 4px rgba(105, 41, 5, .28), 0 4px 0 #b65313, 0 8px 13px rgba(195, 101, 22, .22);
-}
-
-.home-telegram-action-icon--phone {
-    background: linear-gradient(145deg, #b7a4ff 0%, #7a55da 57%, #4b318f 100%);
-    box-shadow: inset 0 2px 2px rgba(255, 255, 255, .48), inset 0 -3px 4px rgba(48, 22, 107, .28), 0 4px 0 #503496, 0 8px 13px rgba(92, 66, 167, .22);
-}
-
-.home-telegram-action-icon--desktop {
-    background: linear-gradient(145deg, #7fb5ff 0%, #3e6ed2 57%, #25428f 100%);
-    box-shadow: inset 0 2px 2px rgba(255, 255, 255, .48), inset 0 -3px 4px rgba(24, 48, 113, .28), 0 4px 0 #27458f, 0 8px 13px rgba(46, 86, 176, .22);
-}
-
-.home-telegram-action:hover .home-telegram-action-icon,
-.home-telegram-action:focus-visible .home-telegram-action-icon {
-    transform: translateY(-5px) scale(1.04);
+.home-telegram-action-icon img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
 
 @media (max-width: 575px) {
     .home-telegram-action-icon {
-        width: 34px;
-        height: 34px;
-        flex-basis: 34px;
-        border-radius: 50%;
-        font-size: 15px;
-        box-shadow: inset 0 2px 2px rgba(255, 255, 255, .42), inset 0 -4px 5px rgba(2, 59, 79, .28), 0 4px 0 #05677f, 0 7px 11px rgba(3, 105, 131, .22);
+        width: 32px;
+        height: 32px;
+        flex-basis: 32px;
     }
 }
