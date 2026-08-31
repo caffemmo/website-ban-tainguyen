@@ -89,7 +89,7 @@ function social_buff_public_services($services)
 {
     $public = [];
     foreach ($services as $service) {
-        unset($service['provider_rate'], $service['description'], $service['category'], $service['type'], $service['refill'], $service['cancel']);
+        unset($service['provider_rate'], $service['category'], $service['type'], $service['refill'], $service['cancel']);
         $public[] = $service;
     }
     return $public;

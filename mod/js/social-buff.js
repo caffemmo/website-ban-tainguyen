@@ -65,6 +65,16 @@
         return 'Nhận đơn từ ' + Number(service.min).toLocaleString('vi-VN') + ' đến ' + Number(service.max).toLocaleString('vi-VN') + ' lượt';
     }
 
+    function serviceCode(service) {
+        var code = String(service && service.code ? service.code : '').trim().toUpperCase();
+        return /^SV\d{1,6}$/.test(code) ? code : '';
+    }
+
+    function serviceDescription(service) {
+        var description = String(service && service.description ? service.description : '').trim();
+        return description || customerServiceRange(service);
+    }
+
     function escapeHtml(value) {
         return String(value == null ? '' : value)
             .replace(/&/g, '&amp;')
@@ -189,7 +199,7 @@
         var filtered = services.filter(function (service) {
             var matchesFilter = matchesActivePlatform(service);
             var matchesType = activeServiceType === 'all' || serviceTypeFor(service) === activeServiceType;
-            var haystack = [customerServiceName(service.name), service.platform].join(' ').toLowerCase();
+            var haystack = [customerServiceName(service.name), serviceCode(service), service.description, service.platform].join(' ').toLowerCase();
             return matchesFilter && matchesType && (!keyword || haystack.indexOf(keyword) !== -1);
         });
         return filtered.sort(compareServicesByRate);
@@ -212,6 +222,24 @@
                 '<span class="social-buff-service-card-detail"><span><i class="fa-solid fa-arrow-down-1-9" aria-hidden="true"></i> Tối thiểu ' + Number(service.min).toLocaleString('vi-VN') + '</span><span><i class="fa-solid fa-arrow-up-9-1" aria-hidden="true"></i> Tối đa ' + Number(service.max).toLocaleString('vi-VN') + '</span></span>' +
                 '</button>';
         }).join('');
+        servicesRoot.querySelectorAll('[data-social-service]').forEach(function (card) {
+            var service = services.find(function (item) {
+                return item.id === card.getAttribute('data-social-service');
+            });
+            if (!service) return;
+
+            var description = card.querySelector('.social-buff-service-heading small');
+            if (description) description.textContent = serviceDescription(service);
+
+            var code = serviceCode(service);
+            var heading = card.querySelector('.social-buff-service-heading strong');
+            if (code && heading) {
+                var codeBadge = document.createElement('span');
+                codeBadge.className = 'social-buff-service-code';
+                codeBadge.textContent = code;
+                heading.appendChild(codeBadge);
+            }
+        });
     }
 
     function renderSelected() {
@@ -231,6 +259,16 @@
         }
 
         selectedRoot.innerHTML = '<span class="social-buff-selected-icon"><i class="' + platformIcon(selectedService.platform) + '" aria-hidden="true"></i></span><div><strong>' + escapeHtml(customerServiceName(selectedService.name) || 'Dịch vụ mạng xã hội') + '</strong><small>' + escapeHtml(customerServiceRange(selectedService)) + ' · ' + formatMoney(selectedService.rate) + ' / 1.000 lượt</small></div><span class="social-buff-selection-badge">Đã chọn</span>';
+        var selectedCode = serviceCode(selectedService);
+        var selectedHeading = selectedRoot.querySelector('strong');
+        var selectedDescription = selectedRoot.querySelector('small');
+        if (selectedCode && selectedHeading) {
+            var selectedCodeBadge = document.createElement('span');
+            selectedCodeBadge.className = 'social-buff-service-code';
+            selectedCodeBadge.textContent = selectedCode;
+            selectedHeading.appendChild(selectedCodeBadge);
+        }
+        if (selectedDescription) selectedDescription.textContent = serviceDescription(selectedService) + ' | ' + formatMoney(selectedService.rate) + ' / 1.000';
         if (detailPlatform) detailPlatform.textContent = selectedService.platform;
         if (detailRate) detailRate.textContent = formatMoney(selectedService.rate) + ' / 1.000';
         if (detailMin) detailMin.textContent = Number(selectedService.min).toLocaleString('vi-VN');

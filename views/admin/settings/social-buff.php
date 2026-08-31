@@ -53,6 +53,34 @@ function social_buff_admin_timeout($value)
     return $timeout >= 10 && $timeout <= 60 ? (string) $timeout : null;
 }
 
+function social_buff_admin_service_notes($value)
+{
+    $value = trim((string) $value);
+    if (mb_strlen($value) > 16000) {
+        return null;
+    }
+
+    $notes = [];
+    foreach (preg_split('/\r\n|\r|\n/', $value) as $line) {
+        $line = trim((string) $line);
+        if ($line === '') {
+            continue;
+        }
+
+        $parts = explode('|', $line, 2);
+        $code = count($parts) === 2 ? social_buff_service_code($parts[0]) : '';
+        $description = count($parts) === 2 ? trim((string) preg_replace('/\s+/u', ' ', $parts[1])) : '';
+        if ($code === '' || $description === '' || mb_strlen($description) > 240 || isset($notes[$code])) {
+            return null;
+        }
+        $notes[$code] = $description;
+    }
+
+    return implode("\n", array_map(function ($code) use ($notes) {
+        return $code . ' | ' . $notes[$code];
+    }, array_keys($notes)));
+}
+
 if (isset($_POST['SaveSocialBuffSettings'])) {
     if (empty($_POST['csrf_token']) || !hash_equals((string) ($_SESSION['csrf_token'] ?? ''), (string) $_POST['csrf_token'])) {
         admin_msg_error('Phiên bảo mật đã hết hạn, vui lòng tải lại trang.', base_url_admin('settings&tab=social-buff'), 1200);
@@ -67,8 +95,12 @@ if (isset($_POST['SaveSocialBuffSettings'])) {
     $apiUrl = social_buff_admin_api_url($_POST['social_buff_api_url'] ?? '');
     $markup = social_buff_admin_markup($_POST['social_buff_markup_percent'] ?? '');
     $timeout = social_buff_admin_timeout($_POST['social_buff_timeout'] ?? '');
+    $serviceNotes = social_buff_admin_service_notes($_POST['social_buff_service_notes'] ?? '');
     $apiKey = trim((string) ($_POST['social_buff_api_key'] ?? ''));
-    if ($apiUrl === null || $markup === null || $timeout === null) {
+    if ($serviceNotes === null) {
+        admin_msg_error('Mô tả gói SV không hợp lệ. Mỗi dòng phải theo dạng SV3 | Mô tả dịch vụ.', base_url_admin('settings&tab=social-buff'));
+    }
+    if ($apiUrl === null || $markup === null || $timeout === null || $serviceNotes === null) {
         admin_msg_error('Vui lòng kiểm tra lại địa chỉ API, phần trăm lợi nhuận và thời gian chờ.', base_url_admin('settings&tab=social-buff'));
     }
     if ($apiKey !== '' && (strlen($apiKey) > 255 || preg_match('/[\r\n]/', $apiKey))) {
@@ -80,6 +112,7 @@ if (isset($_POST['SaveSocialBuffSettings'])) {
         'social_buff_api_url' => $apiUrl,
         'social_buff_markup_percent' => $markup,
         'social_buff_timeout' => $timeout,
+        'social_buff_service_notes' => $serviceNotes,
         'social_buff_maintenance' => $maintenance
     ];
     if ($apiKey !== '') {
@@ -103,6 +136,7 @@ if (isset($_POST['SaveSocialBuffSettings'])) {
 
 $socialBuffMaintenance = social_buff_maintenance_enabled();
 $socialBuffConfig = social_buff_config();
+$socialBuffServiceNotes = social_buff_setting('social_buff_service_notes', '');
 $socialBuffSavedApiKey = social_buff_setting('social_buff_api_key', '');
 $socialBuffApiKeyStatus = $socialBuffSavedApiKey !== ''
     ? 'Khóa API đã được lưu.'
@@ -205,6 +239,11 @@ $socialBuffConfigured = social_buff_is_configured();
                         <label class="form-label" for="social_buff_markup_percent">Lợi nhuận (%)</label>
                         <input class="form-control" id="social_buff_markup_percent" name="social_buff_markup_percent" type="number" min="0" max="500" step="0.01" inputmode="decimal" value="<?= htmlspecialchars((string) $socialBuffConfig['markup_percent'], ENT_QUOTES, 'UTF-8'); ?>" required>
                         <div class="form-text">Từ 0% đến 500%.</div>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label" for="social_buff_service_notes">Mô tả gói SV hiển thị cho khách</label>
+                        <textarea class="form-control" id="social_buff_service_notes" name="social_buff_service_notes" rows="5" maxlength="16000" placeholder="SV3 | Sub Việt Nam, tốc độ 15.000/ngày, bảo hành 7 ngày&#10;SV5 | Sub Việt Nam, tốc độ 10.000/ngày, bảo hành 7 ngày"><?= htmlspecialchars($socialBuffServiceNotes, ENT_QUOTES, 'UTF-8'); ?></textarea>
+                        <div class="form-text">Mỗi dòng theo dạng <code>SV3 | Mô tả khách nhìn thấy</code>. Chỉ các mã có mô tả mới hiện nội dung phụ dưới tên dịch vụ.</div>
                     </div>
                 </div>
                 <hr class="my-4">

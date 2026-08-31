@@ -21,6 +21,7 @@ function social_buff_config()
     $storedApiKey = social_buff_setting('social_buff_api_key', '');
     $storedMarkup = social_buff_setting('social_buff_markup_percent', '');
     $storedTimeout = social_buff_setting('social_buff_timeout', '');
+    $storedServiceNotes = social_buff_setting('social_buff_service_notes', '');
     $baseUrl = $storedBaseUrl !== '' ? $storedBaseUrl : social_buff_env('HACKLIKE17_API_URL', 'https://hacklike17.com/api/v3');
     $markup = (float) ($storedMarkup !== '' ? $storedMarkup : social_buff_env('SOCIAL_BUFF_MARKUP_PERCENT', '0'));
     $timeout = (int) ($storedTimeout !== '' ? $storedTimeout : social_buff_env('HACKLIKE17_TIMEOUT', '30'));
@@ -29,7 +30,8 @@ function social_buff_config()
         'api_key' => $storedApiKey !== '' ? $storedApiKey : social_buff_env('HACKLIKE17_API_KEY'),
         'base_url' => rtrim($baseUrl, '/'),
         'markup_percent' => max(0, min(500, $markup)),
-        'timeout' => max(10, min(60, $timeout))
+        'timeout' => max(10, min(60, $timeout)),
+        'service_notes' => social_buff_service_notes($storedServiceNotes)
     ];
 }
 
@@ -304,9 +306,38 @@ function social_buff_customer_service_name($value)
     $name = trim((string) $value);
     $name = preg_replace('/\s*(?:[-|:]\s*)?\b(?:sv|srv|server)\s*#?\d+\b/iu', '', $name);
     $name = preg_replace('/\s{2,}/u', ' ', (string) $name);
+    $name = preg_replace('/^\s*[-|:]\s*/u', '', (string) $name);
     $name = preg_replace('/\s*[-|:]\s*$/u', '', (string) $name);
 
     return trim((string) $name);
+}
+
+function social_buff_service_code($value)
+{
+    if (!preg_match('/\b(?:sv|srv|server)\s*#?\s*(\d{1,6})\b/iu', (string) $value, $matches)) {
+        return '';
+    }
+
+    return 'SV' . (int) $matches[1];
+}
+
+function social_buff_service_notes($value)
+{
+    $notes = [];
+    foreach (preg_split('/\r\n|\r|\n/', (string) $value) as $line) {
+        $parts = explode('|', $line, 2);
+        if (count($parts) !== 2) {
+            continue;
+        }
+
+        $code = social_buff_service_code($parts[0]);
+        $note = trim((string) preg_replace('/\s+/u', ' ', $parts[1]));
+        if ($code !== '' && $note !== '') {
+            $notes[$code] = $note;
+        }
+    }
+
+    return $notes;
 }
 
 function social_buff_normalize_service($item)
@@ -315,9 +346,10 @@ function social_buff_normalize_service($item)
         return null;
     }
     $serviceId = trim((string) ($item['service'] ?? $item['id'] ?? ''));
-    $name = trim((string) ($item['name'] ?? $item['service_name'] ?? ''));
-    $name = trim((string) preg_replace('/\b(?:hacklike17|hacklike)\b/i', '', $name));
-    $name = social_buff_customer_service_name($name);
+    $sourceName = trim((string) ($item['name'] ?? $item['service_name'] ?? ''));
+    $sourceName = trim((string) preg_replace('/\b(?:hacklike17|hacklike)\b/i', '', $sourceName));
+    $serviceCode = social_buff_service_code($sourceName);
+    $name = social_buff_customer_service_name($sourceName);
     $category = trim((string) ($item['category'] ?? $item['platform'] ?? 'Khac'));
     $min = (int) ($item['min'] ?? $item['minimum'] ?? 0);
     $max = (int) ($item['max'] ?? $item['maximum'] ?? 0);
@@ -337,7 +369,8 @@ function social_buff_normalize_service($item)
         'name' => $name,
         'category' => $category,
         'platform' => social_buff_detect_platform($serviceText),
-        'description' => trim((string) ($item['description'] ?? $item['desc'] ?? '')),
+        'code' => $serviceCode,
+        'description' => $config['service_notes'][$serviceCode] ?? '',
         'min' => $min,
         'max' => $max,
         'provider_rate' => $rate,
