@@ -1131,3 +1131,154 @@
         margin-top: 14px;
     }
 }
+
+/* Keep the service navigator aligned with the primary Caffemmo sidebar. */
+.social-buff-navigator {
+    border: 0;
+    border-radius: 0;
+    color: #d7e8f0;
+    background: #101b30;
+    box-shadow: none;
+}
+
+.social-buff-navigator-head {
+    padding: 14px 14px 15px;
+    border-bottom-color: #24405a;
+}
+
+.social-buff-navigator-mark {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    color: #8fe7ee;
+    background: #213a54;
+    font-size: 13px;
+}
+
+.social-buff-navigator-head strong {
+    color: #f1f8fb;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.social-buff-navigator-head small {
+    color: #8fa9b9;
+    font-size: 10px;
+}
+
+.social-buff-navigator-group {
+    padding: 15px 14px 0;
+}
+
+.social-buff-navigator-group p,
+.social-buff-navigator-type-group > p {
+    margin: 0 6px 8px;
+    color: #76c6d9;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .06em;
+}
+
+.social-buff-navigator-group button {
+    min-height: 44px;
+    gap: 10px;
+    padding: 7px 9px;
+    border-radius: 9px;
+    color: #d7e5ed;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.social-buff-navigator-group button > i {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    color: #8fe7ee;
+    background: #213a54;
+    font-size: 13px;
+}
+
+.social-buff-navigator-group button:hover,
+.social-buff-navigator-group button:focus-visible,
+.social-buff-navigator-group button.is-active {
+    border-color: rgba(0, 211, 214, .42);
+    color: #ffffff;
+    background: #17334e;
+    outline: 0;
+}
+
+.social-buff-navigator-group button.is-active {
+    box-shadow: inset 3px 0 0 #00d3d6;
+}
+
+.social-buff-navigator-group button.is-active > i {
+    color: #8fe7ee;
+    background: #213a54;
+}
+
+.social-buff-navigator-type-group {
+    margin: 15px 14px 0;
+    padding: 11px 8px 8px;
+    border-color: #2b4b65;
+    border-radius: 9px;
+    background: #14263e;
+}
+
+.social-buff-navigator-type-group > p {
+    color: #8fa9b9;
+}
+
+.social-buff-navigator-type-list button {
+    min-height: 40px;
+    border-radius: 8px;
+    color: #d7e5ed;
+    font-size: 11px;
+}
+
+.social-buff-navigator-type-list button > i {
+    display: inline-flex;
+    width: 30px;
+    height: 30px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    color: #8fe7ee;
+    background: #213a54;
+    font-size: 11px;
+}
+
+.social-buff-navigator-type-list button:hover,
+.social-buff-navigator-type-list button:focus-visible,
+.social-buff-navigator-type-list button.is-active {
+    border-color: rgba(0, 211, 214, .42);
+    color: #ffffff;
+    background: #17334e;
+    outline: 0;
+}
+
+.social-buff-navigator-type-list button.is-active > i {
+    color: #8fe7ee;
+}
+
+.social-buff-navigator-note {
+    margin: 15px 14px 10px;
+    color: #8fa9b9;
+}
+
+@media (max-width: 767.98px) {
+    .social-buff-navigator-head {
+        padding: 14px;
+    }
+
+    .social-buff-navigator-group {
+        padding: 11px 10px 0;
+    }
+
+    .social-buff-navigator-group p {
+        display: none;
+    }
+
+    .social-buff-navigator-type-group {
+        margin: 11px 10px 0;
+    }
+}

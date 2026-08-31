@@ -22,7 +22,7 @@ $body = [
     'keyword' => 'buff mạng xã hội, tăng view, tăng like, tăng follow, video',
     'legacy_client_plugins' => false
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/social-buff.css?v=5') . '">';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/social-buff.css?v=6') . '">';
 $body['footer'] = '<script src="' . BASE_URL('mod/js/social-buff.js?v=5') . '"></script>';
 
 require_once __DIR__ . '/header.php';
@@ -64,13 +64,13 @@ require_once __DIR__ . '/nav.php';
     <section class="social-buff-workspace" aria-label="Đặt dịch vụ buff mạng xã hội">
         <nav class="social-buff-navigator" data-social-buff-filters aria-label="Danh mục dịch vụ mạng xã hội">
             <div class="social-buff-navigator-head">
-                <span class="social-buff-navigator-mark"><i class="fa-solid fa-layer-group" aria-hidden="true"></i></span>
+                <span class="social-buff-navigator-mark"><i class="fa-solid fa-bolt" aria-hidden="true"></i></span>
                 <div><strong>Danh mục dịch vụ</strong><small>Chọn nền tảng để lọc</small></div>
             </div>
 
             <div class="social-buff-navigator-group">
                 <p>Khám phá</p>
-                <button type="button" class="is-active" data-social-filter="all"><i class="fa-solid fa-grid-2" aria-hidden="true"></i><span>Tất cả dịch vụ</span></button>
+                <button type="button" class="is-active" data-social-filter="all"><i class="fa-solid fa-table-cells-large" aria-hidden="true"></i><span>Tất cả dịch vụ</span></button>
             </div>
             <div class="social-buff-navigator-group">
                 <p>Mạng xã hội</p>
