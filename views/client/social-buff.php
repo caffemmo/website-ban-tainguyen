@@ -22,7 +22,7 @@ $body = [
     'keyword' => 'buff mạng xã hội, tăng view, tăng like, tăng follow, video',
     'legacy_client_plugins' => false
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/social-buff.css?v=9') . '">';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/social-buff.css?v=10') . '">';
 $body['footer'] = '<script src="' . BASE_URL('mod/js/social-buff.js?v=5') . '"></script>';
 
 require_once __DIR__ . '/header.php';
@@ -152,6 +152,11 @@ require_once __DIR__ . '/nav.php';
                 </button>
             </form>
             <p class="social-buff-security"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Thông tin đơn được bảo vệ trong quá trình xử lý.</p>
+            <a class="social-buff-support-link" href="https://www.facebook.com/nhanvien.support/" target="_blank" rel="noopener noreferrer">
+                <span class="social-buff-support-icon"><i class="fa-solid fa-headset" aria-hidden="true"></i></span>
+                <span><strong>Hỗ trợ dịch vụ</strong><small>Nhắn tin với nhân viên hỗ trợ</small></span>
+                <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+            </a>
 
             <div class="social-buff-guidance">
                 <div class="social-buff-guidance-title"><i class="fa-solid fa-book-open" aria-hidden="true"></i><strong>Lưu ý khi đặt đơn</strong></div>

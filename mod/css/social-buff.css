@@ -625,6 +625,71 @@
 
 .social-buff-security i { color: var(--sb-teal); margin-top: 1px; }
 
+.social-buff-support-link {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    min-height: 52px;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+    padding: 8px 10px;
+    border: 1px solid #badcec;
+    border-radius: 6px;
+    color: #1b5d92;
+    background: #f1f9fd;
+    text-decoration: none;
+    transition: border-color .18s ease, background-color .18s ease, color .18s ease;
+}
+
+.social-buff-support-link:hover,
+.social-buff-support-link:focus-visible {
+    border-color: #3b94c4;
+    color: #124f7c;
+    background: #e4f4fb;
+    outline: 0;
+}
+
+.social-buff-support-link:focus-visible {
+    box-shadow: 0 0 0 2px rgba(58, 156, 203, .28);
+}
+
+.social-buff-support-icon {
+    display: inline-flex;
+    width: 30px;
+    height: 30px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 7px;
+    color: #ffffff;
+    background: #2584bb;
+    font-size: 13px;
+}
+
+.social-buff-support-link span:nth-child(2) {
+    min-width: 0;
+}
+
+.social-buff-support-link strong,
+.social-buff-support-link small {
+    display: block;
+}
+
+.social-buff-support-link strong {
+    color: inherit;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.social-buff-support-link small {
+    margin-top: 2px;
+    color: #65849b;
+    font-size: 10px;
+}
+
+.social-buff-support-link > .fa-arrow-up-right-from-square {
+    font-size: 11px;
+}
+
 .social-buff-guidance {
     margin-top: 20px;
     padding-top: 17px;
