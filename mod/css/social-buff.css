@@ -1291,28 +1291,11 @@
 
 .social-buff-navigator--horizontal {
     position: static;
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    align-items: center;
-    gap: 12px;
+    display: block;
     margin: 16px 0 12px;
     padding: 10px 12px;
     border: 1px solid #24405a;
     border-radius: 8px;
-}
-
-.social-buff-navigator--horizontal .social-buff-navigator-head {
-    padding: 0 12px 0 0;
-    border-right: 1px solid #24405a;
-    border-bottom: 0;
-}
-
-.social-buff-navigator--horizontal .social-buff-navigator-head strong {
-    font-size: 12px;
-}
-
-.social-buff-navigator--horizontal .social-buff-navigator-head small {
-    font-size: 10px;
 }
 
 .social-buff-navigator-horizontal-list,
@@ -1387,7 +1370,6 @@
 
 .social-buff-navigator--horizontal .social-buff-navigator-type-group {
     display: flex;
-    grid-column: 1 / -1;
     align-items: center;
     gap: 10px;
     margin: 0;
@@ -1443,17 +1425,9 @@
 
 @media (max-width: 767.98px) {
     .social-buff-navigator--horizontal {
-        grid-template-columns: 1fr;
-        gap: 10px;
         margin: 14px 0 10px;
         padding: 10px;
         border-radius: 7px;
-    }
-
-    .social-buff-navigator--horizontal .social-buff-navigator-head {
-        padding: 0 0 10px;
-        border-right: 0;
-        border-bottom: 1px solid #24405a;
     }
 
     .social-buff-navigator--horizontal .social-buff-navigator-type-group {

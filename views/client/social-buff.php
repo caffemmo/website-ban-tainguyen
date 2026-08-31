@@ -22,7 +22,7 @@ $body = [
     'keyword' => 'buff mạng xã hội, tăng view, tăng like, tăng follow, video',
     'legacy_client_plugins' => false
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/social-buff.css?v=8') . '">';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/social-buff.css?v=9') . '">';
 $body['footer'] = '<script src="' . BASE_URL('mod/js/social-buff.js?v=5') . '"></script>';
 
 require_once __DIR__ . '/header.php';
@@ -76,10 +76,6 @@ require_once __DIR__ . '/nav.php';
             </div>
 
             <nav class="social-buff-navigator social-buff-navigator--horizontal" data-social-buff-filters aria-label="Danh mục dịch vụ mạng xã hội">
-                <div class="social-buff-navigator-head">
-                    <span class="social-buff-navigator-mark"><i class="fa-solid fa-bolt" aria-hidden="true"></i></span>
-                    <div><strong>Danh mục</strong><small>Lọc nhanh</small></div>
-                </div>
                 <div class="social-buff-navigator-horizontal-list">
                     <button type="button" class="is-active" data-social-filter="all"><i class="fa-solid fa-table-cells-large" aria-hidden="true"></i><span>Tất cả dịch vụ</span></button>
                     <button type="button" data-social-filter="Facebook"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i><span>Facebook</span></button>
