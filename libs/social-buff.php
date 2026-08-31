@@ -299,6 +299,16 @@ function social_buff_service_list($response)
     return $services;
 }
 
+function social_buff_customer_service_name($value)
+{
+    $name = trim((string) $value);
+    $name = preg_replace('/\s*(?:[-|:]\s*)?\b(?:sv|srv|server)\s*#?\d+\b/iu', '', $name);
+    $name = preg_replace('/\s{2,}/u', ' ', (string) $name);
+    $name = preg_replace('/\s*[-|:]\s*$/u', '', (string) $name);
+
+    return trim((string) $name);
+}
+
 function social_buff_normalize_service($item)
 {
     if (!is_array($item)) {
@@ -307,6 +317,7 @@ function social_buff_normalize_service($item)
     $serviceId = trim((string) ($item['service'] ?? $item['id'] ?? ''));
     $name = trim((string) ($item['name'] ?? $item['service_name'] ?? ''));
     $name = trim((string) preg_replace('/\b(?:hacklike17|hacklike)\b/i', '', $name));
+    $name = social_buff_customer_service_name($name);
     $category = trim((string) ($item['category'] ?? $item['platform'] ?? 'Khac'));
     $min = (int) ($item['min'] ?? $item['minimum'] ?? 0);
     $max = (int) ($item['max'] ?? $item['maximum'] ?? 0);

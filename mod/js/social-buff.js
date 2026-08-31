@@ -53,6 +53,18 @@
         return new Intl.NumberFormat('vi-VN').format(amount) + 'đ';
     }
 
+    function customerServiceName(value) {
+        return String(value == null ? '' : value)
+            .replace(/\s*(?:[-|:]\s*)?\b(?:sv|srv|server)\s*#?\d+\b/gi, '')
+            .replace(/\s{2,}/g, ' ')
+            .replace(/\s*[-|:]\s*$/g, '')
+            .trim();
+    }
+
+    function customerServiceRange(service) {
+        return 'Nhận đơn từ ' + Number(service.min).toLocaleString('vi-VN') + ' đến ' + Number(service.max).toLocaleString('vi-VN') + ' lượt';
+    }
+
     function escapeHtml(value) {
         return String(value == null ? '' : value)
             .replace(/&/g, '&amp;')
@@ -177,7 +189,7 @@
         var filtered = services.filter(function (service) {
             var matchesFilter = matchesActivePlatform(service);
             var matchesType = activeServiceType === 'all' || serviceTypeFor(service) === activeServiceType;
-            var haystack = [service.name, service.platform].join(' ').toLowerCase();
+            var haystack = [customerServiceName(service.name), service.platform].join(' ').toLowerCase();
             return matchesFilter && matchesType && (!keyword || haystack.indexOf(keyword) !== -1);
         });
         return filtered.sort(compareServicesByRate);
@@ -194,8 +206,9 @@
 
         servicesRoot.innerHTML = filtered.map(function (service) {
             var selected = selectedService && selectedService.id === service.id;
+            var displayName = customerServiceName(service.name) || 'Dịch vụ mạng xã hội';
             return '<button type="button" class="social-buff-service-card' + (selected ? ' is-selected' : '') + '" data-social-service="' + escapeHtml(service.id) + '" aria-pressed="' + (selected ? 'true' : 'false') + '">' +
-                '<span class="social-buff-service-card-top"><span class="social-buff-service-selector" aria-hidden="true"></span><span class="social-buff-service-icon"><i class="' + platformIcon(service.platform) + '" aria-hidden="true"></i></span><span class="social-buff-service-heading"><strong>' + escapeHtml(service.name) + '</strong><small>' + escapeHtml(service.platform) + '</small></span><span class="social-buff-service-price"><strong>' + formatMoney(service.rate) + '</strong><small>/ 1.000 lượt</small></span></span>' +
+                '<span class="social-buff-service-card-top"><span class="social-buff-service-selector" aria-hidden="true"></span><span class="social-buff-service-icon"><i class="' + platformIcon(service.platform) + '" aria-hidden="true"></i></span><span class="social-buff-service-heading"><strong>' + escapeHtml(displayName) + '</strong><small>' + escapeHtml(customerServiceRange(service)) + '</small></span><span class="social-buff-service-price"><strong>' + formatMoney(service.rate) + '</strong><small>/ 1.000 lượt</small></span></span>' +
                 '<span class="social-buff-service-card-detail"><span><i class="fa-solid fa-arrow-down-1-9" aria-hidden="true"></i> Tối thiểu ' + Number(service.min).toLocaleString('vi-VN') + '</span><span><i class="fa-solid fa-arrow-up-9-1" aria-hidden="true"></i> Tối đa ' + Number(service.max).toLocaleString('vi-VN') + '</span></span>' +
                 '</button>';
         }).join('');
@@ -217,7 +230,7 @@
             return;
         }
 
-        selectedRoot.innerHTML = '<span class="social-buff-selected-icon"><i class="' + platformIcon(selectedService.platform) + '" aria-hidden="true"></i></span><div><strong>' + escapeHtml(selectedService.name) + '</strong><small>' + escapeHtml(selectedService.platform) + ' · ' + formatMoney(selectedService.rate) + ' / 1.000 lượt</small></div><span class="social-buff-selection-badge">Đã chọn</span>';
+        selectedRoot.innerHTML = '<span class="social-buff-selected-icon"><i class="' + platformIcon(selectedService.platform) + '" aria-hidden="true"></i></span><div><strong>' + escapeHtml(customerServiceName(selectedService.name) || 'Dịch vụ mạng xã hội') + '</strong><small>' + escapeHtml(customerServiceRange(selectedService)) + ' · ' + formatMoney(selectedService.rate) + ' / 1.000 lượt</small></div><span class="social-buff-selection-badge">Đã chọn</span>';
         if (detailPlatform) detailPlatform.textContent = selectedService.platform;
         if (detailRate) detailRate.textContent = formatMoney(selectedService.rate) + ' / 1.000';
         if (detailMin) detailMin.textContent = Number(selectedService.min).toLocaleString('vi-VN');
@@ -260,7 +273,7 @@
             var orderDetail = 'Mã đơn: ' + escapeHtml(order.code);
             var progress = order.remains ? 'Còn lại: ' + escapeHtml(order.remains) : 'Số lượng: ' + Number(order.quantity).toLocaleString('vi-VN');
             return '<article class="social-buff-order-row" data-social-order="' + escapeHtml(order.code) + '">' +
-                '<div class="social-buff-order-service"><strong>' + escapeHtml(order.service_name) + '</strong><small>' + orderDetail + '</small></div>' +
+                '<div class="social-buff-order-service"><strong>' + escapeHtml(customerServiceName(order.service_name) || 'Dịch vụ mạng xã hội') + '</strong><small>' + orderDetail + '</small></div>' +
                 '<div class="social-buff-order-metric"><span>' + formatMoney(order.charged_amount) + '</span><small>' + escapeHtml(order.platform) + '</small></div>' +
                 '<div class="social-buff-order-metric"><span>' + progress + '</span><small>' + escapeHtml(order.created_at) + '</small></div>' +
                 '<span class="social-buff-order-status ' + escapeHtml(order.status_class) + '">' + escapeHtml(order.status_label) + '</span>' +
