@@ -22,7 +22,7 @@ $body = [
     'keyword' => 'buff mạng xã hội, tăng view, tăng like, tăng follow, video',
     'legacy_client_plugins' => false
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/social-buff.css?v=7') . '">';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/social-buff.css?v=8') . '">';
 $body['footer'] = '<script src="' . BASE_URL('mod/js/social-buff.js?v=5') . '"></script>';
 
 require_once __DIR__ . '/header.php';

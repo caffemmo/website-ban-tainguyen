@@ -1319,10 +1319,10 @@
 .social-buff-navigator--horizontal .social-buff-navigator-type-list {
     display: flex;
     min-width: 0;
+    flex-wrap: wrap;
+    align-items: center;
     gap: 7px;
-    overflow-x: auto;
-    overscroll-behavior-inline: contain;
-    scrollbar-width: thin;
+    overflow: visible;
 }
 
 .social-buff-navigator-horizontal-list {
