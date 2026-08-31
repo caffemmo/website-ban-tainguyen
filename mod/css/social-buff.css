@@ -13,7 +13,7 @@
     --sb-primary-dark: #1e54bc;
     --sb-teal: #149d83;
     --sb-orange: #dc6c2b;
-    width: min(1340px, calc(100% - 32px));
+    width: calc(100% - 32px);
     margin: 24px auto 52px;
     color: var(--sb-ink);
 }
