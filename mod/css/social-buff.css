@@ -825,6 +825,77 @@
     text-transform: uppercase;
 }
 
+.social-buff-navigator-type-group {
+    margin: 13px 9px 0;
+    padding: 11px 8px 8px;
+    border: 1px solid rgba(100, 194, 225, .2);
+    border-radius: 6px;
+    background: rgba(31, 81, 124, .28);
+}
+
+.social-buff-navigator-type-group[hidden] {
+    display: none;
+}
+
+.social-buff-navigator-type-group > p {
+    margin: 0 6px 7px;
+    color: #91b8df;
+    font-size: 9px;
+    font-weight: 800;
+    line-height: 1.35;
+    text-transform: uppercase;
+}
+
+.social-buff-navigator-type-list {
+    display: grid;
+    gap: 3px;
+}
+
+.social-buff-navigator-type-list button {
+    display: flex;
+    width: 100%;
+    min-height: 35px;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 8px;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    color: #bdd1e8;
+    background: transparent;
+    cursor: pointer;
+    font: inherit;
+    font-size: 10px;
+    font-weight: 700;
+    text-align: left;
+    transition: background-color .18s ease, border-color .18s ease, color .18s ease;
+}
+
+.social-buff-navigator-type-list button > i {
+    width: 18px;
+    flex: 0 0 18px;
+    color: #70cfe1;
+    font-size: 10px;
+    text-align: center;
+}
+
+.social-buff-navigator-type-list button:hover,
+.social-buff-navigator-type-list button:focus-visible {
+    border-color: rgba(93, 191, 226, .36);
+    color: #ffffff;
+    background: rgba(52, 133, 184, .3);
+    outline: 0;
+}
+
+.social-buff-navigator-type-list button.is-active {
+    border-color: rgba(19, 192, 213, .6);
+    color: #ffffff;
+    background: rgba(20, 104, 163, .5);
+}
+
+.social-buff-navigator-type-list button.is-active > i {
+    color: #ffffff;
+}
+
 .social-buff-navigator-group button {
     display: flex;
     width: 100%;
@@ -1012,6 +1083,27 @@
 
     .social-buff-navigator-group p {
         display: none;
+    }
+
+    .social-buff-navigator-type-group {
+        margin: 11px 10px 0;
+        padding: 9px;
+    }
+
+    .social-buff-navigator-type-group > p {
+        display: none;
+    }
+
+    .social-buff-navigator-type-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+    }
+
+    .social-buff-navigator-type-list button {
+        width: auto;
+        min-height: 38px;
+        max-width: 100%;
     }
 
     .social-buff-navigator-group button {

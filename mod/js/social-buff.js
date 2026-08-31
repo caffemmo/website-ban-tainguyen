@@ -28,11 +28,25 @@
     var submit = app.querySelector('[data-social-buff-submit]');
     var search = app.querySelector('[data-social-buff-search]');
     var filters = app.querySelector('[data-social-buff-filters]');
+    var typeFiltersRoot = app.querySelector('[data-social-buff-type-filters]');
+    var typeFilterTitle = app.querySelector('[data-social-buff-type-title]');
+    var typeFilterList = app.querySelector('[data-social-buff-type-filter-list]');
     var historyRefresh = app.querySelector('[data-social-buff-history-refresh]');
     var services = [];
     var selectedService = null;
     var activeFilter = 'all';
+    var activeServiceType = 'all';
     var requestKeyStorage = 'caffemmo-social-buff-request';
+    var serviceTypeRules = [
+        { key: 'share', label: 'Chia sẻ bài viết', icon: 'fa-share-nodes', terms: ['share', 'chia se'] },
+        { key: 'like', label: 'Like bài viết', icon: 'fa-thumbs-up', terms: ['like', 'luot thich', 'thich'] },
+        { key: 'follow', label: 'Tăng theo dõi', icon: 'fa-user-plus', terms: ['follow', 'theo doi', 'follower', 'sub'] },
+        { key: 'comment', label: 'Bình luận', icon: 'fa-comment-dots', terms: ['comment', 'binh luan'] },
+        { key: 'reaction', label: 'Cảm xúc', icon: 'fa-face-smile', terms: ['reaction', 'cam xuc'] },
+        { key: 'member', label: 'Thành viên', icon: 'fa-users', terms: ['member', 'thanh vien', 'tham gia', 'join'] },
+        { key: 'livestream', label: 'Livestream', icon: 'fa-tower-broadcast', terms: ['livestream', 'live stream', 'live'] },
+        { key: 'view', label: 'Lượt xem', icon: 'fa-eye', terms: ['view', 'luot xem', 'mat xem', 'watch', 'video', 'reel', 'story'] }
+    ];
 
     function formatMoney(value) {
         var amount = Math.max(0, Math.ceil(Number(value) || 0));
@@ -59,6 +73,71 @@
             'Google': 'fa-brands fa-google'
         };
         return map[platform] || 'fa-solid fa-bolt';
+    }
+
+    function normalizedServiceText(value) {
+        var text = String(value == null ? '' : value);
+        if (typeof text.normalize === 'function') {
+            text = text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        }
+        return text.toLowerCase();
+    }
+
+    function serviceTypeFor(service) {
+        var text = normalizedServiceText([service.name, service.description, service.type].join(' '));
+        var matched = serviceTypeRules.find(function (rule) {
+            return rule.terms.some(function (term) { return text.indexOf(term) !== -1; });
+        });
+        return matched ? matched.key : 'other';
+    }
+
+    function serviceTypeMeta(type) {
+        return serviceTypeRules.find(function (rule) { return rule.key === type; }) || {
+            key: 'other',
+            label: 'Dịch vụ khác',
+            icon: 'fa-ellipsis'
+        };
+    }
+
+    function matchesActivePlatform(service) {
+        return activeFilter === 'all'
+            || (activeFilter === 'video' && service.is_video)
+            || service.platform === activeFilter;
+    }
+
+    function renderServiceTypeFilters() {
+        if (!typeFiltersRoot || !typeFilterList) return;
+        if (activeFilter === 'all') {
+            activeServiceType = 'all';
+            typeFiltersRoot.hidden = true;
+            typeFilterList.innerHTML = '';
+            return;
+        }
+
+        var types = [];
+        services.forEach(function (service) {
+            if (!matchesActivePlatform(service)) return;
+            var type = serviceTypeFor(service);
+            if (types.indexOf(type) === -1) types.push(type);
+        });
+
+        if (!types.length) {
+            activeServiceType = 'all';
+            typeFiltersRoot.hidden = true;
+            typeFilterList.innerHTML = '';
+            return;
+        }
+
+        if (types.indexOf(activeServiceType) === -1) activeServiceType = 'all';
+        if (typeFilterTitle) typeFilterTitle.textContent = activeFilter === 'video' ? 'Loại video' : activeFilter + ' - loại dịch vụ';
+        typeFilterList.innerHTML = '<button type="button" data-social-service-type="all"><i class="fa-solid fa-list" aria-hidden="true"></i><span>Tất cả loại</span></button>' + types.map(function (type) {
+            var meta = serviceTypeMeta(type);
+            return '<button type="button" data-social-service-type="' + escapeHtml(meta.key) + '"><i class="fa-solid ' + escapeHtml(meta.icon) + '" aria-hidden="true"></i><span>' + escapeHtml(meta.label) + '</span></button>';
+        }).join('');
+        typeFilterList.querySelectorAll('[data-social-service-type]').forEach(function (button) {
+            button.classList.toggle('is-active', button.getAttribute('data-social-service-type') === activeServiceType);
+        });
+        typeFiltersRoot.hidden = false;
     }
 
     function showFeedback(message) {
@@ -90,11 +169,10 @@
     function visibleServices() {
         var keyword = search ? search.value.trim().toLowerCase() : '';
         return services.filter(function (service) {
-            var matchesFilter = activeFilter === 'all'
-                || (activeFilter === 'video' && service.is_video)
-                || service.platform === activeFilter;
+            var matchesFilter = matchesActivePlatform(service);
+            var matchesType = activeServiceType === 'all' || serviceTypeFor(service) === activeServiceType;
             var haystack = [service.name, service.platform].join(' ').toLowerCase();
-            return matchesFilter && (!keyword || haystack.indexOf(keyword) !== -1);
+            return matchesFilter && matchesType && (!keyword || haystack.indexOf(keyword) !== -1);
         });
     }
 
@@ -205,10 +283,12 @@
         request('services').then(function (payload) {
             services = Array.isArray(payload.services) ? payload.services : [];
             if (!payload.configured) showFeedback(payload.message || 'Dịch vụ đang được cấu hình.');
+            renderServiceTypeFilters();
             renderServices();
         }).catch(function (error) {
             services = [];
             showFeedback(error.message || 'Chưa thể tải danh sách dịch vụ.');
+            renderServiceTypeFilters();
             renderServices();
         });
     }
@@ -254,7 +334,21 @@
             var button = event.target.closest('[data-social-filter]');
             if (!button) return;
             activeFilter = button.getAttribute('data-social-filter') || 'all';
+            activeServiceType = 'all';
             filters.querySelectorAll('[data-social-filter]').forEach(function (filter) {
+                filter.classList.toggle('is-active', filter === button);
+            });
+            renderServiceTypeFilters();
+            renderServices();
+        });
+    }
+
+    if (typeFiltersRoot) {
+        typeFiltersRoot.addEventListener('click', function (event) {
+            var button = event.target.closest('[data-social-service-type]');
+            if (!button) return;
+            activeServiceType = button.getAttribute('data-social-service-type') || 'all';
+            typeFilterList.querySelectorAll('[data-social-service-type]').forEach(function (filter) {
                 filter.classList.toggle('is-active', filter === button);
             });
             renderServices();

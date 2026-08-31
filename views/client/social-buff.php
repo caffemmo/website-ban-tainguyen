@@ -22,8 +22,8 @@ $body = [
     'keyword' => 'buff mạng xã hội, tăng view, tăng like, tăng follow, video',
     'legacy_client_plugins' => false
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/social-buff.css?v=4') . '">';
-$body['footer'] = '<script src="' . BASE_URL('mod/js/social-buff.js?v=3') . '"></script>';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/social-buff.css?v=5') . '">';
+$body['footer'] = '<script src="' . BASE_URL('mod/js/social-buff.js?v=4') . '"></script>';
 
 require_once __DIR__ . '/header.php';
 require_once __DIR__ . '/nav.php';
@@ -77,6 +77,10 @@ require_once __DIR__ . '/nav.php';
                 <button type="button" data-social-filter="Facebook"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i><span>Facebook</span></button>
                 <button type="button" data-social-filter="Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i><span>Instagram</span></button>
                 <button type="button" data-social-filter="TikTok"><i class="fa-brands fa-tiktok" aria-hidden="true"></i><span>TikTok</span></button>
+            </div>
+            <div class="social-buff-navigator-type-group" data-social-buff-type-filters hidden>
+                <p data-social-buff-type-title>Loại dịch vụ</p>
+                <div class="social-buff-navigator-type-list" data-social-buff-type-filter-list></div>
             </div>
             <div class="social-buff-navigator-group">
                 <p>Video &amp; kênh</p>
