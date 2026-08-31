@@ -111,7 +111,7 @@
             var selected = selectedService && selectedService.id === service.id;
             return '<button type="button" class="social-buff-service-card' + (selected ? ' is-selected' : '') + '" data-social-service="' + escapeHtml(service.id) + '" aria-pressed="' + (selected ? 'true' : 'false') + '">' +
                 '<span class="social-buff-service-card-top"><span class="social-buff-service-selector" aria-hidden="true"></span><span class="social-buff-service-icon"><i class="' + platformIcon(service.platform) + '" aria-hidden="true"></i></span><span class="social-buff-service-heading"><strong>' + escapeHtml(service.name) + '</strong><small>' + escapeHtml(service.platform) + '</small></span><span class="social-buff-service-price"><strong>' + formatMoney(service.rate) + '</strong><small>/ 1.000 lượt</small></span></span>' +
-                '<span class="social-buff-service-card-detail"><span><i class="fa-solid fa-arrow-down-1-9" aria-hidden="true"></i> Tối thiểu ' + Number(service.min).toLocaleString('vi-VN') + '</span><span><i class="fa-solid fa-arrow-up-9-1" aria-hidden="true"></i> Tối đa ' + Number(service.max).toLocaleString('vi-VN') + '</span><span class="social-buff-service-status"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Sẵn sàng đặt</span></span>' +
+                '<span class="social-buff-service-card-detail"><span><i class="fa-solid fa-arrow-down-1-9" aria-hidden="true"></i> Tối thiểu ' + Number(service.min).toLocaleString('vi-VN') + '</span><span><i class="fa-solid fa-arrow-up-9-1" aria-hidden="true"></i> Tối đa ' + Number(service.max).toLocaleString('vi-VN') + '</span></span>' +
                 '</button>';
         }).join('');
     }
