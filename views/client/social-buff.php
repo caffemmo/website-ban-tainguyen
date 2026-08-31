@@ -22,7 +22,7 @@ $body = [
     'keyword' => 'buff mạng xã hội, tăng view, tăng like, tăng follow, video',
     'legacy_client_plugins' => false
 ];
-$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/social-buff.css?v=6') . '">';
+$body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/social-buff.css?v=7') . '">';
 $body['footer'] = '<script src="' . BASE_URL('mod/js/social-buff.js?v=5') . '"></script>';
 
 require_once __DIR__ . '/header.php';
@@ -62,40 +62,6 @@ require_once __DIR__ . '/nav.php';
     <?php endif; ?>
 
     <section class="social-buff-workspace" aria-label="Đặt dịch vụ buff mạng xã hội">
-        <nav class="social-buff-navigator" data-social-buff-filters aria-label="Danh mục dịch vụ mạng xã hội">
-            <div class="social-buff-navigator-head">
-                <span class="social-buff-navigator-mark"><i class="fa-solid fa-bolt" aria-hidden="true"></i></span>
-                <div><strong>Danh mục dịch vụ</strong><small>Chọn nền tảng để lọc</small></div>
-            </div>
-
-            <div class="social-buff-navigator-group">
-                <p>Khám phá</p>
-                <button type="button" class="is-active" data-social-filter="all"><i class="fa-solid fa-table-cells-large" aria-hidden="true"></i><span>Tất cả dịch vụ</span></button>
-            </div>
-            <div class="social-buff-navigator-group">
-                <p>Mạng xã hội</p>
-                <button type="button" data-social-filter="Facebook"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i><span>Facebook</span></button>
-                <button type="button" data-social-filter="Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i><span>Instagram</span></button>
-                <button type="button" data-social-filter="TikTok"><i class="fa-brands fa-tiktok" aria-hidden="true"></i><span>TikTok</span></button>
-            </div>
-            <div class="social-buff-navigator-type-group" data-social-buff-type-filters hidden>
-                <p data-social-buff-type-title>Loại dịch vụ</p>
-                <div class="social-buff-navigator-type-list" data-social-buff-type-filter-list></div>
-            </div>
-            <div class="social-buff-navigator-group">
-                <p>Video &amp; kênh</p>
-                <button type="button" data-social-filter="video"><i class="fa-solid fa-play" aria-hidden="true"></i><span>Video &amp; lượt xem</span></button>
-                <button type="button" data-social-filter="YouTube"><i class="fa-brands fa-youtube" aria-hidden="true"></i><span>YouTube</span></button>
-            </div>
-            <div class="social-buff-navigator-group">
-                <p>Nền tảng khác</p>
-                <button type="button" data-social-filter="Shopee"><i class="fa-solid fa-bag-shopping" aria-hidden="true"></i><span>Shopee</span></button>
-                <button type="button" data-social-filter="X / Twitter"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i><span>X / Twitter</span></button>
-            </div>
-
-            <p class="social-buff-navigator-note"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Danh mục hiển thị theo dịch vụ đang có.</p>
-        </nav>
-
         <section class="social-buff-catalog" aria-labelledby="social-buff-catalog-title">
             <div class="social-buff-catalog-head">
                 <div>
@@ -108,6 +74,27 @@ require_once __DIR__ . '/nav.php';
                     <input id="social-buff-search" type="search" placeholder="Tìm video, view, like, follow..." autocomplete="off" data-social-buff-search <?= !$isAuthenticated || !$socialBuffAvailable ? 'disabled' : ''; ?>>
                 </label>
             </div>
+
+            <nav class="social-buff-navigator social-buff-navigator--horizontal" data-social-buff-filters aria-label="Danh mục dịch vụ mạng xã hội">
+                <div class="social-buff-navigator-head">
+                    <span class="social-buff-navigator-mark"><i class="fa-solid fa-bolt" aria-hidden="true"></i></span>
+                    <div><strong>Danh mục</strong><small>Lọc nhanh</small></div>
+                </div>
+                <div class="social-buff-navigator-horizontal-list">
+                    <button type="button" class="is-active" data-social-filter="all"><i class="fa-solid fa-table-cells-large" aria-hidden="true"></i><span>Tất cả dịch vụ</span></button>
+                    <button type="button" data-social-filter="Facebook"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i><span>Facebook</span></button>
+                    <button type="button" data-social-filter="Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i><span>Instagram</span></button>
+                    <button type="button" data-social-filter="TikTok"><i class="fa-brands fa-tiktok" aria-hidden="true"></i><span>TikTok</span></button>
+                    <button type="button" data-social-filter="video"><i class="fa-solid fa-play" aria-hidden="true"></i><span>Video &amp; lượt xem</span></button>
+                    <button type="button" data-social-filter="YouTube"><i class="fa-brands fa-youtube" aria-hidden="true"></i><span>YouTube</span></button>
+                    <button type="button" data-social-filter="Shopee"><i class="fa-solid fa-bag-shopping" aria-hidden="true"></i><span>Shopee</span></button>
+                    <button type="button" data-social-filter="X / Twitter"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i><span>X / Twitter</span></button>
+                </div>
+                <div class="social-buff-navigator-type-group" data-social-buff-type-filters hidden>
+                    <p data-social-buff-type-title>Loại dịch vụ</p>
+                    <div class="social-buff-navigator-type-list" data-social-buff-type-filter-list></div>
+                </div>
+            </nav>
 
             <div class="social-buff-quick-filters" hidden aria-hidden="true">
                 <button type="button" class="is-active" data-social-filter="all">Tất cả</button>
