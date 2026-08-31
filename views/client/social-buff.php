@@ -23,7 +23,7 @@ $body = [
     'legacy_client_plugins' => false
 ];
 $body['header'] = '<link rel="stylesheet" href="' . BASE_URL('mod/css/social-buff.css?v=5') . '">';
-$body['footer'] = '<script src="' . BASE_URL('mod/js/social-buff.js?v=4') . '"></script>';
+$body['footer'] = '<script src="' . BASE_URL('mod/js/social-buff.js?v=5') . '"></script>';
 
 require_once __DIR__ . '/header.php';
 require_once __DIR__ . '/nav.php';

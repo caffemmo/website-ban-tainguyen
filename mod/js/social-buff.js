@@ -105,6 +105,12 @@
             || service.platform === activeFilter;
     }
 
+    function compareServicesByRate(left, right) {
+        var rateDifference = Number(left.rate) - Number(right.rate);
+        if (rateDifference !== 0) return rateDifference;
+        return String(left.name || '').localeCompare(String(right.name || ''), 'vi');
+    }
+
     function renderServiceTypeFilters() {
         if (!typeFiltersRoot || !typeFilterList) return;
         if (activeFilter === 'all') {
@@ -168,12 +174,13 @@
 
     function visibleServices() {
         var keyword = search ? search.value.trim().toLowerCase() : '';
-        return services.filter(function (service) {
+        var filtered = services.filter(function (service) {
             var matchesFilter = matchesActivePlatform(service);
             var matchesType = activeServiceType === 'all' || serviceTypeFor(service) === activeServiceType;
             var haystack = [service.name, service.platform].join(' ').toLowerCase();
             return matchesFilter && matchesType && (!keyword || haystack.indexOf(keyword) !== -1);
         });
+        return filtered.sort(compareServicesByRate);
     }
 
     function renderServices() {
