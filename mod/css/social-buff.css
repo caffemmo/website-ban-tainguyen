@@ -421,6 +421,202 @@
     white-space: nowrap;
 }
 
+.social-buff-server-picker {
+    margin: -1px 0 2px;
+    padding: 14px;
+    border: 1px solid #d6e5f0;
+    border-radius: 6px;
+    background: #ffffff;
+}
+
+.social-buff-server-picker-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e5edf2;
+}
+
+.social-buff-server-picker-head strong,
+.social-buff-server-picker-head small {
+    display: block;
+}
+
+.social-buff-server-picker-head strong {
+    color: var(--sb-ink);
+    font-size: 12px;
+}
+
+.social-buff-server-picker-head small {
+    margin-top: 3px;
+    color: #f04b58;
+    font-size: 10px;
+}
+
+.social-buff-server-picker-head > span {
+    flex: 0 0 auto;
+    color: var(--sb-primary-dark);
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.social-buff-server-list {
+    display: grid;
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.social-buff-server-option {
+    position: relative;
+    display: grid;
+    grid-template-columns: 16px minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 10px;
+    min-height: 42px;
+    padding: 7px 9px;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    color: var(--sb-ink);
+    background: #ffffff;
+    cursor: pointer;
+    transition: border-color .18s ease, background-color .18s ease, box-shadow .18s ease;
+}
+
+.social-buff-server-option:hover,
+.social-buff-server-option:focus-within {
+    border-color: #9bc8ee;
+    background: #f7fbff;
+}
+
+.social-buff-server-option.is-selected {
+    border-color: var(--sb-primary);
+    background: #f2f8ff;
+    box-shadow: 0 0 0 2px rgba(22, 101, 216, .08);
+}
+
+.social-buff-server-option input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.social-buff-server-radio {
+    display: inline-flex;
+    width: 15px;
+    height: 15px;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid #b4c7d5;
+    border-radius: 50%;
+    background: #ffffff;
+}
+
+.social-buff-server-radio::after {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: transparent;
+    content: '';
+}
+
+.social-buff-server-option.is-selected .social-buff-server-radio {
+    border-color: var(--sb-primary);
+}
+
+.social-buff-server-option.is-selected .social-buff-server-radio::after {
+    background: var(--sb-primary);
+}
+
+.social-buff-server-copy,
+.social-buff-server-price {
+    min-width: 0;
+}
+
+.social-buff-server-copy strong,
+.social-buff-server-copy small,
+.social-buff-server-price strong,
+.social-buff-server-price small {
+    display: block;
+}
+
+.social-buff-server-copy strong {
+    color: #314e68;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.social-buff-server-copy small {
+    margin-top: 2px;
+    color: #8295a4;
+    font-size: 10px;
+}
+
+.social-buff-server-price {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.social-buff-server-price strong {
+    color: #f04444;
+    font-size: 12px;
+}
+
+.social-buff-server-price small {
+    margin-top: 2px;
+    color: #8295a4;
+    font-size: 9px;
+}
+
+.social-buff-server-status {
+    padding: 4px 7px;
+    border-radius: 4px;
+    color: #ffffff;
+    background: #13b981;
+    font-size: 9px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.social-buff-server-detail {
+    display: grid;
+    gap: 4px;
+    margin-top: 9px;
+    padding: 10px 11px;
+    border-radius: 5px;
+    color: #37627c;
+    background: #e9fbf8;
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+.social-buff-server-detail strong { color: #ef4444; font-size: 11px; }
+.social-buff-server-detail span { color: #2d6c68; }
+.social-buff-server-detail small { color: #567d8e; font-size: 10px; }
+
+@media (max-width: 767.98px) {
+    .social-buff-server-option {
+        grid-template-columns: 16px minmax(0, 1fr) auto;
+    }
+
+    .social-buff-server-price {
+        grid-column: 3;
+        grid-row: 1 / span 2;
+        align-self: center;
+    }
+
+    .social-buff-server-status {
+        grid-column: 2;
+        grid-row: 2;
+        width: fit-content;
+        margin-top: 3px;
+    }
+}
+
 .social-buff-service-heading small {
     margin-top: 3px;
     color: var(--sb-muted);

@@ -65,6 +65,27 @@
         return 'Nhận đơn từ ' + Number(service.min).toLocaleString('vi-VN') + ' đến ' + Number(service.max).toLocaleString('vi-VN') + ' lượt';
     }
 
+    function serviceGroupKey(service) {
+        return [service.platform, customerServiceName(service.name)].join('|').toLowerCase();
+    }
+
+    function groupServices(list) {
+        var groups = [];
+        var byKey = {};
+        list.forEach(function (service) {
+            var key = serviceGroupKey(service);
+            if (!byKey[key]) {
+                byKey[key] = { key: key, services: [] };
+                groups.push(byKey[key]);
+            }
+            byKey[key].services.push(service);
+        });
+        groups.forEach(function (group) {
+            group.services.sort(compareServicesByRate);
+        });
+        return groups;
+    }
+
     function serviceCode(service) {
         var code = String(service && service.code ? service.code : '').trim().toUpperCase();
         return /^SV\d{1,6}$/.test(code) ? code : '';
@@ -205,6 +226,29 @@
         return filtered.sort(compareServicesByRate);
     }
 
+    function renderServerPicker(group) {
+        var selected = group.services.find(function (service) {
+            return selectedService && selectedService.id === service.id;
+        }) || group.services[0];
+        var options = group.services.map(function (service) {
+            var isSelected = selected.id === service.id;
+            var code = serviceCode(service);
+            var label = code ? code + ' : ' : '';
+            return '<label class="social-buff-server-option' + (isSelected ? ' is-selected' : '') + '" data-social-server data-social-server-id="' + escapeHtml(service.id) + '">' +
+                '<input type="radio" name="social-buff-server" value="' + escapeHtml(service.id) + '"' + (isSelected ? ' checked' : '') + ' aria-label="' + escapeHtml(label + serviceDescription(service)) + '">' +
+                '<span class="social-buff-server-radio" aria-hidden="true"></span>' +
+                '<span class="social-buff-server-copy"><strong>' + escapeHtml(label + (serviceDescription(service) || 'Gói dịch vụ')) + '</strong><small>' + escapeHtml(customerServiceRange(service)) + '</small></span>' +
+                '<span class="social-buff-server-price"><strong>' + formatMoney(service.rate) + '</strong><small>/ 1.000 lượt</small></span>' +
+                '<span class="social-buff-server-status">Sẵn sàng</span>' +
+                '</label>';
+        }).join('');
+        return '<section class="social-buff-server-picker" aria-labelledby="social-buff-server-title">' +
+            '<div class="social-buff-server-picker-head"><div><strong id="social-buff-server-title">Chọn server</strong><small>Đọc kỹ mô tả trước khi chọn gói.</small></div><span>' + group.services.length + ' gói</span></div>' +
+            '<div class="social-buff-server-list">' + options + '</div>' +
+            '<div class="social-buff-server-detail"><strong>Thông tin gói ' + escapeHtml(serviceCode(selected) || 'đã chọn') + '</strong><span>' + escapeHtml(serviceDescription(selected)) + '</span><small>' + escapeHtml(customerServiceRange(selected)) + '</small></div>' +
+            '</section>';
+    }
+
     function renderServices() {
         if (!servicesRoot) return;
         var filtered = visibleServices();
@@ -222,6 +266,13 @@
                 '<span class="social-buff-service-card-detail"><span><i class="fa-solid fa-arrow-down-1-9" aria-hidden="true"></i> Tối thiểu ' + Number(service.min).toLocaleString('vi-VN') + '</span><span><i class="fa-solid fa-arrow-up-9-1" aria-hidden="true"></i> Tối đa ' + Number(service.max).toLocaleString('vi-VN') + '</span></span>' +
                 '</button>';
         }).join('');
+        var selectableServices = services.filter(function (service) {
+            return matchesActivePlatform(service) && (activeServiceType === 'all' || serviceTypeFor(service) === activeServiceType);
+        });
+        var selectedGroup = selectedService ? groupServices(selectableServices).find(function (group) {
+            return group.services.some(function (service) { return service.id === selectedService.id; });
+        }) : null;
+        if (selectedGroup) servicesRoot.insertAdjacentHTML('afterbegin', renderServerPicker(selectedGroup));
         servicesRoot.querySelectorAll('[data-social-service]').forEach(function (card) {
             var service = services.find(function (item) {
                 return item.id === card.getAttribute('data-social-service');
@@ -418,6 +469,11 @@
 
     if (servicesRoot) {
         servicesRoot.addEventListener('click', function (event) {
+            var server = event.target.closest('[data-social-server]');
+            if (server) {
+                selectService(server.getAttribute('data-social-server-id'));
+                return;
+            }
             var card = event.target.closest('[data-social-service]');
             if (card) selectService(card.getAttribute('data-social-service'));
         });
