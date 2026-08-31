@@ -38,18 +38,6 @@ require_once __DIR__ . '/nav.php';
     data-unavailable-message="<?= htmlspecialchars($socialBuffUnavailableMessage, ENT_QUOTES, 'UTF-8'); ?>"
     data-login-url="<?= htmlspecialchars(base_url('client/login'), ENT_QUOTES, 'UTF-8'); ?>"
 >
-    <section class="social-buff-intro" aria-labelledby="social-buff-title">
-        <div class="social-buff-intro-copy">
-            <span class="social-buff-eyebrow"><i class="fa-solid fa-bolt" aria-hidden="true"></i> Dịch vụ tự động</span>
-            <h1 id="social-buff-title">Buff mạng xã hội</h1>
-            <p>Chọn dịch vụ, dán liên kết và theo dõi trạng thái đơn ngay tại Caffemmo.</p>
-        </div>
-        <div class="social-buff-intro-status" role="status">
-            <span class="social-buff-status-dot <?= $socialBuffAvailable ? 'is-ready' : ''; ?>" aria-hidden="true"></span>
-            <span><?= $socialBuffMaintenance && !$socialBuffAdmin ? 'Đang bảo trì' : ($isConfigured ? 'Sẵn sàng nhận đơn' : 'Đang cập nhật dịch vụ'); ?></span>
-        </div>
-    </section>
-
     <?php if (!$isAuthenticated): ?>
         <section class="social-buff-login-notice" role="status">
             <i class="fa-solid fa-lock" aria-hidden="true"></i>
