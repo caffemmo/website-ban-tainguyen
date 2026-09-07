@@ -199,11 +199,11 @@ $serviceCatalog = caffemmo_service_catalog();
                 <div class="header-media-group">
                     <button class="header-user" type="button" aria-label="<?= __('Mở menu'); ?>"><i class="fa-solid fa-bars" aria-hidden="true"></i></button>
                     <a href="<?= base_url(); ?>">
-                        <img src="<?= BASE_URL($CMSNT->site('logo_light')); ?>" alt="logo"></a>
+                        <img src="<?= BASE_URL($CMSNT->site('logo_light')); ?>" onerror="this.onerror=null;this.src='<?= BASE_URL('assets/storage/images/logo_dark_AEQ.png'); ?>';" alt="<?= htmlspecialchars((string) $CMSNT->site('title'), ENT_QUOTES, 'UTF-8'); ?>"></a>
                     <button class="header-src"><i class="fas fa-search"></i></button>
                 </div>
                 <a href="<?= base_url(); ?>" class="header-logo"><img src="<?= BASE_URL($CMSNT->site('logo_light')); ?>"
-                        alt="logo"></a>
+                        onerror="this.onerror=null;this.src='<?= BASE_URL('assets/storage/images/logo_dark_AEQ.png'); ?>';" alt="<?= htmlspecialchars((string) $CMSNT->site('title'), ENT_QUOTES, 'UTF-8'); ?>"></a>
                 <form class="header-form" method="GET" action="<?= base_url('client/products'); ?>">
                     <input type="text" name="keyword" value="<?= isset($keyword) ? $keyword : ''; ?>"
                         placeholder="<?= __('Tìm kiếm sản phẩm...'); ?>"><button><i class="fas fa-search"></i></button>
@@ -743,7 +743,7 @@ $serviceCatalog = caffemmo_service_catalog();
     </aside>
     <aside class="nav-sidebar nav-sidebar-legacy" aria-hidden="true">
         <div class="nav-header"><a href="<?= base_url(); ?>"><img src="<?= BASE_URL($CMSNT->site('logo_light')); ?>"
-                    alt="logo"></a><button class="nav-close"><i class="icofont-close"></i></button></div>
+                    onerror="this.onerror=null;this.src='<?= BASE_URL('assets/storage/images/logo_dark_AEQ.png'); ?>';" alt="<?= htmlspecialchars((string) $CMSNT->site('title'), ENT_QUOTES, 'UTF-8'); ?>"></a><button class="nav-close"><i class="icofont-close"></i></button></div>
         <div class="nav-content">
             <div class="nav-btn">
                 <?php if (isset($getUser)): ?>

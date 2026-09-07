@@ -58,7 +58,7 @@ $loadLegacyClientPlugins = !isset($body['legacy_client_plugins']) || $body['lega
   <link rel="stylesheet" href="<?= BASE_URL('public/client/'); ?>vendor/bootstrap/bootstrap.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Lexend:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="<?= BASE_URL('public/client/'); ?>css/main.css?v=3">
   <link rel="stylesheet" href="<?= BASE_URL('public/client/'); ?>css/user-auth.css">
   <link rel="stylesheet" href="<?= BASE_URL('public/client/'); ?>css/index.css">
@@ -104,7 +104,7 @@ $loadLegacyClientPlugins = !isset($body['legacy_client_plugins']) || $body['lega
   <?= $body['header']; ?>
   <link rel="stylesheet" href="<?= BASE_URL('mod/css/main.css?v=73'); ?>">
   <script src="<?= base_url('mod/js/main.js?v=4'); ?>"></script>
-  <link rel="stylesheet" href="<?= BASE_URL('public/assets/caffemmo-dark.css?v=20260907'); ?>">
+  <link rel="stylesheet" href="<?= BASE_URL('public/assets/caffemmo-dark.css?v=20260907b'); ?>">
   <?= $CMSNT->site('javascript_header'); ?>
 
 </head>
@@ -148,7 +148,7 @@ $loadLegacyClientPlugins = !isset($body['legacy_client_plugins']) || $body['lega
 
 <style>
   body {
-    font-family: 'Be Vietnam Pro', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: 'Source Sans 3', 'Be Vietnam Pro', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     <?= $CMSNT->site('font_family');
     ?>
   }
@@ -158,7 +158,7 @@ $loadLegacyClientPlugins = !isset($body['legacy_client_plugins']) || $body['lega
   input,
   select,
   textarea {
-    font-family: 'Be Vietnam Pro', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+    font-family: 'Source Sans 3', 'Be Vietnam Pro', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
     letter-spacing: 0;
   }
 
