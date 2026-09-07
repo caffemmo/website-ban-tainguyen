@@ -81,12 +81,12 @@ require_once(__DIR__ . '/nav.php');
                                 $client->setState($googleOauthState);
                                 $login_url = $client->createAuthUrl();
                             ?>
-                                <div style="text-align:center;margin:15px 0 5px;position:relative;">
+                                <div class="client-oauth-divider" style="text-align:center;margin:15px 0 5px;position:relative;">
                                     <span style="background:#fff;padding:0 12px;color:#888;font-size:13px;position:relative;z-index:1;"><?= __('Hoặc đăng nhập với'); ?></span>
                                     <hr style="margin-top:-10px;border-color:#e0e0e0;">
                                 </div>
                                 <div style="text-align:center;">
-                                    <a href="<?= $login_url; ?>" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 24px;border:1px solid #dadce0;border-radius:6px;background:#fff;color:#3c4043;font-size:14px;font-weight:500;text-decoration:none;transition:all .2s;cursor:pointer;width:100%;"
+                                    <a class="client-oauth-button" href="<?= $login_url; ?>" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 24px;border:1px solid #dadce0;border-radius:6px;background:#fff;color:#3c4043;font-size:14px;font-weight:500;text-decoration:none;transition:all .2s;cursor:pointer;width:100%;"
                                         onmouseover="this.style.boxShadow='0 1px 3px rgba(0,0,0,.15)';this.style.borderColor='#c6c6c6';"
                                         onmouseout="this.style.boxShadow='none';this.style.borderColor='#dadce0';">
                                         <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">

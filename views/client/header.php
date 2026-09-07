@@ -50,6 +50,7 @@ $loadLegacyClientPlugins = !isset($body['legacy_client_plugins']) || $body['lega
   <link rel="stylesheet" href="<?= BASE_URL('public/client/'); ?>fonts/flaticon/flaticon.css">
   <link rel="stylesheet" href="<?= BASE_URL('public/client/'); ?>fonts/icofont/icofont.min.css">
   <link rel="stylesheet" href="<?= BASE_URL('public/client/'); ?>fonts/fontawesome/fontawesome.min.css">
+  <link rel="stylesheet" href="<?= BASE_URL('public/theme/assets/icon-fonts/tabler-icons/iconfont/'); ?>tabler-icons.min.css">
   <?php if ($loadLegacyClientPlugins): ?>
   <link rel="stylesheet" href="<?= BASE_URL('public/client/'); ?>vendor/venobox/venobox.min.css">
   <link rel="stylesheet" href="<?= BASE_URL('public/client/'); ?>vendor/slickslider/slick.min.css">
@@ -104,7 +105,8 @@ $loadLegacyClientPlugins = !isset($body['legacy_client_plugins']) || $body['lega
   <?= $body['header']; ?>
   <link rel="stylesheet" href="<?= BASE_URL('mod/css/main.css?v=73'); ?>">
   <script src="<?= base_url('mod/js/main.js?v=4'); ?>"></script>
-  <link rel="stylesheet" href="<?= BASE_URL('public/assets/caffemmo-dark.css?v=20260907b'); ?>">
+  <link rel="stylesheet" href="<?= BASE_URL('public/assets/caffemmo-dark.css?v=20260907c'); ?>">
+  <script src="<?= BASE_URL('public/assets/caffemmo-client-ui.js?v=20260907c'); ?>" defer></script>
   <?= $CMSNT->site('javascript_header'); ?>
 
 </head>
