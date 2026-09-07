@@ -104,6 +104,7 @@ $loadLegacyClientPlugins = !isset($body['legacy_client_plugins']) || $body['lega
   <?= $body['header']; ?>
   <link rel="stylesheet" href="<?= BASE_URL('mod/css/main.css?v=73'); ?>">
   <script src="<?= base_url('mod/js/main.js?v=4'); ?>"></script>
+  <link rel="stylesheet" href="<?= BASE_URL('public/assets/caffemmo-dark.css?v=20260907'); ?>">
   <?= $CMSNT->site('javascript_header'); ?>
 
 </head>
