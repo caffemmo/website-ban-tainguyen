@@ -561,10 +561,8 @@
         <div class="row">
             <div class="col-sm-6 col-xl-4">
                 <div class="footer-widget">
-                    <a class="client-brand client-brand--footer" href="<?= base_url(); ?>" aria-label="<?= __('Trang chủ CAFFEMMO.COM'); ?>">
-                        <span class="client-brand-mark" aria-hidden="true"><i class="ti ti-link"></i></span>
-                        <span class="client-brand-copy"><strong>CAFFEMMO.COM</strong><small><?= __('Cửa hàng tài khoản số'); ?></small></span>
-                    </a>
+                    <a class="footer-logo" href="<?= base_url(); ?>">
+                        <img src="<?= BASE_URL($CMSNT->site('logo_light')); ?>" onerror="this.onerror=null;this.src='<?= BASE_URL('assets/storage/images/logo_dark_AEQ.png'); ?>';" alt="<?= htmlspecialchars((string) $CMSNT->site('title'), ENT_QUOTES, 'UTF-8'); ?>"></a>
                     <p class="footer-desc">
                         <?= $CMSNT->site('description'); ?></p>
                 </div>
@@ -573,13 +571,13 @@
                 <div class="footer-widget contact">
                     <h3 class="footer-title"><?= __('Liên hệ'); ?></h3>
                     <ul class="footer-contact">
-                        <li><i class="ti ti-mail" aria-hidden="true"></i>
+                        <li><?= $CMSNT->site('icon_email'); ?>
                             <p><?= $CMSNT->site('email'); ?></p>
                         </li>
-                        <li><i class="ti ti-phone" aria-hidden="true"></i>
+                        <li><?= $CMSNT->site('icon_hotline'); ?>
                             <p><?= $CMSNT->site('hotline'); ?></p>
                         </li>
-                        <li><i class="ti ti-map-pin" aria-hidden="true"></i>
+                        <li><?= $CMSNT->site('icon_address'); ?>
                             <p><?= $CMSNT->site('address'); ?></p>
                         </li>
                     </ul>

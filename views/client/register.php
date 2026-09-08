@@ -166,12 +166,12 @@ require_once(__DIR__ . '/nav.php');
                                 $client->setState($googleOauthState);
                                 $register_url = $client->createAuthUrl();
                             ?>
-                                <div class="client-oauth-divider" style="text-align:center;margin:15px 0 5px;position:relative;">
+                                <div style="text-align:center;margin:15px 0 5px;position:relative;">
                                     <span style="background:#fff;padding:0 12px;color:#888;font-size:13px;position:relative;z-index:1;"><?= __('Hoặc đăng ký với'); ?></span>
                                     <hr style="margin-top:-10px;border-color:#e0e0e0;">
                                 </div>
                                 <div style="text-align:center;">
-                                    <a class="client-oauth-button" href="<?= $register_url; ?>" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 24px;border:1px solid #dadce0;border-radius:6px;background:#fff;color:#3c4043;font-size:14px;font-weight:500;text-decoration:none;transition:all .2s;cursor:pointer;width:100%;"
+                                    <a href="<?= $register_url; ?>" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 24px;border:1px solid #dadce0;border-radius:6px;background:#fff;color:#3c4043;font-size:14px;font-weight:500;text-decoration:none;transition:all .2s;cursor:pointer;width:100%;"
                                         onmouseover="this.style.boxShadow='0 1px 3px rgba(0,0,0,.15)';this.style.borderColor='#c6c6c6';"
                                         onmouseout="this.style.boxShadow='none';this.style.borderColor='#dadce0';">
                                         <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
@@ -338,7 +338,7 @@ require_once(__DIR__ . '/footer.php');
 
     function getPasswordStrength(password) {
         var strength = {
-            message: "<?= __('Mật khẩu rất yếu'); ?>",
+            message: "❗ <?= __('Mật khẩu rất yếu'); ?>",
             color: "red"
         };
         var regexes = [
@@ -350,10 +350,10 @@ require_once(__DIR__ . '/footer.php');
         ];
         var passedChecks = regexes.reduce((acc, regex) => acc + regex.test(password), 0);
         if (passedChecks === 5) {
-            strength.message = "<?= __('Mật khẩu mạnh'); ?>";
+            strength.message = "🔰 <?= __('Mật khẩu mạnh'); ?>";
             strength.color = "green";
         } else if (passedChecks >= 3) {
-            strength.message = "<?= __('Mật khẩu trung bình'); ?>";
+            strength.message = "⚠️ <?= __('Mật khẩu trung bình'); ?>";
             strength.color = "orange";
         }
 

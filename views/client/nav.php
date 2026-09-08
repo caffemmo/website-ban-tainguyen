@@ -17,21 +17,17 @@ if ($upMenuActive && $upService === '') {
 $serviceCatalog = caffemmo_service_catalog();
 ?>
 
-<body class="caffemmo-client has-desktop-sidebar">
+<body class="has-desktop-sidebar">
     <div class="backdrop"></div><a class="backtop" href="#"><i class="fa-sharp fa-solid fa-chevron-up"></i></a>
     <aside class="desktop-app-sidebar" aria-label="<?= __('Điều hướng chính'); ?>">
         <div class="desktop-sidebar-scroll">
-            <a class="client-brand client-brand--sidebar" href="<?= base_url('client/home'); ?>" aria-label="<?= __('Trang chủ CAFFEMMO.COM'); ?>">
-                <span class="client-brand-mark" aria-hidden="true"><i class="ti ti-link"></i></span>
-                <span class="client-brand-copy"><strong>CAFFEMMO.COM</strong><small><?= __('Cửa hàng tài khoản số'); ?></small></span>
-            </a>
             <nav class="desktop-sidebar-nav">
                 <p class="desktop-sidebar-section-title"><?= __('Tổng quan'); ?></p>
                 <a class="desktop-sidebar-link <?= isset($action) && $action == 'home' ? 'active' : ''; ?>" href="<?= base_url('client/home'); ?>">
-                    <i class="ti ti-layout-dashboard" aria-hidden="true"></i><span><?= __('Trang chủ'); ?></span>
+                    <i class="fa-solid fa-table-cells-large" aria-hidden="true"></i><span><?= __('Trang chủ'); ?></span>
                 </a>
                 <a class="desktop-sidebar-link <?= isset($action) && $action == 'products' ? 'active' : ''; ?>" href="<?= base_url('client/products'); ?>">
-                    <i class="ti ti-shopping-bag" aria-hidden="true"></i><span><?= __('Mua tài nguyên'); ?></span>
+                    <i class="fa-solid fa-store" aria-hidden="true"></i><span><?= __('Mua tài nguyên'); ?></span>
                 </a>
 
                 <?php foreach ($serviceCatalog as $serviceGroupKey => $serviceGroup): ?>
@@ -48,19 +44,19 @@ $serviceCatalog = caffemmo_service_catalog();
                     <?php endforeach; ?>
                     <?php if ($serviceGroupKey === 'up-tich-xanh'): ?>
                     <a class="desktop-sidebar-link desktop-sidebar-service-link <?= $upHistoryActive ? 'active' : ''; ?>" href="<?= base_url('client/up-tich-xanh-history'); ?>" <?= $upHistoryActive ? 'aria-current="page"' : ''; ?>>
-                        <i class="ti ti-history" aria-hidden="true"></i>
+                        <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
                         <span class="desktop-sidebar-link-label"><strong><?= __('Lịch sử yêu cầu'); ?></strong><small><?= __('Theo dõi dịch vụ đã gửi'); ?></small></span>
                     </a>
                     <?php endif; ?>
                     <?php if ($serviceGroupKey === 'streaming'): ?>
                     <a class="desktop-sidebar-link desktop-sidebar-service-link <?= $netflixHistoryActive ? 'active' : ''; ?>" href="<?= base_url('client/netflix-history'); ?>" <?= $netflixHistoryActive ? 'aria-current="page"' : ''; ?>>
-                        <i class="ti ti-history" aria-hidden="true"></i>
+                        <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
                         <span class="desktop-sidebar-link-label"><strong><?= __('Lịch sử Netflix'); ?></strong><small><?= __('Xem và tạo lại link'); ?></small></span>
                     </a>
                     <?php endif; ?>
                     <?php if ($serviceGroupKey === 'digital'): ?>
                     <a class="desktop-sidebar-link desktop-sidebar-service-link <?= $locketGoldHistoryActive ? 'active' : ''; ?>" href="<?= base_url('client/locket-gold-history'); ?>" <?= $locketGoldHistoryActive ? 'aria-current="page"' : ''; ?>>
-                        <i class="ti ti-history" aria-hidden="true"></i>
+                        <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
                         <span class="desktop-sidebar-link-label"><strong><?= __('Lịch sử Locket Gold Vĩnh Viễn'); ?></strong><small><?= __('Theo dõi đơn đã gửi'); ?></small></span>
                     </a>
                     <?php endif; ?>
@@ -69,49 +65,49 @@ $serviceCatalog = caffemmo_service_catalog();
                 <?php if($CMSNT->site('status_menu_tools') == 1): ?>
                 <p class="desktop-sidebar-section-title"><?= __('Công cụ miễn phí'); ?></p>
                 <a class="desktop-sidebar-link" href="<?= base_url('tool/check-live-facebook'); ?>">
-                    <i class="ti ti-brand-facebook" aria-hidden="true"></i><span><?= __('Check live Facebook'); ?></span>
+                    <i class="fa-brands fa-facebook" aria-hidden="true"></i><span><?= __('Check live Facebook'); ?></span>
                 </a>
                 <a class="desktop-sidebar-link" href="<?= base_url('tool/get-2fa'); ?>">
-                    <i class="ti ti-shield-lock" aria-hidden="true"></i><span><?= __('Lấy mã 2FA'); ?></span>
+                    <i class="fa-solid fa-shield-halved" aria-hidden="true"></i><span><?= __('Lấy mã 2FA'); ?></span>
                 </a>
                 <a class="desktop-sidebar-link" href="<?= base_url('tool/icon-facebook'); ?>">
-                    <i class="ti ti-icons" aria-hidden="true"></i><span><?= __('Icon Facebook'); ?></span>
+                    <i class="fa-solid fa-icons" aria-hidden="true"></i><span><?= __('Icon Facebook'); ?></span>
                 </a>
                 <a class="desktop-sidebar-link" href="<?= base_url('tool/random-face'); ?>">
-                    <i class="ti ti-mood-smile" aria-hidden="true"></i><span><?= __('Random Face'); ?></span>
+                    <i class="fa-solid fa-face-smile" aria-hidden="true"></i><span><?= __('Random Face'); ?></span>
                 </a>
                 <?php endif; ?>
 
                 <p class="desktop-sidebar-section-title"><?= __('Hỗ trợ'); ?></p>
                 <a class="desktop-sidebar-link" href="<?= base_url('client/contact'); ?>">
-                    <i class="ti ti-headset" aria-hidden="true"></i><span><?= __('Liên hệ hỗ trợ'); ?></span>
+                    <i class="fa-solid fa-headset" aria-hidden="true"></i><span><?= __('Liên hệ hỗ trợ'); ?></span>
                 </a>
                 <a class="desktop-sidebar-link" href="<?= base_url('client/faq'); ?>">
-                    <i class="ti ti-help-circle" aria-hidden="true"></i><span><?= __('Câu hỏi thường gặp'); ?></span>
+                    <i class="fa-solid fa-circle-question" aria-hidden="true"></i><span><?= __('Câu hỏi thường gặp'); ?></span>
                 </a>
                 <?php if($CMSNT->site('api_status') == 1): ?>
                 <a class="desktop-sidebar-link" href="<?= base_url('document-api'); ?>">
-                    <i class="ti ti-file-code" aria-hidden="true"></i><span><?= __('Tài liệu API'); ?></span>
+                    <i class="fa-regular fa-file-code" aria-hidden="true"></i><span><?= __('Tài liệu API'); ?></span>
                 </a>
                 <?php endif; ?>
                 <?php if(isset($getUser)): ?>
                 <a class="desktop-sidebar-link desktop-sidebar-logout" href="<?= base_url('client/logout'); ?>">
-                    <i class="ti ti-logout" aria-hidden="true"></i><span><?= __('Đăng xuất'); ?></span>
+                    <i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i><span><?= __('Đăng xuất'); ?></span>
                 </a>
                 <?php else: ?>
                 <a class="desktop-sidebar-link" href="<?= base_url('client/login'); ?>">
-                    <i class="ti ti-login" aria-hidden="true"></i><span><?= __('Đăng nhập'); ?></span>
+                    <i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i><span><?= __('Đăng nhập'); ?></span>
                 </a>
                 <?php endif; ?>
             </nav>
             <div class="desktop-sidebar-support-card">
-                <span class="desktop-sidebar-support-icon"><i class="ti ti-headset" aria-hidden="true"></i></span>
+                <span class="desktop-sidebar-support-icon"><i class="fa-solid fa-headset" aria-hidden="true"></i></span>
                 <span class="desktop-sidebar-support-copy">
                     <strong><?= __('Cần hỗ trợ?'); ?></strong>
                     <small><?= __('Đội ngũ luôn sẵn sàng'); ?></small>
                 </span>
                 <a href="<?= base_url('client/contact'); ?>" aria-label="<?= __('Liên hệ hỗ trợ'); ?>" title="<?= __('Liên hệ hỗ trợ'); ?>">
-                    <i class="ti ti-arrow-up-right" aria-hidden="true"></i>
+                    <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
                 </a>
             </div>
         </div>
@@ -185,7 +181,7 @@ $serviceCatalog = caffemmo_service_catalog();
     <?php if ($homeNoticeText !== ''): ?>
     <section class="site-notice-marquee" aria-label="<?= __('Thông báo'); ?>">
         <div class="container">
-            <span class="site-notice-marquee-icon"><i class="ti ti-info-circle" aria-hidden="true"></i></span>
+            <span class="site-notice-marquee-icon"><i class="fa-solid fa-circle-info" aria-hidden="true"></i></span>
             <div class="site-notice-marquee-viewport">
                 <div class="site-notice-marquee-track">
                     <span class="site-notice-marquee-message"><?= htmlspecialchars($homeNoticeText, ENT_QUOTES, 'UTF-8'); ?></span>
@@ -201,38 +197,40 @@ $serviceCatalog = caffemmo_service_catalog();
         <div class="container">
             <div class="header-content">
                 <div class="header-media-group">
-                    <button class="header-user" type="button" aria-label="<?= __('Mở menu'); ?>"><i class="ti ti-menu-2" aria-hidden="true"></i></button>
-                    <a class="client-brand client-brand--mobile" href="<?= base_url(); ?>" aria-label="<?= __('Trang chủ CAFFEMMO.COM'); ?>"><span class="client-brand-mark" aria-hidden="true"><i class="ti ti-link"></i></span><span class="client-brand-copy"><strong>CAFFEMMO.COM</strong><small><?= __('Cửa hàng tài khoản số'); ?></small></span></a>
-                    <button class="header-src" type="button" aria-label="<?= __('Mở tìm kiếm'); ?>"><i class="ti ti-search" aria-hidden="true"></i></button>
+                    <button class="header-user" type="button" aria-label="<?= __('Mở menu'); ?>"><i class="fa-solid fa-bars" aria-hidden="true"></i></button>
+                    <a href="<?= base_url(); ?>">
+                        <img src="<?= BASE_URL($CMSNT->site('logo_light')); ?>" onerror="this.onerror=null;this.src='<?= BASE_URL('assets/storage/images/logo_dark_AEQ.png'); ?>';" alt="<?= htmlspecialchars((string) $CMSNT->site('title'), ENT_QUOTES, 'UTF-8'); ?>"></a>
+                    <button class="header-src"><i class="fas fa-search"></i></button>
                 </div>
-                <a href="<?= base_url(); ?>" class="client-brand client-brand--header" aria-label="<?= __('Trang chủ CAFFEMMO.COM'); ?>"><span class="client-brand-mark" aria-hidden="true"><i class="ti ti-link"></i></span><span class="client-brand-copy"><strong>CAFFEMMO.COM</strong><small><?= __('Cửa hàng tài khoản số'); ?></small></span></a>
+                <a href="<?= base_url(); ?>" class="header-logo"><img src="<?= BASE_URL($CMSNT->site('logo_light')); ?>"
+                        onerror="this.onerror=null;this.src='<?= BASE_URL('assets/storage/images/logo_dark_AEQ.png'); ?>';" alt="<?= htmlspecialchars((string) $CMSNT->site('title'), ENT_QUOTES, 'UTF-8'); ?>"></a>
                 <form class="header-form" method="GET" action="<?= base_url('client/products'); ?>">
                     <input type="text" name="keyword" value="<?= isset($keyword) ? $keyword : ''; ?>"
-                        placeholder="<?= __('Tìm kiếm sản phẩm...'); ?>"><button aria-label="<?= __('Tìm kiếm'); ?>"><i class="ti ti-search" aria-hidden="true"></i></button>
+                        placeholder="<?= __('Tìm kiếm sản phẩm...'); ?>"><button><i class="fas fa-search"></i></button>
                 </form>
                 <div class="header-widget-group">
                     <a href="<?= base_url('product-orders/'); ?>" class="header-widget" title="<?= __('Đơn hàng'); ?>"><i
-                            class="ti ti-shopping-cart"></i></a>
+                            class="fa-solid fa-cart-arrow-down"></i></a>
                     <a href="<?= base_url('client/favorites'); ?>" class="header-widget"
                         title="<?= __('Sản phẩm yêu thích'); ?>">
-                        <i class="ti ti-heart"></i>
+                        <i class="fas fa-heart"></i>
                         <sup
                             id="numFavorites"><?= isset($getUser) ? $CMSNT->get_row_safe(" SELECT COUNT(id) FROM `favorites` WHERE `user_id` = ? ", [$getUser['id']])["COUNT(id)"] : 0; ?></sup>
                     </a>
-                    <button class="header-widget header-cart" type="button" title="<?= __('Nạp tiền'); ?>"><i
-                            class="ti ti-building-bank"></i>
+                    <button class="header-widget header-cart" title="<?= __('Nạp tiền'); ?>"><i
+                            class="fa-solid fa-building-columns"></i>
 
                     </button>
                     <?php if (isset($getUser)): ?>
                         <a href="<?= base_url('client/profile'); ?>" class="header-widget" title="Profile">
-                            <img src="<?= BASE_URL($CMSNT->site('avatar')); ?>" alt="<?= __('Ảnh đại diện'); ?>"><span>
+                            <img src="<?= BASE_URL($CMSNT->site('avatar')); ?>" alt="user"><span>
                                 <p class="text-uppercase"><?= $getUser['username']; ?></p>
                                 <p style="color:blue;"><?= format_currency($getUser['money']); ?></p>
                             </span>
                         </a>
                     <?php else: ?>
                         <a href="<?= base_url('client/login'); ?>" class="header-widget" title="Login">
-                            <span class="header-account-icon" aria-hidden="true"><i class="ti ti-user-circle"></i></span><span><?= __('Đăng nhập'); ?></span>
+                            <img src="<?= BASE_URL($CMSNT->site('avatar')); ?>" alt="user"><span>Login</span>
                         </a>
                     <?php endif ?>
                 </div>

@@ -17,7 +17,7 @@ if (!function_exists('caffemmo_service_catalog')) {
                         'description' => 'Mua proxy chính hãng, xem giá trước khi thanh toán và nhận thông tin kết nối tự động.',
                         'url' => base_url('client/proxy-buy'),
                         'action' => 'proxy-buy',
-                        'icon' => 'ti ti-shopping-cart',
+                        'icon' => 'fa-solid fa-cart-shopping',
                         'tone' => 'teal',
                         'requires_login' => true
                     ],
@@ -28,7 +28,7 @@ if (!function_exists('caffemmo_service_catalog')) {
                         'description' => 'Theo dõi IP, quốc gia, cổng HTTPS/SOCKS5, hạn dùng và trạng thái tự động gia hạn.',
                         'url' => base_url('client/proxy-list'),
                         'action' => 'proxy-list',
-                        'icon' => 'ti ti-server',
+                        'icon' => 'fa-solid fa-server',
                         'tone' => 'blue',
                         'requires_login' => true
                     ],
@@ -39,7 +39,7 @@ if (!function_exists('caffemmo_service_catalog')) {
                         'description' => 'Chọn nhiều proxy, xem báo giá và bật tự động gia hạn khi cần.',
                         'url' => base_url('client/proxy-renew'),
                         'action' => 'proxy-renew',
-                        'icon' => 'ti ti-refresh',
+                        'icon' => 'fa-solid fa-arrows-rotate',
                         'tone' => 'green',
                         'requires_login' => true
                     ]
@@ -56,7 +56,7 @@ if (!function_exists('caffemmo_service_catalog')) {
                         'url' => base_url('client/up-tich-xanh/get-link'),
                         'action' => 'up-tich-xanh',
                         'service' => 'get-link',
-                        'icon' => 'ti ti-link',
+                        'icon' => 'fa-solid fa-link',
                         'tone' => 'teal',
                         'requires_login' => true
                     ],
@@ -68,7 +68,7 @@ if (!function_exists('caffemmo_service_catalog')) {
                         'url' => base_url('client/up-tich-xanh/up-fb'),
                         'action' => 'up-tich-xanh',
                         'service' => 'up-fb',
-                        'icon' => 'ti ti-brand-facebook',
+                        'icon' => 'fa-brands fa-facebook',
                         'tone' => 'blue',
                         'requires_login' => true
                     ],
@@ -80,7 +80,7 @@ if (!function_exists('caffemmo_service_catalog')) {
                         'url' => base_url('client/up-tich-xanh/up-ig'),
                         'action' => 'up-tich-xanh',
                         'service' => 'up-ig',
-                        'icon' => 'ti ti-brand-instagram',
+                        'icon' => 'fa-brands fa-instagram',
                         'tone' => 'pink',
                         'requires_login' => true
                     ]
@@ -96,7 +96,7 @@ if (!function_exists('caffemmo_service_catalog')) {
                         'description' => 'Chọn dịch vụ video, lượt xem và tương tác; theo dõi trạng thái đơn ngay tại Caffemmo.',
                         'url' => base_url('client/social-buff'),
                         'action' => 'social-buff',
-                        'icon' => 'ti ti-bolt',
+                        'icon' => 'fa-solid fa-bolt',
                         'tone' => 'blue',
                         'requires_login' => true
                     ]
@@ -112,7 +112,7 @@ if (!function_exists('caffemmo_service_catalog')) {
                         'description' => 'Tạo link đăng nhập Netflix theo thời hạn do nhà cung cấp trả về.',
                         'url' => base_url('client/netflix'),
                         'action' => 'netflix',
-                        'icon' => 'ti ti-player-play',
+                        'icon' => 'fa-solid fa-play',
                         'tone' => 'red',
                         'requires_login' => true
                     ]
@@ -128,7 +128,7 @@ if (!function_exists('caffemmo_service_catalog')) {
                         'description' => 'Chọn gói Locket Gold Vĩnh Viễn, gửi username và theo dõi trạng thái xử lý ngay trên Caffemmo.',
                         'url' => base_url('client/locket-gold'),
                         'action' => 'locket-gold',
-                        'icon' => 'ti ti-crown',
+                        'icon' => 'fa-solid fa-crown',
                         'tone' => 'yellow',
                         'requires_login' => true
                     ]

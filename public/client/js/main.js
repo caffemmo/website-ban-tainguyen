@@ -97,7 +97,7 @@
   }),
   $(".header-src").on("click", function () {
     $(".header-form").toggleClass("active"),
-      $(this).children(".ti-search, .ti-x").toggleClass("ti-search ti-x");
+      $(this).children(".fa-search").toggleClass("fa-times");
   }),
   $(".wish").on("click", function () {
     $(this).toggleClass("active");
