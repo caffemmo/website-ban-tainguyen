@@ -562,7 +562,7 @@
             <div class="col-sm-6 col-xl-4">
                 <div class="footer-widget">
                     <a class="footer-logo" href="<?= base_url(); ?>">
-                        <img src="<?= BASE_URL($CMSNT->site('logo_light')); ?>" onerror="this.onerror=null;this.src='<?= BASE_URL('assets/storage/images/logo_dark_AEQ.png'); ?>';" alt="<?= htmlspecialchars((string) $CMSNT->site('title'), ENT_QUOTES, 'UTF-8'); ?>"></a>
+                        <img src="<?= BASE_URL($CMSNT->site('logo_light')); ?>" alt="logo"></a>
                     <p class="footer-desc">
                         <?= $CMSNT->site('description'); ?></p>
                 </div>
